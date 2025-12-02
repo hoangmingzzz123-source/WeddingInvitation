@@ -21,11 +21,13 @@ export function BloomCrystal3D() {
   const stickers = ['❤️', '💝', '🌸', '🎉', '💐', '🥂', '💍', '✨'];
 
   const images = [
-    'https://images.unsplash.com/photo-1658243862459-145b453dd74e?w=1200',
-    'https://images.unsplash.com/photo-1719499809556-070ec0dfda8b?w=1200',
-    'https://images.unsplash.com/photo-1759887244219-17c3d64a7f01?w=1200',
-    'https://images.unsplash.com/photo-1627364155535-9ed50e63aece?w=1200',
-    'https://images.unsplash.com/photo-1742240439165-60790db1ee93?w=1200',
+    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
   ];
 
   const pages = [
@@ -301,7 +303,7 @@ export function BloomCrystal3D() {
                   className="aspect-video bg-gradient-to-br from-[#1B2A41] to-[#0F1A2E] rounded-3xl overflow-hidden shadow-2xl relative group cursor-pointer"
                 >
                   <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1658243862459-145b453dd74e?w=1200"
+                    src="https://thanhnien.mediacdn.vn/Uploaded/voba/2022_04_07/anh-4-9373.jpg"
                     alt="Video thumbnail"
                     className="w-full h-full object-cover"
                   />

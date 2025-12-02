@@ -16,8 +16,9 @@ export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: Musi
   useEffect(() => {
     // Create audio element
     audioRef.current = new Audio();
-    // Using a placeholder audio URL - in real app, this would be user's uploaded music
-    audioRef.current.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+    // Wedding background music - using free music from various sources
+    // In production, use user's uploaded wedding music
+    audioRef.current.src = 'src/asset/Lễ Đường.mp3'; // Romantic Piano Wedding Music
     audioRef.current.loop = true;
     audioRef.current.volume = volume;
 

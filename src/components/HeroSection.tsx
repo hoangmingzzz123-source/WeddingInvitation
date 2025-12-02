@@ -93,7 +93,7 @@ export function HeroSection() {
                 ease: "easeInOut",
               }}
             >
-              Thiệp Cưới Online
+              Wedding Invitation
             </motion.span>
           </motion.h1>
 
@@ -267,8 +267,8 @@ export function HeroSection() {
                 }}
               />
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1649072111605-3ea5047a4468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwbW9ja3VwJTIwcGhvbmV8ZW58MXx8fHwxNzYzNjkyNjIwfDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Wedding Invitation Mockup"
+                src="https://thiepcuoionline.huythanhjewelry.vn/img/home-banner.webp"
+                alt="Wedding Invitation Card"
                 className="relative w-full h-auto rounded-3xl shadow-2xl"
               />
             </div>

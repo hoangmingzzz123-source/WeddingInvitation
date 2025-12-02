@@ -6,6 +6,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 
 export function LuxuryGoldCinematic() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -337,10 +338,13 @@ function TimelinePage() {
 
 function GalleryPage() {
   const images = [
-    'https://images.unsplash.com/photo-1658243862459-145b453dd74e?w=800',
-    'https://images.unsplash.com/photo-1719499809556-070ec0dfda8b?w=800',
-    'https://images.unsplash.com/photo-1759887244219-17c3d64a7f01?w=800',
-    'https://images.unsplash.com/photo-1627364155535-9ed50e63aece?w=800',
+    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
   ];
 
   return (

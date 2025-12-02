@@ -223,9 +223,9 @@ export function FinalCTA() {
         transition={{ duration: 0.8, delay: 1.4 }}
         className="relative z-10 text-center mt-20 pt-8 border-t border-[#C29B43]/20"
       >
-        <p className="text-sm text-[#6F6F6F]">
+        {/* <p className="text-sm text-[#6F6F6F]">
           © 2024 Thiệp Cưới Online. Made with 💝 for every couple's special day.
-        </p>
+        </p> */}
       </motion.div>
     </section>
   );
