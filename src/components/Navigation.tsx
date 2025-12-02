@@ -41,6 +41,7 @@ export function Navigation() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             className="flex items-center gap-2 cursor-pointer"
+            onClick={() => window.location.href = '/'}
           >
             <div className="w-10 h-10 bg-gradient-to-br from-[#C29B43] to-[#A88434] rounded-full flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" fill="white" />
@@ -49,7 +50,7 @@ export function Navigation() {
               className="text-xl text-[#C29B43]"
               style={{ fontFamily: '"Playfair Display", serif' }}
             >
-              Thiệp Cưới Online
+              Wedding Invitation
             </span>
           </motion.div>
 
@@ -68,6 +69,7 @@ export function Navigation() {
             <Button
               className="bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-2 rounded-full"
               style={{ fontFamily: '"Poppins", sans-serif' }}
+              onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Tạo thiệp ngay
             </Button>
@@ -107,6 +109,10 @@ export function Navigation() {
               <Button
                 className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-3 rounded-full"
                 style={{ fontFamily: '"Poppins", sans-serif' }}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 Tạo thiệp ngay
               </Button>

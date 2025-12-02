@@ -53,7 +53,7 @@ export function VideoSection() {
             Xem Video Giới Thiệu
           </h2>
           <p className="text-xl text-[#4A4A4A] max-w-2xl mx-auto">
-            Khám phá cách tạo thiệp cưới online chỉ trong 5 phút
+            Khám phá sản phẩm chúng tôi mang lại
           </p>
         </motion.div>
 
@@ -68,7 +68,7 @@ export function VideoSection() {
         >
           {/* Thumbnail */}
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1658243862459-145b453dd74e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwcm9tYW50aWN8ZW58MXx8fHwxNzYzNjAyMjEwfDA&ixlib=rb-4.1.0&q=80&w=1080"
+            src="src/asset/videoCover.png"
             alt="Video Preview"
             className="w-full h-full object-cover"
           />
@@ -125,7 +125,12 @@ export function VideoSection() {
                 >
                   <X className="w-6 h-6 text-white" />
                 </button>
-
+                <iframe className="w-full h-full"
+                src="https://www.youtube.com/embed/VvkYROIh5qc?si=NzBVHEmRQ-pFrKQ5" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 {/* Video Placeholder */}
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1B2A41] to-[#0F1A2E]">
                   <div className="text-center text-white space-y-4">

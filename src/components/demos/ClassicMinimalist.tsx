@@ -6,6 +6,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 
 export function ClassicMinimalist() {
   const [rsvpData, setRsvpData] = useState({ name: '', guests: '1', note: '' });
@@ -18,13 +19,13 @@ export function ClassicMinimalist() {
   };
 
   const images = [
-    'https://images.unsplash.com/photo-1658243862459-145b453dd74e?w=800',
-    'https://images.unsplash.com/photo-1759887244219-17c3d64a7f01?w=800',
-    'https://images.unsplash.com/photo-1719499809556-070ec0dfda8b?w=800',
-    'https://images.unsplash.com/photo-1627364155535-9ed50e63aece?w=800',
-    'https://images.unsplash.com/photo-1742240439165-60790db1ee93?w=800',
-    'https://images.unsplash.com/photo-1649072111605-3ea5047a4468?w=800',
-  ];
+    'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
+    'https://tiff.vn/wp-content/uploads/2025/06/nghi-thuc-rai-hoa-trong-dam-cuoi-da-co-lich-su-tu-lau-doi.jpg',
+    'https://tphcm.cdnchinhphu.vn/334895287454388224/2023/1/20/tiec-cuoi-1-1674150641907468449774.jpg',
+    'https://static-images.vnncdn.net/vps_images_publish/000001/000003/2024/9/10/dam-cuoi-xuc-dong-cua-dien-vien-anh-duc-va-vo-kem-12-tuoi-4891.jpg?width=0&s=dd3S-SiZ9fG9l2zACWLx6g',
+    'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
+    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    ];
 
   return (
     <div className="min-h-screen bg-[#FAF7F2]">
@@ -200,6 +201,14 @@ export function ClassicMinimalist() {
           </div>
         </motion.div>
       </section>
+
+      {/* Map Section */}
+      <MapSection 
+        location="Nhà hàng Riverside Palace"
+        address="123 Đường Tôn Đức Thắng, Quận 1, TP.HCM"
+        mapUrl="https://maps.google.com/?q=Riverside+Palace+Ho+Chi+Minh"
+        premium={false}
+      />
 
       {/* RSVP Form */}
       <section className="py-20 px-4 bg-white">

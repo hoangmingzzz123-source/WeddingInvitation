@@ -9,7 +9,7 @@ type PackageType = 'all' | '199k' | '299k' | '399k';
 const templates = [
   {
     name: 'Classic Minimalist',
-    image: 'https://images.unsplash.com/photo-1759887244219-17c3d64a7f01?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwaW52aXRhdGlvbiUyMGVsZWdhbnR8ZW58MXx8fHwxNzYzNjkyNjE2fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
     style: 'Minimalist',
     demoUrl: '#/demo/classic-minimalist',
     package: '199k' as PackageType,
@@ -18,7 +18,7 @@ const templates = [
   },
   {
     name: 'Blush Floral',
-    image: 'https://images.unsplash.com/photo-1719499809556-070ec0dfda8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwZmxvcmFsJTIwZGVjb3JhdGlvbnxlbnwxfHx8fDE3NjM2NDAxNTR8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg',
     style: 'Floral',
     demoUrl: '#/demo/blush-floral',
     package: '199k' as PackageType,
@@ -27,7 +27,7 @@ const templates = [
   },
   {
     name: 'Soft Fade Floral',
-    image: 'https://images.unsplash.com/photo-1658243862459-145b453dd74e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwcm9tYW50aWN8ZW58MXx8fHwxNzYzNjAyMjEwfDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-13.jpg',
     style: 'Watercolor Pastel',
     demoUrl: '#/demo/soft-fade-floral',
     package: '199k' as PackageType,
@@ -36,7 +36,7 @@ const templates = [
   },
   {
     name: 'Minimal Slide Clean',
-    image: 'https://images.unsplash.com/photo-1627364155535-9ed50e63aece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3ZWRkaW5nJTIwbWluaW1hbHxlbnwxfHx8fDE3NjM2OTI2MjN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-19.jpeg',
     style: 'Modern Clean',
     demoUrl: '#/demo/minimal-slide-clean',
     package: '199k' as PackageType,
@@ -45,7 +45,7 @@ const templates = [
   },
   {
     name: 'Modern Dark Blue',
-    image: 'https://images.unsplash.com/photo-1627364155535-9ed50e63aece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3ZWRkaW5nJTIwbWluaW1hbHxlbnwxfHx8fDE3NjM2OTI2MjN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://renbridal.vn/wp-content/uploads/2023/01/4-Concept-chup-anh-cuoi-day-y-nghia-ma-dau-re-khong-nen-bo-qua-3-768x1075.jpg',
     style: 'Modern',
     demoUrl: '#/demo/modern-dark-blue',
     package: '199k' as PackageType,
@@ -54,7 +54,7 @@ const templates = [
   },
   {
     name: 'Luxury Gold Frame',
-    image: 'https://images.unsplash.com/photo-1742240439165-60790db1ee93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB3ZWRkaW5nJTIwZ29sZHxlbnwxfHx8fDE3NjM2NjUxMDV8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp', 
     style: 'Luxury',
     demoUrl: '#/demo/luxury-gold-frame',
     package: '299k' as PackageType,
@@ -63,7 +63,7 @@ const templates = [
   },
   {
     name: 'Luxury Gold Cinematic',
-    image: 'https://images.unsplash.com/photo-1742240439165-60790db1ee93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB3ZWRkaW5nJTIwZ29sZHxlbnwxfHx8fDE3NjM2NjUxMDV8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
     style: 'Cinematic Luxury',
     demoUrl: '#/demo/luxury-gold-cinematic',
     package: '299k' as PackageType,
@@ -72,7 +72,7 @@ const templates = [
   },
   {
     name: 'Vintage Film Memory',
-    image: 'https://images.unsplash.com/photo-1658243862459-145b453dd74e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwcm9tYW50aWN8ZW58MXx8fHwxNzYzNjAyMjEwfDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://mimosawedding.vn/wp-content/uploads/2022/07/phong-cach-chup-anh-cuoi-vintage-81.jpg',
     style: 'Vintage',
     demoUrl: '#/demo/vintage-film',
     package: '299k' as PackageType,
@@ -81,7 +81,7 @@ const templates = [
   },
   {
     name: 'Romantic Watercolor',
-    image: 'https://images.unsplash.com/photo-1759887244219-17c3d64a7f01?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwaW52aXRhdGlvbiUyMGVsZWdhbnR8ZW58MXx8fHwxNzYzNjkyNjE2fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
     style: 'Romantic',
     demoUrl: '#/demo/romantic-watercolor',
     package: '299k' as PackageType,
@@ -90,7 +90,7 @@ const templates = [
   },
   {
     name: '3D Bloom Crystal',
-    image: 'https://images.unsplash.com/photo-1719499809556-070ec0dfda8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwZmxvcmFsJTIwZGVjb3JhdGlvbnxlbnwxfHx8fDE3NjM2NDAxNTR8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://lightthatstudio.com/wp-content/uploads/2025/07/Light-That-Studio-Studio-Han-QuocZFK_3275-scaled.jpg',
     style: '3D Effect',
     demoUrl: '#/demo/bloom-crystal-3d',
     package: '399k' as PackageType,
@@ -99,7 +99,7 @@ const templates = [
   },
   {
     name: 'Art Deco Royal',
-    image: 'https://images.unsplash.com/photo-1742240439165-60790db1ee93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB3ZWRkaW5nJTIwZ29sZHxlbnwxfHx8fDE3NjM2NjUxMDV8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
     style: 'Art Deco',
     demoUrl: '#/demo/art-deco-royal',
     package: '399k' as PackageType,
@@ -108,7 +108,7 @@ const templates = [
   },
   {
     name: 'Tropical Sunset',
-    image: 'https://images.unsplash.com/photo-1627364155535-9ed50e63aece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3ZWRkaW5nJTIwbWluaW1hbHxlbnwxfHx8fDE3NjM2OTI2MjN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0250.jpg',
     style: 'Tropical',
     demoUrl: '#/demo/tropical-sunset',
     package: '399k' as PackageType,
