@@ -4,11 +4,12 @@ import { MapPin, Calendar, Clock, Home, Gift } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 
 export function ArtDecoRoyal() {
   const [currentPage, setCurrentPage] = useState(0);
 
-  const pages = ['Cover', 'Details', 'Gallery', 'RSVP'];
+  const pages = ['Cover', 'Details', 'Gallery', 'Map', 'RSVP'];
 
   // Handle swipe gestures
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -155,7 +156,8 @@ export function ArtDecoRoyal() {
             {currentPage === 0 && <CoverPage />}
             {currentPage === 1 && <DetailsPage />}
             {currentPage === 2 && <GalleryPage />}
-            {currentPage === 3 && <RSVPPage />}
+            {currentPage === 3 && <MapPage />}
+            {currentPage === 4 && <RSVPPage />}
           </motion.div>
         </AnimatePresence>
       </motion.div>
@@ -369,6 +371,39 @@ function GalleryPage() {
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+function MapPage() {
+  return (
+    <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto w-full"
+      >
+        <div className="relative p-12 bg-white/5 backdrop-blur-sm">
+          {/* Deco frame */}
+          <div className="absolute inset-0 border-4 border-[#C29B43]" />
+          <div className="absolute inset-2 border border-[#FFD700]/50" />
+          
+          <div className="relative space-y-8">
+            <h2 
+              className="text-4xl text-center text-[#FFD700]"
+              style={{ fontFamily: '"Playfair Display", serif' }}
+            >
+              MAP
+            </h2>
+
+            <p className="text-center text-white/70">
+              Find us at The Grand Ballroom, Royal Hotel
+            </p>
+
+            <MapSection className="w-full h-96" />
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

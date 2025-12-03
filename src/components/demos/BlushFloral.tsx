@@ -6,6 +6,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 
 export function BlushFloral() {
   const [rsvpData, setRsvpData] = useState({ name: '', guests: '1', note: '' });
@@ -258,6 +259,14 @@ export function BlushFloral() {
           </div>
         </motion.div>
       </section>
+
+      {/* Map Section */}
+      <MapSection 
+        location="Vườn Tiệc Cưới Rose Garden"
+        address="456 Đường Hồng Hà, Quận Tân Bình, TP.HCM"
+        mapUrl="https://maps.google.com/?q=Rose+Garden+Wedding+Ho+Chi+Minh"
+        premium={false}
+      />
 
       {/* RSVP */}
       <section className="py-20 px-4 bg-gradient-to-b from-white to-[#FFF3F3]">
