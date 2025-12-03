@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Eye, Music, MapPin, Smartphone } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-type PackageType = 'all' | '199k' | '299k' | '399k';
+type PackageType = 'all' | '109k' | '159k' | '219k';
 
 const templates = [
   {
@@ -12,7 +12,7 @@ const templates = [
     image: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
     style: 'Minimalist',
     demoUrl: '#/demo/classic-minimalist',
-    package: '199k' as PackageType,
+    package: '109k' as PackageType,
     description: 'Tối giản sang trọng',
     features: ['Nhạc nền', 'RSVP', 'Bản đồ'],
   },
@@ -21,7 +21,7 @@ const templates = [
     image: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg',
     style: 'Floral',
     demoUrl: '#/demo/blush-floral',
-    package: '199k' as PackageType,
+    package: '109k' as PackageType,
     description: 'Hoa văn pastel nhẹ nhàng',
     features: ['Watercolor', 'Album', 'Timeline'],
   },
@@ -30,7 +30,7 @@ const templates = [
     image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-13.jpg',
     style: 'Watercolor Pastel',
     demoUrl: '#/demo/soft-fade-floral',
-    package: '199k' as PackageType,
+    package: '109k' as PackageType,
     description: 'Chuyển màu mượt mà',
     features: ['Fade Effect', 'Music', 'Map'],
   },
@@ -39,7 +39,7 @@ const templates = [
     image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-19.jpeg',
     style: 'Modern Clean',
     demoUrl: '#/demo/minimal-slide-clean',
-    package: '199k' as PackageType,
+    package: '109k' as PackageType,
     description: 'Hiện đại trẻ trung',
     features: ['Swipe', 'Clean UI', 'Fast'],
   },
@@ -48,7 +48,7 @@ const templates = [
     image: 'https://renbridal.vn/wp-content/uploads/2023/01/4-Concept-chup-anh-cuoi-day-y-nghia-ma-dau-re-khong-nen-bo-qua-3-768x1075.jpg',
     style: 'Modern',
     demoUrl: '#/demo/modern-dark-blue',
-    package: '199k' as PackageType,
+    package: '159k' as PackageType,
     description: 'Xanh navy sang trọng',
     features: ['Dark Mode', 'Elegant', 'Premium'],
   },
@@ -57,7 +57,7 @@ const templates = [
     image: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp', 
     style: 'Luxury',
     demoUrl: '#/demo/luxury-gold-frame',
-    package: '299k' as PackageType,
+    package: '159k' as PackageType,
     description: 'Khung viền vàng kim',
     features: ['Gold Effect', 'Luxury', '3 Pages'],
   },
@@ -66,7 +66,7 @@ const templates = [
     image: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
     style: 'Cinematic Luxury',
     demoUrl: '#/demo/luxury-gold-cinematic',
-    package: '299k' as PackageType,
+    package: '159k' as PackageType,
     description: 'Điện ảnh đẳng cấp',
     features: ['Bokeh', 'Cinematic', 'Premium'],
   },
@@ -75,7 +75,7 @@ const templates = [
     image: 'https://mimosawedding.vn/wp-content/uploads/2022/07/phong-cach-chup-anh-cuoi-vintage-81.jpg',
     style: 'Vintage',
     demoUrl: '#/demo/vintage-film',
-    package: '299k' as PackageType,
+    package: '159k' as PackageType,
     description: 'Film grain cổ điển',
     features: ['Vintage', 'Film Grain', 'Retro'],
   },
@@ -84,7 +84,7 @@ const templates = [
     image: 'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
     style: 'Romantic',
     demoUrl: '#/demo/romantic-watercolor',
-    package: '299k' as PackageType,
+    package: '159k' as PackageType,
     description: 'Màu nước lãng mạn',
     features: ['Watercolor', 'Romantic', 'Soft'],
   },
@@ -93,7 +93,7 @@ const templates = [
     image: 'https://lightthatstudio.com/wp-content/uploads/2025/07/Light-That-Studio-Studio-Han-QuocZFK_3275-scaled.jpg',
     style: '3D Effect',
     demoUrl: '#/demo/bloom-crystal-3d',
-    package: '399k' as PackageType,
+    package: '219k' as PackageType,
     description: 'Hiệu ứng 3D cao cấp',
     features: ['3D', 'Crystal', '5 Pages'],
   },
@@ -102,7 +102,7 @@ const templates = [
     image: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
     style: 'Art Deco',
     demoUrl: '#/demo/art-deco-royal',
-    package: '399k' as PackageType,
+    package: '219k' as PackageType,
     description: 'Hoàng gia Art Deco',
     features: ['Art Deco', 'Royal', 'Luxury'],
   },
@@ -111,7 +111,7 @@ const templates = [
     image: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0250.jpg',
     style: 'Tropical',
     demoUrl: '#/demo/tropical-sunset',
-    package: '399k' as PackageType,
+    package: '219k' as PackageType,
     description: 'Nhiệt đới hoàng hôn',
     features: ['Tropical', 'Vibrant', 'Unique'],
   },
@@ -191,9 +191,9 @@ export function TemplateGallery() {
           <div className="flex flex-wrap justify-center gap-3">
             {[
               { label: 'Tất cả', value: 'all' as PackageType },
-              { label: 'Gói 199K', value: '199k' as PackageType },
-              { label: 'Gói 299K', value: '299k' as PackageType },
-              { label: 'Gói 399K', value: '399k' as PackageType },
+              { label: 'Gói 109k', value: '109k' as PackageType },
+              { label: 'Gói 159K', value: '159k' as PackageType },
+              { label: 'Gói 219K', value: '219k' as PackageType },
             ].map((filter) => (
               <motion.button
                 key={filter.value}

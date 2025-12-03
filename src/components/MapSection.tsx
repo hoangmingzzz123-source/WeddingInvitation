@@ -71,6 +71,16 @@ export function MapSection({
           {/* Map Container */}
           <div className="relative aspect-video bg-gradient-to-br from-[#FAF7F2] to-white">
             {/* Placeholder map - In real app, use Google Maps iframe */}
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.0634203876657!2d106.67557!3d10.79797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQ3JzUyLjciTiAxMDbCsDQwJzM5LjMiRQ!5e0!3m2!1svi!2s!4v1234567890"
+              width="100%"
+              height="400"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full"
+            ></iframe>
             <div className="absolute inset-0 flex items-center justify-center">
               {/* Animated Pin */}
               <motion.div

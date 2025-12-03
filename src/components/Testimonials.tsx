@@ -9,7 +9,7 @@ const testimonials = [
     id: 1,
     name: 'Nguyễn Thị Lan Anh',
     wedding: 'Đám cưới 15/08/2024',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150',
+    avatar: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0516.jpg',
     rating: 5,
     content: 'Thiệp cưới online quá đẹp và sang trọng! Khách mời ai cũng khen ngợi. Giao diện dễ sử dụng, hiệu ứng mượt mà. Đội ngũ hỗ trợ nhiệt tình. Rất đáng tiền!',
   },
@@ -17,7 +17,7 @@ const testimonials = [
     id: 2,
     name: 'Trần Minh Đức',
     wedding: 'Đám cưới 22/09/2024',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
+    avatar: 'https://watermark.lovepik.com/photo/20211209/large/lovepik-groom-image-picture_501759121.jpg',
     rating: 5,
     content: 'Tính năng RSVP và QR mừng cưới rất tiện lợi. Giúp mình quản lý khách mời dễ dàng hơn nhiều. Mẫu thiệp đa dạng, hiệu ứng 3D cực kỳ ấn tượng!',
   },
@@ -25,9 +25,9 @@ const testimonials = [
     id: 3,
     name: 'Lê Thu Hà & Phạm Tuấn Anh',
     wedding: 'Đám cưới 10/10/2024',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
+    avatar: 'https://images.pexels.com/photos/34952489/pexels-photo-34952489.jpeg?cs=srgb&dl=pexels-le-hao-quang-249157828-34952489.jpg&fm=jpg',
     rating: 5,
-    content: 'Chúng mình chọn gói Diamond Premium và ho��n toàn hài lòng! Album ảnh không giới hạn, video nhúng mượt mà, guestbook đẹp lung linh. Recommend cho các cặp đôi!',
+    content: 'Chúng mình chọn gói Diamond Premium và hoàn toàn hài lòng! Album ảnh không giới hạn, video nhúng mượt mà, guestbook đẹp lung linh. Recommend cho các cặp đôi!',
   },
 ];
 
@@ -60,7 +60,7 @@ export function Testimonials() {
             Khách Hàng Nói Gì Về Chúng Tôi
           </h2>
           <p className="text-xl text-[#4A4A4A] max-w-2xl mx-auto">
-            Hơn 5,000 cặp đôi đã tin tưởng và hài lòng
+            Hơn 50 cặp đôi đã tin tưởng và hài lòng
           </p>
         </motion.div>
 

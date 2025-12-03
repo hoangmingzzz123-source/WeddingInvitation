@@ -7,7 +7,7 @@ import { Check, Crown, Flower2, Diamond } from 'lucide-react';
 const packages = [
   {
     name: 'Basic Elegant',
-    price: '199.000đ',
+    price: '109.000đ',
     color: '#F8E7EA',
     icon: Flower2,
     features: [
@@ -24,7 +24,7 @@ const packages = [
   },
   {
     name: 'Premium Interactive',
-    price: '299.000đ',
+    price: '159.000đ',
     color: '#E7EDF7',
     icon: Crown,
     features: [
@@ -41,7 +41,7 @@ const packages = [
   },
   {
     name: 'Diamond Premium',
-    price: '399.000đ',
+    price: '219.000đ',
     color: '#FFF4D3',
     icon: Diamond,
     features: [

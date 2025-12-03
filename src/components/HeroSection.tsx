@@ -129,7 +129,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 1 }}
             className="text-base text-[#333]"
           >
-            ⚡ Chỉ từ 199K • 99+ Mẫu thiệp cao cấp • Tùy chỉnh dễ dàng
+            ⚡ Chỉ từ 109K • 45+ Mẫu thiệp cao cấp • Tùy chỉnh dễ dàng
           </motion.p>
 
           <motion.div
@@ -171,7 +171,7 @@ export function HeroSection() {
 
                 <span className="relative z-10 flex items-center">
                   <Heart className="w-5 h-5 mr-2" />
-                  Xem 99+ Mẫu Thiệp Cưới
+                  Xem 45+ Mẫu Thiệp Cưới
                 </span>
               </Button>
             </motion.div>
@@ -183,7 +183,7 @@ export function HeroSection() {
             >
               <Button 
                 onClick={() => {
-                  const videoSection = document.querySelector('[id*="video"]');
+                  const videoSection = document.querySelector('[id="video-section-pointer"]');
                   videoSection?.scrollIntoView({ behavior: 'smooth' });
                 }}
                 variant="outline"
@@ -204,9 +204,9 @@ export function HeroSection() {
             className="flex flex-wrap gap-3 justify-center lg:justify-start pt-4"
           >
             {[
-              { label: 'Gói 199K', color: '#F7DADA' },
-              { label: 'Gói 299K', color: '#FFE5B4' },
-              { label: 'Gói 399K', color: '#E6D7FF' },
+              { label: 'Gói 109k', color: '#F7DADA' },
+              { label: 'Gói 159k', color: '#FFE5B4' },
+              { label: 'Gói 219k', color: '#E6D7FF' },
             ].map((pkg, i) => (
               <motion.button
                 key={pkg.label}

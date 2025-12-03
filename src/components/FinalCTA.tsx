@@ -120,7 +120,7 @@ export function FinalCTA() {
           className="grid grid-cols-3 gap-8 max-w-3xl mx-auto py-8"
         >
           {[
-            { number: '5000+', label: 'Cặp đôi tin tưởng' },
+            { number: '50+', label: 'Cặp đôi tin tưởng' },
             { number: '45+', label: 'Mẫu thiệp đẹp' },
             { number: '4.9★', label: 'Đánh giá trung bình' },
           ].map((stat, index) => (
@@ -216,17 +216,17 @@ export function FinalCTA() {
       </div>
 
       {/* Footer */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 1.4 }}
         className="relative z-10 text-center mt-20 pt-8 border-t border-[#C29B43]/20"
       >
-        {/* <p className="text-sm text-[#6F6F6F]">
+        <p className="text-sm text-[#6F6F6F]">
           © 2024 Thiệp Cưới Online. Made with 💝 for every couple's special day.
-        </p> */}
-      </motion.div>
+        </p>
+      </motion.div> */}
     </section>
   );
 }
