@@ -6,11 +6,12 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 
 export function VintageGrain() {
   const [currentTab, setCurrentTab] = useState(0);
   
-  const tabs = ['Cover', 'Story', 'Gallery', 'Details'];
+  const tabs = ['Cover', 'Story', 'Gallery', 'Map', 'Details'];
 
   return (
     <div className="min-h-screen bg-[#F5EFE6] text-[#3E2723] relative overflow-hidden">
@@ -77,7 +78,8 @@ export function VintageGrain() {
           {currentTab === 0 && <CoverTab />}
           {currentTab === 1 && <StoryTab />}
           {currentTab === 2 && <GalleryTab />}
-          {currentTab === 3 && <DetailsTab />}
+          {currentTab === 3 && <MapTab />}
+          {currentTab === 4 && <DetailsTab />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -261,6 +263,31 @@ function GalleryTab() {
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function MapTab() {
+  return (
+    <section className="min-h-screen py-32 px-4">
+      <div className="max-w-6xl mx-auto">
+        <motion.h2
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl text-center mb-16 text-[#8B7355]"
+          style={{ fontFamily: '"Playfair Display", serif' }}
+        >
+          Venue Map
+        </motion.h2>
+
+        <MapSection
+          className="w-full h-[500px] rounded-lg shadow-xl"
+          center={{ lat: 37.7749, lng: -122.4194 }}
+          zoom={13}
+          marker={{ lat: 37.7749, lng: -122.4194 }}
+          markerTitle="The Old Mill by the River"
+        />
       </div>
     </section>
   );

@@ -5,11 +5,12 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 
 export function MinimalSlideClean() {
   const [currentTab, setCurrentTab] = useState(0);
 
-  const tabs = ['Trang Chủ', 'Thông Tin', 'Album', 'Liên Hệ'];
+  const tabs = ['Trang Chủ', 'Thông Tin', 'Album', 'Bản Đồ', 'Liên Hệ'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] via-white to-[#F0F9FF]">
@@ -59,7 +60,8 @@ export function MinimalSlideClean() {
           {currentTab === 0 && <HomeTab />}
           {currentTab === 1 && <InfoTab />}
           {currentTab === 2 && <AlbumTab />}
-          {currentTab === 3 && <ContactTab />}
+          {currentTab === 3 && <MapTab />}
+          {currentTab === 4 && <ContactTab />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -265,6 +267,20 @@ function AlbumTab() {
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+function MapTab() {
+  return (
+    <section className="min-h-screen flex items-center justify-center px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto w-full"
+      >
+        <MapSection />
+      </motion.div>
     </section>
   );
 }

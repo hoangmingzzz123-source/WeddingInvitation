@@ -4,6 +4,7 @@ import { Home, Leaf, MapPin, Heart, Gift, Camera, ChevronLeft, ChevronRight } fr
 import { Button } from '../ui/button';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 import { FloatingParticles } from '../effects/FloatingParticles';
 import { GoldenGlowButton } from '../effects/GoldenGlowButton';
 
@@ -11,7 +12,7 @@ export function GreenElegance() {
   const [currentPage, setCurrentPage] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
 
-  const pages = ['Cover', 'Story', 'Gallery', 'Details', 'RSVP'];
+  const pages = ['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP'];
 
   useEffect(() => {
     const timer = setTimeout(() => setShowIntro(false), 2500);
@@ -111,7 +112,8 @@ export function GreenElegance() {
         {currentPage === 1 && <StoryPage key="story" />}
         {currentPage === 2 && <GalleryPage key="gallery" />}
         {currentPage === 3 && <DetailsPage key="details" />}
-        {currentPage === 4 && <RSVPPage key="rsvp" />}
+        {currentPage === 4 && <MapPage key="map" />}
+        {currentPage === 5 && <RSVPPage key="rsvp" />}
       </AnimatePresence>
     </div>
   );
@@ -355,6 +357,34 @@ function DetailsPage() {
             Xem Bản Đồ
           </GoldenGlowButton>
         </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// Map Page
+function MapPage() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="min-h-screen flex items-center justify-center p-8"
+    >
+      <div className="max-w-2xl w-full">
+        <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl space-y-6">
+          <h2 
+            className="text-4xl text-center text-[#1B5E20]"
+            style={{ fontFamily: '"Playfair Display", serif' }}
+          >
+            Bản Đồ Địa Điểm
+          </h2>
+
+          <MapSection
+            address="123 Đường Hoa, Hà Nội"
+            className="w-full h-96"
+          />
+        </motion.div>
       </div>
     </motion.div>
   );

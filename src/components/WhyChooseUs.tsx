@@ -40,7 +40,7 @@ const features = [
   },
   {
     icon: Users,
-    title: '5000+ Cặp Đôi Tin Dùng',
+    title: '50+ Cặp Đôi Tin Dùng',
     description: 'Được tin tưởng bởi hàng nghìn cặp đôi trên toàn quốc',
     color: '#27AE60',
     gradient: 'from-[#27AE60] to-[#2ECC71]',
@@ -245,8 +245,8 @@ export function WhyChooseUs() {
           className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8"
         >
           {[
-            { number: '5000+', label: 'Cặp Đôi Hạnh Phúc' },
-            { number: '99+', label: 'Mẫu Thiết Kế' },
+            { number: '50+', label: 'Cặp Đôi Hạnh Phúc' },
+            { number: '45+', label: 'Mẫu Thiết Kế' },
             { number: '24/7', label: 'Hỗ Trợ Khách Hàng' },
             { number: '100%', label: 'Hài Lòng' },
           ].map((stat, i) => (

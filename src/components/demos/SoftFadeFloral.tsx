@@ -6,6 +6,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
 
 export function SoftFadeFloral() {
   const [currentTab, setCurrentTab] = useState(0);
@@ -17,7 +18,7 @@ export function SoftFadeFloral() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const tabs = ['Cover', 'Thông Tin', 'Album', 'Lời Mời', 'RSVP'];
+  const tabs = ['Cover', 'Thông Tin', 'Album', 'Lời Mời', 'Bản Đồ', 'RSVP'];
 
   // Watercolor blobs
   const watercolorBlobs = [
@@ -141,7 +142,8 @@ export function SoftFadeFloral() {
           {currentTab === 1 && <InfoTab />}
           {currentTab === 2 && <AlbumTab />}
           {currentTab === 3 && <InvitationTab />}
-          {currentTab === 4 && <RSVPTab />}
+          {currentTab === 4 && <MapTab />}
+          {currentTab === 5 && <RSVPTab />}
         </motion.div>
       </div>
     </div>
@@ -327,6 +329,28 @@ function InvitationTab() {
           Chúng tôi rất vinh hạnh được đón tiếp bạn trong ngày trọng đại của đời mình.
         </p>
       </motion.div>
+    </section>
+  );
+}
+
+function MapTab() {
+  return (
+    <section className="min-h-screen py-20 px-4">
+      <div className="max-w-5xl mx-auto space-y-12">
+        <h2 
+          className="text-5xl text-[#C29B43] text-center"
+          style={{ fontFamily: '"Great Vibes", cursive' }}
+        >
+          Bản Đồ
+        </h2>
+
+        <MapSection
+          address="The Manor Garden"
+          latitude={37.7749}
+          longitude={-122.4194}
+          className="w-full h-96 rounded-2xl shadow-xl"
+        />
+      </div>
     </section>
   );
 }

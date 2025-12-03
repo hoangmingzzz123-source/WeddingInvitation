@@ -48,11 +48,12 @@ export function VideoSection() {
         >
           <h2 
             className="text-5xl md:text-6xl text-[#C29B43]"
+            id="video-section-pointer"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
             Xem Video Giới Thiệu
           </h2>
-          <p className="text-xl text-[#4A4A4A] max-w-2xl mx-auto">
+          <p className="text-xl text-[#4A4A4A] max-w-2xl mx-auto ">
             Khám phá sản phẩm chúng tôi mang lại
           </p>
         </motion.div>
