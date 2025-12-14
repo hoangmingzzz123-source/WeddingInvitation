@@ -9,6 +9,9 @@ import { LuxuryGoldCinematic } from './components/demos/LuxuryGoldCinematic';
 import { ArtDecoRoyal } from './components/demos/ArtDecoRoyal';
 import { VintageGrain } from './components/demos/VintageGrain';
 import { GreenElegance } from './components/demos/GreenElegance';
+import { CinematicLoveStory } from './components/demos/CinematicLoveStory';
+import { MinimalElegant } from './components/demos/MinimalElegant';
+import { VietnameseTraditional } from './components/demos/VietnameseTraditional';
 import DemoThiep219k_Thiep1 from './Demo/Demo219k/Demo1/App';
 
 // Simple hash-based router
@@ -41,6 +44,9 @@ export function Router() {
     '#/demo/art-deco-royal': <ArtDecoRoyal />,
     '#/demo/vintage-grain': <VintageGrain />,
     '#/demo/green-elegance': <GreenElegance />,
+    '#/demo/cinematic-love-story': <CinematicLoveStory />,
+    '#/demo/minimal-elegant': <MinimalElegant />,
+    '#/demo/vietnamese-traditional': <VietnameseTraditional />,
   };
 
   return <>{routes[currentRoute] || <HomePage />}</>;

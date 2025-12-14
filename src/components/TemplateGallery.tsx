@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Eye, Music, MapPin, Smartphone } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-type PackageType = 'all' | '109k' | '159k' | '219k';
+type PackageType = 'all' | '109k' | '159k' | '199k';
 
 const templates = [
   {
@@ -48,9 +48,18 @@ const templates = [
     image: 'https://renbridal.vn/wp-content/uploads/2023/01/4-Concept-chup-anh-cuoi-day-y-nghia-ma-dau-re-khong-nen-bo-qua-3-768x1075.jpg',
     style: 'Modern',
     demoUrl: '#/demo/modern-dark-blue',
-    package: '159k' as PackageType,
+    package: '109k' as PackageType,
     description: 'Xanh navy sang trọng',
     features: ['Dark Mode', 'Elegant', 'Premium'],
+  },
+  {
+    name: 'Minimal Elegant',
+    image: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMHdlZGRpbmclMjBtaW5pbWFsaXN0JTIwZWxlZ2FudHxlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    style: 'Luxury Editorial',
+    demoUrl: '#/demo/minimal-elegant',
+    package: '159k' as PackageType,
+    description: 'Sang trọng tối giản',
+    features: ['Editorial', 'Grid Layout', 'Lightbox'],
   },
   {
     name: 'Luxury Gold Frame',
@@ -89,11 +98,29 @@ const templates = [
     features: ['Watercolor', 'Romantic', 'Soft'],
   },
   {
+    name: 'Cinematic Love Story',
+    image: 'https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwYnJpZGUlMjBncm9vbSUyMGNpbmVtYXRpY3xlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    style: 'Cinematic Film',
+    demoUrl: '#/demo/cinematic-love-story',
+    package: '199k' as PackageType,
+    description: 'Kể chuyện tình yêu điện ảnh',
+    features: ['Timeline', 'Scroll Animation', 'Film Grain'],
+  },
+  {
+    name: 'Vietnamese Traditional',
+    image: 'https://images.unsplash.com/photo-1765248227263-cfd048f2c5c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtZXNlJTIwdHJhZGl0aW9uYWwlMjB3ZWRkaW5nJTIwYW8lMjBkYWl8ZW58MXx8fHwxNzY1NzMwMTYwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    style: 'Traditional Luxury',
+    demoUrl: '#/demo/vietnamese-traditional',
+    package: '199k' as PackageType,
+    description: 'Truyền thống Việt sang trọng',
+    features: ['Song Hỷ', 'Gia Đình 2 Bên', 'Đỏ Vàng'],
+  },
+  {
     name: '3D Bloom Crystal',
     image: 'https://lightthatstudio.com/wp-content/uploads/2025/07/Light-That-Studio-Studio-Han-QuocZFK_3275-scaled.jpg',
     style: '3D Effect',
     demoUrl: '#/demo/bloom-crystal-3d',
-    package: '219k' as PackageType,
+    package: '199k' as PackageType,
     description: 'Hiệu ứng 3D cao cấp',
     features: ['3D', 'Crystal', '5 Pages'],
   },
@@ -125,17 +152,17 @@ export function TemplateGallery() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash.includes('filter-199k')) {
+      if (hash.includes('filter-109k')) {
+        setActiveFilter('109k');
+        setHighlightPackage('109k');
+        setTimeout(() => setHighlightPackage(null), 3000);
+      } else if (hash.includes('filter-159k')) {
+        setActiveFilter('159k');
+        setHighlightPackage('159k');
+        setTimeout(() => setHighlightPackage(null), 3000);
+      } else if (hash.includes('filter-199k')) {
         setActiveFilter('199k');
         setHighlightPackage('199k');
-        setTimeout(() => setHighlightPackage(null), 3000);
-      } else if (hash.includes('filter-299k')) {
-        setActiveFilter('299k');
-        setHighlightPackage('299k');
-        setTimeout(() => setHighlightPackage(null), 3000);
-      } else if (hash.includes('filter-399k')) {
-        setActiveFilter('399k');
-        setHighlightPackage('399k');
         setTimeout(() => setHighlightPackage(null), 3000);
       }
     };
@@ -152,9 +179,9 @@ export function TemplateGallery() {
 
   const getPackageColor = (pkg: PackageType) => {
     switch(pkg) {
-      case '199k': return '#F7DADA';
-      case '299k': return '#FFE5B4';
-      case '399k': return '#E6D7FF';
+      case '109k': return '#F7DADA';
+      case '159k': return '#FFE5B4';
+      case '199k': return '#E6D7FF';
       default: return '#FAF7F2';
     }
   };
@@ -191,9 +218,9 @@ export function TemplateGallery() {
           <div className="flex flex-wrap justify-center gap-3">
             {[
               { label: 'Tất cả', value: 'all' as PackageType },
-              { label: 'Gói 109k', value: '109k' as PackageType },
+              { label: 'Gói 109K', value: '109k' as PackageType },
               { label: 'Gói 159K', value: '159k' as PackageType },
-              { label: 'Gói 219K', value: '219k' as PackageType },
+              { label: 'Gói 199K', value: '199k' as PackageType },
             ].map((filter) => (
               <motion.button
                 key={filter.value}

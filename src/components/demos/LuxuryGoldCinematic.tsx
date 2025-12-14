@@ -31,8 +31,8 @@ export function LuxuryGoldCinematic() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#0A0A0A] text-white overflow-hidden">
-      {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} />
+      {/* Music Player - 159K Package: Custom Music Allowed */}
+      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Bokeh Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -258,37 +258,46 @@ function CoverPage() {
 function InvitationPage() {
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-3xl mx-auto bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-[#C29B43]/30 shadow-2xl"
-      >
-        <h2 
-          className="text-5xl text-[#C29B43] text-center mb-8"
-          style={{ fontFamily: '"Playfair Display", serif' }}
+      <div className="max-w-4xl mx-auto w-full space-y-12">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-[#C29B43]/30 shadow-2xl"
         >
-          Trân Trọng Kính Mời
-        </h2>
+          <h2 
+            className="text-5xl text-[#C29B43] text-center mb-8"
+            style={{ fontFamily: '"Playfair Display", serif' }}
+          >
+            Trân Trọng Kính Mời
+          </h2>
 
-        <div className="space-y-8 text-center">
-          {[
-            { icon: Calendar, text: 'Thứ 7, 12.12.2025' },
-            { icon: Clock, text: '18:00 - 20:00' },
-            { icon: MapPin, text: 'The Imperial Palace Hotel' },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.2 }}
-              className="flex items-center justify-center gap-4 text-xl"
-            >
-              <item.icon className="w-6 h-6 text-[#C29B43]" />
-              <span className="text-white/90">{item.text}</span>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+          <div className="space-y-8 text-center">
+            {[
+              { icon: Calendar, text: 'Thứ 7, 12.12.2025' },
+              { icon: Clock, text: '18:00 - 20:00' },
+              { icon: MapPin, text: 'The Imperial Palace Hotel' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.2 }}
+                className="flex items-center justify-center gap-4 text-xl"
+              >
+                <item.icon className="w-6 h-6 text-[#C29B43]" />
+                <span className="text-white/90">{item.text}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        <MapSection 
+          location="The Imperial Palace Hotel"
+          address="789 Đường Nguyễn Huệ, Quận 1, TP.HCM"
+          mapUrl="https://maps.google.com?q=Imperial+Palace+Hotel+Q1"
+          premium={true}
+        />
+      </div>
     </section>
   );
 }
@@ -338,14 +347,14 @@ function TimelinePage() {
 
 function GalleryPage() {
   const images = [
-    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+   'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
     'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
     'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
     'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
     'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
-  ];
+   ];
 
   return (
     <section className="min-h-screen py-20 px-4">

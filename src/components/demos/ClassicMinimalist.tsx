@@ -30,7 +30,7 @@ export function ClassicMinimalist() {
   return (
     <div className="min-h-screen bg-[#FAF7F2]">
       {/* Music Player */}
-      <MusicPlayer autoPlay={false} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Back to Home Button */}
       <div className="fixed top-4 left-4 z-50">

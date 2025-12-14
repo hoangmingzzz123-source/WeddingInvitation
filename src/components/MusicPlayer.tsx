@@ -1,24 +1,80 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Music, Volume2, VolumeX } from 'lucide-react';
+import { Music, Volume2, VolumeX, Settings, X } from 'lucide-react';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import Le_duong from '../asset/Le_duong.mp3';
 
 interface MusicPlayerProps {
   autoPlay?: boolean;
-  showVolumeControl?: boolean; // For 399k package
+  showVolumeControl?: boolean; // For 199k package
+  allowCustomMusic?: boolean; // For 159k and 199k packages
 }
 
-export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: MusicPlayerProps) {
+export function MusicPlayer({ 
+  autoPlay = true, 
+  showVolumeControl = false,
+  allowCustomMusic = false 
+}: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [showVolume, setShowVolume] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [customMusicUrl, setCustomMusicUrl] = useState('');
+  const [tempMusicUrl, setTempMusicUrl] = useState('');
+  const [isYouTube, setIsYouTube] = useState(false);
+  const [youtubeEmbedId, setYoutubeEmbedId] = useState('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  // Default wedding music
+  const defaultMusicUrl = Le_duong;
+
+  // Helper function to extract YouTube video ID
+  const getYouTubeId = (url: string): string | null => {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  };
+
+  // Check if URL is a Spotify link
+  const isSpotifyUrl = (url: string): boolean => {
+    return url.includes('spotify.com');
+  };
+
+  // Convert Spotify URL to embed format
+  const getSpotifyEmbedUrl = (url: string): string | null => {
+    const trackMatch = url.match(/track\/([a-zA-Z0-9]+)/);
+    if (trackMatch) {
+      return `https://open.spotify.com/embed/track/${trackMatch[1]}`;
+    }
+    return null;
+  };
 
   useEffect(() => {
+    const musicUrl = customMusicUrl || defaultMusicUrl;
+    
+    // Check if it's a YouTube link
+    const ytId = getYouTubeId(musicUrl);
+    if (ytId && customMusicUrl) {
+      setIsYouTube(true);
+      setYoutubeEmbedId(ytId);
+      return;
+    }
+
+    // For regular audio files
+    setIsYouTube(false);
+    
     // Create audio element
     audioRef.current = new Audio();
-    // Wedding background music - using free music from various sources
-    // In production, use user's uploaded wedding music
-    audioRef.current.src = 'src/asset/Lễ Đường.mp3'; // Romantic Piano Wedding Music
+    audioRef.current.src = musicUrl;
     audioRef.current.loop = true;
     audioRef.current.volume = volume;
 
@@ -27,7 +83,6 @@ export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: Musi
       audioRef.current.play()
         .then(() => setIsPlaying(true))
         .catch(() => {
-          // Autoplay blocked, user needs to interact first
           console.log('Autoplay blocked');
         });
     }
@@ -38,9 +93,23 @@ export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: Musi
         audioRef.current = null;
       }
     };
-  }, []);
+  }, [customMusicUrl]);
 
   const togglePlay = () => {
+    // For YouTube player
+    if (isYouTube && iframeRef.current) {
+      const iframe = iframeRef.current;
+      if (isPlaying) {
+        iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        setIsPlaying(false);
+      } else {
+        iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        setIsPlaying(true);
+      }
+      return;
+    }
+
+    // For regular audio
     if (!audioRef.current) return;
 
     if (isPlaying) {
@@ -82,10 +151,18 @@ export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: Musi
     }
   };
 
+  const handleApplyCustomMusic = () => {
+    if (tempMusicUrl) {
+      setCustomMusicUrl(tempMusicUrl);
+      setShowSettings(false);
+      setIsPlaying(false);
+    }
+  };
+
   return (
     <div className="fixed top-20 right-4 z-50">
       <div className="flex items-center gap-2">
-        {/* Volume Control - Only for 399k */}
+        {/* Volume Control */}
         {showVolumeControl && (
           <AnimatePresence>
             {showVolume && (
@@ -106,6 +183,21 @@ export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: Musi
               </motion.div>
             )}
           </AnimatePresence>
+        )}
+
+        {/* Settings Button - For Custom Music */}
+        {allowCustomMusic && (
+          <motion.button
+            onClick={() => setShowSettings(!showSettings)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
+            style={{
+              border: '2px solid rgba(194, 155, 67, 0.3)',
+            }}
+          >
+            <Settings className="w-5 h-5 text-[#C29B43]" />
+          </motion.button>
         )}
 
         {/* Music Button */}
@@ -138,7 +230,7 @@ export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: Musi
           </motion.div>
         </motion.button>
 
-        {/* Visualizer for 399k */}
+        {/* Visualizer */}
         {showVolumeControl && isPlaying && (
           <div className="flex items-center gap-1">
             {[...Array(3)].map((_, i) => (
@@ -159,6 +251,76 @@ export function MusicPlayer({ autoPlay = true, showVolumeControl = false }: Musi
           </div>
         )}
       </div>
+
+      {/* Custom Music Settings Dialog */}
+      <AnimatePresence>
+        {showSettings && allowCustomMusic && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: -10 }}
+            className="absolute top-16 right-0 w-80 bg-white rounded-2xl shadow-2xl p-6 border border-[#C29B43]/20"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                Chọn nhạc riêng
+              </h3>
+              <button onClick={() => setShowSettings(false)}>
+                <X className="w-5 h-5 text-[#666]" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-[#666] mb-2 block">
+                  Dán link nhạc
+                </label>
+                <Input
+                  type="text"
+                  placeholder="YouTube, Spotify, hoặc link MP3"
+                  value={tempMusicUrl}
+                  onChange={(e) => setTempMusicUrl(e.target.value)}
+                  className="w-full"
+                />
+                <p className="text-xs text-[#999] mt-2">
+                  💡 Hỗ trợ: YouTube, Spotify, MP3, Google Drive, Dropbox
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Button
+                  onClick={handleApplyCustomMusic}
+                  className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white"
+                  disabled={!tempMusicUrl}
+                >
+                  Áp dụng
+                </Button>
+                <Button
+                  onClick={() => {
+                    setTempMusicUrl('');
+                    setCustomMusicUrl('');
+                    setShowSettings(false);
+                  }}
+                  variant="outline"
+                  className="w-full border-[#C29B43] text-[#C29B43]"
+                >
+                  Dùng nhạc mặc định
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hidden YouTube Player */}
+      {isYouTube && youtubeEmbedId && (
+        <iframe
+          ref={iframeRef}
+          style={{ display: 'none' }}
+          src={`https://www.youtube.com/embed/${youtubeEmbedId}?enablejsapi=1&autoplay=${autoPlay ? 1 : 0}&loop=1&playlist=${youtubeEmbedId}`}
+          allow="autoplay; encrypted-media"
+        />
+      )}
     </div>
   );
 }

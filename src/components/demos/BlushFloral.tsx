@@ -1,327 +1,690 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { MapPin, Calendar, Clock, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Heart, Calendar, MapPin, Clock, Send, Home, QrCode } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
-import { MapSection } from '../MapSection';
 
 export function BlushFloral() {
-  const [rsvpData, setRsvpData] = useState({ name: '', guests: '1', note: '' });
-  const [submitted, setSubmitted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
-  // Floating petals animation
-  const petals = Array.from({ length: 8 }, (_, i) => i);
+  const coupleNames = "Minh & Hương";
+  
+  // Typewriter effect
+  useEffect(() => {
+    if (currentPage === 0 && isTyping) {
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index <= coupleNames.length) {
+          setDisplayedText(coupleNames.slice(0, index));
+          index++;
+        } else {
+          setIsTyping(false);
+          clearInterval(interval);
+        }
+      }, 150);
+      return () => clearInterval(interval);
+    }
+  }, [currentPage, isTyping]);
 
-  const loveStory = [
-    { year: '2020', title: 'Lần Đầu Gặp Gỡ', icon: '👫', description: 'Chúng mình gặp nhau tại quán cafe yêu thích' },
-    { year: '2022', title: 'Ngày Kỷ Niệm', icon: '💝', description: 'Chính thức bên nhau và tạo nên những kỷ niệm đẹp' },
-    { year: '2025', title: 'Về Chung Một Nhà', icon: '💍', description: 'Quyết định cùng nhau bước vào hôn nhân' },
-  ];
-
-  const images = [
-    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
-    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
-    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
-    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
-  ];
+  // Floating petals animation data
+  const petals = Array(15).fill(0).map((_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    delay: Math.random() * 5,
+    duration: 10 + Math.random() * 5,
+  }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF3F3] to-white relative overflow-hidden">
-      {/* Music Player */}
+    <div className="min-h-screen bg-[#FAF7F2] relative overflow-hidden">
+      {/* Music Player - 109K Package */}
       <MusicPlayer autoPlay={true} showVolumeControl={false} />
 
-      {/* Floating Petals */}
-      <div className="fixed inset-0 pointer-events-none z-0">
+      {/* Paper Grain Texture */}
+      <div 
+        className="fixed inset-0 pointer-events-none opacity-5"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Floating Rose Petals */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {petals.map((petal) => (
           <motion.div
-            key={petal}
-            className="absolute w-4 h-4 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, #F7DADA 0%, transparent 70%)',
-            }}
-            initial={{
-              x: Math.random() * window.innerWidth,
-              y: -20,
-            }}
+            key={petal.id}
+            className="absolute -top-10"
+            style={{ left: petal.left }}
             animate={{
-              y: window.innerHeight + 20,
-              x: Math.random() * window.innerWidth,
-              rotate: 360,
+              y: ['0vh', '110vh'],
+              x: [0, Math.sin(petal.id) * 50, 0],
+              rotate: [0, 360],
+              opacity: [0, 0.6, 0.6, 0],
             }}
             transition={{
-              duration: 10 + Math.random() * 5,
+              duration: petal.duration,
+              delay: petal.delay,
               repeat: Infinity,
-              delay: Math.random() * 5,
               ease: "linear",
             }}
+          >
+            <div 
+              className="w-3 h-3 rounded-full blur-sm"
+              style={{
+                background: 'radial-gradient(circle, #F2C6CC, #E6B7A6)',
+              }}
+            />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Back Button */}
+      <Button
+        onClick={() => window.location.hash = '#/'}
+        className="fixed top-6 left-6 z-50 bg-white/80 hover:bg-white text-[#F2C6CC] border-2 border-[#F2C6CC] backdrop-blur-sm"
+      >
+        <Home className="w-4 h-4 mr-2" />
+        Về Trang Chủ
+      </Button>
+
+      {/* Page Indicator */}
+      <div className="fixed top-6 right-6 z-50 flex gap-2">
+        {['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setCurrentPage(index);
+              if (index === 0) {
+                setDisplayedText('');
+                setIsTyping(true);
+              }
+            }}
+            className={`w-2 h-2 rounded-full transition-all ${
+              currentPage === index 
+                ? 'bg-[#F2C6CC] w-6' 
+                : 'bg-[#F2C6CC]/30'
+            }`}
           />
         ))}
       </div>
 
-      {/* Cover with Full-Screen Image */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        <ImageWithFallback
-          src="https://riversidepalace.vn/newsmultidata/1j.peg"
-          alt="Cover"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        
-        {/* Floral Corner Decorations */}
-        <div className="absolute top-0 left-0 w-48 h-48 opacity-70">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <circle cx="50" cy="50" r="30" fill="#F7DADA" opacity="0.5" />
-            <circle cx="80" cy="30" r="20" fill="#F8E7EA" opacity="0.6" />
-            <circle cx="30" cy="80" r="20" fill="#F8E7EA" opacity="0.6" />
-          </svg>
-        </div>
-        <div className="absolute bottom-0 right-0 w-48 h-48 opacity-70">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <circle cx="150" cy="150" r="30" fill="#F7DADA" opacity="0.5" />
-            <circle cx="120" cy="170" r="20" fill="#F8E7EA" opacity="0.6" />
-            <circle cx="170" cy="120" r="20" fill="#F8E7EA" opacity="0.6" />
-          </svg>
-        </div>
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/40 to-white/80" />
-
-        {/* Names */}
+      {/* Main Content */}
+      <AnimatePresence mode="wait">
         <motion.div
+          key={currentPage}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
+          className="min-h-screen"
+        >
+          {currentPage === 0 && <CoverPage displayedText={displayedText} onNext={() => setCurrentPage(1)} />}
+          {currentPage === 1 && <StoryPage onNext={() => setCurrentPage(2)} />}
+          {currentPage === 2 && <GalleryPage onNext={() => setCurrentPage(3)} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />}
+          {currentPage === 3 && <DetailsPage onNext={() => setCurrentPage(4)} />}
+          {currentPage === 4 && <MapPage onNext={() => setCurrentPage(5)} />}
+          {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} />}
+          {currentPage === 6 && <QRCodePage />}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Cover Page
+function CoverPage({ displayedText, onNext }: { displayedText: string; onNext: () => void }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 relative">
+      {/* Watercolor Roses - Top Left */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: -15 }}
+        animate={{ opacity: 1, scale: 1, rotate: -10 }}
+        transition={{ duration: 1.5, delay: 0.3 }}
+        className="absolute top-10 left-10 w-64 h-64 opacity-30"
+      >
+        <ImageWithFallback
+          src="https://images.unsplash.com/photo-1761285367066-5875252d7558?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400"
+          alt="Rose decoration"
+          className="w-full h-full object-contain"
+        />
+      </motion.div>
+
+      {/* Watercolor Peonies - Bottom Right */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: 15 }}
+        animate={{ opacity: 1, scale: 1, rotate: 10 }}
+        transition={{ duration: 1.5, delay: 0.5 }}
+        className="absolute bottom-10 right-10 w-64 h-64 opacity-30"
+      >
+        <ImageWithFallback
+          src="https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400"
+          alt="Peony decoration"
+          className="w-full h-full object-contain"
+        />
+      </motion.div>
+
+      {/* Center Content */}
+      <div className="text-center space-y-8 max-w-2xl z-10">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2 }}
+        >
+          <p 
+            className="text-sm tracking-[0.3em] text-[#B8860B] uppercase mb-4 font-semibold"
+            style={{ fontFamily: '"Poppins", sans-serif' }}
+          >
+            Save The Date
+          </p>
+          
+          <h1 
+            className="text-7xl md:text-8xl text-[#8B4513] min-h-[100px] font-bold"
+            style={{ fontFamily: '"Allura", cursive' }}
+          >
+            {displayedText}
+            <motion.span
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+            >
+              |
+            </motion.span>
+          </h1>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 4 }}
+          className="space-y-4"
+        >
+          <div className="flex items-center justify-center gap-4">
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#8B4513]" />
+            <Heart className="w-6 h-6 text-[#B8860B]" fill="#B8860B" />
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#8B4513]" />
+          </div>
+
+          <p 
+            className="text-2xl text-[#8B4513] font-bold"
+            style={{ fontFamily: '"Montserrat", sans-serif' }}
+          >
+            15 • 03 • 2025
+          </p>
+
+          <Button
+            onClick={onNext}
+            autoFocus
+            className="mt-8 bg-gradient-to-r from-[#D946A6] to-[#EC4899] hover:from-[#BE185D] hover:to-[#D946A6] text-black px-8 py-6 text-lg rounded-full shadow-lg font-semibold ring-2 ring-[#F2C6CC]/50"
+            style={{ fontFamily: '"Poppins", sans-serif' }}
+          >
+            Xem Thiệp Cưới
+          </Button>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// Story Page
+function StoryPage({ onNext }: { onNext: () => void }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+      <div className="max-w-4xl space-y-16">
+        <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2 }}
-          className="relative z-10 text-center px-4"
+          className="text-5xl text-center text-[#8B4513] font-bold"
+          style={{ fontFamily: '"Allura", cursive' }}
         >
-          <h1 
-            className="text-7xl md:text-8xl text-[#C29B43] mb-4"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+          Chuyện Tình Của Chúng Mình
+        </motion.h2>
+
+        <div className="space-y-12">
+          {[
+            {
+              title: "Lần Đầu Gặp Gỡ",
+              date: "Mùa Xuân 2020",
+              text: "Một buổi sáng xuân tươi đẹp, chúng mình đã gặp nhau trong khoảnh khắc tình cờ đẹp như mơ...",
+              image: "https://images.unsplash.com/photo-1560113406-36a33855c51e?w=600",
+            },
+            {
+              title: "Yêu Thương Bắt Đầu",
+              date: "Mùa Hè 2020",
+              text: "Từ những cuộc trò chuyện đêm khuya, chúng mình dần nhận ra rằng đây là tình yêu đích thực...",
+              image: "https://images.unsplash.com/photo-1761285367066-5875252d7558?w=600",
+            },
+            {
+              title: "Lời Cầu Hôn",
+              date: "Mùa Đông 2024",
+              text: "Dưới bầu trời sao lấp lánh, anh đã quỳ gối và hỏi em câu hỏi quan trọng nhất...",
+              image: "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?w=600",
+            },
+          ].map((story, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.3 }}
+              className="flex flex-col md:flex-row gap-8 items-center"
+            >
+              <div className={`flex-1 ${index % 2 === 1 ? 'md:order-2' : ''}`}>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-[#F2C6CC]/20 rounded-3xl transform rotate-3" />
+                  <ImageWithFallback
+                    src={story.image}
+                    alt={story.title}
+                    className="relative w-full h-64 object-cover rounded-3xl"
+                  />
+                </div>
+              </div>
+              <div className={`flex-1 space-y-4 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                <p className="text-sm text-[#B8860B] tracking-wide font-semibold">{story.date}</p>
+                <h3 
+                  className="text-4xl text-[#8B4513] font-bold"
+                  style={{ fontFamily: '"Allura", cursive' }}
+                >
+                  {story.title}
+                </h3>
+                <p className="text-[#654321] leading-relaxed font-medium" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                  {story.text}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="text-center pt-8">
+          <Button
+            onClick={onNext}
+            autoFocus
+            className="bg-gradient-to-r from-[#D946A6] to-[#EC4899] hover:from-[#BE185D] hover:to-[#D946A6] text-black px-8 py-6 rounded-full shadow-lg font-semibold ring-2 ring-[#F2C6CC]/50"
           >
-            Mai & Tuấn
-          </h1>
-          <p className="text-2xl text-[#666] italic">20.12.2025</p>
-        </motion.div>
-      </section>
+            Tiếp Theo
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-      {/* Wedding Info with Blur Background */}
-      <section className="py-20 px-4 relative">
-        <motion.div
+// Details Page
+function DetailsPage({ onNext }: { onNext: () => void }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+      <div className="max-w-4xl w-full space-y-16">
+        <motion.h2
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-4xl mx-auto"
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl text-center text-[#8B4513] font-bold"
+          style={{ fontFamily: '"Allura", cursive' }}
         >
-          <div className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-[#F7DADA]">
-            <h2 className="text-4xl text-[#C29B43] text-center mb-12" style={{ fontFamily: '"Great Vibes", cursive' }}>
-              Thông Tin Sự Kiện
-            </h2>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="flex flex-col items-center space-y-3">
-                <Calendar className="w-10 h-10 text-[#F7DADA]" />
-                <h3 className="text-xl">Thứ 7</h3>
-                <p className="text-[#666]">20 Tháng 12, 2025</p>
+          Thông Tin Lễ Cưới
+        </motion.h2>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {[
+            {
+              title: "Lễ Thành Hôn",
+              date: "15 Tháng 3, 2025",
+              time: "10:00 Sáng",
+              location: "Nhà Hàng Tiệc Cưới",
+              address: "123 Nguyễn Huệ, Q.1, TP.HCM",
+            },
+            {
+              title: "Tiệc Cưới",
+              date: "15 Tháng 3, 2025",
+              time: "18:00 Tối",
+              location: "Trung Tâm Hội Nghị",
+              address: "456 Lê Lợi, Q.1, TP.HCM",
+            },
+          ].map((event, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2 }}
+              className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 border-2 border-[#8B4513]/30 space-y-4"
+            >
+              <h3 
+                className="text-3xl text-[#8B4513] text-center mb-6 font-bold"
+                style={{ fontFamily: '"Allura", cursive' }}
+              >
+                {event.title}
+              </h3>
+              
+              <div className="space-y-3 text-[#654321] font-medium">
+                <p className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-[#B8860B]" />
+                  {event.date}
+                </p>
+                <p className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-[#B8860B]" />
+                  {event.time}
+                </p>
+                <p className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-[#B8860B] mt-1" />
+                  <span>
+                    <b>{event.location}</b><br />
+                    {event.address}
+                  </span>
+                </p>
               </div>
 
-              <div className="flex flex-col items-center space-y-3">
-                <Clock className="w-10 h-10 text-[#F7DADA]" />
-                <h3 className="text-xl">11:00 AM</h3>
-                <p className="text-[#666]">Giờ bắt đầu</p>
-              </div>
-
-              <div className="flex flex-col items-center space-y-3">
-                <MapPin className="w-10 h-10 text-[#F7DADA]" />
-                <h3 className="text-xl">Địa điểm</h3>
-                <p className="text-[#666] text-center">Nhà hàng Riverside Palace</p>
-              </div>
-            </div>
-
-            <div className="text-center mt-8">
               <Button
-                onClick={() => window.open('https://maps.google.com', '_blank')}
-                className="bg-[#F7DADA] hover:bg-[#C29B43] text-[#666] hover:text-white px-8 py-3 rounded-full transition-all"
+                variant="outline"
+                onClick={() => onNext()}
+                className="w-full mt-4 border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-black font-semibold"
               >
                 <MapPin className="w-4 h-4 mr-2" />
                 Xem Bản Đồ
               </Button>
-            </div>
-          </div>
-        </motion.div>
-      </section>
+            </motion.div>
+          ))}
+        </div>
 
-      {/* Invitation Message with Floral Frame */}
-      <section className="py-20 px-4 bg-gradient-to-b from-white to-[#FFF3F3]">
+        <div className="text-center pt-8">
+          <Button
+            onClick={onNext}
+            autoFocus
+            className="bg-gradient-to-r from-[#D946A6] to-[#EC4899] hover:from-[#BE185D] hover:to-[#D946A6] text-black px-8 py-6 rounded-full shadow-lg font-semibold ring-2 ring-[#F2C6CC]/50"
+          >
+            Xác Nhận Tham Dự
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Gallery Page
+function GalleryPage({ onNext, selectedImage, setSelectedImage }: { 
+  onNext: () => void; 
+  selectedImage: number | null;
+  setSelectedImage: (index: number | null) => void;
+}) {
+  const images = [
+    "https://images.unsplash.com/photo-1560113406-36a33855c51e?w=800",
+    "https://images.unsplash.com/photo-1761285367066-5875252d7558?w=800",
+    "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?w=800",
+    "https://images.unsplash.com/photo-1519027156611-f83273d3333a?w=800",
+    "https://images.unsplash.com/photo-1738800076744-c37b80b37d31?w=800",
+    "https://images.unsplash.com/photo-1606216794079-c24943c3cb82?w=800",
+  ];
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+      <div className="max-w-6xl w-full space-y-16">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl text-center text-[#8B4513] font-bold"
+          style={{ fontFamily: '"Allura", cursive' }}
+        >
+          Album Ảnh Cưới
+        </motion.h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {images.map((img, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              onClick={() => setSelectedImage(index)}
+              className="aspect-square rounded-2xl overflow-hidden cursor-pointer"
+            >
+              <img
+                src={img}
+                alt={`Gallery ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Lightbox */}
+        <AnimatePresence>
+          {selectedImage !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedImage(null)}
+              className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            >
+              <motion.img
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                src={images[selectedImage]}
+                alt="Selected"
+                className="max-w-full max-h-full object-contain rounded-2xl"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="text-center pt-8">
+          <Button
+            onClick={onNext}
+            autoFocus
+            className="bg-gradient-to-r from-[#D946A6] to-[#EC4899] hover:from-[#BE185D] hover:to-[#D946A6] text-black px-8 py-6 rounded-full shadow-lg font-semibold ring-2 ring-[#F2C6CC]/50"
+          >
+            Tiếp Theo
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Map Page
+// Gallery Page
+function MapPage({ onNext }: { onNext: () => void }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+      <div className="max-w-4xl w-full space-y-16">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl text-center text-[#8B4513] font-bold"
+          style={{ fontFamily: '"Allura", cursive' }}
+        >
+          Bản Đồ Địa Điểm
+        </motion.h2>
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto text-center space-y-6 relative"
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white/60 backdrop-blur-sm rounded-3xl p-4 border-2 border-[#8B4513]/30"
         >
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
-            <Heart className="w-12 h-12 text-[#F7DADA] fill-[#F7DADA]" />
-          </div>
-          
-          <h2 className="text-4xl text-[#C29B43]" style={{ fontFamily: '"Great Vibes", cursive' }}>
-            Lời Mời Chân Thành
-          </h2>
-          
-          <p className="text-lg text-[#444] leading-relaxed italic">
-            Tình yêu là điều kỳ diệu nhất mà chúng tôi tìm thấy trong cuộc đời này.
-            <br />
-            Xin hân hạnh được mời bạn đến chung vui cùng gia đình trong ngày trọng đại của chúng tôi.
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.325652528464!2d106.69751731428708!3d10.782926192320595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f4b3330bcc1%3A0xb42d12560499f1b7!2zTmjDoCBIw6BuZyBUaeG7h2MgQ8aw4bubaSBHcmFuZCBQYWxhY2U!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s"
+            width="100%"
+            height="450"
+            style={{ border: 0, borderRadius: '1.5rem' }}
+            allowFullScreen
+            loading="lazy"
+          />
+        </motion.div>
+
+        <div className="text-center space-y-4">
+          <p className="text-[#654321] font-semibold" style={{ fontFamily: '"Poppins", sans-serif' }}>
+            <MapPin className="w-5 h-5 inline mr-2 text-[#B8860B]" />
+            Nhà Hàng Tiệc Cưới Grand Palace
           </p>
-        </motion.div>
-      </section>
+          <p className="text-[#654321] font-medium">123 Nguyễn Huệ, Quận 1, TP.HCM</p>
+          
+          <Button
+            onClick={onNext}
+            autoFocus
+            className="bg-gradient-to-r from-[#D946A6] to-[#EC4899] hover:from-[#BE185D] hover:to-[#D946A6] text-black px-8 py-6 rounded-full shadow-lg font-semibold ring-2 ring-[#F2C6CC]/50 mt-4"
+          >
+            Tiếp Theo
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-      {/* Love Story Timeline */}
-      <section className="py-20 px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-4xl mx-auto space-y-12"
-        >
-          <h2 className="text-5xl text-[#C29B43] text-center mb-16" style={{ fontFamily: '"Great Vibes", cursive' }}>
-            Câu Chuyện Tình Yêu
-          </h2>
+// RSVP Page
+// RSVP Page
+function RSVPPage({ submitted, setSubmitted, onNext }: { submitted: boolean; setSubmitted: (value: boolean) => void; onNext: () => void }) {
+  const [formData, setFormData] = useState({ name: '', phone: '', guests: '1', message: '' });
 
-          <div className="relative">
-            {/* Vertical Line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#F7DADA] transform -translate-x-1/2" />
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
 
-            {loveStory.map((story, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className={`relative flex items-center mb-16 ${
-                  index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                }`}
-              >
-                <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#F7DADA]">
-                    <h3 className="text-2xl text-[#C29B43] mb-2">{story.title}</h3>
-                    <p className="text-sm text-[#666] mb-2">{story.year}</p>
-                    <p className="text-[#444]">{story.description}</p>
-                  </div>
-                </div>
-
-                {/* Center Icon */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-[#F7DADA] rounded-full flex items-center justify-center text-3xl border-4 border-white shadow-lg">
-                  {story.icon}
-                </div>
-
-                <div className="w-5/12" />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Album - Masonry Style */}
-      <section className="py-20 px-4 bg-white">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-6xl mx-auto space-y-12"
-        >
-          <h2 className="text-5xl text-[#C29B43] text-center" style={{ fontFamily: '"Great Vibes", cursive' }}>
-            Album Kỷ Niệm
-          </h2>
-
-          <div className="columns-2 md:columns-3 gap-4 space-y-4">
-            {images.map((img, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(247, 218, 218, 0.5)' }}
-                className="break-inside-avoid mb-4 rounded-2xl overflow-hidden shadow-lg"
-                style={{ aspectRatio: index % 3 === 0 ? '3/4' : index % 3 === 1 ? '1/1' : '4/3' }}
-              >
-                <ImageWithFallback
-                  src={img}
-                  alt={`Photo ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Map Section */}
-      <MapSection 
-        location="Vườn Tiệc Cưới Rose Garden"
-        address="456 Đường Hồng Hà, Quận Tân Bình, TP.HCM"
-        mapUrl="https://maps.google.com/?q=Rose+Garden+Wedding+Ho+Chi+Minh"
-        premium={false}
-      />
-
-      {/* RSVP */}
-      <section className="py-20 px-4 bg-gradient-to-b from-white to-[#FFF3F3]">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-2xl mx-auto"
-        >
-          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border-2 border-[#F7DADA]">
-            <h2 className="text-4xl text-[#C29B43] text-center mb-8" style={{ fontFamily: '"Great Vibes", cursive' }}>
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-2xl w-full bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border-2 border-[#F2C6CC]/30 space-y-8"
+      >
+        {!submitted ? (
+          <>
+            <h2 
+              className="text-5xl text-center text-[#8B4513] font-bold"
+              style={{ fontFamily: '"Allura", cursive' }}
+            >
               Xác Nhận Tham Dự
             </h2>
 
-            <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-6">
-              <Input
-                placeholder="Tên của bạn"
-                value={rsvpData.name}
-                onChange={(e) => setRsvpData({ ...rsvpData, name: e.target.value })}
-                className="border-2 border-[#F7DADA] focus:border-[#C29B43] rounded-xl"
-                required
-              />
+            <p className="text-center text-[#654321] font-semibold" style={{ fontFamily: '"Poppins", sans-serif' }}>
+              Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình ❤️
+            </p>
 
-              <Input
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Input 
+                placeholder="Họ và tên *"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                className="border-2 border-[#F2C6CC]/30 focus:border-[#F2C6CC] rounded-xl py-6"
+              />
+              <Input 
+                placeholder="Số điện thoại *"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                required
+                className="border-2 border-[#F2C6CC]/30 focus:border-[#F2C6CC] rounded-xl py-6"
+              />
+              <Input 
                 type="number"
-                placeholder="Số lượng khách"
-                value={rsvpData.guests}
-                onChange={(e) => setRsvpData({ ...rsvpData, guests: e.target.value })}
-                className="border-2 border-[#F7DADA] focus:border-[#C29B43] rounded-xl"
+                placeholder="Số người tham dự *"
+                value={formData.guests}
+                onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
                 required
+                min="1"
+                className="border-2 border-[#F2C6CC]/30 focus:border-[#F2C6CC] rounded-xl py-6"
               />
-
-              <Textarea
-                placeholder="Lời nhắn của bạn"
-                value={rsvpData.note}
-                onChange={(e) => setRsvpData({ ...rsvpData, note: e.target.value })}
-                className="border-2 border-[#F7DADA] focus:border-[#C29B43] rounded-xl"
-                rows={4}
+              <Textarea 
+                placeholder="Lời chúc đến cô dâu chú rể..."
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                className="border-2 border-[#F2C6CC]/30 focus:border-[#F2C6CC] rounded-xl min-h-[150px]"
               />
-
-              <Button
+              
+              <Button 
                 type="submit"
-                className="w-full bg-[#F7DADA] hover:bg-[#C29B43] text-[#666] hover:text-white py-6 rounded-full transition-all"
+                autoFocus
+                className="w-full bg-gradient-to-r from-[#D946A6] to-[#EC4899] hover:from-[#BE185D] hover:to-[#D946A6] text-black py-6 rounded-xl text-lg shadow-lg font-semibold ring-2 ring-[#F2C6CC]/50"
               >
-                {submitted ? 'Cảm ơn bạn! 💝' : 'Gửi Xác Nhận'}
+                <Send className="w-5 h-5 mr-2" />
+                Gửi Xác Nhận
               </Button>
             </form>
+          </>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center space-y-6 py-12"
+          >
+            <div className="w-20 h-20 mx-auto bg-[#F2C6CC]/20 rounded-full flex items-center justify-center">
+              <Heart className="w-10 h-10 text-[#F2C6CC]" fill="#F2C6CC" />
+            </div>
+            <h3 className="text-3xl text-[#F2C6CC]" style={{ fontFamily: '"Allura", cursive' }}>
+              Cảm ơn bạn!
+            </h3>
+            <p className="text-[#8B7355]">Chúng mình đã nhận được xác nhận của bạn</p>
+            <div className="flex gap-4 justify-center">
+              <Button
+                onClick={() => setSubmitted(false)}
+                variant="outline"
+                className="border-[#8B4513] text-[#8B4513]"
+              >
+                Gửi lại
+              </Button>
+              <Button
+                onClick={onNext}
+                autoFocus
+                className="bg-gradient-to-r from-[#D946A6] to-[#EC4899] hover:from-[#BE185D] hover:to-[#D946A6] text-black shadow-lg font-semibold ring-2 ring-[#F2C6CC]/50"
+              >
+                <QrCode className="w-5 h-5 mr-2" />
+                Xem QR Code
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </motion.div>
+    </div>
+  );
+}
+
+// QR Code Page
+function QRCodePage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-2xl w-full bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border-2 border-[#8B4513]/30 space-y-8 text-center"
+      >
+        <h2 
+          className="text-5xl text-center text-[#8B4513] font-bold"
+          style={{ fontFamily: '"Allura", cursive' }}
+        >
+          Mã QR Thiệp Cưới
+        </h2>
+
+        <p className="text-[#654321] font-medium">
+          Quét mã QR để chia sẻ thiệp cưới với bạn bè
+        </p>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white p-8 rounded-2xl shadow-xl mx-auto w-fit"
+        >
+          <div className="w-64 h-64 bg-gradient-to-br from-[#FAF7F2] to-[#E8E0D5] rounded-xl flex items-center justify-center">
+            <QrCode className="w-48 h-48 text-[#8B4513]" strokeWidth={1} />
           </div>
         </motion.div>
-      </section>
 
-      {/* Footer */}
-      <footer className="py-8 text-center text-[#666]">
-        <p className="italic">Made with love for Mai & Tuấn 💕</p>
-      </footer>
+        <div className="space-y-4">
+          <p className="text-sm text-[#654321]">
+            Link thiệp cưới: <span className="font-semibold">https://wedding.example.com/minh-huong</span>
+          </p>
+          
+          <Button
+            onClick={() => navigator.clipboard.writeText('https://wedding.example.com/minh-huong')}
+            variant="outline"
+            className="border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-black"
+          >
+            Sao chép link
+          </Button>
+        </div>
+      </motion.div>
     </div>
   );
 }

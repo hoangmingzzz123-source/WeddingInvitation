@@ -4,22 +4,27 @@ import { MapPin, Navigation } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface MapSectionProps {
-  location: string;
-  address: string;
+  location?: string;
+  address?: string;
   mapUrl?: string;
-  premium?: boolean; // For 399k package with enhanced features
+  premium?: boolean;
+  className?: string;
+  latitude?: number;
+  longitude?: number;
+  center?: { lat: number; lng: number };
 }
 
 export function MapSection({ 
-  location, 
-  address, 
+  location = 'Địa điểm tổ chức', 
+  address = 'Địa chỉ sẽ được cập nhật', 
   mapUrl = 'https://maps.google.com',
-  premium = false 
+  premium = false,
+  className = ''
 }: MapSectionProps) {
   const [mapType, setMapType] = useState<'roadmap' | 'satellite'>('roadmap');
 
   return (
-    <section className="py-16 px-4">
+    <section className={`py-16 px-4 ${className}`}>
       <div className="max-w-4xl mx-auto">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

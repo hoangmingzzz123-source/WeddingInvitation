@@ -21,7 +21,7 @@ export function GreenElegance() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E8F5E9] via-[#F1F8E9] to-[#E8F5E9] overflow-hidden relative">
-      <MusicPlayer autoPlay={true} showVolumeControl={true} />
+      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
       <FloatingParticles theme="green" density="medium" />
 
       {/* Intro Animation */}

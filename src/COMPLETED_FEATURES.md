@@ -161,15 +161,39 @@ Green Elegance Theme:
 10. ✅ Enhanced Footer - 4 columns + social + payments
 
 ### Demos (9 templates)
-1. ✅ Classic Minimalist (199K)
-2. ✅ Blush Floral (199K)
-3. ✅ Soft Fade Floral (199K)
-4. ✅ Minimal Slide Clean (199K)
-5. ✅ Luxury Gold Cinematic (299K) - Bokeh + cinematic intro
-6. ✅ Vintage Grain (299K)
-7. ✅ 3D Bloom Crystal (399K)
-8. ✅ Art Deco Royal (399K) - SVG patterns + ripple
-9. ✅ Green Elegance (Premium) - NEW! Full effects showcase
+1. ✅ Classic Minimalist (199K) - MapSection added
+2. ✅ Blush Floral (199K) - MapSection added
+3. ✅ Soft Fade Floral (199K) - MapSection added
+4. ✅ Minimal Slide Clean (199K) - MapSection added
+5. ✅ Luxury Gold Cinematic (299K) - Bokeh + cinematic intro + MapSection (premium)
+6. ✅ Vintage Grain (299K) - MapSection added
+7. ✅ 3D Bloom Crystal (399K) - MapSection (premium)
+8. ✅ Art Deco Royal (399K) - SVG patterns + ripple + MapSection
+9. ✅ Green Elegance (Premium) - Full effects showcase + MapSection
+
+---
+
+## 🗺️ MAP SECTION INTEGRATION (NEW!)
+
+### MapSection Component Features
+- ✅ **Flexible Props**: Optional location, address, mapUrl, premium, className
+- ✅ **Premium Features**: Map type toggle (roadmap/satellite), Apple Maps integration
+- ✅ **Animations**: Pin bounce, pulsing glow, fade-in effects
+- ✅ **Responsive**: Mobile-friendly with touch-optimized buttons
+- ✅ **Golden Theme**: Matches site design with gold accents and borders
+
+### Implementation Status
+| Template | MapSection | Premium Mode | Custom Location |
+|----------|-----------|--------------|----------------|
+| Classic Minimalist | ✅ | ❌ | Nhà hàng Riverside Palace |
+| Blush Floral | ✅ | ❌ | Vườn Tiệc Cưới Rose Garden |
+| Soft Fade Floral | ✅ | ❌ | The Manor Garden |
+| Minimal Slide Clean | ✅ | ❌ | Default location |
+| Luxury Gold Cinematic | ✅ | ✅ | The Imperial Palace Hotel |
+| Vintage Grain | ✅ | ❌ | San Francisco Venue |
+| 3D Bloom Crystal | ✅ | ✅ | Riverside Palace, Thủ Đức |
+| Art Deco Royal | ✅ | ❌ | Art Deco Palace |
+| Green Elegance | ✅ | ❌ | Green Garden Venue, Hà Nội |
 
 ---
 

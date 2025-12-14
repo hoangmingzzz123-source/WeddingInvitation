@@ -16,7 +16,7 @@ export function VintageGrain() {
   return (
     <div className="min-h-screen bg-[#F5EFE6] text-[#3E2723] relative overflow-hidden">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Film Grain Overlay */}
       <div 

@@ -25,7 +25,7 @@ export function ArtDecoRoyal() {
   return (
     <div className="min-h-screen bg-[#1A1A2E] text-white overflow-hidden relative">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} />
+      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Art Deco Pattern Background */}
       <div className="fixed inset-0 opacity-10 pointer-events-none">

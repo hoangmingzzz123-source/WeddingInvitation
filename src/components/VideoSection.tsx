@@ -129,9 +129,8 @@ export function VideoSection() {
                 <iframe className="w-full h-full"
                 src="https://www.youtube.com/embed/VvkYROIh5qc?si=NzBVHEmRQ-pFrKQ5" 
                 title="YouTube video player" 
-                frameborder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
                 {/* Video Placeholder */}
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1B2A41] to-[#0F1A2E]">
                   <div className="text-center text-white space-y-4">

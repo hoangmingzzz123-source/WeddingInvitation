@@ -79,9 +79,9 @@ export function BloomCrystal3D() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] via-white to-[#FFF3F3] relative overflow-hidden">
-      {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} />
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 relative overflow-hidden">
+      {/* Music Player - 199K Package: Full Control */}
+      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Back to Home Button */}
       <div className="fixed top-20 left-4 z-50">
@@ -271,15 +271,13 @@ export function BloomCrystal3D() {
                   ))}
                 </div>
 
-                <div className="text-center">
-                  <Button
-                    onClick={() => window.open('https://maps.google.com', '_blank')}
-                    className="bg-[#C29B43] hover:bg-[#A88434] text-white px-8 py-4 rounded-full"
-                  >
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Xem Bản Đồ
-                  </Button>
-                </div>
+                <MapSection 
+                  location="Riverside Palace"
+                  address="456 Đường Phạm Văn Đồng, Quận Thủ Đức, TP.HCM"
+                  mapUrl="https://maps.google.com?q=Riverside+Palace+Thu+Duc"
+                  premium={true}
+                  className="mt-8"
+                />
               </div>
             </motion.section>
           )}
