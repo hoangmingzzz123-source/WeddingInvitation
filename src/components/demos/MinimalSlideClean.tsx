@@ -15,7 +15,7 @@ export function MinimalSlideClean() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] via-white to-[#F0F9FF]">
       {/* Music Player */}
-      <MusicPlayer autoPlay={false} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">

@@ -40,18 +40,38 @@ export function Navigation() {
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-3 cursor-pointer"
             onClick={() => window.location.href = '/'}
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-[#C29B43] to-[#A88434] rounded-full flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" fill="white" />
+            {/* Unique Logo Design */}
+            <div className="relative w-12 h-12">
+              {/* Outer Ring */}
+              <div className="absolute inset-0 rounded-full border-2 border-[#C29B43] animate-spin-slow" 
+                style={{ animation: 'spin 8s linear infinite' }} 
+              />
+              {/* Inner Golden Heart */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] via-[#C29B43] to-[#A88434] rounded-full flex items-center justify-center shadow-lg">
+                  <Heart className="w-5 h-5 text-white" fill="white" />
+                </div>
+              </div>
+              {/* Sparkle Effect */}
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FFD700] rounded-full animate-pulse" />
             </div>
-            <span 
-              className="text-xl text-[#C29B43]"
-              style={{ fontFamily: '"Playfair Display", serif' }}
-            >
-              Wedding Invitation
-            </span>
+            <div className="flex flex-col">
+              <span 
+                className="text-2xl text-[#C29B43] leading-none"
+                style={{ fontFamily: '"Playfair Display", serif' }}
+              >
+                Thiệp Cưới
+              </span>
+              <span 
+                className="text-xs text-[#999] tracking-widest leading-none"
+                style={{ fontFamily: '"Poppins", sans-serif' }}
+              >
+                ONLINE
+              </span>
+            </div>
           </motion.div>
 
           {/* Desktop Navigation */}

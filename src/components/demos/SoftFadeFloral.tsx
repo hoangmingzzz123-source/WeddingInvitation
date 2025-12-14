@@ -34,7 +34,7 @@ export function SoftFadeFloral() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF9F5] via-[#FFF3F3] to-[#F8F0FF] relative overflow-hidden">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Back Button */}
       <div className="fixed top-20 left-4 z-50">

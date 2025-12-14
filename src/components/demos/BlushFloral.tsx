@@ -33,8 +33,8 @@ export function BlushFloral() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF3F3] to-white relative overflow-hidden">
-      {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      {/* Music Player - 109K Package */}
+      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Floating Petals */}
       <div className="fixed inset-0 pointer-events-none z-0">
