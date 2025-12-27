@@ -169,14 +169,14 @@ export function EnhancedFooter() {
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <Phone className="w-4 h-4 mt-0.5 text-[#C29B43] flex-shrink-0" />
                 <div>
-                  <p>Hotline: 0123 456 789</p>
+                  <p> <a href='https://www.facebook.com/profile.php?id=61585450214107'>Facebook</a></p>
                   <p className="text-xs text-gray-400">Hỗ trợ 24/7</p>
                 </div>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <Mail className="w-4 h-4 mt-0.5 text-[#C29B43] flex-shrink-0" />
                 <a href="mailto:contact@thiepcuoi.vn" className="hover:text-[#C29B43] transition-colors">
-                  contact@thiepcuoi.vn
+                  wedding.invitation.mp@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">

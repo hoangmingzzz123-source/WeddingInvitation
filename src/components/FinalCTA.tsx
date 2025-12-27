@@ -43,7 +43,7 @@ export function FinalCTA() {
         ))}
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
+      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 finalCTA-content">
         {/* Animated Icon */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -176,7 +176,7 @@ export function FinalCTA() {
             whileTap={{ scale: 0.95 }}
           >
             <Button 
-              onClick={() => window.open('https://zalo.me', '_blank')}
+              onClick={() => window.open('https://www.facebook.com/profile.php?id=61585450214107', '_blank')}
               variant="outline"
               className="border-2 border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white px-10 py-7 rounded-full text-lg transition-all"
               style={{ fontFamily: '"Poppins", sans-serif' }}
