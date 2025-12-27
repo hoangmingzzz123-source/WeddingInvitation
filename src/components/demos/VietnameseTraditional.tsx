@@ -1,26 +1,102 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { MapPin, Calendar, Clock, Heart, Users, Gift, Send, Phone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { MapPin, Calendar, Clock, Heart, Users, Gift, Send, Phone, Home, QrCode, Image as ImageIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { MapSection } from '../MapSection';
+import { RSVPForm } from '../RSVPForm';
+import { QRCodeSection } from '../QRCodeSection';
 
 export function VietnameseTraditional() {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [rsvpSide, setRsvpSide] = useState<'bride' | 'groom'>('bride');
 
-  // Traditional patterns as SVG
+  // Pages: Cover → Story → Gallery → Details → Map → RSVP → QR
+  const pages = ['cover', 'story', 'gallery', 'details', 'map', 'rsvp', 'qr'];
+
+  // Typewriter effect for story
+  useEffect(() => {
+    if (currentPage === 1 && !isTyping) {
+      const text = "Tình yêu là hành trình, hôn nhân là đích đến. Từ những ngày đầu gặp gỡ, chúng tôi đã biết rằng đây chính là người mình muốn dành cả đời bên cạnh. Hôm nay, trước sự chứng kiến của gia đình và bạn bè, chúng tôi hân hạnh thông báo về lễ thành hôn của chúng tôi.";
+      setIsTyping(true);
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index < text.length) {
+          setDisplayedText(text.slice(0, index + 1));
+          index++;
+        } else {
+          clearInterval(interval);
+          setIsTyping(false);
+        }
+      }, 30);
+      return () => clearInterval(interval);
+    }
+  }, [currentPage, isTyping]);
+
+  // Traditional patterns as SVG - Enhanced
   const TraditionalPattern = () => (
     <svg className="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <pattern id="traditional-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-          <circle cx="50" cy="50" r="20" fill="#C29B43" opacity="0.3"/>
-          <circle cx="50" cy="50" r="10" fill="#DC143C" opacity="0.2"/>
+        <pattern id="traditional-pattern" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+          {/* Lotus flower pattern */}
+          <circle cx="60" cy="60" r="25" fill="#DC143C" opacity="0.3"/>
+          <circle cx="60" cy="60" r="15" fill="#C29B43" opacity="0.4"/>
+          <circle cx="60" cy="60" r="8" fill="#FFD700" opacity="0.5"/>
+          {/* Corner ornaments */}
+          <circle cx="10" cy="10" r="5" fill="#C29B43" opacity="0.2"/>
+          <circle cx="110" cy="110" r="5" fill="#DC143C" opacity="0.2"/>
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#traditional-pattern)" />
     </svg>
+  );
+
+  // Floating lotus petals
+  const FloatingLotus = () => (
+    <>
+      {Array.from({ length: 12 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{
+            x: Math.random() * window.innerWidth,
+            y: -50,
+            rotate: Math.random() * 360,
+            opacity: 0,
+          }}
+          animate={{
+            y: window.innerHeight + 50,
+            rotate: Math.random() * 720,
+            opacity: [0, 0.6, 0],
+          }}
+          transition={{
+            duration: 15 + Math.random() * 10,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+            ease: "linear",
+          }}
+          className="pointer-events-none"
+        >
+          <div
+            className="w-8 h-8 rounded-full"
+            style={{
+              background: i % 3 === 0 ? 'radial-gradient(circle, #DC143C, #FF69B4)' : 
+                         i % 3 === 1 ? 'radial-gradient(circle, #FFD700, #C29B43)' :
+                         'radial-gradient(circle, #FFC0CB, #FFB6C1)',
+              filter: 'blur(1px)',
+              opacity: 0.7,
+            }}
+          />
+        </motion.div>
+      ))}
+    </>
   );
 
   const events = [
