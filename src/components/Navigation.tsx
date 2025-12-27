@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
 import { Menu, X, Heart } from 'lucide-react';
+import logoWeb from '../asset/logoweb.jpg';
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -36,42 +37,18 @@ export function Navigation() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-28 md:h-32">
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             className="flex items-center gap-3 cursor-pointer"
             onClick={() => window.location.href = '/'}
           >
-            {/* Unique Logo Design */}
-            <div className="relative w-12 h-12">
-              {/* Outer Ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-[#C29B43] animate-spin-slow" 
-                style={{ animation: 'spin 8s linear infinite' }} 
-              />
-              {/* Inner Golden Heart */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] via-[#C29B43] to-[#A88434] rounded-full flex items-center justify-center shadow-lg">
-                  <Heart className="w-5 h-5 text-white" fill="white" />
-                </div>
-              </div>
-              {/* Sparkle Effect */}
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FFD700] rounded-full animate-pulse" />
-            </div>
-            <div className="flex flex-col">
-              <span 
-                className="text-2xl text-[#C29B43] leading-none"
-                style={{ fontFamily: '"Playfair Display", serif' }}
-              >
-                Thiệp Cưới
-              </span>
-              <span 
-                className="text-xs text-[#999] tracking-widest leading-none"
-                style={{ fontFamily: '"Poppins", sans-serif' }}
-              >
-                ONLINE
-              </span>
-            </div>
+            <img 
+              src={logoWeb} 
+              alt="Thiệp Cưới Online Logo" 
+              className="h-24 md:h-28 w-auto object-contain"
+            />
           </motion.div>
 
           {/* Desktop Navigation */}

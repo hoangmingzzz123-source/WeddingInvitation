@@ -41,7 +41,7 @@ const packages = [
   },
   {
     name: 'Diamond Premium',
-    price: '219.000đ',
+    price: '199.000đ',
     color: '#FFF4D3',
     icon: Diamond,
     features: [
