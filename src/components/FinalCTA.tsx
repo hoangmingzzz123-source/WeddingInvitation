@@ -161,7 +161,7 @@ export function FinalCTA() {
               whileTap={{ scale: 0.95 }}
             >
               <Button 
-                onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => window.open('https://forms.gle/2qBNf4tHBiq6vavZ6', '_blank')}
                 className="bg-[#C29B43] hover:bg-[#A88434] text-white px-10 py-7 rounded-full shadow-2xl text-lg transition-all"
                 style={{ fontFamily: '"Poppins", sans-serif' }}
               >
