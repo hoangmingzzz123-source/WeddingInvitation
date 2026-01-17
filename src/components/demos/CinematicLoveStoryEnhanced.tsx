@@ -15,13 +15,15 @@ export function CinematicLoveStoryEnhanced() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [currentChapter, setCurrentChapter] = useState(0);
+  const [attending, setAttending] = useState<'yes' | 'no' | null>(null);
+  const [guestCount, setGuestCount] = useState(1);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
   const scaleProgress = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
   const opacityProgress = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0]);
 
-  const loveStory = `Câu chuyện tình yêu của chúng tôi bắt đầu như một bộ phim điện ảnh - đầy cảm xúc, bất ngờ và lãng mạn. Từ ánh mắt đầu tiên gặp nhau đến những khoảnh khắc ngọt ngào bên nhau, mỗi giây phút đều là một khung hình đáng nhớ. Giờ đây, chúng tôi viết tiếp câu chuyện của mình với chương mới nhất - một đám cưới như mơ.`;
+  const loveStory = `Câu chuyện tình yêu của chúng tôi bắt đầu như một thước phim dịu dàng, nơi cảm xúc đến thật tự nhiên và chân thành. Từ ánh nhìn đầu tiên cho đến những khoảnh khắc bình yên bên nhau, mỗi ngày trôi qua đều trở thành một kỷ niệm đáng trân trọng. Hôm nay, chúng tôi cùng nhau bước sang một chương mới, nơi yêu thương được gọi tên là gia đình.`;
 
   // Typewriter effect
   useEffect(() => {
@@ -126,7 +128,7 @@ export function CinematicLoveStoryEnhanced() {
 
       {/* Cinematic Page Indicator */}
       <div className="fixed top-8 right-8 z-50 flex gap-3 bg-black/80 backdrop-blur-md px-5 py-4 rounded-full border border-[#C29B43]/30 shadow-2xl">
-        {['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((label, index) => (
+        {['Trang Bìa', 'Câu Chuyện', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận', 'QR'].map((label, index) => (
           <button
             key={index}
             onClick={() => {
@@ -161,8 +163,8 @@ export function CinematicLoveStoryEnhanced() {
           {currentPage === 2 && <GalleryPage onNext={() => setCurrentPage(3)} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />}
           {currentPage === 3 && <DetailsPage onNext={() => setCurrentPage(4)} />}
           {currentPage === 4 && <MapPage onNext={() => setCurrentPage(5)} />}
-          {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} />}
-          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} />}
+          {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} attending={attending} setAttending={setAttending} guestCount={guestCount} setGuestCount={setGuestCount} />}
+          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} onBack={() => setCurrentPage(0)} />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -201,13 +203,7 @@ function CoverPage({ onNext, scaleProgress, opacityProgress }: { onNext: () => v
         >
           <div className="relative">
             <Film className="w-20 h-20 text-[#C29B43]" />
-            <motion.div
-              className="absolute inset-0"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              <Sparkles className="w-20 h-20 text-[#FFD700] opacity-50" />
-            </motion.div>
+            
           </div>
         </motion.div>
 
@@ -438,7 +434,7 @@ function StoryPage({ displayedText, onNext, currentChapter, setCurrentChapter }:
             onClick={onNext}
             className="px-12 py-6 bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl transition-all hover:scale-105"
           >
-            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>View Gallery</span>
+            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Xem Album</span>
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
@@ -454,12 +450,13 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
-    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800',
-    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
-    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    'https://images.unsplash.com/photo-1525258441167-d6ced3f01c95?w=800',
+       'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
+     
   ];
 
   return (
@@ -616,7 +613,8 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       date: 'Thứ 7, 15/03/2025',
       location: 'Tư Gia Nhà Gái',
       address: '123 Nguyễn Huệ, Quận 1, TP.HCM',
-      color: 'from-[#C29B43] to-[#FFD700]',
+      gradient: 'from-[#C29B43]/20 via-[#FFD700]/10 to-transparent',
+      iconGradient: 'from-[#C29B43] to-[#FFD700]',
     },
     {
       icon: '💒',
@@ -625,7 +623,8 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       date: 'Thứ 7, 15/03/2025',
       location: 'Nhà Thờ Đức Bà',
       address: '01 Công xã Paris, Quận 1, TP.HCM',
-      color: 'from-[#FFD700] to-[#C29B43]',
+      gradient: 'from-[#FFD700]/20 via-[#C29B43]/10 to-transparent',
+      iconGradient: 'from-[#FFD700] to-[#C29B43]',
     },
     {
       icon: '🎉',
@@ -634,7 +633,8 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       date: 'Thứ 7, 15/03/2025',
       location: 'Grand Palace Hotel',
       address: '789 Lê Lợi, Quận 1, TP.HCM',
-      color: 'from-[#C29B43] to-[#FFD700]',
+      gradient: 'from-[#C29B43]/20 via-[#FFD700]/10 to-transparent',
+      iconGradient: 'from-[#C29B43] to-[#FFD700]',
     },
   ];
 
@@ -653,7 +653,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
             className="text-6xl md:text-7xl text-white font-light"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
-            Schedule
+            Chi Tiết Sự Kiện
           </h2>
           <div className="flex items-center justify-center gap-4">
             <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#C29B43]" />
@@ -670,51 +670,115 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="group relative bg-black/60 backdrop-blur-md p-8 md:p-12 border-2 border-white/10 hover:border-[#C29B43] transition-all duration-500"
+              whileHover={{ scale: 1.02, y: -5 }}
+              className="group relative overflow-hidden"
             >
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
-                {/* Icon */}
+              {/* Card with gradient background */}
+              <div className={`relative bg-gradient-to-br ${event.gradient} backdrop-blur-xl border-2 border-[#C29B43]/20 group-hover:border-[#C29B43]/50 transition-all duration-500 p-8 md:p-10`}>
+                {/* Animated background effect */}
                 <motion.div
-                  whileHover={{ scale: 1.2, rotate: 10 }}
-                  className={`w-24 h-24 rounded-full bg-gradient-to-br ${event.color} flex items-center justify-center text-5xl shadow-lg shadow-[#C29B43]/50`}
-                >
-                  {event.icon}
-                </motion.div>
+                  className="absolute inset-0 bg-gradient-to-r from-[#C29B43]/0 via-[#FFD700]/10 to-[#C29B43]/0"
+                  animate={{
+                    x: ['-100%', '100%'],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: index * 0.5,
+                  }}
+                />
 
-                {/* Content */}
-                <div className="flex-1 space-y-4">
-                  <h3 
-                    className="text-3xl md:text-4xl text-white font-light"
-                    style={{ fontFamily: '"Playfair Display", serif' }}
+                {/* Film Perforations */}
+                <div className="absolute top-0 left-0 right-0 h-3 flex justify-between px-4 opacity-10">
+                  {Array(16).fill(0).map((_, i) => (
+                    <div key={i} className="w-0.5 h-full bg-[#C29B43]" />
+                  ))}
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-3 flex justify-between px-4 opacity-10">
+                  {Array(16).fill(0).map((_, i) => (
+                    <div key={i} className="w-0.5 h-full bg-[#C29B43]" />
+                  ))}
+                </div>
+
+                <div className="relative flex flex-col md:flex-row items-start md:items-center gap-8">
+                  {/* Icon Badge */}
+                  <motion.div
+                    whileHover={{ scale: 1.15, rotate: 10 }}
+                    className="relative flex-shrink-0"
                   >
-                    {event.title}
-                  </h3>
-
-                  <div className="space-y-2 text-white/70" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-[#C29B43]" />
-                      <span className="text-lg">{event.time}</span>
-                      <span className="text-lg">•</span>
-                      <span className="text-lg">{event.date}</span>
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#C29B43] to-[#FFD700] blur-xl opacity-50 group-hover:opacity-70 transition-opacity" />
+                    
+                    {/* Icon circle */}
+                    <div className={`relative w-28 h-28 rounded-full bg-gradient-to-br ${event.iconGradient} flex items-center justify-center text-5xl shadow-2xl border-4 border-black/20`}>
+                      {event.icon}
                     </div>
+                  </motion.div>
 
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 text-[#C29B43] mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="text-lg font-semibold text-white">{event.location}</p>
-                        <p className="text-sm">{event.address}</p>
-                      </div>
+                  {/* Content */}
+                  <div className="flex-1 space-y-6">
+                    <h3 
+                      className="text-4xl md:text-5xl text-white font-light tracking-tight"
+                      style={{ fontFamily: '"Playfair Display", serif' }}
+                    >
+                      {event.title}
+                    </h3>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {/* Time & Date Box */}
+                      <motion.div 
+                        whileHover={{ scale: 1.05 }}
+                        className="bg-black/40 backdrop-blur-sm border border-[#C29B43]/30 rounded-2xl p-5 space-y-2"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C29B43] to-[#FFD700] flex items-center justify-center">
+                            <Clock className="w-5 h-5 text-black" />
+                          </div>
+                          <span className="text-sm text-[#FFD700] uppercase tracking-wider font-semibold" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                            Thời Gian
+                          </span>
+                        </div>
+                        <p className="text-2xl font-bold text-white" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                          {event.time}
+                        </p>
+                        <p className="text-sm text-white/70" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                          {event.date}
+                        </p>
+                      </motion.div>
+
+                      {/* Location Box */}
+                      <motion.div 
+                        whileHover={{ scale: 1.05 }}
+                        className="bg-black/40 backdrop-blur-sm border border-[#C29B43]/30 rounded-2xl p-5 space-y-2"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFD700] to-[#C29B43] flex items-center justify-center">
+                            <MapPin className="w-5 h-5 text-black" />
+                          </div>
+                          <span className="text-sm text-[#FFD700] uppercase tracking-wider font-semibold" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                            Địa Điểm
+                          </span>
+                        </div>
+                        <p className="text-lg font-bold text-white leading-tight" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                          {event.location}
+                        </p>
+                        <p className="text-sm text-white/70 leading-relaxed" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                          {event.address}
+                        </p>
+                      </motion.div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Film Perforations */}
-              <div className="absolute top-4 left-4 right-4 h-2 flex justify-between opacity-20">
-                {Array(12).fill(0).map((_, i) => (
-                  <div key={i} className="w-1 h-full bg-[#C29B43]" />
-                ))}
-              </div>
+              {/* Shine effect on hover */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
+                initial={{ x: '-100%', opacity: 0 }}
+                whileHover={{ x: '100%', opacity: 1 }}
+                transition={{ duration: 0.8 }}
+              />
             </motion.div>
           ))}
         </div>
@@ -728,10 +792,16 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
         >
           <Button
             onClick={onNext}
-            className="px-12 py-6 bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl transition-all hover:scale-105"
+            className="group px-12 py-6 bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl transition-all hover:scale-105 relative overflow-hidden"
           >
-            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>View Location</span>
-            <ArrowRight className="w-5 h-5 ml-2" />
+            {/* Button shine effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              animate={{ x: ['-100%', '100%'] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            />
+            <span className="relative" style={{ fontFamily: '"Montserrat", sans-serif' }}>Xem Bản Đồ</span>
+            <ArrowRight className="relative w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         </motion.div>
       </div>
@@ -824,12 +894,16 @@ function MapPage({ onNext }: { onNext: () => void }) {
 }
 
 // RSVP Page
-function RSVPPage({ submitted, setSubmitted, onNext }: { 
+function RSVPPage({ submitted, setSubmitted, onNext, attending, setAttending, guestCount, setGuestCount }: { 
   submitted: boolean; 
   setSubmitted: (value: boolean) => void;
   onNext: () => void;
+  attending: 'yes' | 'no' | null;
+  setAttending: (value: 'yes' | 'no' | null) => void;
+  guestCount: number;
+  setGuestCount: (value: number) => void;
 }) {
-  const [formData, setFormData] = useState({ name: '', guests: '1', message: '' });
+  const [formData, setFormData] = useState({ name: '', message: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -851,7 +925,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
             className="text-6xl md:text-7xl text-white font-light"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
-            RSVP
+            Xác Nhận Tham Dự
           </h2>
           <div className="flex items-center justify-center gap-4">
             <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#C29B43]" />
@@ -868,61 +942,126 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
             className="bg-black/60 backdrop-blur-md p-12 md:p-16 border-2 border-[#C29B43]/30"
           >
             <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="space-y-3">
+              {/* Attendance Buttons */}
+              <div className="space-y-4">
                 <label 
                   className="text-sm text-white/70 uppercase tracking-wider"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 >
-                  Họ và Tên *
+                  Bạn có thể tham dự không? *
                 </label>
-                <Input
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="p-4 text-lg bg-black/50 border-2 border-[#C29B43]/30 focus:border-[#C29B43] text-white"
-                  placeholder="Nhập họ tên của bạn"
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    type="button"
+                    onClick={() => setAttending('yes')}
+                    className={`py-6 text-lg font-bold transition-all ${
+                      attending === 'yes'
+                        ? 'bg-gradient-to-r from-[#C29B43] to-[#FFD700] text-black shadow-xl shadow-[#C29B43]/50'
+                        : 'bg-black/50 border-2 border-[#C29B43]/30 text-white hover:border-[#C29B43]'
+                    }`}
+                  >
+                    <Heart className="w-5 h-5 mr-2" />
+                    <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Có, tôi sẽ đến</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setAttending('no');
+                      setGuestCount(0);
+                    }}
+                    className={`py-6 text-lg font-bold transition-all ${
+                      attending === 'no'
+                        ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white shadow-xl'
+                        : 'bg-black/50 border-2 border-[#C29B43]/30 text-white hover:border-[#C29B43]'
+                    }`}
+                  >
+                    <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Không thể đến</span>
+                  </Button>
+                </div>
               </div>
 
-              <div className="space-y-3">
-                <label 
-                  className="text-sm text-white/70 uppercase tracking-wider"
-                  style={{ fontFamily: '"Montserrat", sans-serif' }}
+              <AnimatePresence>
+                {attending === 'yes' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-8 overflow-hidden"
+                  >
+                    {/* Name Field */}
+                    <div className="space-y-3">
+                      <label 
+                        className="text-sm text-white/70 uppercase tracking-wider"
+                        style={{ fontFamily: '"Montserrat", sans-serif' }}
+                      >
+                        Họ và Tên *
+                      </label>
+                      <Input
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="p-4 text-lg bg-black/50 border-2 border-[#C29B43]/30 focus:border-[#C29B43] text-white"
+                        placeholder="Nhập họ tên của bạn"
+                      />
+                    </div>
+
+                    {/* Guest Counter */}
+                    <div className="space-y-3">
+                      <label 
+                        className="text-sm text-white/70 uppercase tracking-wider"
+                        style={{ fontFamily: '"Montserrat", sans-serif' }}
+                      >
+                        Số Lượng Khách
+                      </label>
+                      <div className="flex items-center gap-6 bg-black/50 p-6 border-2 border-[#C29B43]/30">
+                        <Button
+                          type="button"
+                          onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+                          className="w-12 h-12 bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold text-2xl"
+                        >
+                          -
+                        </Button>
+                        <span className="text-3xl font-bold text-white flex-1 text-center" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                          {guestCount}
+                        </span>
+                        <Button
+                          type="button"
+                          onClick={() => setGuestCount(guestCount + 1)}
+                          className="w-12 h-12 bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold text-2xl"
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Message */}
+                    <div className="space-y-3">
+                      <label 
+                        className="text-sm text-white/70 uppercase tracking-wider"
+                        style={{ fontFamily: '"Montserrat", sans-serif' }}
+                      >
+                        Lời Nhắn
+                      </label>
+                      <Textarea
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        className="p-4 text-lg bg-black/50 border-2 border-[#C29B43]/30 focus:border-[#C29B43] text-white min-h-32"
+                        placeholder="Gửi lời chúc đến cô dâu chú rể..."
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {attending && (
+                <Button
+                  type="submit"
+                  className="w-full py-6 text-lg bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl"
                 >
-                  Số Lượng Khách *
-                </label>
-                <Input
-                  type="number"
-                  min="1"
-                  required
-                  value={formData.guests}
-                  onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-                  className="p-4 text-lg bg-black/50 border-2 border-[#C29B43]/30 focus:border-[#C29B43] text-white"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <label 
-                  className="text-sm text-white/70 uppercase tracking-wider"
-                  style={{ fontFamily: '"Montserrat", sans-serif' }}
-                >
-                  Lời Nhắn
-                </label>
-                <Textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="p-4 text-lg bg-black/50 border-2 border-[#C29B43]/30 focus:border-[#C29B43] text-white min-h-32"
-                  placeholder="Gửi lời chúc đến cô dâu chú rể..."
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full py-6 text-lg bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl"
-              >
-                <Send className="w-5 h-5 mr-2" />
-                <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Gửi Xác Nhận</span>
-              </Button>
+                  <Send className="w-5 h-5 mr-2" />
+                  <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Gửi Xác Nhận</span>
+                </Button>
+              )}
             </form>
           </motion.div>
         ) : (
@@ -946,11 +1085,12 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                 className="text-4xl text-white font-light"
                 style={{ fontFamily: '"Playfair Display", serif' }}
               >
-                Thank You!
+                {attending === 'yes' ? 'Cảm Ơn Bạn!' : 'Rất Tiếc!'}
               </h3>
               <p className="text-xl text-white/70" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-                Chúng tôi rất vui khi bạn xác nhận tham dự. <br />
-                Hẹn gặp bạn trong ngày trọng đại!
+                {attending === 'yes' 
+                  ? 'Chúng tôi rất vui khi bạn xác nhận tham dự. Hẹn gặp bạn trong ngày trọng đại!'
+                  : 'Cảm ơn bạn đã thông báo. Hy vọng chúng ta sẽ gặp lại sớm!'}
               </p>
             </div>
 
@@ -958,7 +1098,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
               onClick={onNext}
               className="px-12 py-6 bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl"
             >
-              <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Continue</span>
+              <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Tiếp Tục</span>
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </motion.div>
@@ -969,7 +1109,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 }
 
 // QR Code Page - Final Scene
-function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value: boolean) => void }) {
+function QRCodePage({ copied, setCopied, onBack }: { copied: boolean; setCopied: (value: boolean) => void; onBack: () => void }) {
   const invitationUrl = 'https://wedding-invitation.example.com/minh-huong';
 
   const handleCopy = () => {
@@ -988,12 +1128,11 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
           transition={{ duration: 1 }}
           className="text-center space-y-6"
         >
-          <QrCode className="w-16 h-16 mx-auto text-[#C29B43]" />
           <h2 
             className="text-6xl md:text-7xl text-white font-light"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
-            Share
+            Mừng cưới
           </h2>
           <div className="flex items-center justify-center gap-4">
             <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#C29B43]" />
@@ -1009,6 +1148,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
           transition={{ duration: 1, delay: 0.3 }}
           className="bg-black/60 backdrop-blur-md p-16 text-center space-y-8 border-2 border-[#C29B43]/30"
         >
+          <br/>
           {/* QR Code */}
           <motion.div
             initial={{ rotate: -10, opacity: 0 }}
@@ -1016,7 +1156,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
             transition={{ duration: 1, delay: 0.5 }}
             className="inline-block p-8 bg-white border-4 border-[#C29B43]"
           >
-            <div className="w-64 h-64 bg-gradient-to-br from-[#C29B43] to-[#FFD700] flex items-center justify-center">
+            <div className="w-64 h-64 bg-gradient-to-br from-[#C29B43] to-[#FFD700] flex items-center justify-center ">
               <QrCode className="w-48 h-48 text-black" strokeWidth={1} />
             </div>
           </motion.div>
@@ -1027,7 +1167,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
               className="text-lg text-white/70"
               style={{ fontFamily: '"Montserrat", sans-serif' }}
             >
-              Quét mã QR để xem thiệp mời
+              Quét mã QR để gửi mừng hạnh phúc đến cô dâu, chú rể
             </p>
 
             {/* URL */}
@@ -1045,43 +1185,26 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
               {copied ? (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Copied!</span>
+                  <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Đã Sao Chép!</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-4 h-4 mr-2" />
-                  <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Copy Link</span>
+                  <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Sao Chép Link</span>
                 </>
               )}
             </Button>
           </div>
 
-          {/* The End */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="pt-8 border-t-2 border-[#C29B43]/30 space-y-4"
-          >
-            <p 
-              className="text-5xl text-white font-light"
-              style={{ fontFamily: '"Playfair Display", serif' }}
-            >
-              The End
-            </p>
-            <p className="text-lg text-white/50" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-              ... và bắt đầu của chúng tôi
-            </p>
-          </motion.div>
-
           {/* Back to Home */}
           <Button
-            onClick={() => window.location.hash = '#/'}
+            onClick={onBack}
             className="px-10 py-4 bg-black/80 hover:bg-black text-white border-2 border-[#C29B43] hover:border-[#FFD700] shadow-lg transition-all"
           >
             <Home className="w-4 h-4 mr-2" />
-            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Back to Home</span>
+            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Trang chính</span>
           </Button>
+          <br/>
         </motion.div>
       </div>
     </div>

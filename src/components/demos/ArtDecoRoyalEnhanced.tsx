@@ -153,7 +153,7 @@ export function ArtDecoRoyalEnhanced() {
 
       {/* Page Indicator */}
       <div className="fixed top-8 right-8 z-50 flex gap-3 bg-[#0A0A0A]/80 backdrop-blur-md px-6 py-4 rounded-full border-2 border-[#C29B43] shadow-2xl">
-        {['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((label, index) => (
+        {['Trang Bìa', 'Câu Chuyện', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận', 'QR'].map((label, index) => (
           <button
             key={index}
             onClick={() => {
@@ -446,7 +446,7 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
             onClick={onNext}
             className="px-14 py-7 bg-[#C29B43] hover:bg-[#FFD700] text-[#1A1A2E] border-2 border-[#FFD700] shadow-2xl hover:scale-105 transition-all"
           >
-            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>View Gallery</span>
+            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Xem Album</span>
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
@@ -567,7 +567,7 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
             onClick={onNext}
             className="px-14 py-7 bg-[#C29B43] hover:bg-[#FFD700] text-[#1A1A2E] border-2 border-[#FFD700] shadow-2xl hover:scale-105 transition-all"
           >
-            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Event Details</span>
+            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Chi Tiết Sự Kiện</span>
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
@@ -664,7 +664,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
             onClick={onNext}
             className="px-14 py-7 bg-[#C29B43] hover:bg-[#FFD700] text-[#1A1A2E] border-2 border-[#FFD700] shadow-2xl hover:scale-105 transition-all"
           >
-            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>View Map</span>
+            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Xem Bản Đồ</span>
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
@@ -732,7 +732,7 @@ function MapPage({ onNext }: { onNext: () => void }) {
             onClick={onNext}
             className="px-14 py-7 bg-[#C29B43] hover:bg-[#FFD700] text-[#1A1A2E] border-2 border-[#FFD700] shadow-2xl hover:scale-105 transition-all"
           >
-            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>RSVP Now</span>
+            <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Xác Nhận Ngay</span>
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
@@ -824,7 +824,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                 className="w-full py-7 text-xl bg-[#C29B43] hover:bg-[#FFD700] text-[#1A1A2E] border-2 border-[#FFD700] shadow-2xl"
               >
                 <Send className="w-5 h-5 mr-2" />
-                Submit RSVP
+                Gửi Xác Nhận
               </Button>
             </form>
           </motion.div>
@@ -927,7 +927,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
               {copied ? (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Copied!
+                  Đã Sao Chép!
                 </>
               ) : (
                 <>
@@ -958,7 +958,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
             className="px-12 py-5 bg-[#1A1A2E] hover:bg-[#C29B43] text-[#FFD700] border-2 border-[#C29B43] shadow-xl"
           >
             <Home className="w-4 h-4 mr-2" />
-            Back to Home
+            Trang Chủ
           </Button>
         </motion.div>
       </div>

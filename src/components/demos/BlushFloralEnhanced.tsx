@@ -15,12 +15,18 @@ export function BlushFloralEnhanced() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 
   const coupleNames = "Minh & Hương";
-  const loveStory = `Chúng tôi gặp nhau vào một buổi chiều thu lãng mạn, khi những chiếc lá vàng rơi nhẹ nhàng như lời yêu thương đầu tiên. Từ ánh mắt đầu tiên, chúng tôi biết rằng đây là định mệnh. Năm tháng trôi qua, tình yêu của chúng tôi ngày càng bền chặt như những bông hoa đua nở. Giờ đây, chúng tôi vui mừng mời bạn đến chứng kiến hành trình tình yêu của chúng tôi nở rộ thành hiện thực.`;
-
+  const loveStory = `Giữa những điều bình dị của đời sống Việt, chúng tôi gặp nhau và thương nhau từ lúc nào không hay. Tình yêu lớn lên qua từng ngày giản đơn, để hôm nay cùng nắm tay viết tiếp một chặng đường mới.
+Chúng tôi trân trọng kính mời Quý khách đến chung vui trong ngày trọng đại của chúng tôi, để cùng chia sẻ niềm hạnh phúc và khởi đầu cho một hành trình mới đầy yêu thương. Sự hiện diện của Quý khách là món quà vô giá đối với chúng tôi.`;
   // Typewriter effect for love story
   useEffect(() => {
     if (currentPage === 1 && isTyping) {
@@ -163,7 +169,7 @@ export function BlushFloralEnhanced() {
 
       {/* Enhanced Page Indicator */}
       <div className="fixed top-6 right-6 z-50 flex gap-2 bg-white/80 backdrop-blur-md px-4 py-3 rounded-full shadow-lg">
-        {['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((label, index) => (
+        {['Trang Bìa', 'Câu Chuyện', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận', 'QR'].map((label, index) => (
           <button
             key={index}
             onClick={() => {
@@ -199,7 +205,7 @@ export function BlushFloralEnhanced() {
           {currentPage === 3 && <DetailsPage onNext={() => setCurrentPage(4)} />}
           {currentPage === 4 && <MapPage onNext={() => setCurrentPage(5)} />}
           {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} />}
-          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} />}
+          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} guestName={getGuestName()} />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -209,7 +215,33 @@ export function BlushFloralEnhanced() {
 // Enhanced Cover Page
 function CoverPage({ onNext }: { onNext: () => void }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 relative">
+    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden">
+      {/* Corner Decorations */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 0.3, scale: 1 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+        className="absolute top-8 left-8 w-24 h-24 border-t-4 border-l-4 border-[#FF69B4] rounded-tl-xl"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 0.3, scale: 1 }}
+        transition={{ delay: 0.7, duration: 0.8 }}
+        className="absolute top-8 right-8 w-24 h-24 border-t-4 border-r-4 border-[#FF69B4] rounded-tr-xl"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 0.3, scale: 1 }}
+        transition={{ delay: 0.9, duration: 0.8 }}
+        className="absolute bottom-8 left-8 w-24 h-24 border-b-4 border-l-4 border-[#FF69B4] rounded-bl-xl"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 0.3, scale: 1 }}
+        transition={{ delay: 1.1, duration: 0.8 }}
+        className="absolute bottom-8 right-8 w-24 h-24 border-b-4 border-r-4 border-[#FF69B4] rounded-br-xl"
+      />
+
       {/* Watercolor Floral Top Left */}
       <motion.div
         initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
@@ -290,7 +322,12 @@ function CoverPage({ onNext }: { onNext: () => void }) {
           <motion.div
             animate={{ 
               scale: [1, 1.2, 1],
-              rotate: [0, 5, -5, 0]
+              rotate: [0, 5, -5, 0],
+              filter: [
+                'drop-shadow(0 0 0px rgba(255, 105, 180, 0))',
+                'drop-shadow(0 0 20px rgba(255, 105, 180, 0.8))',
+                'drop-shadow(0 0 0px rgba(255, 105, 180, 0))'
+              ],
             }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
@@ -368,9 +405,30 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
             Câu Chuyện Tình Yêu
           </h2>
           <div className="flex items-center justify-center gap-4 mt-6">
-            <div className="h-[2px] w-20 bg-gradient-to-r from-transparent to-[#FFB6C1]" />
-            <Sparkles className="w-6 h-6 text-[#FF69B4]" />
-            <div className="h-[2px] w-20 bg-gradient-to-l from-transparent to-[#FFB6C1]" />
+            <motion.div 
+              animate={{ scaleX: [0.8, 1, 0.8], opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="h-[2px] w-20 bg-gradient-to-r from-transparent to-[#FFB6C1]" 
+            />
+            <motion.div
+              animate={{
+                rotate: [0, 5, -5, 0],
+                scale: [1, 1.2, 1],
+                filter: [
+                  'drop-shadow(0 0 0px rgba(255, 105, 180, 0))',
+                  'drop-shadow(0 0 15px rgba(255, 105, 180, 0.8))',
+                  'drop-shadow(0 0 0px rgba(255, 105, 180, 0))'
+                ],
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <Sparkles className="w-6 h-6 text-[#FF69B4]" />
+            </motion.div>
+            <motion.div 
+              animate={{ scaleX: [0.8, 1, 0.8], opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="h-[2px] w-20 bg-gradient-to-l from-transparent to-[#FFB6C1]" 
+            />
           </div>
         </motion.div>
 
@@ -410,11 +468,23 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
           ].map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 1.5 + index * 0.2 }}
-              className="bg-gradient-to-br from-white/80 to-[#FFF0F5]/80 backdrop-blur-sm p-8 rounded-2xl text-center shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 border border-[#FFB6C1]/20"
+              initial={{ opacity: 0, scale: 0.8, rotateY: -15 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              whileHover={{
+                rotateY: 5,
+                rotateX: -3,
+                scale: 1.05,
+                boxShadow: '0 20px 40px rgba(255, 105, 180, 0.3)',
+                transition: { type: 'spring', stiffness: 300 },
+              }}
+              transition={{ duration: 0.8, delay: 1.5 + index * 0.2, type: 'spring', stiffness: 100 }}
+              className="bg-gradient-to-br from-white/80 to-[#FFF0F5]/80 backdrop-blur-sm p-8 rounded-2xl text-center shadow-lg border border-[#FFB6C1]/20 relative overflow-hidden group"
+              style={{ transformStyle: 'preserve-3d' }}
             >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
+                initial={false}
+              />
               <div className="text-5xl mb-4">{item.icon}</div>
               <p className="text-3xl font-bold text-[#FF69B4] mb-2" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                 {item.year}
@@ -452,12 +522,13 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
-    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800',
-    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
-    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    'https://images.unsplash.com/photo-1525258441167-d6ced3f01c95?w=800',
+     'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
+    
   ];
 
   return (
@@ -488,14 +559,26 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
           {images.map((src, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`cursor-pointer group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all ${
+              initial={{ opacity: 0, scale: 0.8, rotateY: -15 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              whileHover={{
+                scale: 1.03,
+                rotateY: 3,
+                rotateZ: 1,
+                boxShadow: '0 25px 50px rgba(255, 105, 180, 0.35)',
+                transition: { type: 'spring', stiffness: 300 },
+              }}
+              transition={{ duration: 0.6, delay: index * 0.1, type: 'spring', stiffness: 100 }}
+              className={`cursor-pointer group relative overflow-hidden rounded-2xl shadow-lg ${
                 index % 5 === 0 ? 'md:col-span-2 md:row-span-2' : ''
               }`}
+              style={{ transformStyle: 'preserve-3d' }}
               onClick={() => setSelectedImage(index)}
             >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full z-10 pointer-events-none"
+                transition={{ duration: 1, ease: 'linear' }}
+              />
               <ImageWithFallback
                 src={src}
                 alt={`Wedding photo ${index + 1}`}
@@ -621,16 +704,45 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
           {events.map((event, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="group bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-[#FFB6C1]/30"
+              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50, rotateX: -10 }}
+              animate={{ opacity: 1, x: 0, rotateX: 0 }}
+              whileHover={{
+                rotateX: 2,
+                rotateY: index % 2 === 0 ? -3 : 3,
+                scale: 1.02,
+                y: -8,
+                boxShadow: '0 25px 50px rgba(255, 105, 180, 0.25)',
+                transition: { type: 'spring', stiffness: 300 },
+              }}
+              transition={{ duration: 0.8, delay: index * 0.2, type: 'spring', stiffness: 100 }}
+              className="group bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-xl border border-[#FFB6C1]/30"
+              style={{ transformStyle: 'preserve-3d' }}
             >
               <div className="flex flex-col md:flex-row items-center gap-8">
                 {/* Icon */}
                 <motion.div
-                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  whileHover={{ 
+                    scale: 1.2, 
+                    rotate: 10,
+                    rotateY: 15,
+                    transition: { type: 'spring', stiffness: 300 },
+                  }}
+                  animate={{
+                    boxShadow: [
+                      '0 10px 20px rgba(255, 105, 180, 0.3)',
+                      '0 10px 30px rgba(255, 105, 180, 0.5)',
+                      '0 10px 20px rgba(255, 105, 180, 0.3)'
+                    ],
+                  }}
+                  transition={{
+                    boxShadow: {
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    },
+                  }}
                   className={`w-24 h-24 rounded-full bg-gradient-to-br ${event.color} flex items-center justify-center text-5xl shadow-lg`}
+                  style={{ transformStyle: 'preserve-3d' }}
                 >
                   {event.icon}
                 </motion.div>
@@ -665,51 +777,155 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
         </div>
 
         {/* Contact Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.8 }}
-          className="bg-gradient-to-br from-white/70 to-[#FFF0F5]/70 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-[#FFB6C1]/30"
-        >
-          <h3 
-            className="text-3xl font-bold text-[#FF69B4] mb-8 text-center"
+        <div className="space-y-8">
+          <motion.h3
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className="text-3xl font-bold text-[#FF69B4] text-center"
             style={{ fontFamily: '"Libre Baskerville", serif' }}
           >
             Thông Tin Liên Hệ
-          </h3>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <p className="text-xl font-semibold text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-                Nhà Trai
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-[#8B5A6B]">
-                  <Phone className="w-5 h-5 text-[#FF69B4]" />
-                  <span>0123 456 789</span>
-                </div>
-                <div className="flex items-center gap-3 text-[#8B5A6B]">
-                  <Mail className="w-5 h-5 text-[#FF69B4]" />
-                  <span>minh@example.com</span>
+          </motion.h3>
+
+          {/* Nhà Trai */}
+          <motion.div
+            initial={{ opacity: 0, x: -50, rotateX: -10 }}
+            animate={{ opacity: 1, x: 0, rotateX: 0 }}
+            whileHover={{
+              rotateX: 2,
+              rotateY: -3,
+              scale: 1.02,
+              y: -8,
+              boxShadow: '0 25px 50px rgba(255, 105, 180, 0.25)',
+              transition: { type: 'spring', stiffness: 300 },
+            }}
+            transition={{ duration: 0.8, delay: 0.9, type: 'spring', stiffness: 100 }}
+            className="group bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-xl border border-[#FFB6C1]/30"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              {/* Icon */}
+              <motion.div
+                whileHover={{ 
+                  scale: 1.2, 
+                  rotate: 10,
+                  rotateY: 15,
+                  transition: { type: 'spring', stiffness: 300 },
+                }}
+                animate={{
+                  boxShadow: [
+                    '0 10px 20px rgba(255, 105, 180, 0.3)',
+                    '0 10px 30px rgba(255, 105, 180, 0.5)',
+                    '0 10px 20px rgba(255, 105, 180, 0.3)'
+                  ],
+                }}
+                transition={{
+                  boxShadow: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  },
+                }}
+                className="w-24 h-24 rounded-full bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] flex items-center justify-center text-5xl shadow-lg"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                🤵
+              </motion.div>
+
+              {/* Content */}
+              <div className="flex-1 text-center md:text-left space-y-4">
+                <h4 
+                  className="text-3xl md:text-4xl font-bold text-[#FF69B4]"
+                  style={{ fontFamily: '"Libre Baskerville", serif' }}
+                >
+                  Nhà Trai
+                </h4>
+
+                <div className="space-y-3 text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                  <div className="flex items-center justify-center md:justify-start gap-3">
+                    <Phone className="w-5 h-5 text-[#FF69B4]" />
+                    <span className="text-lg">0123 456 789</span>
+                  </div>
+
+                  <div className="flex items-center justify-center md:justify-start gap-3">
+                    <Mail className="w-5 h-5 text-[#FF69B4]" />
+                    <span className="text-lg">minh@example.com</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="space-y-4">
-              <p className="text-xl font-semibold text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-                Nhà Gái
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-[#8B5A6B]">
-                  <Phone className="w-5 h-5 text-[#FF69B4]" />
-                  <span>0987 654 321</span>
-                </div>
-                <div className="flex items-center gap-3 text-[#8B5A6B]">
-                  <Mail className="w-5 h-5 text-[#FF69B4]" />
-                  <span>huong@example.com</span>
+          </motion.div>
+
+          {/* Nhà Gái */}
+          <motion.div
+            initial={{ opacity: 0, x: 50, rotateX: -10 }}
+            animate={{ opacity: 1, x: 0, rotateX: 0 }}
+            whileHover={{
+              rotateX: 2,
+              rotateY: 3,
+              scale: 1.02,
+              y: -8,
+              boxShadow: '0 25px 50px rgba(255, 105, 180, 0.25)',
+              transition: { type: 'spring', stiffness: 300 },
+            }}
+            transition={{ duration: 0.8, delay: 1, type: 'spring', stiffness: 100 }}
+            className="group bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-xl border border-[#FFB6C1]/30"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              {/* Icon */}
+              <motion.div
+                whileHover={{ 
+                  scale: 1.2, 
+                  rotate: 10,
+                  rotateY: 15,
+                  transition: { type: 'spring', stiffness: 300 },
+                }}
+                animate={{
+                  boxShadow: [
+                    '0 10px 20px rgba(255, 105, 180, 0.3)',
+                    '0 10px 30px rgba(255, 105, 180, 0.5)',
+                    '0 10px 20px rgba(255, 105, 180, 0.3)'
+                  ],
+                }}
+                transition={{
+                  boxShadow: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  },
+                }}
+                className="w-24 h-24 rounded-full bg-gradient-to-br from-[#FFB6C1] to-[#FFC0CB] flex items-center justify-center text-5xl shadow-lg"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                👰
+              </motion.div>
+
+              {/* Content */}
+              <div className="flex-1 text-center md:text-left space-y-4">
+                <h4 
+                  className="text-3xl md:text-4xl font-bold text-[#FF69B4]"
+                  style={{ fontFamily: '"Libre Baskerville", serif' }}
+                >
+                  Nhà Gái
+                </h4>
+
+                <div className="space-y-3 text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                  <div className="flex items-center justify-center md:justify-start gap-3">
+                    <Phone className="w-5 h-5 text-[#FF69B4]" />
+                    <span className="text-lg">0987 654 321</span>
+                  </div>
+
+                  <div className="flex items-center justify-center md:justify-start gap-3">
+                    <Mail className="w-5 h-5 text-[#FF69B4]" />
+                    <span className="text-lg">huong@example.com</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* Next Button */}
         <motion.div
@@ -820,136 +1036,466 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
   setSubmitted: (value: boolean) => void;
   onNext: () => void;
 }) {
-  const [formData, setFormData] = useState({ name: '', guests: '1', message: '' });
+  const [formData, setFormData] = useState({ name: '', guests: 1, message: '', attending: 'yes' });
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setSubmitted(true);
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen px-6 py-20">
-      <div className="max-w-3xl mx-auto space-y-12">
+    <div className="min-h-screen px-6 py-20 relative overflow-hidden">
+      {/* Background Decorations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 -left-20 w-96 h-96 bg-gradient-to-br from-[#FF69B4]/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-20 -right-20 w-96 h-96 bg-gradient-to-bl from-[#FFB6C1]/20 to-transparent rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-6xl mx-auto space-y-12 relative z-10">
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-center"
+          className="text-center space-y-6"
         >
-          <h2 
-            className="text-5xl md:text-6xl text-[#FF69B4] font-bold mb-4"
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, -5, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <Heart className="w-16 h-16 mx-auto text-[#FF69B4] fill-[#FF69B4]" />
+          </motion.div>
+          
+          <h2
+            className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-[#FF69B4] via-[#FFB6C1] to-[#FF69B4] bg-clip-text text-transparent"
             style={{ fontFamily: '"Great Vibes", cursive' }}
           >
             Xác Nhận Tham Dự
           </h2>
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <div className="h-[2px] w-20 bg-gradient-to-r from-transparent to-[#FFB6C1]" />
-            <Heart className="w-6 h-6 text-[#FF69B4] fill-[#FF69B4]" />
-            <div className="h-[2px] w-20 bg-gradient-to-l from-transparent to-[#FFB6C1]" />
-          </div>
+          
+          <p className="text-lg text-[#8B5A6B] max-w-2xl mx-auto" style={{ fontFamily: '"Poppins", sans-serif' }}>
+            Sự hiện diện của bạn là niềm hạnh phúc lớn nhất đối với chúng tôi. <br />
+            Vui lòng xác nhận để chúng tôi chuẩn bị chu đáo hơn 💕
+          </p>
         </motion.div>
 
         {!submitted ? (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="bg-white/80 backdrop-blur-md p-10 md:p-14 rounded-3xl shadow-2xl border border-[#FFB6C1]/30"
-          >
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="space-y-3">
-                <label className="text-lg font-semibold text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-                  Họ và Tên *
-                </label>
-                <Input
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="p-4 text-lg border-2 border-[#FFB6C1] focus:border-[#FF69B4] rounded-xl"
-                  placeholder="Nhập họ tên của bạn"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-lg font-semibold text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-                  Số Lượng Khách *
-                </label>
-                <Input
-                  type="number"
-                  min="1"
-                  required
-                  value={formData.guests}
-                  onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-                  className="p-4 text-lg border-2 border-[#FFB6C1] focus:border-[#FF69B4] rounded-xl"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-lg font-semibold text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-                  Lời Nhắn
-                </label>
-                <Textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="p-4 text-lg border-2 border-[#FFB6C1] focus:border-[#FF69B4] rounded-xl min-h-32"
-                  placeholder="Gửi lời chúc mừng đến cô dâu chú rể..."
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full py-6 text-lg bg-gradient-to-r from-[#FF69B4] to-[#FFB6C1] hover:from-[#FF1493] hover:to-[#FF69B4] text-white shadow-xl hover:scale-105 transition-all"
-              >
-                <Send className="w-5 h-5 mr-2" />
-                Gửi Xác Nhận
-              </Button>
-            </form>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-white/90 to-[#FFF0F5]/90 backdrop-blur-md p-14 rounded-3xl shadow-2xl text-center space-y-8 border border-[#FFB6C1]/30"
-          >
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* RSVP Form */}
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
-              className="w-32 h-32 mx-auto bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] rounded-full flex items-center justify-center shadow-xl"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="relative"
             >
-              <Check className="w-16 h-16 text-white" strokeWidth={3} />
+              <div className="relative bg-white/95 backdrop-blur-xl p-8 md:p-10 rounded-[2rem] shadow-2xl border-2 border-[#FFB6C1]/30 overflow-hidden">
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#FF69B4]/10 to-transparent rounded-full blur-2xl" />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 0.15, scale: 1 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                  className="absolute top-4 left-4 w-12 h-12 border-t-3 border-l-3 border-[#FF69B4] rounded-tl-xl"
+                />
+
+                <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+                  <div className="text-center pb-6 border-b-2 border-[#FFB6C1]/20">
+                    <h3 
+                      className="text-3xl font-bold text-[#FF69B4]"
+                      style={{ fontFamily: '"Libre Baskerville", serif' }}
+                    >
+                      Thông Tin Tham Dự
+                    </h3>
+                  </div>
+
+                  {/* Attending Choice */}
+                  <div className="space-y-4">
+                    <label className="block text-center text-lg font-bold text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                      Bạn có thể tham dự không?
+                    </label>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <motion.button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, attending: 'yes' })}
+                        whileHover={{ scale: 1.05, y: -4 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`relative p-6 rounded-2xl border-2 transition-all duration-300 overflow-hidden group ${
+                          formData.attending === 'yes'
+                            ? 'bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] text-white border-[#FF69B4] shadow-xl shadow-[#FF69B4]/40'
+                            : 'bg-white/80 border-[#FFB6C1] hover:border-[#FF69B4] hover:shadow-lg text-[#8B5A6B]'
+                        }`}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        <motion.div 
+                          animate={{ 
+                            scale: formData.attending === 'yes' ? [1, 1.2, 1] : 1,
+                          }}
+                          transition={{ duration: 0.5 }}
+                          className="text-4xl mb-2"
+                        >
+                          ✓
+                        </motion.div>
+                        <div className="font-bold text-sm" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                          Có, tôi sẽ đến
+                        </div>
+                      </motion.button>
+
+                      <motion.button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, attending: 'no' })}
+                        whileHover={{ scale: 1.05, y: -4 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`relative p-6 rounded-2xl border-2 transition-all duration-300 overflow-hidden group ${
+                          formData.attending === 'no'
+                            ? 'bg-gradient-to-br from-gray-500 to-gray-600 text-white border-gray-500 shadow-xl shadow-gray-500/40'
+                            : 'bg-white/80 border-gray-300 hover:border-gray-400 hover:shadow-lg text-[#8B5A6B]'
+                        }`}
+                      >
+                        <motion.div 
+                          animate={{ 
+                            scale: formData.attending === 'no' ? [1, 1.2, 1] : 1,
+                          }}
+                          transition={{ duration: 0.5 }}
+                          className="text-4xl mb-2"
+                        >
+                          ✗
+                        </motion.div>
+                        <div className="font-bold text-sm" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                          Không thể đến
+                        </div>
+                      </motion.button>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {formData.attending === 'yes' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="space-y-6"
+                      >
+                        {/* Name */}
+                        <div className="space-y-3">
+                          <label className="flex items-center gap-2 text-sm font-bold text-[#FF69B4] uppercase tracking-wide">
+                            <Heart className="w-4 h-4 fill-[#FF69B4]" />
+                            Họ và Tên *
+                          </label>
+                          <motion.div
+                            animate={{ 
+                              scale: focusedField === 'name' ? 1.02 : 1,
+                            }}
+                          >
+                            <Input
+                              required
+                              value={formData.name}
+                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                              onFocus={() => setFocusedField('name')}
+                              onBlur={() => setFocusedField(null)}
+                              placeholder="Nhập họ tên của bạn"
+                              className="w-full p-4 text-base rounded-xl border-2 border-[#FFB6C1]/50 focus:border-[#FF69B4] bg-white/80 transition-all duration-300"
+                              style={{ fontFamily: '"Poppins", sans-serif' }}
+                            />
+                          </motion.div>
+                        </div>
+
+                        {/* Guests */}
+                        <div className="space-y-3">
+                          <label className="flex items-center gap-2 text-sm font-bold text-[#FF69B4] uppercase tracking-wide">
+                            <Calendar className="w-4 h-4 fill-[#FF69B4]" />
+                            Số Lượng Khách *
+                          </label>
+                          <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#FFF0F5] to-white rounded-xl border-2 border-[#FFB6C1]/30">
+                            <motion.button
+                              type="button"
+                              onClick={() => setFormData((prev) => ({ ...prev, guests: Math.max(1, prev.guests - 1) }))}
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] text-white text-xl font-bold shadow-md"
+                            >
+                              -
+                            </motion.button>
+
+                            <div className="flex-1 text-center">
+                              <motion.div 
+                                key={formData.guests}
+                                initial={{ scale: 1.3, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="text-4xl font-bold bg-gradient-to-r from-[#FF69B4] to-[#FFB6C1] bg-clip-text text-transparent"
+                                style={{ fontFamily: '"Libre Baskerville", serif' }}
+                              >
+                                {formData.guests}
+                              </motion.div>
+                              <p className="text-xs text-[#8B5A6B] mt-1">khách</p>
+                            </div>
+
+                            <motion.button
+                              type="button"
+                              onClick={() => setFormData((prev) => ({ ...prev, guests: Math.min(10, prev.guests + 1) }))}
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] text-white text-xl font-bold shadow-md"
+                            >
+                              +
+                            </motion.button>
+                          </div>
+                          <p className="text-xs text-center text-[#8B5A6B]/70 italic">Tối đa 10 khách</p>
+                        </div>
+
+                        {/* Message */}
+                        <div className="space-y-3">
+                          <label className="flex items-center gap-2 text-sm font-bold text-[#FF69B4] uppercase tracking-wide">
+                            <Sparkles className="w-4 h-4 fill-[#FF69B4]" />
+                            Lời Nhắn Gửi
+                          </label>
+                          <Textarea
+                            value={formData.message}
+                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                            onFocus={() => setFocusedField('message')}
+                            onBlur={() => setFocusedField(null)}
+                            placeholder="Gửi lời chúc mừng đến cô dâu chú rể..."
+                            className="w-full p-4 text-base min-h-28 rounded-xl border-2 border-[#FFB6C1]/50 focus:border-[#FF69B4] bg-white/80 transition-all duration-300 resize-none"
+                            style={{ fontFamily: '"Poppins", sans-serif' }}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Submit */}
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="relative w-full py-6 text-lg font-bold bg-gradient-to-r from-[#FF69B4] via-[#FFB6C1] to-[#FF69B4] text-white shadow-2xl shadow-[#FF69B4]/40 hover:shadow-[#FF69B4]/60 disabled:opacity-50 overflow-hidden group rounded-xl border-0 transition-all duration-300"
+                      style={{ fontFamily: '"Poppins", sans-serif' }}
+                    >
+                      <motion.div
+                        animate={{ x: ['0%', '100%'] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      />
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {loading ? (
+                          <>
+                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
+                              <Send className="w-5 h-5" />
+                            </motion.div>
+                            Đang gửi...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-5 h-5" />
+                            {formData.attending === 'yes' ? 'Gửi Xác Nhận Tham Dự' : 'Gửi Phản Hồi'}
+                          </>
+                        )}
+                      </span>
+                    </Button>
+                  </motion.div>
+                </form>
+              </div>
             </motion.div>
 
-            <div className="space-y-4">
-              <h3 
-                className="text-4xl font-bold text-[#FF69B4]"
-                style={{ fontFamily: '"Libre Baskerville", serif' }}
-              >
-                Cảm Ơn Bạn!
-              </h3>
-              <p className="text-xl text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-                Chúng tôi rất vui khi bạn xác nhận tham dự. <br />
-                Hẹn gặp bạn tại tiệc cưới!
-              </p>
-            </div>
-
-            <Button
-              onClick={onNext}
-              className="px-10 py-6 text-lg bg-gradient-to-r from-[#FF69B4] to-[#FFB6C1] hover:from-[#FF1493] hover:to-[#FF69B4] text-white shadow-xl hover:scale-105 transition-all"
+            {/* Info Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-6"
             >
-              Xem Mã QR →
-            </Button>
+              {/* Why RSVP */}
+              <div className="bg-gradient-to-br from-white via-[#FFF0F5] to-white p-8 rounded-[2rem] shadow-xl border-2 border-[#FFB6C1]/30">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] flex items-center justify-center flex-shrink-0">
+                    <Heart className="w-6 h-6 text-white fill-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-[#FF69B4] mb-2" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                      Tại Sao Cần RSVP?
+                    </h3>
+                    <p className="text-[#8B5A6B] leading-relaxed" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                      Xác nhận sớm giúp chúng tôi chuẩn bị chu đáo hơn cho ngày trọng đại
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {[
+                    { icon: '🍽️', text: 'Sắp xếp chỗ ngồi và thực đơn phù hợp' },
+                    { icon: '🎁', text: 'Chuẩn bị quà lưu niệm cho từng vị khách' },
+                    { icon: '📸', text: 'Đảm bảo khoảnh khắc của bạn được ghi lại' },
+                  ].map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + index * 0.1 }}
+                      className="flex items-center gap-3 p-3 bg-white/60 rounded-xl"
+                    >
+                      <span className="text-2xl">{item.icon}</span>
+                      <p className="text-sm text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                        {item.text}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Contact Info */}
+              <div className="bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] p-8 rounded-[2rem] shadow-xl text-white">
+                <h3 className="text-2xl font-bold mb-6" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                  Cần Hỗ Trợ?
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs text-white/80">Liên hệ</p>
+                      <p className="font-semibold">0123 456 789</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs text-white/80">Email</p>
+                      <p className="font-semibold">contact@wedding.com</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-white/90 italic pt-4 border-t border-white/20">
+                    Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi!
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        ) : (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          className="relative bg-gradient-to-br from-white via-[#FFF0F5] to-white p-16 rounded-[2.5rem] shadow-2xl text-center space-y-8 overflow-hidden border-2 border-[#FFB6C1]/40"
+        >
+          {/* Background Decorations */}
+          <div className="absolute inset-0 overflow-hidden">
+            <motion.div
+              animate={{
+                scale: [1, 2, 1],
+                opacity: [0.3, 0, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-[#FF69B4]/20"
+            />
+            <motion.div
+              animate={{
+                scale: [1, 2, 1],
+                opacity: [0.3, 0, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: 1,
+              }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-[#FFB6C1]/20"
+            />
+          </div>
+
+          {/* Success Icon */}
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
+            className="relative z-10"
+          >
+            <motion.div
+              animate={{
+                boxShadow: [
+                  '0 0 0 0 rgba(255, 105, 180, 0.4)',
+                  '0 0 0 20px rgba(255, 105, 180, 0)',
+                  '0 0 0 0 rgba(255, 105, 180, 0)',
+                ],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+              }}
+              className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] mx-auto"
+            >
+              <Check className="w-14 h-14 text-white" strokeWidth={3} />
+            </motion.div>
           </motion.div>
-        )}
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="space-y-4 relative z-10"
+          >
+            <h3 
+              className="text-5xl font-bold bg-gradient-to-r from-[#FF69B4] to-[#FFB6C1] bg-clip-text text-transparent"
+              style={{ fontFamily: '"Great Vibes", cursive' }}
+            >
+              Cảm Ơn Bạn!
+            </h3>
+            <p className="text-2xl text-[#8B5A6B] font-medium" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+              Xác nhận của bạn đã được ghi nhận
+            </p>
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-4xl"
+            >
+              💕
+            </motion.div>
+            <p className="text-lg text-[#8B5A6B]/80" style={{ fontFamily: '"Poppins", sans-serif' }}>
+              Chúng tôi rất mong được gặp bạn tại buổi tiệc!
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="relative z-10"
+          >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                onClick={onNext}
+                className="px-12 py-6 text-xl font-bold bg-gradient-to-r from-[#FF69B4] to-[#FFB6C1] hover:from-[#FF1493] hover:to-[#FF69B4] text-white shadow-xl hover:shadow-2xl transition-all rounded-2xl"
+                style={{ fontFamily: '"Poppins", sans-serif' }}
+              >
+                Xem Mã QR <span className="ml-2">→</span>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      )}
       </div>
     </div>
   );
 }
 
 // QR Code Page
-function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value: boolean) => void }) {
+function QRCodePage({ copied, setCopied, guestName }: { copied: boolean; setCopied: (value: boolean) => void; guestName: string }) {
   const invitationUrl = 'https://wedding-invitation.example.com/minh-huong';
 
   const handleCopy = () => {
@@ -990,14 +1536,35 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
         >
           {/* QR Code */}
           <motion.div
-            initial={{ rotate: -180, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
+            initial={{ rotate: -180, opacity: 0, rotateY: -90 }}
+            animate={{ rotate: 0, opacity: 1, rotateY: 0 }}
+            whileHover={{
+              rotateY: 10,
+              rotateX: 5,
+              scale: 1.05,
+              transition: { type: 'spring', stiffness: 300 },
+            }}
+            transition={{ duration: 1, delay: 0.5, type: 'spring', stiffness: 100 }}
             className="inline-block p-8 bg-white rounded-3xl shadow-xl border-4 border-[#FFB6C1]"
+            style={{ transformStyle: 'preserve-3d' }}
           >
-            <div className="w-64 h-64 bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] rounded-2xl flex items-center justify-center">
+            <motion.div 
+              animate={{
+                boxShadow: [
+                  '0 0 0px rgba(255, 105, 180, 0)',
+                  '0 0 40px rgba(255, 105, 180, 0.6)',
+                  '0 0 0px rgba(255, 105, 180, 0)'
+                ],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              className="w-64 h-64 bg-gradient-to-br from-[#FF69B4] to-[#FFB6C1] rounded-2xl flex items-center justify-center"
+            >
               <QrCode className="w-48 h-48 text-white" strokeWidth={1.5} />
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Instructions */}
@@ -1050,7 +1617,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
               Cảm Ơn Bạn Đã Đến!
             </p>
             <p className="text-lg text-[#8B5A6B]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-              Sự hiện diện của bạn là món quà ý nghĩa nhất với chúng tôi
+              Sự hiện diện của <span className="font-semibold text-[#D4A5A5]">{guestName}</span> là món quà ý nghĩa nhất với chúng tôi
             </p>
           </motion.div>
 

@@ -52,7 +52,7 @@ export function RomanticWatercolor() {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white/80 hover:bg-[#FFB6C1] text-[#666] border border-[#FFB6C1]/50 rounded-full px-4 py-2 shadow-lg transition-all backdrop-blur-sm"
         >
           <Home className="w-4 h-4 mr-2" />

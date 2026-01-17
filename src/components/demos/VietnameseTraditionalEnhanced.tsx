@@ -900,7 +900,7 @@ export function VietnameseTraditionalEnhanced() {
         className="fixed top-6 left-6 z-40"
       >
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white/90 hover:bg-white text-[#DC143C] border-2 border-[#DC143C]/30 rounded-full px-6 py-3 shadow-lg backdrop-blur-sm font-semibold"
         >
           <Home className="w-5 h-5 mr-2" />

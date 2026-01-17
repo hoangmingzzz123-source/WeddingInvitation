@@ -12,41 +12,25 @@ export function LuxuryGoldCinematicEnhanced() {
   const [showLogo, setShowLogo] = useState(true);
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [displayedText, setDisplayedText] = useState('');
+  const [attending, setAttending] = useState<'yes' | 'no' | null>(null);
+  const [guestCount, setGuestCount] = useState(1);
 
   const pages = ['cover', 'story', 'gallery', 'details', 'map', 'rsvp', 'qr'];
 
   const gallery = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-    'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800',
-    'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800',
-    'https://images.unsplash.com/photo-1525258854165-8dbe544937d5?w=800',
-    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800',
+       'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
+    
   ];
 
   useEffect(() => {
     const timer = setTimeout(() => setShowLogo(false), 3000);
     return () => clearTimeout(timer);
   }, []);
-
-  // Typewriter effect
-  useEffect(() => {
-    if (currentPage === 1) {
-      const text = "Trong ánh hoàng hôn lấp lánh như vàng, chúng tôi tìm thấy nhau. Từ những cuộc trò chuyện đêm khuya đến những buổi sáng đầy nắng, tình yêu của chúng tôi đã lớn dần như những ánh sao. Hôm nay, chúng tôi viết tiếp câu chuyện đẹp nhất của đời mình.";
-      setDisplayedText('');
-      let index = 0;
-      const interval = setInterval(() => {
-        if (index < text.length) {
-          setDisplayedText(prev => prev + text[index]);
-          index++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 35);
-      return () => clearInterval(interval);
-    }
-  }, [currentPage]);
 
   // Enhanced bokeh particles - larger and more
   const bokehParticles = Array.from({ length: 25 }, (_, i) => ({
@@ -224,7 +208,7 @@ export function LuxuryGoldCinematicEnhanced() {
                     repeat: Infinity,
                   }}
                 >
-                  The Wedding Of
+                  Hôn Lễ Của
                 </motion.p>
                 <h1 
                   className="text-6xl md:text-8xl font-bold"
@@ -236,7 +220,7 @@ export function LuxuryGoldCinematicEnhanced() {
                     textShadow: '0 0 40px rgba(255, 215, 0, 0.5)',
                   }}
                 >
-                  Alexandre
+                  Vũ Thế Long
                 </h1>
               </motion.div>
 
@@ -282,7 +266,7 @@ export function LuxuryGoldCinematicEnhanced() {
                     textShadow: '0 0 40px rgba(255, 215, 0, 0.5)',
                   }}
                 >
-                  Natalie
+                  Cao Thanh Ngân
                 </h1>
               </motion.div>
 
@@ -330,7 +314,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   className="flex flex-col items-center gap-2"
                   style={{ color: '#FFD700' }}
                 >
-                  <p className="text-sm tracking-widest">SWIPE TO CONTINUE</p>
+                  <p className="text-sm tracking-widest">VUỐT ĐỂ TIẾP TỤC</p>
                   <ChevronRight className="w-6 h-6" />
                 </motion.div>
               </motion.div>
@@ -359,14 +343,14 @@ export function LuxuryGoldCinematicEnhanced() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Our Love Story
+                Câu Chuyện Tình Yêu
               </motion.h2>
 
               <motion.div
                 className="relative p-12 bg-black/30 backdrop-blur-md rounded-3xl border-2 border-[#FFD700]/30"
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
               >
                 {/* Shine effect */}
                 <motion.div
@@ -385,15 +369,13 @@ export function LuxuryGoldCinematicEnhanced() {
                 />
 
                 <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 1 }}
                   className="text-2xl md:text-3xl leading-relaxed text-white/90"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 >
-                  {displayedText}
-                  <motion.span
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ duration: 0.8, repeat: Infinity }}
-                    className="inline-block w-1 h-8 bg-[#FFD700] ml-1"
-                  />
+                  Giữa dòng đời xuôi ngược, chúng tôi gặp nhau bằng một chữ duyên. Từ hai con người xa lạ, học cách yêu thương, thấu hiểu và cùng nắm tay đi đến hôm nay. Hôn lễ này là lời hẹn trăm năm bắt đầu.
                 </motion.p>
               </motion.div>
 
@@ -405,10 +387,10 @@ export function LuxuryGoldCinematicEnhanced() {
                 className="grid grid-cols-2 md:grid-cols-4 gap-8"
               >
                 {[
-                  { year: '2019', title: 'First Meet', icon: '✨' },
-                  { year: '2021', title: 'In Love', icon: '❤️' },
-                  { year: '2024', title: 'Engaged', icon: '💍' },
-                  { year: '2025', title: 'Wedding', icon: '💒' },
+                  { year: '2019', title: 'Gặp Gỡ', icon: '✨' },
+                  { year: '2021', title: 'Yêu Nhau', icon: '❤️' },
+                  { year: '2024', title: 'Đính Hôn', icon: '💍' },
+                  { year: '2025', title: 'Kết Hôn', icon: '💒' },
                 ].map((item, i) => (
                   <motion.div
                     key={i}
@@ -452,7 +434,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Gallery
+                Album Ảnh
               </motion.h2>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -538,70 +520,138 @@ export function LuxuryGoldCinematicEnhanced() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Event Details
+                Chi Tiết Sự Kiện
               </motion.h2>
 
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid md:grid-cols-2 gap-10">
                 {[
                   {
-                    title: 'Ceremony',
-                    date: 'Saturday, March 15, 2025',
-                    time: '4:00 PM',
-                    location: 'Grand Ballroom',
-                    address: 'The Luxury Hotel, 123 Golden Avenue, District 1',
+                    title: 'Lễ Thành Hôn',
+                    date: 'Thứ Bảy, 15 Tháng 3, 2025',
+                    time: '16:00',
+                    location: 'Hội Trường Lớn',
+                    address: 'Khách Sạn Sang Trọng, 123 Đại Lộ Vàng, Quận 1',
+                    icon: '💒',
+                    gradient: 'from-[#FFD700]/20 via-[#FFA500]/10 to-transparent',
                   },
                   {
-                    title: 'Reception',
-                    date: 'Saturday, March 15, 2025',
-                    time: '6:30 PM',
-                    location: 'Crystal Hall',
-                    address: 'The Luxury Hotel, 123 Golden Avenue, District 1',
+                    title: 'Tiệc Chiêu Đãi',
+                    date: 'Thứ Bảy, 15 Tháng 3, 2025',
+                    time: '18:30',
+                    location: 'Phòng Pha Lê',
+                    address: 'Khách Sạn Sang Trọng, 123 Đại Lộ Vàng, Quận 1',
+                    icon: '🥂',
+                    gradient: 'from-[#C29B43]/20 via-[#FFD700]/10 to-transparent',
                   },
                 ].map((event, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.2 }}
-                    whileHover={{ 
-                      y: -10,
-                      boxShadow: '0 30px 60px rgba(255, 215, 0, 0.3)',
+                    initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ 
+                      delay: i * 0.2,
+                      type: "spring",
+                      stiffness: 100,
                     }}
-                    className="p-10 bg-black/30 backdrop-blur-md rounded-3xl border-2 border-[#FFD700]/30 space-y-6"
+                    whileHover={{ 
+                      y: -15,
+                      scale: 1.02,
+                      boxShadow: '0 40px 80px rgba(255, 215, 0, 0.4)',
+                    }}
+                    className={`relative p-12 bg-gradient-to-br ${event.gradient} backdrop-blur-xl rounded-[2rem] border-4 border-[#FFD700]/40 space-y-8 overflow-hidden group`}
                   >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-4xl font-bold text-[#FFD700] mb-2" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
-                          {event.title}
-                        </h3>
-                      </div>
-                      <Heart className="w-10 h-10 text-[#FFD700]" fill="#FFD700" />
+                    {/* Animated background glow */}
+                    <motion.div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                      style={{
+                        background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.15), transparent 70%)',
+                      }}
+                    />
+
+                    {/* Corner decoration */}
+                    <div className="absolute top-4 right-4 text-6xl opacity-20 group-hover:opacity-40 transition-opacity">
+                      {event.icon}
                     </div>
 
-                    <div className="space-y-4 text-white/90">
-                      <div className="flex items-center gap-4">
-                        <Calendar className="w-6 h-6 text-[#FFD700]" />
-                        <span className="text-lg">{event.date}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Clock className="w-6 h-6 text-[#FFD700]" />
-                        <span className="text-lg">{event.time}</span>
-                      </div>
-                      <div className="flex items-start gap-4">
-                        <MapPin className="w-6 h-6 text-[#FFD700] mt-1 flex-shrink-0" />
-                        <div>
-                          <p className="text-xl font-bold text-[#FFD700]">{event.location}</p>
-                          <p className="text-base text-white/70">{event.address}</p>
+                    {/* Title section */}
+                    <div className="relative z-10">
+                      <motion.div
+                        whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+                        transition={{ duration: 0.5 }}
+                        className="inline-block"
+                      >
+                        <Heart className="w-12 h-12 text-[#FFD700] mb-4" fill="#FFD700" />
+                      </motion.div>
+                      <h3 className="text-5xl font-bold mb-3" style={{ 
+                        fontFamily: '"Cormorant Garamond", serif',
+                        background: 'linear-gradient(135deg, #FFD700, #FFF)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      }}>
+                        {event.title}
+                      </h3>
+                      <div className="h-1 w-24 bg-gradient-to-r from-[#FFD700] to-transparent rounded-full" />
+                    </div>
+
+                    {/* Details section */}
+                    <div className="relative z-10 space-y-5">
+                      <motion.div 
+                        whileHover={{ x: 5 }}
+                        className="flex items-center gap-5 p-4 bg-black/20 rounded-2xl backdrop-blur-sm border border-[#FFD700]/20"
+                      >
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFD700] to-[#C29B43] flex items-center justify-center flex-shrink-0">
+                          <Calendar className="w-6 h-6 text-black" />
                         </div>
-                      </div>
+                        <span className="text-lg text-white font-medium px-4">{event.date}</span>
+                      </motion.div>
+
+                      <motion.div 
+                        whileHover={{ x: 5 }}
+                        className="flex items-center gap-5 p-4 bg-black/20 rounded-2xl backdrop-blur-sm border border-[#FFD700]/20"
+                      >
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFD700] to-[#C29B43] flex items-center justify-center flex-shrink-0">
+                          <Clock className="w-6 h-6 text-black" />
+                        </div>
+                        <span className="text-lg text-white font-medium px-4">{event.time}</span>
+                      </motion.div>
+
+                      <motion.div 
+                        whileHover={{ x: 5 }}
+                        className="flex items-start gap-5 p-4 bg-black/20 rounded-2xl backdrop-blur-sm border border-[#FFD700]/20"
+                      >
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFD700] to-[#C29B43] flex items-center justify-center flex-shrink-0">
+                          <MapPin className="w-6 h-6 text-black" />
+                        </div>
+                        <div className="flex-1 px-4">
+                          <p className="text-xl font-bold text-[#FFD700] mb-1">{event.location}</p>
+                          <p className="text-base text-white/70 leading-relaxed">{event.address}</p>
+                        </div>
+                      </motion.div>
                     </div>
 
-                    <Button 
-                      className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[#FFD700] to-[#C29B43] hover:from-[#FFF] hover:to-[#FFD700] text-black rounded-xl shadow-lg"
+                    {/* Action button */}
+                    <motion.div
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      <MapPin className="w-5 h-5 mr-2" />
-                      View Map
-                    </Button>
+                      <Button 
+                        className="relative w-full h-16 text-xl font-bold bg-gradient-to-r from-[#FFD700] via-[#FFF] to-[#FFD700] hover:from-[#FFF] hover:via-[#FFD700] hover:to-[#FFF] text-black rounded-2xl shadow-2xl shadow-[#FFD700]/30 overflow-hidden group/btn"
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                          animate={{
+                            x: ['-100%', '200%'],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            repeatDelay: 1,
+                          }}
+                        />
+                        <MapPin className="w-6 h-6 mr-3 relative z-10" />
+                        <span className="relative z-10">Xem Bản Đồ</span>
+                      </Button>
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
@@ -630,7 +680,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Location
+                Địa Điểm
               </motion.h2>
 
               <motion.div
@@ -666,7 +716,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                RSVP
+                Xác Nhận Tham Dự
               </motion.h2>
 
               {!rsvpSubmitted ? (
@@ -680,39 +730,92 @@ export function LuxuryGoldCinematicEnhanced() {
                   }}
                   className="p-12 bg-black/30 backdrop-blur-md rounded-3xl border-2 border-[#FFD700]/30 space-y-6"
                 >
-                  <div className="space-y-4">
-                    <Input
-                      placeholder="Full Name *"
-                      required
-                      className="h-16 text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl text-white placeholder:text-white/50"
-                    />
-                    <Input
-                      type="email"
-                      placeholder="Email *"
-                      required
-                      className="h-16 text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl text-white placeholder:text-white/50"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Number of Guests *"
-                      required
-                      min="1"
-                      className="h-16 text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl text-white placeholder:text-white/50"
-                    />
-                    <Textarea
-                      placeholder="Message (optional)"
-                      rows={4}
-                      className="text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl resize-none text-white placeholder:text-white/50"
-                    />
+                  {/* Attendance Buttons */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setAttending('yes')}
+                      className={`p-8 rounded-2xl border-2 transition-all ${
+                        attending === 'yes'
+                          ? 'bg-[#FFD700] border-[#FFD700] text-black shadow-lg shadow-[#FFD700]/50'
+                          : 'bg-white/5 border-[#FFD700]/30 hover:border-[#FFD700]/50 text-white'
+                      }`}
+                    >
+                      <div className="text-4xl mb-2">✓</div>
+                      <div className="text-xl font-bold">Có, tôi sẽ đến</div>
+                    </motion.button>
+
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setAttending('no')}
+                      className={`p-8 rounded-2xl border-2 transition-all ${
+                        attending === 'no'
+                          ? 'bg-[#FFD700] border-[#FFD700] text-black shadow-lg shadow-[#FFD700]/50'
+                          : 'bg-white/5 border-[#FFD700]/30 hover:border-[#FFD700]/50 text-white'
+                      }`}
+                    >
+                      <div className="text-4xl mb-2">✗</div>
+                      <div className="text-xl font-bold">Không thể đến</div>
+                    </motion.button>
                   </div>
 
-                  <Button 
-                    type="submit"
-                    className="w-full h-16 text-xl font-bold bg-gradient-to-r from-[#FFD700] to-[#C29B43] hover:from-[#FFF] hover:to-[#FFD700] text-black rounded-xl shadow-lg"
-                  >
-                    <Send className="w-6 h-6 mr-2" />
-                    Submit RSVP
-                  </Button>
+                  <AnimatePresence>
+                    {attending === 'yes' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-4"
+                      >
+                        <Input
+                          placeholder="Họ và tên *"
+                          required
+                          className="h-16 text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl text-white placeholder:text-white/50"
+                        />
+                        
+                        <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border-2 border-[#FFD700]/30">
+                          <label className="text-white/90 text-lg flex-1">Số lượng khách:</label>
+                          <div className="flex items-center gap-4">
+                            <button
+                              type="button"
+                              onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+                              className="w-12 h-12 rounded-full bg-white/10 border-2 border-[#FFD700]/30 hover:bg-[#FFD700]/30 text-white text-2xl font-bold"
+                            >
+                              −
+                            </button>
+                            <span className="text-3xl font-bold text-[#FFD700] w-16 text-center">{guestCount}</span>
+                            <button
+                              type="button"
+                              onClick={() => setGuestCount(guestCount + 1)}
+                              className="w-12 h-12 rounded-full bg-white/10 border-2 border-[#FFD700]/30 hover:bg-[#FFD700]/30 text-white text-2xl font-bold"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+
+                        <Textarea
+                          placeholder="Lời nhắn (không bắt buộc)"
+                          rows={4}
+                          className="text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl resize-none text-white placeholder:text-white/50"
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {attending && (
+                    <Button 
+                      type="submit"
+                      className="w-full h-16 text-xl font-bold bg-gradient-to-r from-[#FFD700] to-[#C29B43] hover:from-[#FFF] hover:to-[#FFD700] text-black rounded-xl shadow-lg"
+                    >
+                      <Send className="w-6 h-6 mr-2" />
+                      Gửi Xác Nhận
+                    </Button>
+                  )}
                 </motion.form>
               ) : (
                 <motion.div
@@ -731,17 +834,17 @@ export function LuxuryGoldCinematicEnhanced() {
                     <Heart className="w-28 h-28 mx-auto text-[#FFD700]" fill="#FFD700" />
                   </motion.div>
                   <h3 className="text-5xl font-bold text-[#FFD700]" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
-                    Thank You!
+                    Cảm Ơn Bạn!
                   </h3>
                   <p className="text-2xl text-white/90">
-                    We can't wait to celebrate with you.
+                    Chúng tôi rất mong được đón tiếp bạn trong ngày trọng đại.
                   </p>
                   <Button
                     onClick={() => setRsvpSubmitted(false)}
                     variant="outline"
                     className="border-2 border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700] hover:text-black h-14 px-8 text-lg"
                   >
-                    Submit Another
+                    Gửi Tiếp
                   </Button>
                 </motion.div>
               )}
@@ -770,7 +873,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Share
+                Quét mã QR
               </motion.h2>
 
               <motion.div
@@ -793,25 +896,25 @@ export function LuxuryGoldCinematicEnhanced() {
                       repeat: Infinity,
                     }}
                   />
-                  <QrCode className="w-56 h-56 text-[#FFD700] relative z-10" />
+                  <QrCode className="w-full h-full text-[#FFD700] relative z-10 p-4" />
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-2xl font-semibold text-white">Scan to view invitation</p>
+                  <p className="text-2xl font-semibold text-white">Mừng cưới cô dâu chú rể</p>
                   <div className="p-4 bg-white/10 rounded-xl border border-[#FFD700]/30">
-                    <code className="text-base text-[#FFD700] break-all">
-                      https://luxury-wedding.com/alexandre-natalie
+                    <code className="text-base text-[#FFD700] break-all text-center">
+                      Nguyen Van A - 1998794321 - BIDV
                     </code>
                   </div>
                 </div>
 
                 <Button
                   onClick={() => {
-                    navigator.clipboard.writeText('https://luxury-wedding.com/alexandre-natalie');
+                    navigator.clipboard.writeText('Nguyen Van A - 1998794321 - BIDV');
                   }}
                   className="w-full h-16 text-xl font-bold bg-gradient-to-r from-[#FFD700] to-[#C29B43] hover:from-[#FFF] hover:to-[#FFD700] text-black rounded-xl shadow-lg"
                 >
-                  📋 Copy Link
+                  📋 Sao chép STK
                 </Button>
               </motion.div>
             </div>
@@ -906,7 +1009,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                A & N
+                L & N
               </h1>
               {/* Shine effect */}
               <motion.div
@@ -935,11 +1038,11 @@ export function LuxuryGoldCinematicEnhanced() {
         className="fixed top-6 left-6 z-40"
       >
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => window.location.hash = '#/'}
           className="bg-white/10 hover:bg-[#FFD700] hover:text-black text-white border-2 border-[#FFD700]/50 rounded-full px-6 py-3 shadow-lg backdrop-blur-sm font-semibold transition-all"
         >
           <Home className="w-5 h-5 mr-2" />
-          Home
+          Trang chủ
         </Button>
       </motion.div>
 

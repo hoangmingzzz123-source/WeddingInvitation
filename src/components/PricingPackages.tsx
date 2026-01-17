@@ -13,7 +13,7 @@ const packages = [
     features: [
       '01 trang thiệp đơn giản',
       'Tối đa 10 hình ảnh',
-      'Form RSVP cơ bản',
+      'Form xác nhận khách mời cơ bản',
       'Bản đồ Google Maps',
       'Hiệu ứng nhẹ nhàng',
       'Nhạc nền có sẵn',
@@ -30,7 +30,7 @@ const packages = [
     features: [
       '03 trang thiệp đầy đủ',
       'Tối đa 30 hình ảnh',
-      'Form RSVP nâng cao + Email',
+      'Form xác nhận khách mời nâng cao + Email',
       'Hiệu ứng hoạt hình nâng cao',
       'Upload nhạc nền riêng',
       'Nút chia sẻ Zalo/Messenger',

@@ -9,7 +9,7 @@ import { MapSection } from '../MapSection';
 export function ArtDecoRoyal() {
   const [currentPage, setCurrentPage] = useState(0);
 
-  const pages = ['Cover', 'Details', 'Gallery', 'Map', 'RSVP'];
+  const pages = ['Cover', 'Details', 'Gallery', 'Map', 'Xác Nhận Tham Dự'];
 
   // Handle swipe gestures
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -99,11 +99,11 @@ export function ArtDecoRoyal() {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white/10 hover:bg-[#C29B43] text-white border border-[#C29B43]/50 rounded-none px-6 py-2 shadow-lg backdrop-blur-sm transition-all"
         >
           <Home className="w-4 h-4 mr-2" />
-          Back
+          Trang chủ
         </Button>
       </div>
 
@@ -426,15 +426,15 @@ function RSVPPage() {
               className="text-4xl text-center text-[#FFD700]"
               style={{ fontFamily: '"Playfair Display", serif' }}
             >
-              RSVP
+              Xác nhận tham dự
             </h2>
 
             <p className="text-center text-white/70">
-              Kindly respond by December 1st, 2025
+              Vui lòng xác nhận sự hiện diện của bạn trước ngày 10/12/2025
             </p>
 
             <Button className="w-full bg-transparent border-2 border-[#C29B43] hover:bg-[#C29B43] text-[#FFD700] hover:text-white py-6 rounded-none transition-all">
-              CONFIRM ATTENDANCE
+              Xác nhận ngay
             </Button>
           </div>
         </div>

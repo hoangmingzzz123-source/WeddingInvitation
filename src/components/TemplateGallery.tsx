@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
 import { Eye, Music, MapPin, Smartphone } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { navigateTo } from '../Router';
 
 type PackageType = 'all' | '109k' | '159k' | '199k';
 
@@ -11,16 +12,16 @@ const templates = [
     name: 'Classic Minimalist',
     image: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
     style: 'Minimalist',
-    demoUrl: '#/demo/classic-minimalist',
+    demoUrl: '/demo/classic-minimalist',
     package: '109k' as PackageType,
     description: 'Tối giản sang trọng',
-    features: ['Nhạc nền', 'RSVP', 'Bản đồ'],
+    features: ['Nhạc nền', 'Album', 'Bản đồ'],
   },
   {
     name: 'Blush Floral',
     image: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg',
     style: 'Floral',
-    demoUrl: '#/demo/blush-floral',
+    demoUrl: '/demo/blush-floral',
     package: '109k' as PackageType,
     description: 'Hoa văn pastel nhẹ nhàng',
     features: ['Watercolor', 'Album', 'Timeline'],
@@ -29,7 +30,7 @@ const templates = [
     name: 'Soft Fade Floral',
     image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-13.jpg',
     style: 'Watercolor Pastel',
-    demoUrl: '#/demo/soft-fade-floral',
+    demoUrl: '/demo/soft-fade-floral',
     package: '109k' as PackageType,
     description: 'Chuyển màu mượt mà',
     features: ['Fade Effect', 'Music', 'Map'],
@@ -38,7 +39,7 @@ const templates = [
     name: 'Minimal Slide Clean',
     image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-19.jpeg',
     style: 'Modern Clean',
-    demoUrl: '#/demo/minimal-slide-clean',
+    demoUrl: '/demo/minimal-slide-clean',
     package: '109k' as PackageType,
     description: 'Hiện đại trẻ trung',
     features: ['Swipe', 'Clean UI', 'Fast'],
@@ -47,7 +48,7 @@ const templates = [
     name: 'Modern Dark Blue',
     image: 'https://renbridal.vn/wp-content/uploads/2023/01/4-Concept-chup-anh-cuoi-day-y-nghia-ma-dau-re-khong-nen-bo-qua-3-768x1075.jpg',
     style: 'Modern',
-    demoUrl: '#/demo/modern-dark-blue',
+    demoUrl: '/demo/modern-dark-blue',
     package: '109k' as PackageType,
     description: 'Xanh navy sang trọng',
     features: ['Dark Mode', 'Elegant', 'Premium'],
@@ -56,7 +57,7 @@ const templates = [
     name: 'Minimal Elegant',
     image: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMHdlZGRpbmclMjBtaW5pbWFsaXN0JTIwZWxlZ2FudHxlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     style: 'Luxury Editorial',
-    demoUrl: '#/demo/minimal-elegant',
+    demoUrl: '/demo/minimal-elegant-basic',
     package: '159k' as PackageType,
     description: 'Sang trọng tối giản',
     features: ['Editorial', 'Grid Layout', 'Lightbox'],
@@ -65,7 +66,7 @@ const templates = [
     name: 'Luxury Gold Frame',
     image: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp', 
     style: 'Luxury',
-    demoUrl: '#/demo/luxury-gold-frame',
+    demoUrl: '/demo/luxury-gold-frame',
     package: '159k' as PackageType,
     description: 'Khung viền vàng kim',
     features: ['Gold Effect', 'Luxury', '3 Pages'],
@@ -74,7 +75,7 @@ const templates = [
     name: 'Luxury Gold Cinematic',
     image: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
     style: 'Cinematic Luxury',
-    demoUrl: '#/demo/luxury-gold-cinematic',
+    demoUrl: '/demo/luxury-gold-cinematic',
     package: '159k' as PackageType,
     description: 'Điện ảnh đẳng cấp',
     features: ['Bokeh', 'Cinematic', 'Premium'],
@@ -83,7 +84,7 @@ const templates = [
     name: 'Vintage Film Memory',
     image: 'https://mimosawedding.vn/wp-content/uploads/2022/07/phong-cach-chup-anh-cuoi-vintage-81.jpg',
     style: 'Vintage',
-    demoUrl: '#/demo/vintage-film',
+    demoUrl: '/demo/vintage-film',
     package: '159k' as PackageType,
     description: 'Film grain cổ điển',
     features: ['Vintage', 'Film Grain', 'Retro'],
@@ -92,7 +93,7 @@ const templates = [
     name: 'Romantic Watercolor',
     image: 'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
     style: 'Romantic',
-    demoUrl: '#/demo/romantic-watercolor',
+    demoUrl: '/demo/romantic-watercolor',
     package: '159k' as PackageType,
     description: 'Màu nước lãng mạn',
     features: ['Watercolor', 'Romantic', 'Soft'],
@@ -101,7 +102,7 @@ const templates = [
     name: 'Cinematic Love Story',
     image: 'https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwYnJpZGUlMjBncm9vbSUyMGNpbmVtYXRpY3xlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     style: 'Cinematic Film',
-    demoUrl: '#/demo/cinematic-love-story',
+    demoUrl: '/demo/cinematic-love-story',
     package: '199k' as PackageType,
     description: 'Kể chuyện tình yêu điện ảnh',
     features: ['Timeline', 'Scroll Animation', 'Film Grain'],
@@ -110,7 +111,7 @@ const templates = [
     name: 'Vietnamese Traditional',
     image: 'https://images.unsplash.com/photo-1765248227263-cfd048f2c5c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtZXNlJTIwdHJhZGl0aW9uYWwlMjB3ZWRkaW5nJTIwYW8lMjBkYWl8ZW58MXx8fHwxNzY1NzMwMTYwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     style: 'Traditional Luxury',
-    demoUrl: '#/demo/vietnamese-traditional',
+    demoUrl: '/demo/vietnamese-traditional',
     package: '199k' as PackageType,
     description: 'Truyền thống Việt sang trọng',
     features: ['Song Hỷ', 'Gia Đình 2 Bên', 'Đỏ Vàng'],
@@ -119,7 +120,7 @@ const templates = [
     name: '3D Bloom Crystal',
     image: 'https://lightthatstudio.com/wp-content/uploads/2025/07/Light-That-Studio-Studio-Han-QuocZFK_3275-scaled.jpg',
     style: '3D Effect',
-    demoUrl: '#/demo/bloom-crystal-3d',
+    demoUrl: '/demo/bloom-crystal-3d',
     package: '199k' as PackageType,
     description: 'Hiệu ứng 3D cao cấp',
     features: ['3D', 'Crystal', '5 Pages'],
@@ -128,7 +129,7 @@ const templates = [
     name: 'Art Deco Royal',
     image: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
     style: 'Art Deco',
-    demoUrl: '#/demo/art-deco-royal',
+    demoUrl: '/demo/art-deco-royal',
     package: '219k' as PackageType,
     description: 'Hoàng gia Art Deco',
     features: ['Art Deco', 'Royal', 'Luxury'],
@@ -137,7 +138,7 @@ const templates = [
     name: 'Tropical Sunset',
     image: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0250.jpg',
     style: 'Tropical',
-    demoUrl: '#/demo/tropical-sunset',
+    demoUrl: '/demo/tropical-sunset',
     package: '219k' as PackageType,
     description: 'Nhiệt đới hoàng hôn',
     features: ['Tropical', 'Vibrant', 'Unique'],
@@ -148,19 +149,22 @@ export function TemplateGallery() {
   const [activeFilter, setActiveFilter] = useState<PackageType>('all');
   const [highlightPackage, setHighlightPackage] = useState<PackageType | null>(null);
 
-  // Listen for hash changes to auto-filter
+  // Listen for hash changes to auto-filter (keeping for backward compatibility)
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash.includes('filter-109k')) {
+      const search = window.location.search;
+      const filterParam = new URLSearchParams(search).get('filter');
+      
+      if (hash.includes('filter-109k') || filterParam === '109k') {
         setActiveFilter('109k');
         setHighlightPackage('109k');
         setTimeout(() => setHighlightPackage(null), 3000);
-      } else if (hash.includes('filter-159k')) {
+      } else if (hash.includes('filter-159k') || filterParam === '159k') {
         setActiveFilter('159k');
         setHighlightPackage('159k');
         setTimeout(() => setHighlightPackage(null), 3000);
-      } else if (hash.includes('filter-199k')) {
+      } else if (hash.includes('filter-199k') || filterParam === '199k') {
         setActiveFilter('199k');
         setHighlightPackage('199k');
         setTimeout(() => setHighlightPackage(null), 3000);
@@ -318,7 +322,7 @@ export function TemplateGallery() {
                       transition={{ duration: 0.15 }}
                     >
                       <Button
-                        onClick={() => window.open(window.location.origin + window.location.pathname + template.demoUrl, '_blank')}
+                        onClick={() => window.open(window.location.origin + template.demoUrl, '_blank')}
                         className="bg-[#C29B43] hover:bg-[#A88434] text-white rounded-full px-6 py-3 shadow-xl"
                       >
                         <Eye className="w-4 h-4 mr-2" />
@@ -393,7 +397,7 @@ export function TemplateGallery() {
             whileTap={{ scale: 0.95 }}
           >
             <Button
-              onClick={() => setActiveFilter('all')}
+              onClick={() => navigateTo('/templates')}
               className="bg-[#1B2A41] hover:bg-[#0F1A2E] text-white px-8 py-6 rounded-full"
             >
               Xem tất cả 45+ mẫu thiệp

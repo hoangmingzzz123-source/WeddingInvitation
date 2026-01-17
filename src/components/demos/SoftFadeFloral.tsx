@@ -14,6 +14,12 @@ export function SoftFadeFloral() {
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   const slides = [
     {
       image: "https://images.unsplash.com/photo-1560113406-36a33855c51e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920",
@@ -84,8 +90,8 @@ export function SoftFadeFloral() {
 
       {/* Back Button */}
       <Button
-        onClick={() => window.location.hash = '#/'}
-        className="fixed top-6 left-6 z-50 bg-white/90 hover:bg-white text-[#C8A2C8] border border-[#C8A2C8]/30 backdrop-blur-md"
+        onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
+        className="fixed top-6 left-6 z-50 bg-white/90 hover:bg-white text-[#8B4789] border-2 border-[#8B4789] backdrop-blur-md font-semibold shadow-lg"
       >
         <Home className="w-4 h-4 mr-2" />
         Về Trang Chủ
@@ -111,13 +117,13 @@ export function SoftFadeFloral() {
         </div>
       ) : (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex gap-2">
-          {['Slideshow', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((_, index) => (
+          {['Trình Chiếu', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận', 'QR'].map((_, index) => (
             <div
               key={index}
               className={`h-2 rounded-full transition-all duration-300 ${
                 currentPage === index 
-                  ? 'bg-[#C8A2C8] w-8' 
-                  : 'bg-[#C8A2C8]/30 w-2'
+                  ? 'bg-[#C29B43] w-8' 
+                  : 'bg-[#C29B43]/30 w-2'
               }`}
             />
           ))}
@@ -129,16 +135,16 @@ export function SoftFadeFloral() {
         <>
           <button
             onClick={prevSlide}
-            className="fixed left-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center hover:bg-white transition-all group"
+            className="fixed left-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center hover:bg-white transition-all group border-2 border-[#C29B43]/30"
           >
-            <ChevronLeft className="w-6 h-6 text-[#C8A2C8] group-hover:text-[#A882A8]" />
+            <ChevronLeft className="w-6 h-6 text-[#C29B43] group-hover:text-[#8B4789]" />
           </button>
 
           <button
             onClick={nextSlide}
-            className="fixed right-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center hover:bg-white transition-all group"
+            className="fixed right-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center hover:bg-white transition-all group border-2 border-[#C29B43]/30"
           >
-            <ChevronRight className="w-6 h-6 text-[#C8A2C8] group-hover:text-[#A882A8]" />
+            <ChevronRight className="w-6 h-6 text-[#C29B43] group-hover:text-[#8B4789]" />
           </button>
         </>
       )}
@@ -190,7 +196,7 @@ export function SoftFadeFloral() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
-                  className="text-black/80 text-sm tracking-[0.3em] uppercase"
+                  className="text-white text-xl uppercase tracking-widest mb-4 font-semibold drop-shadow-lg"
                   style={{ fontFamily: '"Poppins", sans-serif' }}
                 >
                   {slides[currentSlide].subtitle}
@@ -200,7 +206,7 @@ export function SoftFadeFloral() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.9 }}
-                  className="text-6xl md:text-7xl text-black"
+                  className="text-6xl md:text-7xl text-white font-bold drop-shadow-2xl"
                   style={{ fontFamily: '"Cormorant Garamond", serif' }}
                 >
                   {slides[currentSlide].title}
@@ -210,7 +216,7 @@ export function SoftFadeFloral() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.1 }}
-                  className="text-black/90 text-lg max-w-2xl mx-auto leading-relaxed"
+                  className="text-white text-lg max-w-2xl mx-auto leading-relaxed font-medium drop-shadow-lg"
                   style={{ fontFamily: '"Libre Baskerville", serif' }}
                 >
                   {slides[currentSlide].caption}
@@ -224,7 +230,7 @@ export function SoftFadeFloral() {
                   >
                     <Button
                       onClick={() => setCurrentPage(1)}
-                      className="mt-8 bg-white/90 hover:bg-white text-[#C8A2C8] px-10 py-6 text-lg rounded-full backdrop-blur-md"
+                      className="mt-8 bg-gradient-to-r from-[#8B4789] to-[#C29B43] hover:from-[#6D3667] hover:to-[#A88434] text-white px-10 py-6 text-lg rounded-full backdrop-blur-md font-semibold shadow-xl"
                       style={{ fontFamily: '"Poppins", sans-serif' }}
                     >
                       Xem Album Ảnh
@@ -248,7 +254,7 @@ export function SoftFadeFloral() {
         {currentPage === 1 && <GalleryPage onNext={() => setCurrentPage(2)} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />}
         {currentPage === 2 && <DetailsPage onNext={() => setCurrentPage(3)} />}
         {currentPage === 3 && <MapPage onNext={() => setCurrentPage(4)} />}
-        {currentPage === 4 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(5)} />}
+        {currentPage === 4 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(5)} guestName={getGuestName()} />}
         {currentPage === 5 && <QRCodePage />}
       </div>
     </div>
@@ -262,12 +268,13 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-    "https://images.unsplash.com/photo-1560113406-36a33855c51e?w=800",
-    "https://images.unsplash.com/photo-1761285367066-5875252d7558?w=800",
-    "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?w=800",
-    "https://images.unsplash.com/photo-1519027156611-f83273d3333a?w=800",
-    "https://images.unsplash.com/photo-1738800076744-c37b80b37d31?w=800",
-    "https://images.unsplash.com/photo-1606216794079-c24943c3cb82?w=800",
+     'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
+    
   ];
 
   return (
@@ -276,7 +283,7 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl text-center text-[#C8A2C8]"
+          className="text-5xl text-center text-[#8B4789] font-bold"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
           Album Ảnh Cưới
@@ -326,7 +333,7 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
         <div className="text-center pt-8">
           <Button
             onClick={onNext}
-            className="bg-[#C8A2C8] hover:bg-[#A882A8] text-black px-8 py-6 rounded-full"
+            className="bg-gradient-to-r from-[#8B4789] to-[#C29B43] hover:from-[#6D3667] hover:to-[#A88434] text-white px-8 py-6 rounded-full font-semibold shadow-xl"
           >
             Tiếp Theo
           </Button>
@@ -344,7 +351,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl text-center text-[#C8A2C8]"
+          className="text-5xl text-center text-[#8B4789] font-bold"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
           Thông Tin Tiệc Cưới
@@ -356,26 +363,26 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 space-y-6 border-2 border-[#C8A2C8]/30"
+            className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 space-y-6 border-2 border-[#C29B43]/30 shadow-xl"
           >
-            <Heart className="w-12 h-12 text-[#C8A2C8] mx-auto" />
-            <h3 className="text-3xl text-center text-[#C8A2C8]" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+            <Heart className="w-12 h-12 text-[#C29B43] mx-auto" />
+            <h3 className="text-3xl text-center text-[#8B4789] font-bold" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
               Lễ Vu Quy
             </h3>
-            <div className="space-y-4 text-center text-[#8B7355]">
+            <div className="space-y-4 text-center text-[#5D4037] font-medium">
               <p className="flex items-center justify-center gap-2">
-                <Calendar className="w-5 h-5 text-[#C8A2C8]" />
+                <Calendar className="w-5 h-5 text-[#C29B43]" />
                 <span>Thứ Bảy, 15 tháng 3, 2025</span>
               </p>
               <p className="flex items-center justify-center gap-2">
-                <Clock className="w-5 h-5 text-[#C8A2C8]" />
+                <Clock className="w-5 h-5 text-[#C29B43]" />
                 <span>09:00 Sáng</span>
               </p>
               <p className="flex items-center justify-center gap-2">
-                <MapPin className="w-5 h-5 text-[#C8A2C8]" />
+                <MapPin className="w-5 h-5 text-[#C29B43]" />
                 <span>Tư gia nhà gái</span>
               </p>
-              <p className="text-sm">123 Lê Lợi, Quận 1, TP.HCM</p>
+              <p className="text-sm text-[#6D4C41] font-medium">123 Lê Lợi, Quận 1, TP.HCM</p>
             </div>
           </motion.div>
 
@@ -384,26 +391,26 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 space-y-6 border-2 border-[#C8A2C8]/30"
+            className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 space-y-6 border-2 border-[#C29B43]/30 shadow-xl"
           >
-            <Heart className="w-12 h-12 text-[#C8A2C8] mx-auto" fill="#C8A2C8" />
-            <h3 className="text-3xl text-center text-[#C8A2C8]" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+            <Heart className="w-12 h-12 text-[#C29B43] mx-auto" fill="#C29B43" />
+            <h3 className="text-3xl text-center text-[#8B4789] font-bold" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
               Tiệc Cưới
             </h3>
-            <div className="space-y-4 text-center text-[#8B7355]">
+            <div className="space-y-4 text-center text-[#5D4037] font-medium">
               <p className="flex items-center justify-center gap-2">
-                <Calendar className="w-5 h-5 text-[#C8A2C8]" />
+                <Calendar className="w-5 h-5 text-[#C29B43]" />
                 <span>Thứ Bảy, 15 tháng 3, 2025</span>
               </p>
               <p className="flex items-center justify-center gap-2">
-                <Clock className="w-5 h-5 text-[#C8A2C8]" />
+                <Clock className="w-5 h-5 text-[#C29B43]" />
                 <span>18:00 Chiều</span>
               </p>
               <p className="flex items-center justify-center gap-2">
-                <MapPin className="w-5 h-5 text-[#C8A2C8]" />
+                <MapPin className="w-5 h-5 text-[#C29B43]" />
                 <span>Nhà Hàng Tiệc Cưới Grand Palace</span>
               </p>
-              <p className="text-sm">456 Nguyễn Huệ, Quận 1, TP.HCM</p>
+              <p className="text-sm text-[#6D4C41] font-medium">456 Nguyễn Huệ, Quận 1, TP.HCM</p>
             </div>
           </motion.div>
         </div>
@@ -411,7 +418,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
         <div className="text-center pt-8">
           <Button
             onClick={onNext}
-            className="bg-[#C8A2C8] hover:bg-[#A882A8] text-black px-8 py-6 rounded-full"
+            className="bg-gradient-to-r from-[#8B4789] to-[#C29B43] hover:from-[#6D3667] hover:to-[#A88434] text-white px-8 py-6 rounded-full font-semibold shadow-xl"
           >
             <MapPin className="w-5 h-5 mr-2" />
             Xem Bản Đồ
@@ -430,7 +437,7 @@ function MapPage({ onNext }: { onNext: () => void }) {
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl text-center text-[#C8A2C8]"
+          className="text-5xl text-center text-[#8B4789] font-bold"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
           Bản Đồ Địa Điểm
@@ -439,7 +446,7 @@ function MapPage({ onNext }: { onNext: () => void }) {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/60 backdrop-blur-sm rounded-3xl p-4 border-2 border-[#C8A2C8]/30"
+          className="bg-white/60 backdrop-blur-sm rounded-3xl p-4 border-2 border-[#C29B43]/30 shadow-xl"
         >
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.325652528464!2d106.69751731428708!3d10.782926192320595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f4b3330bcc1%3A0xb42d12560499f1b7!2zTmjDoCBIw6BuZyBUaeG7h2MgQ8aw4bubaSBHcmFuZCBQYWxhY2U!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s"
@@ -452,15 +459,15 @@ function MapPage({ onNext }: { onNext: () => void }) {
         </motion.div>
 
         <div className="text-center space-y-4">
-          <p className="text-[#8B7355]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-            <MapPin className="w-5 h-5 inline mr-2 text-[#C8A2C8]" />
+          <p className="text-[#5D4037] font-medium" style={{ fontFamily: '"Poppins", sans-serif' }}>
+            <MapPin className="w-5 h-5 inline mr-2 text-[#C29B43]" />
             Nhà Hàng Tiệc Cưới Grand Palace
           </p>
-          <p className="text-[#8B7355]">456 Nguyễn Huệ, Quận 1, TP.HCM</p>
+          <p className="text-[#6D4C41] font-medium">456 Nguyễn Huệ, Quận 1, TP.HCM</p>
           
           <Button
             onClick={onNext}
-            className="bg-[#C8A2C8] hover:bg-[#A882A8] text-black px-8 py-6 rounded-full mt-4"
+            className="bg-gradient-to-r from-[#8B4789] to-[#C29B43] hover:from-[#6D3667] hover:to-[#A88434] text-white px-8 py-6 rounded-full mt-4 font-semibold shadow-xl"
           >
             Tiếp Theo
           </Button>
@@ -471,7 +478,7 @@ function MapPage({ onNext }: { onNext: () => void }) {
 }
 
 // RSVP Page
-function RSVPPage({ submitted, setSubmitted, onNext }: { submitted: boolean; setSubmitted: (value: boolean) => void; onNext: () => void }) {
+function RSVPPage({ submitted, setSubmitted, onNext, guestName }: { submitted: boolean; setSubmitted: (value: boolean) => void; onNext: () => void; guestName: string }) {
   const [formData, setFormData] = useState({ name: '', phone: '', guests: '1', message: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -484,19 +491,19 @@ function RSVPPage({ submitted, setSubmitted, onNext }: { submitted: boolean; set
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-2xl w-full bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border-2 border-[#C8A2C8]/30 space-y-8"
+        className="max-w-2xl w-full bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border-2 border-[#C29B43]/30 space-y-8 shadow-xl"
       >
         {!submitted ? (
           <>
             <h2 
-              className="text-5xl text-center text-[#C8A2C8]"
+              className="text-5xl text-center text-[#8B4789] font-bold"
               style={{ fontFamily: '"Cormorant Garamond", serif' }}
             >
               Xác Nhận Tham Dự
             </h2>
 
-            <p className="text-center text-[#8B7355]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-              Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình ❤️
+            <p className="text-center text-[#5D4037] font-medium" style={{ fontFamily: '"Poppins", sans-serif' }}>
+              Sự hiện diện của <span className="font-bold text-[#C29B43]">{guestName}</span> là niềm hạnh phúc lớn nhất của chúng mình ❤️
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -505,34 +512,34 @@ function RSVPPage({ submitted, setSubmitted, onNext }: { submitted: boolean; set
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
-                className="border-2 border-[#C8A2C8]/30 focus:border-[#C8A2C8] rounded-xl py-6"
+                className="border-2 border-[#8B4789]/30 focus:border-[#8B4789] rounded-xl py-6 font-medium"
               />
               <Input 
                 placeholder="Số điện thoại *"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 required
-                className="border-2 border-[#C8A2C8]/30 focus:border-[#C8A2C8] rounded-xl py-6"
+                className="border-2 border-[#8B4789]/30 focus:border-[#8B4789] rounded-xl py-6 font-medium"
               />
               <Input 
                 type="number"
                 placeholder="Số người tham dự *"
                 value={formData.guests}
-                onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 required
                 min="1"
-                className="border-2 border-[#C8A2C8]/30 focus:border-[#C8A2C8] rounded-xl py-6"
+                className="border-2 border-[#8B4789]/30 focus:border-[#8B4789] rounded-xl py-6 font-medium"
               />
               <Textarea 
                 placeholder="Lời chúc đến cô dâu chú rể..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="border-2 border-[#C8A2C8]/30 focus:border-[#C8A2C8] rounded-xl min-h-[150px]"
+                className="border-2 border-[#8B4789]/30 focus:border-[#8B4789] rounded-xl min-h-[150px] font-medium"
               />
               
               <Button 
                 type="submit"
-                className="w-full bg-[#C8A2C8] hover:bg-[#A882A8] text-black py-6 rounded-xl text-lg"
+                className="w-full bg-gradient-to-r from-[#8B4789] to-[#C29B43] hover:from-[#6D3667] hover:to-[#A88434] text-white py-6 rounded-xl text-lg font-semibold shadow-xl"
               >
                 <Send className="w-5 h-5 mr-2" />
                 Gửi Xác Nhận
@@ -545,24 +552,24 @@ function RSVPPage({ submitted, setSubmitted, onNext }: { submitted: boolean; set
             animate={{ opacity: 1, scale: 1 }}
             className="text-center space-y-6 py-12"
           >
-            <div className="w-20 h-20 mx-auto bg-[#C8A2C8]/20 rounded-full flex items-center justify-center">
-              <Heart className="w-10 h-10 text-[#C8A2C8]" fill="#C8A2C8" />
+            <div className="w-20 h-20 mx-auto bg-[#C29B43]/20 rounded-full flex items-center justify-center">
+              <Heart className="w-10 h-10 text-[#C29B43]" fill="#C29B43" />
             </div>
-            <h3 className="text-3xl text-[#C8A2C8]" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+            <h3 className="text-3xl text-[#8B4789] font-bold" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
               Cảm ơn bạn!
             </h3>
-            <p className="text-[#8B7355]">Chúng mình đã nhận được xác nhận của bạn</p>
+            <p className="text-[#5D4037] font-medium">Chúng mình đã nhận được xác nhận của bạn</p>
             <div className="flex gap-4 justify-center">
               <Button
                 onClick={() => setSubmitted(false)}
                 variant="outline"
-                className="border-[#C8A2C8] text-[#C8A2C8]"
+                className="border-2 border-[#8B4789] text-[#8B4789] hover:bg-[#8B4789] hover:text-white font-semibold"
               >
                 Gửi lại
               </Button>
               <Button
                 onClick={onNext}
-                className="bg-[#C8A2C8] hover:bg-[#A882A8] text-black"
+                className="bg-gradient-to-r from-[#8B4789] to-[#C29B43] hover:from-[#6D3667] hover:to-[#A88434] text-white font-semibold shadow-xl"
               >
                 <QrCode className="w-5 h-5 mr-2" />
                 Xem QR Code
@@ -582,16 +589,16 @@ function QRCodePage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-2xl w-full bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border-2 border-[#C8A2C8]/30 space-y-8 text-center"
+        className="max-w-2xl w-full bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border-2 border-[#C29B43]/30 space-y-8 text-center shadow-xl"
       >
         <h2 
-          className="text-5xl text-center text-[#C8A2C8]"
+          className="text-5xl text-center text-[#8B4789] font-bold"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
           Mã QR Thiệp Cưới
         </h2>
 
-        <p className="text-[#8B7355]">
+        <p className="text-[#5D4037] font-medium">
           Quét mã QR để chia sẻ thiệp cưới với bạn bè
         </p>
 
@@ -602,19 +609,19 @@ function QRCodePage() {
           className="bg-white p-8 rounded-2xl shadow-xl mx-auto w-fit"
         >
           <div className="w-64 h-64 bg-gradient-to-br from-[#FFF5F5] to-[#E8F4F8] rounded-xl flex items-center justify-center">
-            <QrCode className="w-48 h-48 text-[#C8A2C8]" strokeWidth={1} />
+            <QrCode className="w-48 h-48 text-[#8B4789]" strokeWidth={1} />
           </div>
         </motion.div>
 
         <div className="space-y-4">
-          <p className="text-sm text-[#8B7355]">
-            Link thiệp cưới: <span className="font-semibold">https://wedding.example.com/minh-huong</span>
+          <p className="text-sm text-[#5D4037] font-medium">
+            Link thiệp cưới: <span className="font-bold text-[#C29B43]">https://wedding.example.com/minh-huong</span>
           </p>
           
           <Button
             onClick={() => navigator.clipboard.writeText('https://wedding.example.com/minh-huong')}
             variant="outline"
-            className="border-[#C8A2C8] text-[#C8A2C8] hover:bg-[#C8A2C8] hover:text-black"
+            className="border-2 border-[#8B4789] text-[#8B4789] hover:bg-[#8B4789] hover:text-white font-semibold shadow-lg"
           >
             Sao chép link
           </Button>

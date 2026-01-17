@@ -7,8 +7,6 @@ import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
 import { MapSection } from '../MapSection';
-import { RSVPForm } from '../RSVPForm';
-import { QRCodeSection } from '../QRCodeSection';
 
 export function VietnameseTraditional() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -18,13 +16,19 @@ export function VietnameseTraditional() {
   const [isTyping, setIsTyping] = useState(false);
   const [rsvpSide, setRsvpSide] = useState<'bride' | 'groom'>('bride');
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   // Pages: Cover → Story → Gallery → Details → Map → RSVP → QR
   const pages = ['cover', 'story', 'gallery', 'details', 'map', 'rsvp', 'qr'];
 
   // Typewriter effect for story
   useEffect(() => {
     if (currentPage === 1 && !isTyping) {
-      const text = "Tình yêu là hành trình, hôn nhân là đích đến. Từ những ngày đầu gặp gỡ, chúng tôi đã biết rằng đây chính là người mình muốn dành cả đời bên cạnh. Hôm nay, trước sự chứng kiến của gia đình và bạn bè, chúng tôi hân hạnh thông báo về lễ thành hôn của chúng tôi.";
+      const text = "Giữa những điều bình dị của đời sống Việt, chúng tôi gặp nhau và thương nhau từ lúc nào không hay. Tình yêu lớn lên qua từng ngày giản đơn, để hôm nay cùng nắm tay viết tiếp một chặng đường mới.";
       setIsTyping(true);
       let index = 0;
       const interval = setInterval(() => {
@@ -64,7 +68,7 @@ export function VietnameseTraditional() {
       {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute"
+          className="absolute pointer-events-none"
           initial={{
             x: Math.random() * window.innerWidth,
             y: -50,
@@ -82,7 +86,6 @@ export function VietnameseTraditional() {
             delay: Math.random() * 5,
             ease: "linear",
           }}
-          className="pointer-events-none"
         >
           <div
             className="w-8 h-8 rounded-full"
@@ -575,7 +578,7 @@ export function VietnameseTraditional() {
             Trân Trọng Kính Mời
           </p>
           <p className="text-sm opacity-80 max-w-2xl mx-auto">
-            Sự hiện diện của quý khách là niềm vinh hạnh và hạnh phúc lớn nhất cho gia đình chúng tôi
+            Sự hiện diện của <span className="font-semibold text-[#DC143C]">{getGuestName()}</span> là niềm vinh hạnh và hạnh phúc lớn nhất cho gia đình chúng tôi
           </p>
           
           <Button

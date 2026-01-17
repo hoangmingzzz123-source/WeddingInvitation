@@ -12,7 +12,7 @@ export function GreenElegance() {
   const [currentPage, setCurrentPage] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
 
-  const pages = ['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP'];
+  const pages = ['Trang Bìa', 'Câu Chuyện', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận'];
 
   useEffect(() => {
     const timer = setTimeout(() => setShowIntro(false), 2500);
@@ -63,7 +63,7 @@ export function GreenElegance() {
       {/* Navigation */}
       <div className="fixed top-4 left-4 z-40">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white/80 hover:bg-white text-[#2E7D32] backdrop-blur-sm rounded-full px-4 py-2 shadow-lg"
         >
           <Home className="w-4 h-4 mr-2" />

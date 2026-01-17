@@ -12,6 +12,12 @@ export function ModernDarkBlue() {
   const [rsvpData, setRsvpData] = useState({ name: '', guests: '1', note: '' });
   const [submitted, setSubmitted] = useState(false);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   // Geometric patterns for modern look
   const geometricElements = Array.from({ length: 12 }, (_, i) => ({
     id: i,
@@ -46,7 +52,7 @@ export function ModernDarkBlue() {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white/10 hover:bg-[#3B82F6] text-white border border-white/20 rounded-full px-4 py-2 shadow-lg transition-all backdrop-blur-md"
         >
           <Home className="w-4 h-4 mr-2" />
@@ -151,7 +157,7 @@ export function ModernDarkBlue() {
 
             <p className="text-lg text-gray-400 leading-relaxed">
               Chúng tôi rất hân hạnh được mời bạn đến tham dự lễ cưới của chúng tôi. 
-              Sự hiện diện của bạn sẽ là niềm vinh hạnh lớn nhất cho gia đình chúng tôi.
+              Sự hiện diện của <span className="font-semibold text-[#64B5F6]">{getGuestName()}</span> sẽ là niềm vinh hạnh lớn nhất cho gia đình chúng tôi.
             </p>
 
             <Button className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-8 py-6 text-lg rounded-xl">

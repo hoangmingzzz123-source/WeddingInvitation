@@ -206,7 +206,7 @@ export function HeroSection() {
             {[
               { label: 'Gói 109k', color: '#F7DADA' },
               { label: 'Gói 159k', color: '#FFE5B4' },
-              { label: 'Gói 219k', color: '#E6D7FF' },
+              { label: 'Gói 199k', color: '#E6D7FF' },
             ].map((pkg, i) => (
               <motion.button
                 key={pkg.label}

@@ -12,7 +12,7 @@ import {
 const features = [
   {
     icon: UserCheck,
-    title: 'RSVP Thông Minh',
+    title: 'Xác nhận khách mời Thông Minh',
     description: 'Xác nhận khách mời tự động, gửi email thông báo ngay lập tức',
   },
   {

@@ -12,7 +12,13 @@ export function LuxuryGoldCinematic() {
   const [currentPage, setCurrentPage] = useState(0);
   const [showLogo, setShowLogo] = useState(true);
 
-  const pages = ['Cover', 'Invitation', 'Timeline', 'Gallery', 'Wishes'];
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
+  const pages = ['Trang Bìa', 'Lời Mời', 'Dòng Thời Gian', 'Album', 'RSVP', 'QR Code'];
 
   useEffect(() => {
     // Hide logo after 3 seconds
@@ -117,7 +123,7 @@ export function LuxuryGoldCinematic() {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-40">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white/10 hover:bg-[#C29B43] text-white border border-[#C29B43]/50 rounded-full px-4 py-2 shadow-lg backdrop-blur-sm transition-all"
         >
           <Home className="w-4 h-4 mr-2" />
@@ -177,10 +183,11 @@ export function LuxuryGoldCinematic() {
             transition={{ duration: 0.6, ease: "easeInOut" }}
           >
             {currentPage === 0 && <CoverPage />}
-            {currentPage === 1 && <InvitationPage />}
+            {currentPage === 1 && <InvitationPage guestName={getGuestName()} />}
             {currentPage === 2 && <TimelinePage />}
             {currentPage === 3 && <GalleryPage />}
-            {currentPage === 4 && <WishesPage />}
+            {currentPage === 4 && <RSVPPage />}
+            {currentPage === 5 && <QRPage />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -255,7 +262,7 @@ function CoverPage() {
   );
 }
 
-function InvitationPage() {
+function InvitationPage({ guestName }: { guestName: string }) {
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20">
       <div className="max-w-4xl mx-auto w-full space-y-12">
@@ -268,7 +275,7 @@ function InvitationPage() {
             className="text-5xl text-[#C29B43] text-center mb-8"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
-            Trân Trọng Kính Mời
+            Trân Trọng Kính Mời <span className="font-semibold">{guestName}</span>
           </h2>
 
           <div className="space-y-8 text-center">
@@ -304,46 +311,191 @@ function InvitationPage() {
 
 function TimelinePage() {
   const timeline = [
-    { year: '2019', title: 'First Meet', desc: 'A chance encounter that changed everything' },
-    { year: '2021', title: 'Love Blooms', desc: 'Our journey together begins' },
-    { year: '2025', title: 'Forever', desc: 'We say "I do"' },
+    {
+      year: '2019',
+      title: 'Lần Đầu Gặp Gỡ',
+      desc: 'Một cuộc gặp gỡ tình cờ đã thay đổi mọi thứ 💫',
+      image: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+      objectPosition: 'center', // center | top | bottom | left | right | '20% 30%'
+    },
+    {
+      year: '2021',
+      title: 'Yêu Thương Đơm Hoa',
+      desc: 'Chúng tôi bắt đầu hành trình bên nhau 💖',
+      image: 'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+      objectPosition: '30% 18%', // Lấy phần đầu ảnh
+    },
+    {
+      year: '2025',
+      title: 'Mãi Mãi Bên Nhau',
+      desc: 'Chúng tôi nói lời "I Do" 💍',
+      image: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
+      objectPosition: 'center',
+    },
   ];
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 py-20">
-      <div className="max-w-4xl mx-auto">
+    <section className="relative min-h-screen px-6 py-28 bg-[#0B0B0B] overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[#C29B43]/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative max-w-6xl mx-auto">
+        {/* Title */}
         <motion.h2
           initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-5xl text-[#C29B43] text-center mb-16"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center text-5xl md:text-6xl mb-24 text-[#E6C36A]"
           style={{ fontFamily: '"Playfair Display", serif' }}
         >
-          Our Story
+          Câu Chuyện Của Chúng Tôi
         </motion.h2>
 
-        <div className="space-y-12">
-          {timeline.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.2 }}
-              className="flex items-center gap-6"
-            >
-              <div className="w-24 text-right text-[#C29B43] text-2xl">{item.year}</div>
-              <div className="w-px h-20 bg-gradient-to-b from-[#C29B43] to-transparent" />
-              <div className="flex-1 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-[#C29B43]/20">
-                <h3 className="text-2xl text-[#FFD700] mb-2">{item.title}</h3>
-                <p className="text-white/70">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+        {/* Timeline */}
+        <div className="relative">
+          {/* Center line */}
+          <div className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-[#C29B43] via-[#FFD700] to-transparent opacity-60" />
+
+          <div className="space-y-28">
+            {timeline.map((item, i) => {
+              const isLeft = i % 2 === 0;
+
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: i * 0.15 }}
+                  className="relative flex flex-col md:flex-row items-center"
+                >
+                  {/* LEFT */}
+                  <div className="w-full md:w-1/2 flex justify-end md:pr-12 mb-8 md:mb-0">
+                    {isLeft ? (
+                      <TimelineCard item={item} align="right" />
+                    ) : (
+                      <TimelineImage src={item.image} objectPosition={item.objectPosition} />
+                    )}
+                  </div>
+
+                  {/* CENTER DOT */}
+                  <div className="absolute md:static left-1/2 -translate-x-1/2 md:translate-x-0 z-10">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: 'spring', stiffness: 200 }}
+                      className="w-6 h-6 rounded-full bg-gradient-to-br from-[#FFD700] to-[#C29B43] shadow-lg shadow-[#FFD700]/40"
+                    />
+                  </div>
+
+                  {/* RIGHT */}
+                  <div className="w-full md:w-1/2 flex justify-start md:pl-12 mt-8 md:mt-0">
+                    {!isLeft ? (
+                      <TimelineCard item={item} align="left" />
+                    ) : (
+                      <TimelineImage src={item.image} objectPosition={item.objectPosition} />
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+/* ===== Timeline Card ===== */
+function TimelineCard({
+  item,
+  align,
+}: {
+  item: { year: string; title: string; desc: string };
+  align: 'left' | 'right';
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: align === 'left' ? 40 : -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      className={`
+        w-full
+        max-w-md
+        min-h-64
+        flex
+        flex-col
+        justify-center
+        bg-white/5
+        backdrop-blur-md
+        rounded-3xl
+        p-8
+        border
+        border-[#C29B43]/30
+        shadow-xl
+        ${align === 'right' ? 'text-right' : 'text-left'}
+      `}
+    >
+      <span className="block text-sm tracking-widest text-[#FFD700] mb-2">
+        {item.year}
+      </span>
+      <h3
+        className="text-3xl text-[#E6C36A] mb-3"
+        style={{ fontFamily: '"Playfair Display", serif' }}
+      >
+        {item.title}
+      </h3>
+      <p className="text-white/70 leading-relaxed">
+        {item.desc}
+      </p>
+    </motion.div>
+  );
+}
+
+/* ===== Timeline Image ===== */
+function TimelineImage({ 
+  src, 
+  objectPosition = 'center' 
+}: { 
+  src: string;
+  objectPosition?: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      className="
+        relative
+        w-full
+        max-w-md
+        h-48
+        rounded-3xl
+        overflow-hidden
+        border
+        border-[#C29B43]/30
+        shadow-2xl
+        flex
+        items-center
+      "
+    >
+      <img
+        src={src}
+        alt=""
+        className="w-full h-full object-cover"
+        style={{ objectPosition }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+    </motion.div>
+  );
+}
+
 
 function GalleryPage() {
   const images = [
@@ -401,9 +553,150 @@ function GalleryPage() {
   );
 }
 
-function WishesPage() {
-  const [message, setMessage] = useState({ name: '', text: '' });
+function RSVPPage() {
+  const [attending, setAttending] = useState<'yes' | 'no' | null>(null);
+  const [formData, setFormData] = useState({ name: '', guests: 1, message: '' });
+  const [submitted, setSubmitted] = useState(false);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  return (
+    <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto w-full"
+      >
+        {!submitted ? (
+          <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-[#C29B43]/30 shadow-2xl">
+            <h2 
+              className="text-4xl text-[#C29B43] text-center mb-8"
+              style={{ fontFamily: '"Playfair Display", serif' }}
+            >
+              Xác Nhận Tham Dự
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Attendance Buttons */}
+              <div className="grid grid-cols-2 gap-4">
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() => setAttending('yes')}
+                  className={`p-6 rounded-2xl border-2 transition-all ${
+                    attending === 'yes'
+                      ? 'bg-[#C29B43] border-[#FFD700] shadow-lg shadow-[#C29B43]/50'
+                      : 'bg-white/5 border-[#C29B43]/30 hover:border-[#C29B43]/50'
+                  }`}
+                >
+                  <div className="text-2xl mb-2">✓</div>
+                  <div className="text-lg">Có, tôi sẽ đến</div>
+                </motion.button>
+
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() => setAttending('no')}
+                  className={`p-6 rounded-2xl border-2 transition-all ${
+                    attending === 'no'
+                      ? 'bg-[#C29B43] border-[#FFD700] shadow-lg shadow-[#C29B43]/50'
+                      : 'bg-white/5 border-[#C29B43]/30 hover:border-[#C29B43]/50'
+                  }`}
+                >
+                  <div className="text-2xl mb-2">✗</div>
+                  <div className="text-lg">Không thể đến</div>
+                </motion.button>
+              </div>
+
+              <AnimatePresence>
+                {attending === 'yes' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-4"
+                  >
+                    <Input
+                      placeholder="Họ và tên"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="bg-white/10 border-[#C29B43]/30 text-white placeholder:text-white/50 rounded-xl"
+                      required
+                    />
+                    
+                    <div className="flex items-center gap-4">
+                      <label className="text-white/90">Số lượng khách:</label>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, guests: Math.max(1, formData.guests - 1) })}
+                          className="w-10 h-10 rounded-full bg-white/10 border border-[#C29B43]/30 hover:bg-[#C29B43]/30"
+                        >
+                          -
+                        </button>
+                        <span className="text-2xl text-[#C29B43] w-12 text-center">{formData.guests}</span>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, guests: formData.guests + 1 })}
+                          className="w-10 h-10 rounded-full bg-white/10 border border-[#C29B43]/30 hover:bg-[#C29B43]/30"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <Textarea
+                      placeholder="Lời nhắn (không bắt buộc)"
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="bg-white/10 border-[#C29B43]/30 text-white placeholder:text-white/50 rounded-xl"
+                      rows={3}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {attending && (
+                <Button 
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#A88434] hover:to-[#C29B43] text-white py-6 rounded-xl"
+                >
+                  Gửi Xác Nhận
+                </Button>
+              )}
+            </form>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-[#C29B43]/30 shadow-2xl text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', delay: 0.2 }}
+              className="text-6xl mb-4"
+            >
+              ✓
+            </motion.div>
+            <h3 className="text-3xl text-[#C29B43] mb-4" style={{ fontFamily: '"Playfair Display", serif' }}>
+              Cảm Ơn Bạn!
+            </h3>
+            <p className="text-white/70 text-lg">
+              Chúng tôi đã nhận được phản hồi của bạn.
+            </p>
+          </motion.div>
+        )}
+      </motion.div>
+    </section>
+  );
+}
+
+function QRPage() {
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20">
       <motion.div
@@ -413,30 +706,37 @@ function WishesPage() {
       >
         <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-[#C29B43]/30 shadow-2xl">
           <h2 
-            className="text-4xl text-[#C29B43] text-center mb-8"
+            className="text-4xl text-[#C29B43] text-center mb-1"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
-            Send Your Wishes
+            Mừng hạnh phúc
           </h2>
+          <h4
+            className="text-xl text-[#C29B43] text-center mb-12"
+             style={{ fontFamily: '"Playfair Display", serif' }}
+          > cho cô dâu chú rể</h4>
 
-          <form className="space-y-6">
-            <Input
-              placeholder="Your Name"
-              value={message.name}
-              onChange={(e) => setMessage({ ...message, name: e.target.value })}
-              className="bg-white/10 border-[#C29B43]/30 text-white placeholder:text-white/50 rounded-xl"
-            />
-            <Textarea
-              placeholder="Your Message"
-              value={message.text}
-              onChange={(e) => setMessage({ ...message, text: e.target.value })}
-              className="bg-white/10 border-[#C29B43]/30 text-white placeholder:text-white/50 rounded-xl"
-              rows={4}
-            />
-            <Button className="w-full bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#A88434] hover:to-[#C29B43] text-white py-6 rounded-xl">
-              Send Wishes
+          <div className="flex flex-col items-center space-y-6">
+            {/* QR Code Placeholder */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="w-64 h-64 bg-white rounded-2xl flex items-center justify-center shadow-2xl"
+            >
+              <QrCode className="w-full h-full text-[#C29B43] px-4 py-4" />
+            </motion.div>
+
+            <p className="text-white/70 text-center max-w-md">
+              Nguyen Van A
+            <br/>1900991919
+            <br/>Techcombank
+            </p>
+
+            <Button className="bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#A88434] hover:to-[#C29B43] text-white px-8 py-3 rounded-xl">
+              Tải Về Mã QR
             </Button>
-          </form>
+          </div>
         </div>
       </motion.div>
     </section>
