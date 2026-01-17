@@ -19,7 +19,7 @@ const testimonials = [
     wedding: 'Đám cưới 22/09/2024',
     avatar: 'https://watermark.lovepik.com/photo/20211209/large/lovepik-groom-image-picture_501759121.jpg',
     rating: 5,
-    content: 'Tính năng RSVP và QR mừng cưới rất tiện lợi. Giúp mình quản lý khách mời dễ dàng hơn nhiều. Mẫu thiệp đa dạng, hiệu ứng 3D cực kỳ ấn tượng!',
+    content: 'Tính năng xác nhận tham dự và QR mừng cưới rất tiện lợi. Giúp mình quản lý khách mời dễ dàng hơn nhiều. Mẫu thiệp đa dạng, hiệu ứng 3D cực kỳ ấn tượng!',
   },
   {
     id: 3,
