@@ -20,45 +20,52 @@ import { MinimalElegantEnhanced } from './components/demos/MinimalElegantEnhance
 import { VietnameseTraditional } from './components/demos/VietnameseTraditional';
 import { VietnameseTraditionalEnhanced } from './components/demos/VietnameseTraditionalEnhanced';
 import DemoThiep219k_Thiep1 from './Demo/Demo219k/Demo1/App';
+import { TemplatesPage } from './components/TemplatesPage';
 
-// Simple hash-based router
+// Browser history-based router
 export function Router() {
-  const [currentRoute, setCurrentRoute] = useState(window.location.hash || '#/');
+  const [currentRoute, setCurrentRoute] = useState(window.location.pathname);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setCurrentRoute(window.location.hash || '#/');
+    const handlePopState = () => {
+      setCurrentRoute(window.location.pathname);
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   // Route mapping
   const routes: Record<string, React.ReactNode> = {
-    '#/': <HomePage />,
-    '#/demo/classic-minimalist': <ClassicMinimalist />,
-    '#/demo/blush-floral': <BlushFloral />,
-    '#/demo/soft-fade-floral': <SoftFadeFloral />,
-    '#/demo/minimal-slide-clean': <MinimalSlideClean />,
-    '#/demo/modern-dark-blue': <BlushFloralEnhanced />,
-    '#/demo/luxury-gold-frame': <LuxuryGoldCinematic />,
-    '#/demo/luxury-gold-cinematic': <LuxuryGoldCinematicEnhanced />,
-    '#/demo/vintage-film': <CinematicLoveStoryEnhanced />,
-    '#/demo/romantic-watercolor': <VietnameseTraditionalEnhanced /> ,
-    '#/demo/bloom-crystal-3d': <BloomCrystal3DEnhanced />,
-    // '#/demo/bloom-crystal-3d-enhanced': <BloomCrystal3DEnhanced />,
-    '#/demo/tropical-sunset': <DemoThiep219k_Thiep1 />,
-    '#/demo/art-deco-royal': <ArtDecoRoyalEnhanced />,
-    // '#/demo/art-deco-royal-enhanced': <ArtDecoRoyalEnhanced />,
-    '#/demo/vintage-grain': <VintageGrain />,
-    '#/demo/green-elegance': <GreenElegance />,
-    '#/demo/cinematic-love-story': <CinematicLoveStory />,
-    // '#/demo/cinematic-love-story-enhanced': <CinematicLoveStoryEnhanced />,
-    '#/demo/minimal-elegant': <MinimalElegantEnhanced />,
-    '#/demo/vietnamese-traditional': <VietnameseTraditional />,
-    // '#/demo/vietnamese-traditional-enhanced': <VietnameseTraditionalEnhanced />,
+    '/': <HomePage />,
+    '/templates': <TemplatesPage />,
+    '/demo/classic-minimalist': <ClassicMinimalist />,
+    '/demo/blush-floral': <BlushFloral />,
+    '/demo/soft-fade-floral': <SoftFadeFloral />,
+    '/demo/minimal-slide-clean': <MinimalSlideClean />,
+    '/demo/modern-dark-blue': <BlushFloralEnhanced />,
+    '/demo/luxury-gold-frame': <LuxuryGoldCinematic />,
+    '/demo/luxury-gold-cinematic': <LuxuryGoldCinematicEnhanced />,
+    '/demo/vintage-film': <CinematicLoveStoryEnhanced />,
+    '/demo/romantic-watercolor': <VietnameseTraditionalEnhanced /> ,
+    '/demo/bloom-crystal-3d': <BloomCrystal3DEnhanced />,
+    '/demo/tropical-sunset': <DemoThiep219k_Thiep1 />,
+    '/demo/art-deco-royal': <ArtDecoRoyalEnhanced />,
+    '/demo/vintage-grain': <VintageGrain />,
+    '/demo/green-elegance': <GreenElegance />,
+    '/demo/cinematic-love-story': <CinematicLoveStory />,
+    '/demo/minimal-elegant': <MinimalElegantEnhanced />,
+    '/demo/vietnamese-traditional': <VietnameseTraditional />,
+    '/demo/bloom-crystal-3d-basic': <BloomCrystal3D />,
+    '/demo/art-deco-royal-basic': <ArtDecoRoyal />,
+    '/demo/minimal-elegant-basic': <MinimalElegant />,
   };
 
   return <>{routes[currentRoute] || <HomePage />}</>;
+}
+
+// Navigation helper function
+export function navigateTo(path: string) {
+  window.history.pushState({}, '', path);
+  window.dispatchEvent(new PopStateEvent('popstate'));
 }

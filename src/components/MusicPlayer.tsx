@@ -11,6 +11,18 @@ interface MusicPlayerProps {
   allowCustomMusic?: boolean; // For 159k and 199k packages
 }
 
+const listMusic = [
+  "https://www.youtube.com/watch?v=AfNbehFKJ7o&list=RDAfNbehFKJ7o&start_radio=1",
+  "https://www.youtube.com/watch?v=IOe0tNoUGv8&list=RDIOe0tNoUGv8&start_radio=1",
+  "https://www.youtube.com/watch?v=jgW4C528hHs&list=RDjgW4C528hHs&start_radio=1",
+  "https://www.youtube.com/watch?v=_8ldAdQd9WU&list=RD_8ldAdQd9WU&start_radio=1",
+  "https://www.youtube.com/watch?v=BnfaIDwb-y0&list=RD_8ldAdQd9WU&index=5",
+  "https://www.youtube.com/watch?v=WCm2elbTEZQ&list=RD_8ldAdQd9WU&index=13",
+  "https://www.youtube.com/watch?v=jdzj6tYAnjY&list=RD_8ldAdQd9WU&index=19",
+  "https://www.youtube.com/watch?v=JgTZvDbaTtg&list=RDJgTZvDbaTtg&start_radio=1",
+  Le_duong, // Local MP3 file
+];
+
 export function MusicPlayer({ 
   autoPlay = true, 
   showVolumeControl = false,
@@ -24,11 +36,18 @@ export function MusicPlayer({
   const [tempMusicUrl, setTempMusicUrl] = useState('');
   const [isYouTube, setIsYouTube] = useState(false);
   const [youtubeEmbedId, setYoutubeEmbedId] = useState('');
+  const [randomMusic, setRandomMusic] = useState<string>('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
+  // Random select music on mount
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * listMusic.length);
+    setRandomMusic(listMusic[randomIndex]);
+  }, []);
+
   // Default wedding music
-  const defaultMusicUrl = Le_duong;
+  const defaultMusicUrl = randomMusic || Le_duong;
 
   // Helper function to extract YouTube video ID
   const getYouTubeId = (url: string): string | null => {
@@ -59,13 +78,19 @@ export function MusicPlayer({
   };
 
   useEffect(() => {
+    if (!defaultMusicUrl) return; // Wait for random music to be selected
+    
     const musicUrl = customMusicUrl || defaultMusicUrl;
     
     // Check if it's a YouTube link
     const ytId = getYouTubeId(musicUrl);
-    if (ytId && customMusicUrl) {
+    if (ytId) {
       setIsYouTube(true);
       setYoutubeEmbedId(ytId);
+      // Auto play YouTube after iframe loads
+      if (autoPlay) {
+        setTimeout(() => setIsPlaying(true), 1000);
+      }
       return;
     }
 
@@ -93,7 +118,7 @@ export function MusicPlayer({
         audioRef.current = null;
       }
     };
-  }, [customMusicUrl]);
+  }, [customMusicUrl, defaultMusicUrl]);
 
   const togglePlay = () => {
     // For YouTube player
@@ -149,6 +174,7 @@ export function MusicPlayer({
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
+    // Note: YouTube iframe API doesn't support volume control via postMessage in embed mode
   };
 
   const handleApplyCustomMusic = () => {

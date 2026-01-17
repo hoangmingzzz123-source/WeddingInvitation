@@ -12,6 +12,12 @@ export function ClassicMinimalist() {
   const [rsvpData, setRsvpData] = useState({ name: '', guests: '1', note: '' });
   const [submitted, setSubmitted] = useState(false);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
@@ -35,7 +41,7 @@ export function ClassicMinimalist() {
       {/* Back to Home Button */}
       <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white hover:bg-[#C29B43] text-[#C29B43] hover:text-white border border-[#C29B43] rounded-full px-4 py-2 shadow-lg transition-all"
         >
           <Home className="w-4 h-4 mr-2" />
@@ -159,8 +165,8 @@ export function ClassicMinimalist() {
           </h2>
           <div className="w-24 h-px bg-[#C29B43] mx-auto" />
           <p className="text-lg text-[#444] leading-relaxed">
-            Kính mời Quý khách đến tham dự buổi tiệc chung vui cùng gia đình chúng tôi. 
-            Sự hiện diện của Quý khách là niềm vinh hạnh cho gia đình chúng tôi.
+            Kính mời <span className="font-semibold text-[#C29B43]">{getGuestName()}</span> đến tham dự buổi tiệc chung vui cùng gia đình chúng tôi. 
+            Sự hiện diện của <span className="font-semibold text-[#C29B43]">{getGuestName()}</span> là niềm vinh hạnh cho gia đình chúng tôi.
           </p>
           <p className="text-[#666]">
             Trân trọng kính mời!
@@ -277,12 +283,16 @@ export function ClassicMinimalist() {
           className="max-w-2xl mx-auto text-center space-y-6"
         >
           <h2 className="text-4xl text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>
-            Chia Sẻ Thiệp
+            Mừng cưới cùng chúng tôi
           </h2>
           
           <div className="bg-white p-8 rounded-2xl shadow-lg inline-block">
             <div className="w-48 h-48 bg-[#C29B43]/10 rounded-lg flex items-center justify-center mb-4">
-              <p className="text-sm text-[#666] text-center px-4">QR Code<br/>Chia sẻ thiệp</p>
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://wedding-invitation.example.com/minh-khanh"
+                alt="QR Code"
+                className="w-40 h-40"
+              />
             </div>
             <Button
               onClick={() => {
@@ -293,7 +303,7 @@ export function ClassicMinimalist() {
               className="border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white"
             >
               <Share2 className="w-4 h-4 mr-2" />
-              Copy Link
+              Sao Chép Link
             </Button>
           </div>
         </motion.div>

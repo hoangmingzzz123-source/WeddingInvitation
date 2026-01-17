@@ -86,7 +86,7 @@ export function BloomCrystal3D() {
       {/* Back to Home Button */}
       <div className="fixed top-20 left-4 z-50">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-white/90 hover:bg-[#C29B43] text-[#C29B43] hover:text-white border border-[#C29B43] rounded-full px-4 py-2 shadow-lg transition-all backdrop-blur-sm"
         >
           <Home className="w-4 h-4 mr-2" />

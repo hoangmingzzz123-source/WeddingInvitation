@@ -20,8 +20,8 @@ export function MinimalSlideClean() {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => window.location.href = '/'}
-          className="bg-white hover:bg-[#DBEAFE] text-[#1E40AF] border border-[#BFDBFE] rounded-full px-4 py-2 shadow-lg transition-all"
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
+          className="bg-white/95 hover:bg-[#DBEAFE] text-[#1E40AF] border-2 border-[#BFDBFE] rounded-full px-5 py-2.5 shadow-xl font-semibold transition-all hover:shadow-2xl hover:scale-105"
         >
           <Home className="w-4 h-4 mr-2" />
           Trang chủ
@@ -30,15 +30,15 @@ export function MinimalSlideClean() {
 
       {/* Minimalist Navigation */}
       <div className="fixed top-4 right-4 z-50">
-        <div className="flex gap-2 bg-white/90 backdrop-blur-md rounded-full p-2 shadow-lg border border-[#BFDBFE]/50">
+        <div className="flex gap-2 bg-white/95 backdrop-blur-md rounded-full p-2 shadow-xl border border-[#BFDBFE]">
           {tabs.map((tab, i) => (
             <button
               key={i}
               onClick={() => setCurrentTab(i)}
-              className={`px-4 py-2 rounded-full text-sm transition-all duration-300 ${
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                 currentTab === i
-                  ? 'bg-[#1E40AF] text-white shadow-md'
-                  : 'text-[#666] hover:bg-[#F0F9FF]'
+                  ? 'bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] text-white shadow-lg shadow-blue-500/30'
+                  : 'text-[#64748B] hover:bg-[#F0F9FF] hover:text-[#1E40AF]'
               }`}
             >
               {tab}
@@ -108,18 +108,18 @@ function HomeTab() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="text-6xl md:text-7xl mb-4"
+              className="text-6xl md:text-8xl mb-6 font-bold"
               style={{ fontFamily: '"Playfair Display", serif' }}
             >
               <span className="text-[#1E40AF]">An</span>
-              <span className="text-[#94A3B8]"> & </span>
+              <span className="text-[#94A3B8] font-light"> & </span>
               <span className="text-[#1E40AF]">Huy</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="text-2xl text-[#64748B]"
+              className="text-3xl text-[#3B82F6] font-semibold tracking-wider"
             >
               25.07.2025
             </motion.p>
@@ -129,7 +129,7 @@ function HomeTab() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
-            className="text-lg text-[#475569] leading-relaxed"
+            className="text-xl text-[#475569] leading-relaxed font-medium"
           >
             Chúng tôi rất hân hạnh được chia sẻ niềm vui trong ngày đặc biệt này cùng bạn.
           </motion.p>
@@ -140,7 +140,7 @@ function HomeTab() {
             transition={{ delay: 1.2 }}
           >
             <Button 
-              className="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white px-8 py-6 rounded-xl"
+              className="bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] hover:from-[#1E3A8A] hover:to-[#2563EB] text-white px-10 py-6 rounded-xl shadow-xl shadow-blue-500/30 font-semibold text-lg hover:scale-105 transition-all"
               onClick={() => window.open('https://maps.google.com', '_blank')}
             >
               Xem Địa Điểm
@@ -165,7 +165,7 @@ function InfoTab() {
         <motion.h2
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl text-center mb-16 text-[#1E40AF]"
+          className="text-5xl md:text-6xl text-center mb-16 text-[#1E40AF] font-bold"
           style={{ fontFamily: '"Playfair Display", serif' }}
         >
           Chi Tiết Sự Kiện
@@ -179,19 +179,20 @@ function InfoTab() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.2, duration: 0.6 }}
               whileHover={{ 
-                y: -10,
-                boxShadow: '0 20px 40px rgba(30, 64, 175, 0.15)'
+                y: -12,
+                scale: 1.05,
+                boxShadow: '0 25px 50px rgba(30, 64, 175, 0.2)'
               }}
-              className="bg-white rounded-2xl p-8 text-center space-y-4 shadow-lg border border-[#BFDBFE]/50"
+              className="bg-white rounded-3xl p-10 text-center space-y-5 shadow-xl border-2 border-[#BFDBFE] hover:border-[#3B82F6] transition-colors"
             >
               <div 
-                className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
+                className="w-20 h-20 mx-auto rounded-full flex items-center justify-center shadow-lg"
                 style={{ backgroundColor: `${card.color}15` }}
               >
-                <card.icon className="w-8 h-8" style={{ color: card.color }} />
+                <card.icon className="w-10 h-10" style={{ color: card.color }} />
               </div>
-              <h3 className="text-xl text-[#334155]">{card.title}</h3>
-              <p className="text-[#64748B]">{card.value}</p>
+              <h3 className="text-xl font-bold text-[#334155]">{card.title}</h3>
+              <p className="text-[#64748B] font-medium text-lg">{card.value}</p>
             </motion.div>
           ))}
         </div>
@@ -204,8 +205,9 @@ function InfoTab() {
         >
           <Button
             onClick={() => window.open('https://maps.google.com', '_blank')}
-            className="bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] hover:from-[#1E3A8A] hover:to-[#2563EB] text-white px-12 py-6 rounded-xl shadow-lg"
+            className="bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] hover:from-[#1E3A8A] hover:to-[#2563EB] text-white px-12 py-7 rounded-xl shadow-xl shadow-blue-500/30 font-semibold text-lg hover:scale-105 transition-all"
           >
+            <MapPin className="w-5 h-5 mr-2 inline" />
             Mở Google Maps
           </Button>
         </motion.div>
@@ -231,7 +233,7 @@ function AlbumTab() {
         <motion.h2
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl text-center mb-16 text-[#1E40AF]"
+          className="text-5xl md:text-6xl text-center mb-16 text-[#1E40AF] font-bold"
           style={{ fontFamily: '"Playfair Display", serif' }}
         >
           Kỷ Niệm Của Chúng Tôi
@@ -245,24 +247,19 @@ function AlbumTab() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
               whileHover={{ 
-                scale: 1.1,
+                scale: 1.08,
                 zIndex: 10,
-                boxShadow: '0 25px 50px rgba(30, 64, 175, 0.25)'
+                boxShadow: '0 30px 60px rgba(30, 64, 175, 0.3)'
               }}
-              className="aspect-square rounded-2xl overflow-hidden shadow-lg relative group"
+              className="aspect-square rounded-3xl overflow-hidden shadow-xl border-2 border-white hover:border-[#3B82F6] relative group transition-all"
             >
               <ImageWithFallback
                 src={img}
                 alt={`Photo ${i + 1}`}
                 className="w-full h-full object-cover"
               />
-              {/* Ripple effect on hover */}
-              <motion.div
-                initial={{ scale: 0, opacity: 0.5 }}
-                whileHover={{ scale: 2, opacity: 0 }}
-                transition={{ duration: 0.6 }}
-                className="absolute inset-0 bg-[#1E40AF] rounded-full"
-              />
+              {/* Overlay on hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1E40AF]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.div>
           ))}
         </div>
@@ -293,9 +290,9 @@ function ContactTab() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-2xl mx-auto w-full"
       >
-        <div className="bg-white rounded-3xl p-12 shadow-2xl border border-[#BFDBFE]/50">
+        <div className="bg-white rounded-3xl p-12 shadow-2xl border-2 border-[#BFDBFE]">
           <h2 
-            className="text-4xl text-center mb-12 text-[#1E40AF]"
+            className="text-5xl text-center mb-12 text-[#1E40AF] font-bold"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
             Liên Hệ Với Chúng Tôi
@@ -311,14 +308,15 @@ function ContactTab() {
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.2 }}
-                className="flex items-center gap-4 p-4 rounded-xl bg-[#F0F9FF] border border-[#BFDBFE]/50"
+                whileHover={{ x: 10, boxShadow: '0 10px 30px rgba(30, 64, 175, 0.15)' }}
+                className="flex items-center gap-5 p-6 rounded-2xl bg-[#F0F9FF] border-2 border-[#BFDBFE] hover:border-[#3B82F6] transition-all cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-full bg-[#1E40AF] flex items-center justify-center">
-                  <item.icon className="w-6 h-6 text-white" />
+                <div className="w-14 h-14 rounded-full bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] flex items-center justify-center shadow-lg">
+                  <item.icon className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-[#64748B]">{item.label}</p>
-                  <p className="text-lg text-[#1E40AF]">{item.value}</p>
+                  <p className="text-sm font-semibold text-[#64748B] uppercase tracking-wide">{item.label}</p>
+                  <p className="text-lg font-bold text-[#1E40AF] mt-1">{item.value}</p>
                 </div>
               </motion.div>
             ))}

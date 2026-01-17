@@ -15,6 +15,12 @@ export function MinimalElegantEnhanced() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
@@ -71,32 +77,35 @@ export function MinimalElegantEnhanced() {
             style={{ left: particle.left, top: '-20px' }}
             animate={{
               y: ['0vh', '120vh'],
-              opacity: [0, 0.15, 0.15, 0],
+              opacity: [0, 0.2, 0.2, 0],
+              x: ['0px', '50px', '-30px', '20px', '0px'],
+              rotate: [0, 360],
+              scale: [0.5, 1, 0.8, 1, 0.5],
             }}
             transition={{
               duration: particle.duration,
               delay: particle.delay,
               repeat: Infinity,
-              ease: "linear",
+              ease: "easeInOut",
             }}
           >
-            <div className="w-1 h-1 rounded-full bg-[#C29B43]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#C29B43] shadow-lg shadow-[#C29B43]/50" />
           </motion.div>
         ))}
       </div>
 
       {/* Back Button */}
       <Button
-        onClick={() => window.location.hash = '#/'}
-        className="fixed top-8 left-8 z-50 bg-white hover:bg-[#FAF7F2] text-[#1B2A41] border border-[#E5E5E5] shadow-sm transition-all hover:shadow-md"
+        onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
+        className="fixed top-8 left-8 z-50 bg-white/95 hover:bg-[#FAF7F2] text-[#1B2A41] border-2 border-[#E5E5E5] hover:border-[#C29B43] shadow-lg hover:shadow-xl transition-all font-semibold"
       >
         <Home className="w-4 h-4 mr-2" />
         Trang Chủ
       </Button>
 
       {/* Minimal Page Indicator */}
-      <div className="fixed top-8 right-8 z-50 flex gap-2">
-        {['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((label, index) => (
+      <div className="fixed top-8 right-8 z-50 flex gap-3">
+        {['Trang Bìa', 'Câu Chuyện', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận', 'QR'].map((label, index) => (
           <button
             key={index}
             onClick={() => {
@@ -106,10 +115,10 @@ export function MinimalElegantEnhanced() {
                 setIsTyping(true);
               }
             }}
-            className={`transition-all duration-300 ${
+            className={`transition-all duration-300 border-2 ${
               currentPage === index 
-                ? 'w-8 h-1 bg-[#1B2A41]' 
-                : 'w-6 h-1 bg-[#E5E5E5] hover:bg-[#C29B43]'
+                ? 'w-10 h-1.5 bg-[#1B2A41] border-[#1B2A41] shadow-lg' 
+                : 'w-8 h-1.5 bg-white border-[#E5E5E5] hover:bg-[#C29B43] hover:border-[#C29B43]'
             }`}
             title={label}
           />
@@ -126,13 +135,13 @@ export function MinimalElegantEnhanced() {
           transition={{ duration: 0.5, ease: "easeInOut" }}
           className="min-h-screen"
         >
-          {currentPage === 0 && <CoverPage onNext={() => setCurrentPage(1)} opacity={opacity} />}
+          {currentPage === 0 && <CoverPage onNext={() => setCurrentPage(1)} opacity={opacity} guestName={getGuestName()} />}
           {currentPage === 1 && <StoryPage displayedText={displayedText} onNext={() => setCurrentPage(2)} />}
           {currentPage === 2 && <GalleryPage onNext={() => setCurrentPage(3)} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />}
           {currentPage === 3 && <DetailsPage onNext={() => setCurrentPage(4)} />}
           {currentPage === 4 && <MapPage onNext={() => setCurrentPage(5)} />}
           {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} />}
-          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} />}
+          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} guestName={getGuestName()} />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -140,7 +149,7 @@ export function MinimalElegantEnhanced() {
 }
 
 // Cover Page - Minimal & Elegant
-function CoverPage({ onNext, opacity }: { onNext: () => void; opacity: any }) {
+function CoverPage({ onNext, opacity, guestName }: { onNext: () => void; opacity: any; guestName: string }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-8 relative">
       {/* Subtle Background Image */}
@@ -157,6 +166,32 @@ function CoverPage({ onNext, opacity }: { onNext: () => void; opacity: any }) {
 
       {/* Content */}
       <div className="relative z-10 text-center space-y-16 max-w-5xl">
+        {/* Animated Corner Decorations */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, delay: 0.5 }}
+          className="absolute top-0 left-0 w-40 h-40 border-t-2 border-l-2 border-[#C29B43]/20"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, delay: 0.7 }}
+          className="absolute top-0 right-0 w-40 h-40 border-t-2 border-r-2 border-[#C29B43]/20"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, delay: 0.9 }}
+          className="absolute bottom-0 left-0 w-40 h-40 border-b-2 border-l-2 border-[#C29B43]/20"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, delay: 1.1 }}
+          className="absolute bottom-0 right-0 w-40 h-40 border-b-2 border-r-2 border-[#C29B43]/20"
+        />
+        
         {/* Date Badge */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -168,7 +203,7 @@ function CoverPage({ onNext, opacity }: { onNext: () => void; opacity: any }) {
             className="text-xs tracking-[0.5em] text-[#999] uppercase"
             style={{ fontFamily: '"Montserrat", sans-serif' }}
           >
-            Save The Date
+            Ghi Nhớ Ngày
           </p>
           
           <div className="flex items-center justify-center gap-8">
@@ -217,10 +252,13 @@ function CoverPage({ onNext, opacity }: { onNext: () => void; opacity: any }) {
           <div className="flex items-center justify-center gap-8">
             <div className="w-16 h-px bg-[#C29B43]" />
             <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
+              animate={{ 
+                scale: [1, 1.2, 1],
+                filter: ['drop-shadow(0 0 0px rgba(194, 155, 67, 0))', 'drop-shadow(0 0 20px rgba(194, 155, 67, 0.8))', 'drop-shadow(0 0 0px rgba(194, 155, 67, 0))'],
+              }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Heart className="w-6 h-6 text-[#C29B43]" />
+              <Heart className="w-6 h-6 text-[#C29B43]" fill="#C29B43" />
             </motion.div>
             <div className="w-16 h-px bg-[#C29B43]" />
           </div>
@@ -241,7 +279,7 @@ function CoverPage({ onNext, opacity }: { onNext: () => void; opacity: any }) {
           className="text-base text-[#666] max-w-2xl mx-auto leading-relaxed"
           style={{ fontFamily: '"Montserrat", sans-serif' }}
         >
-          Trân trọng kính mời Quý khách đến dự Lễ Cưới của chúng tôi
+          Trân trọng kính mời <span className="font-semibold text-[#C29B43]">{guestName}</span> đến dự Lễ Cưới của chúng tôi
         </motion.p>
 
         {/* Next Button */}
@@ -252,10 +290,10 @@ function CoverPage({ onNext, opacity }: { onNext: () => void; opacity: any }) {
         >
           <Button
             onClick={onNext}
-            className="group px-12 py-6 bg-[#1B2A41] hover:bg-[#0F1A2E] text-white border-0 shadow-lg transition-all hover:shadow-xl"
+            className="group px-14 py-7 bg-[#1B2A41] hover:bg-[#0F1A2E] text-white border-0 shadow-2xl shadow-[#1B2A41]/30 transition-all hover:shadow-3xl hover:scale-105 font-semibold text-lg"
           >
             <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Khám Phá Câu Chuyện</span>
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
           </Button>
         </motion.div>
       </div>
@@ -293,23 +331,23 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="bg-[#FAF7F2] p-12 md:p-20 border border-[#E5E5E5] relative"
+          className="bg-[#FAF7F2] p-12 md:p-20 border-2 border-[#E5E5E5] shadow-xl relative"
         >
           {/* Corner Decorations */}
-          <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-[#C29B43]" />
-          <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#C29B43]" />
-          <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-[#C29B43]" />
-          <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#C29B43]" />
+          <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-[#C29B43]" />
+          <div className="absolute top-0 right-0 w-20 h-20 border-t-2 border-r-2 border-[#C29B43]" />
+          <div className="absolute bottom-0 left-0 w-20 h-20 border-b-2 border-l-2 border-[#C29B43]" />
+          <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-[#C29B43]" />
 
           <p 
-            className="text-xl md:text-2xl text-[#1B2A41] leading-loose text-justify"
+            className="text-xl md:text-2xl text-[#1B2A41] leading-loose text-justify font-medium"
             style={{ fontFamily: '"Crimson Text", serif' }}
           >
             {displayedText}
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ duration: 0.8, repeat: Infinity }}
-              className="text-[#C29B43]"
+              className="text-[#C29B43] font-bold"
             >
               |
             </motion.span>
@@ -331,19 +369,34 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
           ].map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.5 + index * 0.15 }}
-              className="text-center space-y-3 border-l-2 border-[#C29B43] pl-6"
+              initial={{ opacity: 0, y: 20, rotateX: -15 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ 
+                duration: 0.8, 
+                delay: 1.5 + index * 0.15,
+                type: "spring",
+                stiffness: 100,
+              }}
+              whileHover={{ 
+                scale: 1.05, 
+                y: -5,
+                rotateY: 5,
+                boxShadow: '0 20px 40px rgba(194, 155, 67, 0.3)',
+              }}
+              className="text-center space-y-4 border-l-4 border-[#C29B43] pl-6 bg-white/50 py-6 rounded-r-lg shadow-md hover:shadow-xl transition-all relative overflow-hidden group"
             >
+              {/* Animated background on hover */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-[#C29B43]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              />
               <p 
-                className="text-4xl text-[#1B2A41] font-light"
+                className="text-5xl text-[#1B2A41] font-light relative z-10"
                 style={{ fontFamily: '"Cormorant Garamond", serif' }}
               >
                 {item.year}
               </p>
               <p 
-                className="text-sm text-[#666] uppercase tracking-wider"
+                className="text-sm text-[#666] uppercase tracking-wider font-semibold relative z-10"
                 style={{ fontFamily: '"Montserrat", sans-serif' }}
               >
                 {item.event}
@@ -414,22 +467,41 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
         </motion.div>
 
         {/* Grid Gallery */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {images.map((src, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.08 }}
-              className="aspect-square overflow-hidden cursor-pointer group relative border border-[#E5E5E5]"
+              initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              transition={{ 
+                duration: 0.5, 
+                delay: index * 0.08,
+                type: "spring",
+                stiffness: 100,
+              }}
+              whileHover={{ 
+                scale: 1.05, 
+                y: -8,
+                rotateZ: 1,
+                boxShadow: '0 30px 60px rgba(194, 155, 67, 0.3)',
+              }}
+              className="aspect-square overflow-hidden cursor-pointer group relative border-2 border-[#E5E5E5] hover:border-[#C29B43] shadow-lg hover:shadow-2xl transition-all rounded-lg"
               onClick={() => setSelectedImage(index)}
             >
               <ImageWithFallback
                 src={src}
                 alt={`Gallery ${index + 1}`}
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-[#1B2A41]/0 group-hover:bg-[#1B2A41]/20 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1B2A41]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              {/* Shimmer effect on hover */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                initial={{ x: '-100%' }}
+                whileHover={{ x: '200%' }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+              />
             </motion.div>
           ))}
         </div>
@@ -541,11 +613,33 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
           {events.map((event, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="border-l-4 border-[#C29B43] pl-8 py-8 hover:bg-[#FAF7F2] transition-colors duration-300"
+              initial={{ opacity: 0, x: -30, rotateX: -10 }}
+              animate={{ opacity: 1, x: 0, rotateX: 0 }}
+              transition={{ 
+                duration: 0.8, 
+                delay: index * 0.2,
+                type: "spring",
+                stiffness: 80,
+              }}
+              whileHover={{ 
+                x: 10, 
+                boxShadow: '0 20px 40px rgba(27, 42, 65, 0.15)',
+                borderColor: 'rgba(194, 155, 67, 1)',
+              }}
+              className="border-l-4 border-[#C29B43] pl-10 py-10 hover:bg-[#FAF7F2] transition-all duration-300 rounded-r-xl shadow-md relative group overflow-hidden"
             >
+              {/* Animated background accent */}
+              <motion.div
+                className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#C29B43] via-[#1B2A41] to-[#C29B43] opacity-0 group-hover:opacity-100"
+                animate={{
+                  backgroundPosition: ['0% 0%', '0% 100%'],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
               <div className="grid md:grid-cols-12 gap-6 items-start">
                 {/* Time */}
                 <div className="md:col-span-3 space-y-2">
@@ -589,7 +683,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="grid md:grid-cols-2 gap-8 p-12 border-2 border-[#E5E5E5] bg-[#FAF7F2]"
+          className="grid md:grid-cols-2 gap-10 p-12 border-2 border-[#E5E5E5] bg-[#FAF7F2] shadow-xl rounded-lg"
         >
           <div className="space-y-4">
             <h3 
@@ -679,9 +773,9 @@ function MapPage({ onNext }: { onNext: () => void }) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="border-2 border-[#E5E5E5] p-6 bg-[#FAF7F2]"
+          className="border-2 border-[#E5E5E5] p-8 bg-[#FAF7F2] shadow-2xl rounded-xl"
         >
-          <div className="aspect-video overflow-hidden border border-[#C29B43]">
+          <div className="aspect-video overflow-hidden border-2 border-[#C29B43] rounded-lg shadow-lg">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.3193500236194!2d106.6918029!3d10.7870943!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b2e9cd7861%3A0xedce370ff1fd83c3!2sHo%20Chi%20Minh%20City%2C%20Vietnam!5e0!3m2!1sen!2s!4v1234567890"
               width="100%"
@@ -704,9 +798,9 @@ function MapPage({ onNext }: { onNext: () => void }) {
             </p>
             <Button
               onClick={() => window.open('https://maps.google.com', '_blank')}
-              className="mt-6 px-10 py-4 bg-[#C29B43] hover:bg-[#A88434] text-white shadow-lg"
+              className="mt-8 px-12 py-5 bg-[#C29B43] hover:bg-[#A88434] text-white shadow-xl shadow-[#C29B43]/30 font-semibold text-lg hover:scale-105 transition-all"
             >
-              <MapPin className="w-4 h-4 mr-2" />
+              <MapPin className="w-5 h-5 mr-2" />
               <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Mở Google Maps</span>
             </Button>
           </div>
@@ -773,12 +867,12 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="border-2 border-[#E5E5E5] p-12 md:p-16 bg-[#FAF7F2]"
+            className="border-2 border-[#E5E5E5] p-12 md:p-16 bg-[#FAF7F2] shadow-2xl rounded-xl"
           >
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-3">
                 <label 
-                  className="text-sm text-[#666] uppercase tracking-wider"
+                  className="text-sm text-[#666] uppercase tracking-wider font-semibold"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 >
                   Họ và Tên *
@@ -787,7 +881,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="p-4 text-lg border-[#C29B43]/30 focus:border-[#C29B43] bg-white"
+                  className="p-5 text-lg border-2 border-[#C29B43]/30 focus:border-[#C29B43] bg-white rounded-lg shadow-sm font-medium"
                   placeholder="Nhập họ tên của bạn"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 />
@@ -795,7 +889,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 
               <div className="space-y-3">
                 <label 
-                  className="text-sm text-[#666] uppercase tracking-wider"
+                  className="text-sm text-[#666] uppercase tracking-wider font-semibold"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 >
                   Số Lượng Khách *
@@ -806,14 +900,14 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                   required
                   value={formData.guests}
                   onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-                  className="p-4 text-lg border-[#C29B43]/30 focus:border-[#C29B43] bg-white"
+                  className="p-5 text-lg border-2 border-[#C29B43]/30 focus:border-[#C29B43] bg-white rounded-lg shadow-sm font-medium"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 />
               </div>
 
               <div className="space-y-3">
                 <label 
-                  className="text-sm text-[#666] uppercase tracking-wider"
+                  className="text-sm text-[#666] uppercase tracking-wider font-semibold"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 >
                   Lời Nhắn
@@ -821,7 +915,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                 <Textarea
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="p-4 text-lg border-[#C29B43]/30 focus:border-[#C29B43] bg-white min-h-32"
+                  className="p-5 text-lg border-2 border-[#C29B43]/30 focus:border-[#C29B43] bg-white min-h-36 rounded-lg shadow-sm font-medium"
                   placeholder="Gửi lời chúc đến cô dâu chú rể..."
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 />
@@ -829,9 +923,9 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 
               <Button
                 type="submit"
-                className="w-full py-6 text-lg bg-[#1B2A41] hover:bg-[#0F1A2E] text-white shadow-lg"
+                className="w-full py-7 text-lg bg-[#1B2A41] hover:bg-[#0F1A2E] text-white shadow-2xl shadow-[#1B2A41]/30 font-semibold hover:scale-[1.02] transition-all"
               >
-                <Send className="w-4 h-4 mr-2" />
+                <Send className="w-5 h-5 mr-2" />
                 <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Gửi Xác Nhận</span>
               </Button>
             </form>
@@ -841,25 +935,65 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="border-2 border-[#C29B43] p-16 text-center space-y-8 bg-[#FAF7F2]"
+            className="border-4 border-[#C29B43] p-16 text-center space-y-8 bg-[#FAF7F2] shadow-2xl rounded-xl relative overflow-hidden"
           >
+            {/* Animated background rings */}
+            <motion.div
+              className="absolute inset-0 border-4 border-[#C29B43]/20 rounded-xl"
+              animate={{
+                scale: [1, 1.05, 1],
+                opacity: [0.2, 0.1, 0.2],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
-              className="w-24 h-24 mx-auto bg-[#C29B43] flex items-center justify-center"
+              className="w-28 h-28 mx-auto bg-[#C29B43] flex items-center justify-center rounded-full shadow-xl relative z-10"
             >
-              <Check className="w-12 h-12 text-white" strokeWidth={3} />
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <Check className="w-14 h-14 text-white" strokeWidth={3} />
+              </motion.div>
+              
+              {/* Pulsing ring */}
+              <motion.div
+                className="absolute inset-0 border-4 border-[#C29B43] rounded-full"
+                animate={{
+                  scale: [1, 1.5],
+                  opacity: [0.5, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                }}
+              />
             </motion.div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               <h3 
-                className="text-4xl text-[#1B2A41] font-light"
+                className="text-5xl text-[#1B2A41] font-light"
                 style={{ fontFamily: '"Cormorant Garamond", serif' }}
               >
                 Cảm Ơn Bạn
               </h3>
-              <p className="text-lg text-[#666]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+              <p className="text-xl text-[#666] font-medium leading-relaxed" style={{ fontFamily: '"Montserrat", sans-serif' }}>
                 Chúng tôi rất vui mừng khi bạn xác nhận tham dự. <br />
                 Hẹn gặp lại bạn trong ngày trọng đại!
               </p>
@@ -880,7 +1014,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 }
 
 // QR Code Page
-function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value: boolean) => void }) {
+function QRCodePage({ copied, setCopied, guestName }: { copied: boolean; setCopied: (value: boolean) => void; guestName: string }) {
   const invitationUrl = 'https://wedding-invitation.example.com/minh-huong';
 
   const handleCopy = () => {
@@ -917,16 +1051,36 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="border-2 border-[#E5E5E5] p-16 text-center space-y-8 bg-[#FAF7F2]"
+          className="border-2 border-[#E5E5E5] p-16 text-center space-y-10 bg-[#FAF7F2] shadow-2xl rounded-xl"
         >
           {/* QR Code */}
           <motion.div
-            initial={{ rotate: -10, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="inline-block p-8 bg-white border-4 border-[#C29B43]"
+            initial={{ rotate: -10, opacity: 0, scale: 0.8 }}
+            animate={{ rotate: 0, opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.5, type: "spring", stiffness: 100 }}
+            whileHover={{
+              rotateY: 15,
+              rotateX: -5,
+              scale: 1.05,
+              boxShadow: '0 40px 80px rgba(194, 155, 67, 0.3)',
+            }}
+            className="inline-block p-10 bg-white border-4 border-[#C29B43] shadow-2xl rounded-lg relative group"
+            style={{ transformStyle: 'preserve-3d' }}
           >
-            <div className="w-64 h-64 bg-[#1B2A41] flex items-center justify-center">
+            {/* Glow effect */}
+            <motion.div
+              className="absolute inset-0 bg-[#C29B43]/20 rounded-lg blur-xl"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            <div className="w-64 h-64 bg-[#1B2A41] flex items-center justify-center relative z-10">
               <QrCode className="w-48 h-48 text-white" strokeWidth={1} />
             </div>
           </motion.div>
@@ -950,7 +1104,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
             {/* Copy Button */}
             <Button
               onClick={handleCopy}
-              className="px-10 py-4 bg-[#C29B43] hover:bg-[#A88434] text-white shadow-lg"
+              className="px-12 py-5 bg-[#C29B43] hover:bg-[#A88434] text-white shadow-xl shadow-[#C29B43]/30 font-semibold text-lg hover:scale-105 transition-all"
             >
               {copied ? (
                 <>
@@ -980,16 +1134,16 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
               Thank You
             </p>
             <p className="text-base text-[#666]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-              Sự hiện diện của bạn là món quà ý nghĩa nhất
+              Sự hiện diện của <span className="font-semibold text-[#C29B43]">{guestName}</span> là món quà ý nghĩa nhất
             </p>
           </motion.div>
 
           {/* Back to Home */}
           <Button
-            onClick={() => window.location.hash = '#/'}
-            className="px-10 py-4 bg-white hover:bg-[#FAF7F2] text-[#1B2A41] border-2 border-[#1B2A41] shadow-lg"
+            onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
+            className="px-12 py-5 bg-white hover:bg-[#FAF7F2] text-[#1B2A41] border-2 border-[#1B2A41] hover:border-[#C29B43] shadow-xl font-semibold text-lg hover:scale-105 transition-all"
           >
-            <Home className="w-4 h-4 mr-2" />
+            <Home className="w-5 h-5 mr-2" />
             <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Về Trang Chủ</span>
           </Button>
         </motion.div>

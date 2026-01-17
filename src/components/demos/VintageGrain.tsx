@@ -11,7 +11,7 @@ import { MapSection } from '../MapSection';
 export function VintageGrain() {
   const [currentTab, setCurrentTab] = useState(0);
   
-  const tabs = ['Cover', 'Story', 'Gallery', 'Map', 'Details'];
+  const tabs = ['Trang Bìa', 'Câu Chuyện', 'Album', 'Bản Đồ', 'Chi Tiết'];
 
   return (
     <div className="min-h-screen bg-[#F5EFE6] text-[#3E2723] relative overflow-hidden">
@@ -38,7 +38,7 @@ export function VintageGrain() {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-40">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-[#8B7355]/80 hover:bg-[#6D5A44] text-white rounded-full px-4 py-2 shadow-lg backdrop-blur-sm transition-all"
         >
           <Home className="w-4 h-4 mr-2" />
@@ -284,9 +284,6 @@ function MapTab() {
         <MapSection
           className="w-full h-[500px] rounded-lg shadow-xl"
           center={{ lat: 37.7749, lng: -122.4194 }}
-          zoom={13}
-          marker={{ lat: 37.7749, lng: -122.4194 }}
-          markerTitle="The Old Mill by the River"
         />
       </div>
     </section>

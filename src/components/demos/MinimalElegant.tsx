@@ -11,6 +11,12 @@ export function MinimalElegant() {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [showQR, setShowQR] = useState(false);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   const events = [
     {
       type: 'Lễ Gia Tiên',
@@ -51,7 +57,59 @@ export function MinimalElegant() {
       <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Hero Section - Clean & Minimal */}
-      <section className="relative h-screen flex items-center justify-center px-6">
+      <section className="relative h-screen flex items-center justify-center px-6 overflow-hidden">
+        {/* Floating Particles */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ y: '-10vh', opacity: 0 }}
+            animate={{
+              y: ['0vh', '120vh'],
+              x: ['0px', `${50 + i * 10}px`, `-${30 + i * 5}px`, `${20 + i * 8}px`, '0px'],
+              rotate: [0, 360],
+              scale: [0.5, 1, 0.8, 1, 0.5],
+              opacity: [0, 0.2, 0.2, 0],
+            }}
+            transition={{
+              duration: 15 + i * 2,
+              repeat: Infinity,
+              delay: i * 1.5,
+              ease: 'linear',
+            }}
+            className="absolute w-1.5 h-1.5 bg-[#C29B43] rounded-full shadow-lg"
+            style={{
+              left: `${(i * 8) % 100}%`,
+              filter: 'blur(0.5px)',
+            }}
+          />
+        ))}
+
+        {/* Corner Decorations */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 0.2, scale: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="absolute top-8 left-8 w-24 h-24 border-t-2 border-l-2 border-[#C29B43]"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 0.2, scale: 1 }}
+          transition={{ delay: 0.7, duration: 0.8 }}
+          className="absolute top-8 right-8 w-24 h-24 border-t-2 border-r-2 border-[#C29B43]"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 0.2, scale: 1 }}
+          transition={{ delay: 0.9, duration: 0.8 }}
+          className="absolute bottom-8 left-8 w-24 h-24 border-b-2 border-l-2 border-[#C29B43]"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 0.2, scale: 1 }}
+          transition={{ delay: 1.1, duration: 0.8 }}
+          className="absolute bottom-8 right-8 w-24 h-24 border-b-2 border-r-2 border-[#C29B43]"
+        />
+
         {/* Background Image */}
         <div className="absolute inset-0 opacity-10">
           <ImageWithFallback
@@ -102,9 +160,48 @@ export function MinimalElegant() {
               Nguyễn Văn Minh
             </h1>
             <div className="flex items-center justify-center gap-6">
-              <div className="w-12 h-px bg-[#C29B43]" />
-              <span className="text-3xl text-[#C29B43]">&</span>
-              <div className="w-12 h-px bg-[#C29B43]" />
+              <motion.div 
+                animate={{
+                  opacity: [0.4, 1, 0.4],
+                  scaleX: [0.8, 1, 0.8],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="w-12 h-px bg-[#C29B43]" 
+              />
+              <motion.span 
+                animate={{
+                  scale: [1, 1.1, 1],
+                  filter: [
+                    'drop-shadow(0 0 0px rgba(194, 155, 67, 0))',
+                    'drop-shadow(0 0 10px rgba(194, 155, 67, 0.8))',
+                    'drop-shadow(0 0 0px rgba(194, 155, 67, 0))'
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="text-3xl text-[#C29B43]"
+              >
+                &
+              </motion.span>
+              <motion.div 
+                animate={{
+                  opacity: [0.4, 1, 0.4],
+                  scaleX: [0.8, 1, 0.8],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="w-12 h-px bg-[#C29B43]" 
+              />
             </div>
             <h1 
               className="text-5xl md:text-7xl text-[#1B2A41]"
@@ -121,7 +218,7 @@ export function MinimalElegant() {
             transition={{ delay: 0.9 }}
             className="text-lg text-[#666] max-w-2xl mx-auto"
           >
-            Trân trọng kính mời quý khách đến dự lễ cưới của chúng tôi
+            Trân trọng kính mời <span className="font-semibold text-[#C29B43]">{getGuestName()}</span> đến dự lễ cưới của chúng tôi
           </motion.p>
         </motion.div>
       </section>
@@ -132,10 +229,18 @@ export function MinimalElegant() {
           <div className="grid md:grid-cols-2 gap-16">
             {/* Groom */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -30, rotateY: -15 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+              whileHover={{
+                rotateY: 5,
+                rotateX: -3,
+                scale: 1.02,
+                transition: { type: 'spring', stiffness: 300 },
+              }}
               viewport={{ once: true }}
+              transition={{ type: 'spring', stiffness: 100, damping: 15 }}
               className="text-center space-y-6"
+              style={{ transformStyle: 'preserve-3d' }}
             >
               <div className="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-[#C29B43]">
                 <ImageWithFallback
@@ -169,10 +274,18 @@ export function MinimalElegant() {
 
             {/* Bride */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 30, rotateY: 15 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+              whileHover={{
+                rotateY: -5,
+                rotateX: -3,
+                scale: 1.02,
+                transition: { type: 'spring', stiffness: 300 },
+              }}
               viewport={{ once: true }}
+              transition={{ type: 'spring', stiffness: 100, damping: 15 }}
               className="text-center space-y-6"
+              style={{ transformStyle: 'preserve-3d' }}
             >
               <div className="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-[#C29B43]">
                 <ImageWithFallback
@@ -224,11 +337,25 @@ export function MinimalElegant() {
             {events.map((event, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 30, rotateX: -10 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                whileHover={{
+                  rotateX: 2,
+                  rotateY: -3,
+                  scale: 1.01,
+                  background: 'linear-gradient(135deg, rgba(194, 155, 67, 0.03) 0%, transparent 100%)',
+                  boxShadow: '0 10px 30px rgba(194, 155, 67, 0.15)',
+                  transition: { type: 'spring', stiffness: 300 },
+                }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="border-l-4 border-[#C29B43] pl-8 py-6"
+                transition={{ 
+                  delay: index * 0.2,
+                  type: 'spring',
+                  stiffness: 100,
+                  damping: 15,
+                }}
+                className="border-l-4 border-[#C29B43] pl-8 py-6 rounded-r-xl"
+                style={{ transformStyle: 'preserve-3d' }}
               >
                 <div className="grid md:grid-cols-12 gap-8 items-start">
                   {/* Date */}
@@ -269,10 +396,22 @@ export function MinimalElegant() {
                   </div>
 
                   {/* Action */}
-                  <div className="md:col-span-3">
+                  <div className="md:col-span-3 relative">
+                    <motion.div
+                      animate={{
+                        rotate: [0, 360],
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                      className="absolute inset-0 bg-gradient-to-r from-[#C29B43] via-transparent to-[#C29B43] opacity-20 rounded-lg"
+                      style={{ filter: 'blur(4px)' }}
+                    />
                     <Button 
                       variant="outline"
-                      className="w-full border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white"
+                      className="w-full border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white relative z-10"
                     >
                       Xem Bản Đồ
                     </Button>
@@ -301,14 +440,29 @@ export function MinimalElegant() {
             {gallery.map((img, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.95, rotateY: -15 }}
+                whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ scale: 1.02 }}
+                transition={{ 
+                  delay: index * 0.05,
+                  type: 'spring',
+                  stiffness: 100,
+                }}
+                whileHover={{ 
+                  scale: 1.05,
+                  rotateY: 5,
+                  rotateZ: 2,
+                  boxShadow: '0 20px 40px rgba(194, 155, 67, 0.3)',
+                  transition: { type: 'spring', stiffness: 300 },
+                }}
                 onClick={() => setLightboxImage(img)}
-                className="aspect-square overflow-hidden cursor-pointer"
+                className="aspect-square overflow-hidden cursor-pointer rounded-lg relative group"
+                style={{ transformStyle: 'preserve-3d' }}
               >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out z-10"
+                  initial={false}
+                />
                 <ImageWithFallback
                   src={img}
                   alt={`Gallery ${index + 1}`}
@@ -379,10 +533,27 @@ export function MinimalElegant() {
                 placeholder="Lời chúc (tùy chọn)"
                 className="border-[#C29B43]/30 focus:border-[#C29B43] min-h-[100px]"
               />
-              <Button className="w-full bg-[#1B2A41] hover:bg-[#0F1A2E] text-white py-6">
-                <Send className="w-4 h-4 mr-2" />
-                Gửi Xác Nhận
-              </Button>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button className="w-full bg-[#1B2A41] hover:bg-[#0F1A2E] text-white py-6 relative overflow-hidden group">
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.5, 0, 0.5],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                    className="absolute inset-0 bg-[#C29B43] rounded-lg"
+                  />
+                  <Send className="w-4 h-4 mr-2 relative z-10" />
+                  <span className="relative z-10">Gửi Xác Nhận</span>
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
 
@@ -404,7 +575,24 @@ export function MinimalElegant() {
             </p>
 
             <div className="border-2 border-[#C29B43]/20 rounded-2xl p-8 space-y-6 text-center">
-              <Gift className="w-16 h-16 text-[#C29B43] mx-auto" />
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                  filter: [
+                    'drop-shadow(0 0 0px rgba(194, 155, 67, 0))',
+                    'drop-shadow(0 0 20px rgba(194, 155, 67, 0.8))',
+                    'drop-shadow(0 0 0px rgba(194, 155, 67, 0))'
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="flex justify-center"
+              >
+                <Gift className="w-16 h-16 text-[#C29B43] fill-[#C29B43]/20" />
+              </motion.div>
               
               {!showQR ? (
                 <Button
@@ -415,17 +603,45 @@ export function MinimalElegant() {
                   Xem QR Code
                 </Button>
               ) : (
-                <div className="space-y-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                  transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+                  className="space-y-4"
+                >
                   {/* Placeholder QR */}
-                  <div className="w-48 h-48 mx-auto bg-[#FAF7F2] border-2 border-[#C29B43] rounded-xl flex items-center justify-center">
+                  <motion.div 
+                    whileHover={{
+                      rotateY: 10,
+                      rotateX: 5,
+                      scale: 1.05,
+                      transition: { type: 'spring', stiffness: 300 },
+                    }}
+                    animate={{
+                      boxShadow: [
+                        '0 0 0px rgba(194, 155, 67, 0)',
+                        '0 0 30px rgba(194, 155, 67, 0.4)',
+                        '0 0 0px rgba(194, 155, 67, 0)'
+                      ],
+                    }}
+                    transition={{
+                      boxShadow: {
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      },
+                    }}
+                    className="w-48 h-48 mx-auto bg-[#FAF7F2] border-2 border-[#C29B43] rounded-xl flex items-center justify-center"
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
                     <QrCode className="w-24 h-24 text-[#C29B43]" />
-                  </div>
+                  </motion.div>
                   <div className="space-y-2 text-sm text-[#666]">
                     <p><b>Ngân hàng:</b> Vietcombank</p>
                     <p><b>STK:</b> 0123456789</p>
                     <p><b>Chủ TK:</b> Nguyễn Văn Minh</p>
                   </div>
-                </div>
+                </motion.div>
               )}
             </div>
           </motion.div>
@@ -442,7 +658,7 @@ export function MinimalElegant() {
             Thank You
           </p>
           <p className="text-sm text-gray-400">
-            Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi
+            Sự hiện diện của <span className="font-semibold text-[#C29B43]">{getGuestName()}</span> là niềm vinh hạnh cho gia đình chúng tôi
           </p>
           
           <Button

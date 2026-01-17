@@ -15,6 +15,12 @@ export function BloomCrystal3DEnhanced() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   const { scrollYProgress } = useScroll();
   const rotateX = useTransform(scrollYProgress, [0, 1], [0, 360]);
 
@@ -147,7 +153,7 @@ export function BloomCrystal3DEnhanced() {
 
       {/* 3D Page Indicator */}
       <div className="fixed top-8 right-8 z-50 flex gap-3 bg-white/20 backdrop-blur-md px-6 py-4 rounded-full border border-white/30 shadow-xl">
-        {['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((label, index) => (
+        {['Trang Bìa', 'Câu Chuyện', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận', 'QR'].map((label, index) => (
           <button
             key={index}
             onClick={() => {
@@ -183,7 +189,7 @@ export function BloomCrystal3DEnhanced() {
           {currentPage === 3 && <DetailsPage onNext={() => setCurrentPage(4)} />}
           {currentPage === 4 && <MapPage onNext={() => setCurrentPage(5)} />}
           {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} />}
-          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} />}
+          {currentPage === 6 && <QRCodePage copied={copied} setCopied={setCopied} guestName={getGuestName()} />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -837,7 +843,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
   );
 }
 
-function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value: boolean) => void }) {
+function QRCodePage({ copied, setCopied, guestName }: { copied: boolean; setCopied: (value: boolean) => void; guestName: string }) {
   const invitationUrl = 'https://wedding-invitation.example.com/minh-huong';
 
   const handleCopy = () => {
@@ -918,7 +924,7 @@ function QRCodePage({ copied, setCopied }: { copied: boolean; setCopied: (value:
               Thank You
             </p>
             <p className="text-base text-white/70" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-              Sự hiện diện của bạn là món quà ý nghĩa nhất
+              Sự hiện diện của <span className="font-semibold text-[#E8B4F8]">{guestName}</span> là món quà ý nghĩa nhất
             </p>
           </motion.div>
 

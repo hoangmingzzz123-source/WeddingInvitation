@@ -11,6 +11,12 @@ export function LuxuryGoldFrame() {
   const [rsvpData, setRsvpData] = useState({ name: '', guests: '1', note: '' });
   const [submitted, setSubmitted] = useState(false);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   // Gold sparkle particles
   const sparkles = Array.from({ length: 30 }, (_, i) => ({
     id: i,
@@ -32,7 +38,7 @@ export function LuxuryGoldFrame() {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => window.location.href = '/'}
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           className="bg-[#C29B43]/20 hover:bg-[#C29B43] text-[#FFD700] border border-[#C29B43] rounded-full px-4 py-2 shadow-lg transition-all backdrop-blur-md"
         >
           <Home className="w-4 h-4 mr-2" />
@@ -198,7 +204,7 @@ export function LuxuryGoldFrame() {
                     <span className="text-xl">15 • Tháng 3 • 2025</span>
                   </div>
                   <p className="text-lg leading-relaxed">
-                    Trân trọng kính mời quý khách đến dự lễ cưới của chúng tôi
+                    Trân trọng kính mời <span className="font-semibold text-[#FFD700]">{getGuestName()}</span> đến dự lễ cưới của chúng tôi
                   </p>
                 </div>
 

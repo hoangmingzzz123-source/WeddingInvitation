@@ -14,6 +14,12 @@ export function BlushFloral() {
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
+  // Get guest name from URL parameter
+  const getGuestName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('guest') || 'Bạn và người thân';
+  };
+
   const coupleNames = "Minh & Hương";
   
   // Typewriter effect
@@ -86,7 +92,7 @@ export function BlushFloral() {
 
       {/* Back Button */}
       <Button
-        onClick={() => window.location.hash = '#/'}
+        onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
         className="fixed top-6 left-6 z-50 bg-white/80 hover:bg-white text-[#F2C6CC] border-2 border-[#F2C6CC] backdrop-blur-sm"
       >
         <Home className="w-4 h-4 mr-2" />
@@ -95,7 +101,7 @@ export function BlushFloral() {
 
       {/* Page Indicator */}
       <div className="fixed top-6 right-6 z-50 flex gap-2">
-        {['Cover', 'Story', 'Gallery', 'Details', 'Map', 'RSVP', 'QR'].map((_, index) => (
+        {['Trang Bìa', 'Câu Chuyện', 'Album', 'Chi Tiết', 'Bản Đồ', 'Xác Nhận', 'QR'].map((_, index) => (
           <button
             key={index}
             onClick={() => {
@@ -129,7 +135,7 @@ export function BlushFloral() {
           {currentPage === 2 && <GalleryPage onNext={() => setCurrentPage(3)} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />}
           {currentPage === 3 && <DetailsPage onNext={() => setCurrentPage(4)} />}
           {currentPage === 4 && <MapPage onNext={() => setCurrentPage(5)} />}
-          {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} />}
+          {currentPage === 5 && <RSVPPage submitted={rsvpSubmitted} setSubmitted={setRsvpSubmitted} onNext={() => setCurrentPage(6)} guestName={getGuestName()} />}
           {currentPage === 6 && <QRCodePage />}
         </motion.div>
       </AnimatePresence>
@@ -408,12 +414,13 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-    "https://images.unsplash.com/photo-1560113406-36a33855c51e?w=800",
-    "https://images.unsplash.com/photo-1761285367066-5875252d7558?w=800",
-    "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?w=800",
-    "https://images.unsplash.com/photo-1519027156611-f83273d3333a?w=800",
-    "https://images.unsplash.com/photo-1738800076744-c37b80b37d31?w=800",
-    "https://images.unsplash.com/photo-1606216794079-c24943c3cb82?w=800",
+    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
+    
   ];
 
   return (
@@ -534,7 +541,7 @@ function MapPage({ onNext }: { onNext: () => void }) {
 
 // RSVP Page
 // RSVP Page
-function RSVPPage({ submitted, setSubmitted, onNext }: { submitted: boolean; setSubmitted: (value: boolean) => void; onNext: () => void }) {
+function RSVPPage({ submitted, setSubmitted, onNext, guestName }: { submitted: boolean; setSubmitted: (value: boolean) => void; onNext: () => void; guestName: string }) {
   const [formData, setFormData] = useState({ name: '', phone: '', guests: '1', message: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -559,7 +566,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: { submitted: boolean; set
             </h2>
 
             <p className="text-center text-[#654321] font-semibold" style={{ fontFamily: '"Poppins", sans-serif' }}>
-              Sự hiện diện của bạn là niềm hạnh phúc lớn nhất của chúng mình ❤️
+              Sự hiện diện của <span className="font-semibold text-[#D4A5A5]">{guestName}</span> là niềm hạnh phúc lớn nhất của chúng mình ❤️
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
