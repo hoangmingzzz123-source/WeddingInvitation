@@ -11,7 +11,8 @@ import { MapSection } from '../MapSection';
 
 export function BloomCrystal3D() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [rsvpData, setRsvpData] = useState({ name: '', email: '', guests: '1', note: '', attending: true });
+  const [rsvpData, setRsvpData] = useState({ name: '', email: '', guests: '1', note: '', attending: 'yes' });
+  const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [guestbook, setGuestbook] = useState<Array<{ name: string; message: string; sticker: string }>>([
     { name: 'Minh Anh', message: 'Chúc hai bạn hạnh phúc mãi mãi!', sticker: '❤️' },
     { name: 'Thu Hà', message: 'Trăm năm hạnh phúc!', sticker: '🌸' },
@@ -366,7 +367,7 @@ export function BloomCrystal3D() {
             </motion.section>
           )}
 
-          {/* Page 5: QR Wedding Gift */}
+          {/* Page 4: QR Wedding Gift - Updated with 3 QR Codes */}
           {currentPage === 4 && (
             <motion.section
               key="qr"
@@ -375,50 +376,97 @@ export function BloomCrystal3D() {
               exit={{ opacity: 0, y: -50 }}
               className="min-h-screen flex items-center justify-center px-4 py-20"
             >
-              <div className="max-w-2xl w-full space-y-8 text-center">
-                <h2 className="text-5xl text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>
-                  Mừng Cưới Online
-                </h2>
-                <p className="text-lg text-[#666]">
-                  Thay lời chúc phúc, bạn có thể gửi lời chúc và mừng cưới cho chúng tôi qua QR Code
+              <div className="max-w-6xl w-full space-y-12">
+                <div className="text-center space-y-4">
+                  <h2 className="text-5xl text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                    Mừng Cưới Online
+                  </h2>
+                  <p className="text-lg text-[#666]">
+                    Thay lời chúc phúc, bạn có thể gửi lời chúc và mừng cưới cho chúng tôi
+                  </p>
+                </div>
+
+                {/* 3 QR Codes Grid */}
+                <div className="grid md:grid-cols-3 gap-8">
+                  {[
+                    { 
+                      icon: '📱', 
+                      title: 'Momo',
+                      account: '0987654321',
+                      name: 'NGUYEN VAN MINH',
+                      color: '#A50064'
+                    },
+                    { 
+                      icon: '🏦', 
+                      title: 'Ngân Hàng',
+                      account: '1234567890',
+                      name: 'Vietcombank',
+                      color: '#C29B43'
+                    },
+                    { 
+                      icon: '💬', 
+                      title: 'Zalo/Facebook',
+                      account: '@wedding2025',
+                      name: 'Kết nối với chúng tôi',
+                      color: '#0068FF'
+                    }
+                  ].map((qr, index) => (
+                    <motion.div
+                      key={qr.title}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.2 }}
+                      className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border-2 hover:border-[#C29B43] transition-all"
+                    >
+                      <div className="text-center space-y-4">
+                        <div className="text-5xl mb-4">{qr.icon}</div>
+                        <h3 className="text-2xl text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                          {qr.title}
+                        </h3>
+                        
+                        <motion.div
+                          animate={{
+                            boxShadow: [
+                              '0 0 20px rgba(194, 155, 67, 0.2)',
+                              '0 0 30px rgba(194, 155, 67, 0.4)',
+                              '0 0 20px rgba(194, 155, 67, 0.2)',
+                            ],
+                          }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="inline-block bg-white p-6 rounded-2xl"
+                        >
+                          <div className="w-48 h-48 bg-gradient-to-br from-[#C29B43]/10 to-[#F7DADA]/10 rounded-xl flex items-center justify-center">
+                            <QrCode className="w-40 h-40" style={{ color: qr.color }} />
+                          </div>
+                        </motion.div>
+                        
+                        <div className="space-y-2">
+                          <p className="text-lg"><strong>STK:</strong> {qr.account}</p>
+                          <p className="text-sm text-[#666]">{qr.name}</p>
+                        </div>
+
+                        <Button
+                          onClick={() => {
+                            navigator.clipboard.writeText(qr.account);
+                            alert('Đã copy: ' + qr.account);
+                          }}
+                          className="bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-2 rounded-full"
+                        >
+                          Copy {qr.title === 'Ngân Hàng' ? 'STK' : 'ID'}
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <p className="text-center text-[#666] italic">
+                  Sự hiện diện của bạn là món quà ý nghĩa nhất với chúng tôi
                 </p>
-
-                <motion.div
-                  animate={{
-                    boxShadow: [
-                      '0 0 20px rgba(194, 155, 67, 0.3)',
-                      '0 0 40px rgba(194, 155, 67, 0.5)',
-                      '0 0 20px rgba(194, 155, 67, 0.3)',
-                    ],
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="inline-block bg-white p-8 rounded-3xl"
-                >
-                  <div className="w-64 h-64 bg-gradient-to-br from-[#C29B43]/10 to-[#F7DADA]/10 rounded-2xl flex items-center justify-center">
-                    <QrCode className="w-48 h-48 text-[#C29B43]" />
-                  </div>
-                  
-                  <div className="mt-6 space-y-2">
-                    <p className="text-lg">Ngân hàng: <strong>Vietcombank</strong></p>
-                    <p className="text-lg">STK: <strong>1234567890</strong></p>
-                    <p className="text-lg">Chủ TK: <strong>NGUYEN VAN MINH</strong></p>
-                  </div>
-
-                  <Button
-                    onClick={() => {
-                      navigator.clipboard.writeText('1234567890');
-                      alert('Đã copy số tài khoản!');
-                    }}
-                    className="mt-6 bg-[#C29B43] hover:bg-[#A88434] text-white px-8 py-3 rounded-full"
-                  >
-                    Copy Số Tài Khoản
-                  </Button>
-                </motion.div>
               </div>
             </motion.section>
           )}
 
-          {/* Page 6: RSVP Advanced */}
+          {/* Page 6: RSVP Advanced - Updated with Attending Field */}
           {currentPage === 5 && (
             <motion.section
               key="rsvp"
@@ -433,67 +481,147 @@ export function BloomCrystal3D() {
                     Xác Nhận Tham Dự
                   </h2>
 
-                  <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
-                    <div className="relative">
-                      <Input
-                        placeholder=" "
-                        className="peer border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl pt-6"
-                        required
-                      />
-                      <label className="absolute left-4 top-2 text-xs text-[#666] peer-placeholder-shown:top-4 peer-placeholder-shown:text-base transition-all">
-                        Họ và tên
-                      </label>
-                    </div>
-
-                    <div className="relative">
-                      <Input
-                        type="email"
-                        placeholder=" "
-                        className="peer border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl pt-6"
-                        required
-                      />
-                      <label className="absolute left-4 top-2 text-xs text-[#666] peer-placeholder-shown:top-4 peer-placeholder-shown:text-base transition-all">
-                        Email
-                      </label>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="checkbox"
-                        id="attending"
-                        checked={rsvpData.attending}
-                        onChange={(e) => setRsvpData({ ...rsvpData, attending: e.target.checked })}
-                        className="w-5 h-5 accent-[#C29B43]"
-                      />
-                      <label htmlFor="attending" className="text-lg">Tôi sẽ tham dự</label>
-                    </div>
-
-                    <Input
-                      type="number"
-                      placeholder="Số lượng khách"
-                      min="1"
-                      className="border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl"
-                    />
-
-                    <Textarea
-                      placeholder="Lời nhắn của bạn"
-                      rows={4}
-                      className="border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl"
-                    />
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white py-6 rounded-full text-lg"
+                  {!rsvpSubmitted ? (
+                    <form 
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        try {
+                          await submitRSVPWithFallback({
+                            name: rsvpData.name,
+                            attending: rsvpData.attending === 'yes' ? 'yes' : 'no',
+                            guestCount: parseInt(rsvpData.guests) || 1,
+                            message: rsvpData.note || 'Không có lời nhắn',
+                            template: 'BloomCrystal3D Demo',
+                          });
+                          setRsvpSubmitted(true);
+                          setTimeout(() => {
+                            setRsvpSubmitted(false);
+                            setRsvpData({ name: '', email: '', guests: '1', note: '', attending: 'yes' });
+                          }, 3000);
+                        } catch (error) {
+                          console.error('RSVP error:', error);
+                          setRsvpSubmitted(true);
+                          setTimeout(() => {
+                            setRsvpSubmitted(false);
+                            setRsvpData({ name: '', email: '', guests: '1', note: '', attending: 'yes' });
+                          }, 3000);
+                        }
+                      }} 
+                      className="space-y-6"
                     >
-                      Gửi Xác Nhận
-                    </Button>
-                  </form>
+                      <div>
+                        <label className="block text-[#666] mb-2">Họ và tên *</label>
+                        <Input
+                          value={rsvpData.name}
+                          onChange={(e) => setRsvpData({ ...rsvpData, name: e.target.value })}
+                          placeholder="Nhập họ và tên của bạn"
+                          className="border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[#666] mb-2">Email</label>
+                        <Input
+                          type="email"
+                          value={rsvpData.email}
+                          onChange={(e) => setRsvpData({ ...rsvpData, email: e.target.value })}
+                          placeholder="email@example.com"
+                          className="border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[#666] mb-2">Bạn có tham dự không? *</label>
+                        <div className="flex gap-4">
+                          <label className="flex-1 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="attending"
+                              value="yes"
+                              checked={rsvpData.attending === 'yes'}
+                              onChange={(e) => setRsvpData({ ...rsvpData, attending: e.target.value })}
+                              className="peer sr-only"
+                            />
+                            <div className="px-4 py-3 rounded-xl border-2 border-[#C29B43]/30 peer-checked:border-[#C29B43] peer-checked:bg-[#C29B43]/10 text-center transition-all">
+                              <span>Có, tôi sẽ đến</span>
+                            </div>
+                          </label>
+                          <label className="flex-1 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="attending"
+                              value="no"
+                              checked={rsvpData.attending === 'no'}
+                              onChange={(e) => setRsvpData({ ...rsvpData, attending: e.target.value })}
+                              className="peer sr-only"
+                            />
+                            <div className="px-4 py-3 rounded-xl border-2 border-[#C29B43]/30 peer-checked:border-[#C29B43] peer-checked:bg-[#C29B43]/10 text-center transition-all">
+                              <span>Xin lỗi, không thể</span>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[#666] mb-2">Số lượng khách *</label>
+                        <Input
+                          type="number"
+                          value={rsvpData.guests}
+                          onChange={(e) => setRsvpData({ ...rsvpData, guests: e.target.value })}
+                          placeholder="Số lượng khách"
+                          min="1"
+                          className="border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[#666] mb-2">Lời nhắn của bạn</label>
+                        <Textarea
+                          value={rsvpData.note}
+                          onChange={(e) => setRsvpData({ ...rsvpData, note: e.target.value })}
+                          placeholder="Ghi chú đặc biệt (ăn chay, dị ứng...)"
+                          rows={4}
+                          className="border-2 border-[#C29B43]/30 focus:border-[#C29B43] rounded-xl"
+                        />
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white py-6 rounded-full text-lg"
+                      >
+                        Gửi Xác Nhận
+                      </Button>
+                    </form>
+                  ) : (
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="text-center py-12"
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", bounce: 0.5 }}
+                        className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-100 mb-6"
+                      >
+                        <Heart className="w-12 h-12 text-green-600" fill="currentColor" />
+                      </motion.div>
+                      <h3 className="text-3xl text-[#C29B43] mb-3" style={{ fontFamily: '"Playfair Display", serif' }}>
+                        Xác Nhận Thành Công!
+                      </h3>
+                      <p className="text-lg text-[#666]">
+                        Cảm ơn bạn đã xác nhận. Chúng tôi rất mong được gặp bạn!
+                      </p>
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </motion.section>
           )}
 
-          {/* Page 7: Guestbook */}
+          {/* Page 7: Guestbook - Updated */}
           {currentPage === 6 && (
             <motion.section
               key="guestbook"
@@ -512,35 +640,44 @@ export function BloomCrystal3D() {
                   <h3 className="text-2xl text-[#C29B43] mb-6">Gửi lời chúc</h3>
                   
                   <div className="space-y-4">
-                    <Input
-                      placeholder="Tên của bạn"
-                      value={newMessage.name}
-                      onChange={(e) => setNewMessage({ ...newMessage, name: e.target.value })}
-                      className="border-2 border-[#C29B43]/30 rounded-xl"
-                    />
+                    <div>
+                      <label className="block text-[#666] mb-2">Tên của bạn</label>
+                      <Input
+                        placeholder="Nhập tên của bạn"
+                        value={newMessage.name}
+                        onChange={(e) => setNewMessage({ ...newMessage, name: e.target.value })}
+                        className="border-2 border-[#C29B43]/30 rounded-xl"
+                      />
+                    </div>
 
-                    <Textarea
-                      placeholder="Lời chúc của bạn..."
-                      value={newMessage.message}
-                      onChange={(e) => setNewMessage({ ...newMessage, message: e.target.value })}
-                      rows={3}
-                      className="border-2 border-[#C29B43]/30 rounded-xl"
-                    />
+                    <div>
+                      <label className="block text-[#666] mb-2">Lời chúc của bạn</label>
+                      <Textarea
+                        placeholder="Gửi lời chúc đến cô dâu chú rể..."
+                        value={newMessage.message}
+                        onChange={(e) => setNewMessage({ ...newMessage, message: e.target.value })}
+                        rows={3}
+                        className="border-2 border-[#C29B43]/30 rounded-xl"
+                      />
+                    </div>
 
-                    <div className="flex gap-2 flex-wrap">
-                      {stickers.map((sticker) => (
-                        <button
-                          key={sticker}
-                          onClick={() => setNewMessage({ ...newMessage, sticker })}
-                          className={`text-3xl p-3 rounded-xl transition-all ${
-                            newMessage.sticker === sticker
-                              ? 'bg-[#C29B43] scale-125'
-                              : 'bg-gray-100 hover:scale-110'
-                          }`}
-                        >
-                          {sticker}
-                        </button>
-                      ))}
+                    <div>
+                      <label className="block text-[#666] mb-2">Chọn biểu tượng</label>
+                      <div className="flex gap-2 flex-wrap">
+                        {stickers.map((sticker) => (
+                          <button
+                            key={sticker}
+                            onClick={() => setNewMessage({ ...newMessage, sticker })}
+                            className={`text-3xl p-3 rounded-xl transition-all ${
+                              newMessage.sticker === sticker
+                                ? 'bg-[#C29B43] scale-125'
+                                : 'bg-gray-100 hover:scale-110'
+                            }`}
+                          >
+                            {sticker}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
                     <Button
@@ -560,6 +697,10 @@ export function BloomCrystal3D() {
 
                 {/* Messages */}
                 <div className="space-y-4">
+                  <div className="text-center mb-6">
+                    <p className="text-[#666]">{guestbook.length} lời chúc</p>
+                  </div>
+
                   {guestbook.map((msg, index) => (
                     <motion.div
                       key={index}
