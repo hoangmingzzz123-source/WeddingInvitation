@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { MapPin, Calendar, Clock, Send, Home, QrCode, Copy, Check, Heart, Sparkles, ArrowRight } from 'lucide-react';
+import { MapPin, Calendar, Clock, Send, Home, QrCode, Copy, Check, Heart, Sparkles, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 
 export function BloomCrystal3DEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -725,11 +726,28 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
   setSubmitted: (value: boolean) => void;
   onNext: () => void;
 }) {
-  const [formData, setFormData] = useState({ name: '', guests: '1', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', guests: '1', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      await submitRSVPWithFallback({
+        name: formData.name,
+        email: formData.email || undefined,
+        attending: 'yes',
+        guestCount: parseInt(formData.guests) || 1,
+        message: formData.message || undefined,
+        template: 'Bloom Crystal 3D Enhanced',
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting RSVP:', error);
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -768,8 +786,22 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                 />
               </div>
 
-              <div className="space-y-3">
-                <label className="text-sm text-white/80 uppercase tracking-wider" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+              <div className="space-y-3">                <label className="text-sm text-white/70 uppercase tracking-wider">
+                  Email (Không bắt buộc)
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FF69B4]" />
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="p-4 pl-12 text-lg bg-white/10 border-2 border-[#FF69B4]/30 focus:border-[#FF69B4] text-white placeholder:text-white/50"
+                    placeholder="example@email.com"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">                <label className="text-sm text-white/80 uppercase tracking-wider" style={{ fontFamily: '"Montserrat", sans-serif' }}>
                   Số Lượng Khách *
                 </label>
                 <Input
@@ -796,10 +828,24 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 
               <Button
                 type="submit"
-                className="w-full py-6 text-lg bg-white/20 hover:bg-white/30 text-white border-2 border-white/50 backdrop-blur-md shadow-xl"
+                disabled={isSubmitting}
+                className="w-full py-6 text-lg bg-white/20 hover:bg-white/30 text-white border-2 border-white/50 backdrop-blur-md shadow-xl disabled:opacity-50"
               >
-                <Send className="w-5 h-5 mr-2" />
-                Gửi Xác Nhận
+                {isSubmitting ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    Đang gửi...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5 mr-2" />
+                    Gửi Xác Nhận
+                  </>
+                )}
               </Button>
             </form>
           </motion.div>

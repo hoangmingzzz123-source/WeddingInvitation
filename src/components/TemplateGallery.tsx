@@ -400,7 +400,7 @@ export function TemplateGallery() {
               onClick={() => navigateTo('/templates')}
               className="bg-[#1B2A41] hover:bg-[#0F1A2E] text-white px-8 py-6 rounded-full"
             >
-              Xem tất cả 45+ mẫu thiệp
+              Xem tất cả mẫu thiệp
             </Button>
           </motion.div>
         </motion.div>
