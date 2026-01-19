@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@300;400;500;600;700&display=swap');
+
+:where(.demo-traditional-wrapper) {
+  --color-red-traditional: #8B1E1E;
+  --color-gold: #D4AF37;
+  --color-cream: #FBF6EE;
+  --color-brown: #3A2F2F;
+  --color-red-light: #A73333;
+  
+  --font-family-display: 'Noto Serif', 'Playfair Display', 'Georgia', serif;
+  --font-family-script: 'Great Vibes', cursive;
+  --font-family-serif: 'Noto Serif', 'EB Garamond', 'Georgia', serif;
+  
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+}
+
+@layer base {
+  /* Playfair Display - Ultra luxury high-fashion serif for headings */
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/playfairdisplay/v36/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/playfairdisplay/v36/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKd3vUDQZNLo_U2r.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/playfairdisplay/v36/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKebukDQZNLo_U2r.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/playfairdisplay/v36/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKeKukDQZNLo_U2r.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/playfairdisplay/v36/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_qiTbtbK-F2rA0s.woff2) format('woff2');
+  }
+  
+  /* Great Vibes - Flowing luxury script for names */
+  @font-face {
+    font-family: 'Great Vibes';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/greatvibes/v18/RWmMoKWR9v4ksMfaWd_JN9XFiaQ.woff2) format('woff2');
+  }
+  
+  /* EB Garamond - Classic refined serif for body */
+  @font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-2fRUA4V-e6yHgQ.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-NfNUA4V-e6yHgQ.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-DPNUA4V-e6yHgQ.woff2) format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'EB Garamond';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/ebgaramond/v27/SlGFmQSNjdsmc35JDF1K5GRwUjcdlttVFm-rI7e8QI96WamXgXFI.woff2) format('woff2');
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-family-serif);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-brown);
+    line-height: 1.75;
+    position: relative;
+    letter-spacing: 0.02em;
+  }
+  
+  /* Paper grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    z-index: 1;
+    pointer-events: none;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+  }
+  
+  /* Cloud/wave pattern overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.04;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 200 Q 100 150 200 200 T 400 200' stroke='%233A2F2F' stroke-width='0.5' fill='none' opacity='0.3'/%3E%3Cpath d='M 0 250 Q 100 200 200 250 T 400 250' stroke='%233A2F2F' stroke-width='0.5' fill='none' opacity='0.2'/%3E%3C/svg%3E");
+    background-size: 400px 400px;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 400;
+    line-height: 1.3;
+    font-family: var(--font-family-display);
+    letter-spacing: 0.05em;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.4;
+    font-family: var(--font-family-display);
+    letter-spacing: 0.08em;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.5;
+    font-family: var(--font-family-display);
+    letter-spacing: 0.05em;
+  }
+  
+  p {
+    font-size: 1rem;
+    line-height: 1.75;
+    font-family: var(--font-family-serif);
+  }
+  
+  button {
+    font-family: var(--font-family-serif);
+    letter-spacing: 0.03em;
+  }
+}
+
+/* Smooth animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes inkSpread {
+  from {
+    opacity: 0;
+    filter: blur(20px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes silkFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+@keyframes slowRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-red-traditional);
+}
+
+/* Silk texture class */
+.silk-texture {
+  position: relative;
+}
+
+.silk-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: silkShimmer 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes silkShimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Vignette effect */
+.vignette {
+  position: relative;
+}
+
+.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 40%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  pointer-events: none;
+
+}

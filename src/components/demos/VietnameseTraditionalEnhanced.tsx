@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Calendar, Clock, Heart, Users, Gift, Send, Phone, Home, QrCode, Image as ImageIcon, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { MapPin, Calendar, Clock, Heart, Users, Gift, Send, Phone, Home, QrCode, Image as ImageIcon, ChevronLeft, ChevronRight, X, Mail } from 'lucide-react';
+import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -11,40 +12,23 @@ export function VietnameseTraditionalEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [displayedText, setDisplayedText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
+  const [formData, setFormData] = useState({ name: '', phone: '', guests: '1', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const pages = ['cover', 'story', 'gallery', 'details', 'map', 'rsvp', 'qr'];
+  const pages = ['cover', 'story', 'gallery', 'details', 'map', 'rsvp', 'banking', 'qr'];
 
   // Gallery images
   const gallery = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-    'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800',
-    'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800',
-    'https://images.unsplash.com/photo-1525258854165-8dbe544937d5?w=800',
-    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800',
+     'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
+     
   ];
-
-  // Typewriter effect
-  useEffect(() => {
-    if (currentPage === 1 && !isTyping) {
-      const text = "Tình yêu là hành trình kỳ diệu, hôn nhân là bến đỗ hạnh phúc. Từ ngày đầu tiên gặp gỡ, chúng tôi đã biết rằng định mệnh đã sắp đặt cho chúng tôi những một người. Hôm nay, trước sự chứng kiến của gia đình, bạn bè và người thân, chúng tôi hân hạnh thông báo về lễ thành hôn của chúng tôi.";
-      setIsTyping(true);
-      setDisplayedText('');
-      let index = 0;
-      const interval = setInterval(() => {
-        if (index < text.length) {
-          setDisplayedText(prev => prev + text[index]);
-          index++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 40);
-      return () => clearInterval(interval);
-    }
-  }, [currentPage]);
 
   // Fireworks on page change
   useEffect(() => {
@@ -400,15 +384,13 @@ export function VietnameseTraditionalEnhanced() {
                 <div className="absolute bottom-4 right-4 w-16 h-16 border-b-4 border-r-4 border-[#DC143C] rounded-br-2xl" />
 
                 <motion.p 
-                  className="text-xl md:text-2xl leading-relaxed text-[#3333]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                  className="text-xl md:text-2xl leading-relaxed text-[#333]"
                   style={{ fontFamily: '"Poppins", sans-serif' }}
                 >
-                  {displayedText}
-                  <motion.span
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ duration: 0.8, repeat: Infinity }}
-                    className="inline-block w-1 h-6 bg-[#DC143C] ml-1"
-                  />
+                  Tình yêu là hành trình kỳ diệu, hôn nhân là bến đỗ hạnh phúc. Từ ngày đầu tiên gặp gỡ, chúng tôi đã biết rằng định mệnh đã sắp đặt cho chúng tôi một người. Hôm nay, trước sự chứng kiến của gia đình, bạn bè và người thân, chúng tôi hân hạnh thông báo về lễ thành hôn của chúng tôi.
                 </motion.p>
               </motion.div>
 
@@ -628,6 +610,7 @@ export function VietnameseTraditionalEnhanced() {
                     </div>
 
                     <Button 
+                      onClick={() => setCurrentPage(4)}
                       className="w-full bg-gradient-to-r from-[#DC143C] to-[#C29B43] hover:from-[#C41E3A] hover:to-[#B8860B] text-white font-semibold py-6 rounded-xl shadow-lg"
                     >
                       <MapPin className="w-5 h-5 mr-2" />
@@ -682,7 +665,10 @@ export function VietnameseTraditionalEnhanced() {
                 <div className="p-8 bg-gradient-to-br from-[#FFE5E5] to-white rounded-2xl border-2 border-[#DC143C]/20">
                   <h3 className="text-2xl font-bold text-[#DC143C] mb-4">Nhà Gái</h3>
                   <p className="text-[#666] mb-4">123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM</p>
-                  <Button className="w-full bg-[#DC143C] hover:bg-[#C41E3A]">
+                  <Button 
+                    onClick={() => window.open('https://maps.google.com/?q=123+Nguyen+Hue+District+1+HCMC', '_blank')}
+                    className="w-full bg-[#DC143C] hover:bg-[#C41E3A]"
+                  >
                     <MapPin className="w-5 h-5 mr-2" />
                     Mở Google Maps
                   </Button>
@@ -690,7 +676,10 @@ export function VietnameseTraditionalEnhanced() {
                 <div className="p-8 bg-gradient-to-br from-[#FFF8E7] to-white rounded-2xl border-2 border-[#C29B43]/20">
                   <h3 className="text-2xl font-bold text-[#C29B43] mb-4">Nhà Trai</h3>
                   <p className="text-[#666] mb-4">456 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM</p>
-                  <Button className="w-full bg-[#C29B43] hover:bg-[#B8860B]">
+                  <Button 
+                    onClick={() => window.open('https://maps.google.com/?q=456+Le+Loi+District+1+HCMC', '_blank')}
+                    className="w-full bg-[#C29B43] hover:bg-[#B8860B]"
+                  >
                     <MapPin className="w-5 h-5 mr-2" />
                     Mở Google Maps
                   </Button>
@@ -709,97 +698,429 @@ export function VietnameseTraditionalEnhanced() {
             exit={{ opacity: 0 }}
             className="min-h-screen px-6 py-20"
           >
-            <div className="max-w-2xl mx-auto space-y-12">
-              <motion.h2
+            <div className="max-w-3xl mx-auto space-y-12">
+              {/* Header */}
+              <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-5xl md:text-6xl font-bold text-center"
-                style={{
-                  fontFamily: '"Playfair Display", serif',
-                  background: 'linear-gradient(135deg, #DC143C, #C29B43)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
+                className="text-center space-y-6"
               >
-                Xác Nhận Tham Dự
-              </motion.h2>
+                <h2
+                  className="text-5xl md:text-6xl font-bold"
+                  style={{
+                    fontFamily: '"Playfair Display", serif',
+                    background: 'linear-gradient(135deg, #DC143C, #C29B43)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Xác Nhận Tham Dự
+                </h2>
+                <div className="flex items-center justify-center gap-4">
+                  <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#C29B43]" />
+                  <Heart className="w-6 h-6 text-[#DC143C] fill-[#DC143C]" />
+                  <div className="w-16 h-px bg-gradient-to-l from-transparent to-[#C29B43]" />
+                </div>
+                <p className="text-lg text-[#666] max-w-2xl mx-auto">
+                  Sự hiện diện của bạn là niềm vinh hạnh cho chúng tôi. Vui lòng xác nhận tham dự để chúng tôi chuẩn bị chu đáo hơn.
+                </p>
+              </motion.div>
 
               {!rsvpSubmitted ? (
                 <motion.form
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    setRsvpSubmitted(true);
+                    setIsSubmitting(true);
+                    try {
+                      await submitRSVPWithFallback({
+                        name: formData.name,
+                        email: formData.phone,
+                        attending: 'yes',
+                        guestCount: parseInt(formData.guests) || 1,
+                        message: formData.message || undefined,
+                        template: 'Vietnamese Traditional Enhanced',
+                      });
+                      setRsvpSubmitted(true);
+                    } catch (error) {
+                      console.error('Error submitting RSVP:', error);
+                      setRsvpSubmitted(true);
+                    } finally {
+                      setIsSubmitting(false);
+                    }
                   }}
-                  className="p-10 bg-white rounded-3xl shadow-2xl border-4 border-[#FFD700]/30 space-y-6"
+                  className="relative"
                 >
-                  <div className="space-y-4">
-                    <Input
-                      placeholder="Họ và tên *"
-                      required
-                      className="h-14 text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl"
-                    />
-                    <Input
-                      type="tel"
-                      placeholder="Số điện thoại *"
-                      required
-                      className="h-14 text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Số người tham dự *"
-                      required
-                      min="1"
-                      className="h-14 text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl"
-                    />
-                    <Textarea
-                      placeholder="Lời chúc (không bắt buộc)"
-                      rows={4}
-                      className="text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl resize-none"
-                    />
+                  {/* Decorative corners */}
+                  
+                  <div className="p-8 md:p-12 bg-gradient-to-br from-white via-[#FFF8E7]/30 to-white rounded-3xl shadow-2xl border-4 border-[#FFD700]/30 space-y-4">
+                    {/* Form Fields */}
+                    <div className="space-y-6">
+                      {/* Name Field */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="space-y-3"
+                      >
+                        <label className="flex items-center gap-2 text-sm font-semibold text-[#8B4513] uppercase tracking-wider">
+                          <Users className="w-4 h-4 text-[#DC143C]" />
+                          Họ và Tên *
+                        </label>
+                        <div className="relative group">
+                          <Input
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="Nhập họ và tên của bạn"
+                            className="h-14 text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl pl-4 pr-12 transition-all group-hover:border-[#C29B43]/50 bg-white/80 backdrop-blur-sm"
+                          />
+                          <Users className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#C29B43]/50 pointer-events-none" />
+                        </div>
+                      </motion.div>
+
+                      {/* Phone Field */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="space-y-3"
+                      >
+                        <label className="flex items-center gap-2 text-sm font-semibold text-[#8B4513] uppercase tracking-wider">
+                          <Phone className="w-4 h-4 text-[#DC143C]" />
+                          Số Điện Thoại *
+                        </label>
+                        <div className="relative group">
+                          <Input
+                            type="tel"
+                            required
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="Nhập số điện thoại"
+                            className="h-14 text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl pl-4 pr-12 transition-all group-hover:border-[#C29B43]/50 bg-white/80 backdrop-blur-sm"
+                          />
+                          <Phone className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#C29B43]/50 pointer-events-none" />
+                        </div>
+                      </motion.div>
+
+                      {/* Guest Count Field */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.6 }}
+                        className="space-y-3"
+                      >
+                        <label className="flex items-center gap-2 text-sm font-semibold text-[#8B4513] uppercase tracking-wider">
+                          <Heart className="w-4 h-4 text-[#DC143C]" />
+                          Số Người Tham Dự *
+                        </label>
+                        <div className="relative group">
+                          <Input
+                            type="number"
+                            required
+                            min="1"
+                            max="20"
+                            value={formData.guests}
+                            onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
+                            placeholder="Số lượng khách"
+                            className="h-14 text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl pl-4 pr-12 transition-all group-hover:border-[#C29B43]/50 bg-white/80 backdrop-blur-sm"
+                          />
+                          <Users className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#C29B43]/50 pointer-events-none" />
+                        </div>
+                      </motion.div>
+
+                      {/* Message Field */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.7 }}
+                        className="space-y-3"
+                      >
+                        <label className="flex items-center gap-2 text-sm font-semibold text-[#8B4513] uppercase tracking-wider">
+                          <Mail className="w-4 h-4 text-[#DC143C]" />
+                          Lời Chúc (không bắt buộc)
+                        </label>
+                        <div className="relative group">
+                          <Textarea
+                            rows={5}
+                            value={formData.message}
+                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                            placeholder="Gửi lời chúc phúc đến đôi uyên ương..."
+                            className="text-lg border-2 border-[#C29B43]/30 focus:border-[#DC143C] rounded-xl p-4 transition-all group-hover:border-[#C29B43]/50 resize-none bg-white/80 backdrop-blur-sm"
+                          />
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 }}
+                    >
+                      <Button 
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full h-16 text-xl font-bold bg-gradient-to-r from-[#DC143C] via-[#C41E3A] to-[#C29B43] hover:from-[#C41E3A] hover:via-[#DC143C] hover:to-[#B8860B] text-white rounded-xl shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(220,20,60,0.4)]"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className="w-6 h-6 border-3 border-white border-t-transparent rounded-full mr-3"
+                            />
+                            Đang Gửi...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-6 h-6 mr-3" />
+                            Gửi Xác Nhận Tham Dự
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
+
+                    {/* Note */}
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.9 }}
+                      className="text-center text-sm text-[#999] italic"
+                    >
+                      * Thông tin của bạn sẽ được bảo mật tuyệt đối
+                    </motion.p>
                   </div>
 
-                  <Button 
-                    type="submit"
-                    className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[#DC143C] to-[#C29B43] hover:from-[#C41E3A] hover:to-[#B8860B] text-white rounded-xl shadow-lg"
-                  >
-                    <Send className="w-5 h-5 mr-2" />
-                    Gửi Xác Nhận
-                  </Button>
+                  
                 </motion.form>
               ) : (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", duration: 0.8 }}
-                  className="p-12 bg-gradient-to-br from-[#FFE5E5] to-[#FFF8E7] rounded-3xl shadow-2xl border-4 border-[#FFD700]/50 text-center space-y-6"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", duration: 0.8, bounce: 0.4 }}
+                  className="relative"
                 >
-                  <motion.div
-                    animate={{ 
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 10, 0, -10, 0],
-                    }}
-                    transition={{ duration: 1 }}
-                  >
-                    <Heart className="w-24 h-24 mx-auto text-[#DC143C] fill-[#DC143C]" />
-                  </motion.div>
-                  <h3 className="text-4xl font-bold text-[#DC143C]" style={{ fontFamily: '"Playfair Display", serif' }}>
-                    Cảm Ơn Bạn!
-                  </h3>
-                  <p className="text-xl text-[#666]">
-                    Chúng tôi rất vui mừng được đón tiếp bạn trong ngày trọng đại của chúng tôi.
-                  </p>
-                  <Button
-                    onClick={() => setRsvpSubmitted(false)}
-                    variant="outline"
-                    className="border-2 border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white"
-                  >
-                    Gửi xác nhận khác
-                  </Button>
+                  {/* Success card decorative corners */}
+                  <div className="absolute -top-3 -left-3 w-24 h-24 border-t-4 border-l-4 border-[#DC143C]/40 rounded-tl-3xl pointer-events-none" />
+                  <div className="absolute -top-3 -right-3 w-24 h-24 border-t-4 border-r-4 border-[#C29B43]/40 rounded-tr-3xl pointer-events-none" />
+                  <div className="absolute -bottom-3 -left-3 w-24 h-24 border-b-4 border-l-4 border-[#C29B43]/40 rounded-bl-3xl pointer-events-none" />
+                  <div className="absolute -bottom-3 -right-3 w-24 h-24 border-b-4 border-r-4 border-[#DC143C]/40 rounded-br-3xl pointer-events-none" />
+
+                  <div className="p-12 md:p-16 bg-gradient-to-br from-[#FFE5E5] via-white to-[#FFF8E7] rounded-3xl shadow-2xl border-4 border-[#FFD700]/50 text-center space-y-8">
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 10, 0, -10, 0],
+                      }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="relative inline-block"
+                    >
+                      <div className="absolute inset-0 bg-[#DC143C]/20 blur-3xl rounded-full" />
+                      <Heart className="relative w-28 h-28 text-[#DC143C] fill-[#DC143C] drop-shadow-2xl" />
+                    </motion.div>
+                    
+                    <div className="space-y-4">
+                      <motion.h3 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-4xl md:text-5xl font-bold text-[#DC143C]" 
+                        style={{ fontFamily: '"Playfair Display", serif' }}
+                      >
+                        Cảm Ơn Bạn Rất Nhiều!
+                      </motion.h3>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="w-32 h-1 mx-auto bg-gradient-to-r from-transparent via-[#C29B43] to-transparent rounded-full"
+                      />
+                    </div>
+
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                      className="text-xl md:text-2xl text-[#666] leading-relaxed max-w-xl mx-auto"
+                    >
+                      Chúng tôi rất vui mừng và hạnh phúc được đón tiếp bạn trong ngày trọng đại nhất cuộc đời chúng tôi.
+                    </motion.p>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 }}
+                      className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+                    >
+                      <Button
+                        onClick={() => {
+                          setRsvpSubmitted(false);
+                          setFormData({ name: '', phone: '', guests: '1', message: '' });
+                        }}
+                        variant="outline"
+                        className="px-8 py-6 text-lg border-2 border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white rounded-xl font-semibold transition-all hover:scale-105 hover:shadow-lg"
+                      >
+                        <Users className="w-5 h-5 mr-2" />
+                        Gửi xác nhận khác
+                      </Button>
+                    </motion.div>
+                  </div>
                 </motion.div>
               )}
+            </div>
+          </motion.div>
+        );
+
+      case 'banking':
+        return (
+          <motion.div
+            key="banking"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="min-h-screen px-6 py-20"
+          >
+            <div className="max-w-5xl mx-auto space-y-12">
+              {/* Header */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center space-y-6"
+              >
+                <h2
+                  className="text-5xl md:text-6xl font-bold"
+                  style={{
+                    fontFamily: '"Playfair Display", serif',
+                    background: 'linear-gradient(135deg, #DC143C, #C29B43)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Mừng Cưới
+                </h2>
+                <div className="flex items-center justify-center gap-4">
+                  <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#C29B43]" />
+                  <Gift className="w-6 h-6 text-[#DC143C] fill-[#DC143C]" />
+                  <div className="w-16 h-px bg-gradient-to-l from-transparent to-[#C29B43]" />
+                </div>
+                <p className="text-lg text-[#666] max-w-2xl mx-auto">
+                  Thay vì hoa và quà tặng, chúng tôi trân trọng nhận được lời chúc phúc và sự hiện diện của bạn.
+                </p>
+              </motion.div>
+
+              {/* Banking Cards */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Bride */}
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="relative group"
+                >
+                  {/* Decorative corners */}
+                  <div className="absolute -top-2 -left-2 w-16 h-16 border-t-4 border-l-4 border-[#DC143C]/40 rounded-tl-2xl pointer-events-none z-10" />
+                  <div className="absolute -bottom-2 -right-2 w-16 h-16 border-b-4 border-r-4 border-[#DC143C]/40 rounded-br-2xl pointer-events-none z-10" />
+                  
+                  <div className="p-8 bg-gradient-to-br from-[#FFE5E5] via-white to-[#FFF8E7] rounded-2xl shadow-2xl border-4 border-[#FFD700]/30 space-y-6 hover:scale-[1.02] transition-transform">
+                    {/* Title */}
+                    <div className="text-center space-y-2 pb-4 border-b-2 border-[#DC143C]/20">
+                      <Heart className="w-8 h-8 mx-auto text-[#DC143C] fill-[#DC143C]" />
+                      <h3 className="text-2xl font-bold text-[#DC143C]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                        Cô Dâu
+                      </h3>
+                      <p className="text-lg text-[#666]">Trần Thị Hương</p>
+                    </div>
+
+                    {/* QR Code */}
+                    <div className="flex justify-center py-4">
+                      <div className="relative p-4 bg-white rounded-xl border-4 border-[#DC143C]/30 shadow-lg group-hover:shadow-2xl transition-shadow">
+                        <div className="w-48 h-48 bg-gradient-to-br from-[#DC143C]/10 to-[#FFD700]/10 flex items-center justify-center rounded-lg">
+                          <QrCode className="w-40 h-40 text-[#DC143C]" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bank Info */}
+                    <div className="space-y-3 text-center">
+                      <div className="p-4 bg-white/80 rounded-xl border-2 border-[#DC143C]/20">
+                        <p className="text-sm text-[#8B4513] font-semibold mb-1">Ngân hàng</p>
+                        <p className="text-lg font-bold text-[#333]">Vietcombank</p>
+                      </div>
+                      <div className="p-4 bg-white/80 rounded-xl border-2 border-[#DC143C]/20">
+                        <p className="text-sm text-[#8B4513] font-semibold mb-1">Số tài khoản</p>
+                        <p className="text-lg font-bold text-[#333] font-mono">1234567890</p>
+                      </div>
+                      <div className="p-4 bg-white/80 rounded-xl border-2 border-[#DC143C]/20">
+                        <p className="text-sm text-[#8B4513] font-semibold mb-1">Chủ tài khoản</p>
+                        <p className="text-lg font-bold text-[#333]">TRAN THI HUONG</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Groom */}
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="relative group"
+                >
+                  {/* Decorative corners */}
+                  <div className="absolute -top-2 -left-2 w-16 h-16 border-t-4 border-l-4 border-[#C29B43]/40 rounded-tl-2xl pointer-events-none z-10" />
+                  <div className="absolute -bottom-2 -right-2 w-16 h-16 border-b-4 border-r-4 border-[#C29B43]/40 rounded-br-2xl pointer-events-none z-10" />
+                  
+                  <div className="p-8 bg-gradient-to-br from-[#FFF8E7] via-white to-[#FFE5E5] rounded-2xl shadow-2xl border-4 border-[#FFD700]/30 space-y-6 hover:scale-[1.02] transition-transform">
+                    {/* Title */}
+                    <div className="text-center space-y-2 pb-4 border-b-2 border-[#C29B43]/20">
+                      <Heart className="w-8 h-8 mx-auto text-[#C29B43] fill-[#C29B43]" />
+                      <h3 className="text-2xl font-bold text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                        Chú Rể
+                      </h3>
+                      <p className="text-lg text-[#666]">Nguyễn Văn Minh</p>
+                    </div>
+
+                    {/* QR Code */}
+                    <div className="flex justify-center py-4">
+                      <div className="relative p-4 bg-white rounded-xl border-4 border-[#C29B43]/30 shadow-lg group-hover:shadow-2xl transition-shadow">
+                        <div className="w-48 h-48 bg-gradient-to-br from-[#C29B43]/10 to-[#FFD700]/10 flex items-center justify-center rounded-lg">
+                          <QrCode className="w-40 h-40 text-[#C29B43]" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bank Info */}
+                    <div className="space-y-3 text-center">
+                      <div className="p-4 bg-white/80 rounded-xl border-2 border-[#C29B43]/20">
+                        <p className="text-sm text-[#8B4513] font-semibold mb-1">Ngân hàng</p>
+                        <p className="text-lg font-bold text-[#333]">Techcombank</p>
+                      </div>
+                      <div className="p-4 bg-white/80 rounded-xl border-2 border-[#C29B43]/20">
+                        <p className="text-sm text-[#8B4513] font-semibold mb-1">Số tài khoản</p>
+                        <p className="text-lg font-bold text-[#333] font-mono">0987654321</p>
+                      </div>
+                      <div className="p-4 bg-white/80 rounded-xl border-2 border-[#C29B43]/20">
+                        <p className="text-sm text-[#8B4513] font-semibold mb-1">Chủ tài khoản</p>
+                        <p className="text-lg font-bold text-[#333]">NGUYEN VAN MINH</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Thank You Message */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="text-center p-8 bg-gradient-to-r from-[#FFE5E5] via-[#FFF8E7] to-[#FFE5E5] rounded-2xl border-2 border-[#FFD700]/30"
+              >
+                <p className="text-xl md:text-2xl text-[#666] italic" style={{ fontFamily: '"Poppins", sans-serif' }}>
+                  "Tình cảm và sự hiện diện của bạn là món quà quý giá nhất dành cho chúng tôi."
+                </p>
+              </motion.div>
             </div>
           </motion.div>
         );
@@ -850,10 +1171,20 @@ export function VietnameseTraditionalEnhanced() {
                 <Button
                   onClick={() => {
                     navigator.clipboard.writeText('https://thiepcuoi.vn/minh-huong-2025');
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[#DC143C] to-[#C29B43] hover:from-[#C41E3A] hover:to-[#B8860B] text-white rounded-xl shadow-lg"
+                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[#DC143C] to-[#C29B43] hover:from-[#C41E3A] hover:to-[#B8860B] text-white rounded-xl shadow-lg transition-all"
                 >
-                  📋 Sao Chép Link
+                  {copied ? (
+                    <>
+                      ✓ Đã Sao Chép!
+                    </>
+                  ) : (
+                    <>
+                      📋 Sao Chép Link
+                    </>
+                  )}
                 </Button>
               </motion.div>
             </div>
