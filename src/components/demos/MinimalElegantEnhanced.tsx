@@ -6,7 +6,6 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
-import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 
 export function MinimalElegantEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -833,28 +832,11 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
   setSubmitted: (value: boolean) => void;
   onNext: () => void;
 }) {
-  const [formData, setFormData] = useState({ name: '', email: '', guests: '1', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ name: '', guests: '1', message: '' });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await submitRSVPWithFallback({
-        name: formData.name,
-        email: formData.email || undefined,
-        attending: 'yes',
-        guestCount: parseInt(formData.guests) || 1,
-        message: formData.message || undefined,
-        template: 'Minimal Elegant Enhanced',
-      });
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Error submitting RSVP:', error);
-      setSubmitted(true);
-    } finally {
-      setIsSubmitting(false);
-    }
+    setSubmitted(true);
   };
 
   return (
@@ -910,26 +892,6 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                   className="text-sm text-[#666] uppercase tracking-wider font-semibold"
                   style={{ fontFamily: '"Montserrat", sans-serif' }}
                 >
-                  Email (Không bắt buộc)
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#2A5D67]" />
-                  <Input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="p-5 pl-12 text-lg border-2 border-[#C29B43]/30 focus:border-[#C29B43] bg-white rounded-lg shadow-sm font-medium"
-                    placeholder="example@email.com"
-                    style={{ fontFamily: '"Montserrat", sans-serif' }}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label 
-                  className="text-sm text-[#666] uppercase tracking-wider font-semibold"
-                  style={{ fontFamily: '"Montserrat", sans-serif' }}
-                >
                   Số Lượng Khách *
                 </label>
                 <Input
@@ -961,24 +923,10 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 
               <Button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full py-7 text-lg bg-[#1B2A41] hover:bg-[#0F1A2E] text-white shadow-2xl shadow-[#1B2A41]/30 font-semibold hover:scale-[1.02] transition-all disabled:opacity-50"
+                className="w-full py-7 text-lg bg-[#1B2A41] hover:bg-[#0F1A2E] text-white shadow-2xl shadow-[#1B2A41]/30 font-semibold hover:scale-[1.02] transition-all"
               >
-                {isSubmitting ? (
-                  <>
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full"
-                    />
-                    <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Đang gửi...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5 mr-2" />
-                    <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Gửi Xác Nhận</span>
-                  </>
-                )}
+                <Send className="w-5 h-5 mr-2" />
+                <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Gửi Xác Nhận</span>
               </Button>
             </form>
           </motion.div>

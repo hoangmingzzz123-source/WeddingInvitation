@@ -4,12 +4,9 @@ import { Welcome } from './components/Welcome';
 import { LoveStory } from './components/LoveStory';
 import { WeddingInfo } from './components/WeddingInfo';
 import { Gallery } from './components/Gallery';
-import { VideoSection } from './components/VideoSection';
 import { RSVP } from './components/RSVP';
 import { Footer } from './components/Footer';
 import './styles/globals.css';
-import './styles/index.css';
-
 
 export default function DemoThiep219k_Thiep1() {
   const [showContent, setShowContent] = useState(false);
@@ -30,7 +27,6 @@ export default function DemoThiep219k_Thiep1() {
           <LoveStory />
           <WeddingInfo />
           <Gallery />
-          <VideoSection />
           <RSVP />
           <Footer />
         </>

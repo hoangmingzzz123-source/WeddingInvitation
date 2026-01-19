@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Calendar, MapPin, Clock, Send, Home, QrCode, Mail } from 'lucide-react';
-import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
+import { Heart, Calendar, MapPin, Clock, Send, Home, QrCode } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -543,28 +542,11 @@ function MapPage({ onNext }: { onNext: () => void }) {
 // RSVP Page
 // RSVP Page
 function RSVPPage({ submitted, setSubmitted, onNext, guestName }: { submitted: boolean; setSubmitted: (value: boolean) => void; onNext: () => void; guestName: string }) {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', guests: '1', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ name: '', phone: '', guests: '1', message: '' });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await submitRSVPWithFallback({
-        name: formData.name,
-        email: formData.email || undefined,
-        attending: 'yes',
-        guestCount: parseInt(formData.guests) || 1,
-        message: formData.message || undefined,
-        template: 'Blush Floral',
-      });
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Error:', error);
-      setSubmitted(true);
-    } finally {
-      setIsSubmitting(false);
-    }
+    setSubmitted(true);
   };
 
   return (
