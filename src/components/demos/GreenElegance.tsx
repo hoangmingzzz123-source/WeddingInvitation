@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, Leaf, MapPin, Heart, Gift, Camera, ChevronLeft, ChevronRight, Mail, Send } from 'lucide-react';
-import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
+import { Home, Leaf, MapPin, Heart, Gift, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
@@ -393,31 +392,6 @@ function MapPage() {
 
 // RSVP Page
 function RSVPPage() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', guests: '1', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await submitRSVPWithFallback({
-        name: formData.name,
-        email: formData.email || undefined,
-        attending: 'yes',
-        guestCount: parseInt(formData.guests) || 1,
-        message: formData.message || undefined,
-        template: 'Green Elegance',
-      });
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Error:', error);
-      setSubmitted(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -426,8 +400,7 @@ function RSVPPage() {
       className="min-h-screen flex items-center justify-center p-8"
     >
       <div className="max-w-xl w-full">
-        {!submitted ? (
-        <motion.form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl space-y-6">
+        <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl space-y-6">
           <h2 
             className="text-4xl text-center text-[#1B5E20]"
             style={{ fontFamily: '"Playfair Display", serif' }}
@@ -439,82 +412,28 @@ function RSVPPage() {
             <input
               type="text"
               placeholder="Họ và tên"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
               className="w-full px-4 py-3 rounded-xl border-2 border-[#2E7D32]/20 focus:border-[#2E7D32] outline-none transition-all"
             />
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#2E7D32]" />
-              <input
-                type="email"
-                placeholder="Email (không bắt buộc)"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-[#2E7D32]/20 focus:border-[#2E7D32] outline-none transition-all"
-              />
-            </div>
             <input
               type="tel"
               placeholder="Số điện thoại"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              required
               className="w-full px-4 py-3 rounded-xl border-2 border-[#2E7D32]/20 focus:border-[#2E7D32] outline-none transition-all"
             />
-            <input
-              type="number"
-              placeholder="Số người tham dự"
-              value={formData.guests}
-              onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-              required
-              min="1"
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#2E7D32]/20 focus:border-[#2E7D32] outline-none transition-all"
-            />
+            <select className="w-full px-4 py-3 rounded-xl border-2 border-[#2E7D32]/20 focus:border-[#2E7D32] outline-none transition-all">
+              <option>Tôi sẽ tham dự</option>
+              <option>Rất tiếc, tôi không thể đến</option>
+            </select>
             <textarea
               placeholder="Lời nhắn"
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               rows={4}
               className="w-full px-4 py-3 rounded-xl border-2 border-[#2E7D32]/20 focus:border-[#2E7D32] outline-none transition-all"
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-4 bg-gradient-to-r from-[#2E7D32] to-[#1B5E20] hover:from-[#1B5E20] hover:to-[#0D3F11] text-white rounded-xl font-semibold transition-all shadow-lg"
-          >
-            {isSubmitting ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-5 h-5 mr-2 border-2 border-current border-t-transparent rounded-full inline-block"
-                />
-                Đang gửi...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5 mr-2 inline" />
-                Gửi Xác Nhận
-              </>
-            )}
-          </Button>
-        </motion.form>
-        ) : (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl text-center space-y-4"
-          >
-            <div className="w-16 h-16 mx-auto bg-[#2E7D32]/20 rounded-full flex items-center justify-center">
-              <Heart className="w-8 h-8 text-[#2E7D32]" fill="#2E7D32" />
-            </div>
-            <h3 className="text-2xl font-bold text-[#1B5E20]">Cảm ơn bạn!</h3>
-            <p className="text-gray-600">Chúng tôi rất mong được gặp bạn tại đám cưới.</p>
-          </motion.div>
-        )}
+          <GoldenGlowButton icon={Heart} variant="primary" className="w-full">
+            Gửi Xác Nhận
+          </GoldenGlowButton>
+        </motion.div>
       </div>
     </motion.div>
   );
