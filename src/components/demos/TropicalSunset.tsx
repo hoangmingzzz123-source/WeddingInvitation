@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, Sun, MapPin, Heart, Camera, ChevronLeft, ChevronRight, Palmtree, Mail, Send } from 'lucide-react';
-import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
+import { Home, Sun, MapPin, Heart, Camera, ChevronLeft, ChevronRight, Palmtree } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';

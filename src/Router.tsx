@@ -21,8 +21,6 @@ import { VietnameseTraditional } from './components/demos/VietnameseTraditional'
 import { VietnameseTraditionalEnhanced } from './components/demos/VietnameseTraditionalEnhanced';
 import DemoThiep219k_Thiep1 from './Demo/Demo219k/Demo1/App';
 import { TemplatesPage } from './components/TemplatesPage';
-import DemoThiep219k_ThiepTraditional from './Demo/Demo219k/Traditional/App';
-import DemoThiep219k_ThiepCinema from './Demo/Demo219k/Cinema/App';
 
 // Browser history-based router
 export function Router() {
@@ -52,12 +50,12 @@ export function Router() {
     '/demo/romantic-watercolor': <VietnameseTraditionalEnhanced /> ,
     '/demo/bloom-crystal-3d': <BloomCrystal3DEnhanced />,
     '/demo/tropical-sunset': <DemoThiep219k_Thiep1 />,
-    '/demo/art-deco-royal': <DemoThiep219k_ThiepCinema />,
+    '/demo/art-deco-royal': <ArtDecoRoyalEnhanced />,
     '/demo/vintage-grain': <VintageGrain />,
     '/demo/green-elegance': <GreenElegance />,
     '/demo/cinematic-love-story': <CinematicLoveStory />,
     '/demo/minimal-elegant': <MinimalElegantEnhanced />,
-    '/demo/vietnamese-traditional': <DemoThiep219k_ThiepTraditional />,
+    '/demo/vietnamese-traditional': <VietnameseTraditional />,
     '/demo/bloom-crystal-3d-basic': <BloomCrystal3D />,
     '/demo/art-deco-royal-basic': <ArtDecoRoyal />,
     '/demo/minimal-elegant-basic': <MinimalElegant />,

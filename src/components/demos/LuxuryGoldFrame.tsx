@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Calendar, Clock, Heart, Send, Home, Gift, Mail } from 'lucide-react';
-import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
+import { MapPin, Calendar, Clock, Heart, Send, Home, Gift } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';

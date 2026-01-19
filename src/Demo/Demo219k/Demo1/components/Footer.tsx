@@ -98,7 +98,51 @@ export function Footer() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-center"
-        >         
+        >
+          <div className="flex justify-center gap-6 mb-8">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-300 shadow-md"
+            >
+              <Facebook className="w-6 h-6" />
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-300 shadow-md"
+            >
+              <Instagram className="w-6 h-6" />
+            </a>
+            <a
+              href="mailto:wedding@example.com"
+              className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-300 shadow-md"
+            >
+              <Mail className="w-6 h-6" />
+            </a>
+            <a
+              href="tel:+84909123456"
+              className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-300 shadow-md"
+            >
+              <Phone className="w-6 h-6" />
+            </a>
+          </div>
+
+          <div className="mb-8">
+            <p className="text-gray-600 mb-2">Liên hệ với chúng tôi:</p>
+            <p className="text-gray-700">
+              <a href="tel:+84909123456" className="hover:text-rose-600">Cô dâu: 0909 123 456</a>
+              {' '} | {' '}
+              <a href="tel:+84909654321" className="hover:text-rose-600">Chú rể: 0909 654 321</a>
+            </p>
+            <p className="text-gray-700 mt-2">
+              <a href="mailto:wedding@example.com" className="hover:text-rose-600">
+                wedding@example.com
+              </a>
+            </p>
+          </div>
 
           {/* Thank You Message */}
           <div className="max-w-2xl mx-auto mb-8">

@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
-import { MapPin, Calendar, Clock, Heart, Send, Home, QrCode, Copy, Check, Film, Play, Pause, Sparkles, ArrowRight, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
+import { MapPin, Calendar, Clock, Heart, Send, Home, QrCode, Copy, Check, Film, Play, Pause, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
-import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 
 export function CinematicLoveStoryEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -904,35 +903,11 @@ function RSVPPage({ submitted, setSubmitted, onNext, attending, setAttending, gu
   guestCount: number;
   setGuestCount: (value: number) => void;
 }) {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ name: '', message: '' });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!attending) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Submit to Google Sheets
-      await submitRSVPWithFallback({
-        name: formData.name,
-        email: formData.email || undefined,
-        attending: attending,
-        guestCount: attending === 'yes' ? guestCount : 0,
-        message: formData.message || undefined,
-        template: 'Cinematic Love Story Enhanced',
-      });
-      
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Error submitting RSVP:', error);
-      // Still show success to user (data saved to localStorage)
-      setSubmitted(true);
-    } finally {
-      setIsSubmitting(false);
-    }
+    setSubmitted(true);
   };
 
   return (
@@ -1030,26 +1005,6 @@ function RSVPPage({ submitted, setSubmitted, onNext, attending, setAttending, gu
                       />
                     </div>
 
-                    {/* Email Field */}
-                    <div className="space-y-3">
-                      <label 
-                        className="text-sm text-white/70 uppercase tracking-wider"
-                        style={{ fontFamily: '"Montserrat", sans-serif' }}
-                      >
-                        Email (Tùy chọn)
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#C29B43]" />
-                        <Input
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="p-4 pl-12 text-lg bg-black/50 border-2 border-[#C29B43]/30 focus:border-[#C29B43] text-white"
-                          placeholder="example@email.com"
-                        />
-                      </div>
-                    </div>
-
                     {/* Guest Counter */}
                     <div className="space-y-3">
                       <label 
@@ -1101,24 +1056,10 @@ function RSVPPage({ submitted, setSubmitted, onNext, attending, setAttending, gu
               {attending && (
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-6 text-lg bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-6 text-lg bg-gradient-to-r from-[#C29B43] to-[#FFD700] hover:from-[#FFD700] hover:to-[#C29B43] text-black font-bold shadow-2xl"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="w-5 h-5 mr-2 border-2 border-black border-t-transparent rounded-full"
-                      />
-                      <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Đang gửi...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5 mr-2" />
-                      <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Gửi Xác Nhận</span>
-                    </>
-                  )}
+                  <Send className="w-5 h-5 mr-2" />
+                  <span style={{ fontFamily: '"Montserrat", sans-serif' }}>Gửi Xác Nhận</span>
                 </Button>
               )}
             </form>
