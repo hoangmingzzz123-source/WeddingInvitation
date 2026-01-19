@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { MapPin, Calendar, Clock, Send, Home, QrCode, Copy, Check, Heart, Crown, ArrowRight } from 'lucide-react';
+import { MapPin, Calendar, Clock, Send, Home, QrCode, Copy, Check, Heart, Crown, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 
 export function ArtDecoRoyalEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -746,11 +747,28 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
   setSubmitted: (value: boolean) => void;
   onNext: () => void;
 }) {
-  const [formData, setFormData] = useState({ name: '', guests: '1', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', guests: '1', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      await submitRSVPWithFallback({
+        name: formData.name,
+        email: formData.email || undefined,
+        attending: 'yes',
+        guestCount: parseInt(formData.guests) || 1,
+        message: formData.message || undefined,
+        template: 'Art Deco Royal Enhanced',
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting RSVP:', error);
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -795,6 +813,22 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 
               <div className="space-y-4">
                 <label className="text-sm text-[#C29B43] uppercase tracking-[0.3em]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
+                  Email (Optional)
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#C29B43]" />
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="p-5 pl-14 text-xl bg-[#1A1A2E] border-2 border-[#C29B43] focus:border-[#FFD700] text-[#C29B43]"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <label className="text-sm text-[#C29B43] uppercase tracking-[0.3em]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
                   Number of Guests *
                 </label>
                 <Input
@@ -821,10 +855,24 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 
               <Button
                 type="submit"
-                className="w-full py-7 text-xl bg-[#C29B43] hover:bg-[#FFD700] text-[#1A1A2E] border-2 border-[#FFD700] shadow-2xl"
+                disabled={isSubmitting}
+                className="w-full py-7 text-xl bg-[#C29B43] hover:bg-[#FFD700] text-[#1A1A2E] border-2 border-[#FFD700] shadow-2xl disabled:opacity-50"
               >
-                <Send className="w-5 h-5 mr-2" />
-                Gửi Xác Nhận
+                {isSubmitting ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-5 h-5 mr-2 border-2 border-[#1A1A2E] border-t-transparent rounded-full"
+                    />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5 mr-2" />
+                    Gửi Xác Nhận
+                  </>
+                )}
               </Button>
             </form>
           </motion.div>

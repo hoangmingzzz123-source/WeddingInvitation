@@ -1,0 +1,52 @@
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&family=Allura&family=Lora:wght@400;600&display=swap');
+
+:where(.demo-cinema-wrapper) {
+  /* Cinema Love Color Palette */
+  --color-burgundy: #5A1E2A;
+  --color-ivory: #F6F1EB;
+  --color-gold: #C9A24D;
+  --color-dark: #1C1C1C;
+  
+  font-family: 'Noto Sans', 'Lora', serif;
+  color: var(--color-ivory);
+  background-color: var(--color-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.demo-cinema-wrapper *,
+.demo-cinema-wrapper *::before,
+.demo-cinema-wrapper *::after {
+  box-sizing: border-box;
+}
+
+/* Smooth scrollbar */
+.demo-cinema-wrapper ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.demo-cinema-wrapper ::-webkit-scrollbar-track {
+  background: var(--color-dark);
+}
+
+.demo-cinema-wrapper ::-webkit-scrollbar-thumb {
+  background: var(--color-burgundy);
+  border-radius: 4px;
+}
+
+.demo-cinema-wrapper ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* Selection color */
+.demo-cinema-wrapper ::selection {
+  background: var(--color-gold);
+  color: var(--color-dark);
+}
+
+.demo-cinema-wrapper .font-serif {
+  font-family: 'Noto Serif', 'Playfair Display', Georgia, serif;
+}
+

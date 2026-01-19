@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'motion/react';
-import { MapPin, Calendar, Clock, Home, Gift } from 'lucide-react';
+import { MapPin, Calendar, Clock, Home, Gift, Mail, Send } from 'lucide-react';
+import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 import { Button } from '../ui/button';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';

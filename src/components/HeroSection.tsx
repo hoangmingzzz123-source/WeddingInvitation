@@ -107,29 +107,8 @@ export function HeroSection() {
               fontWeight: 300,
             }}
           >
-            Cá Nhân Hóa – Đa Hiệu Ứng – Thiết Kế Hiện Đại
-            <br />
-            <motion.span
-              className="inline-block mt-2 text-lg text-[#C29B43]"
-              animate={{
-                opacity: [0.7, 1, 0.7],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-              }}
-            >
-              ✨ Tạo thiệp mời đám cưới điện tử đẹp lung linh
-            </motion.span>
-          </motion.p>
+            ✨ Cá Nhân Hóa – Đa Hiệu Ứng – Thiết Kế Hiện Đại
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="text-base text-[#333]"
-          >
-            ⚡ Chỉ từ 109K • 45+ Mẫu thiệp cao cấp • Tùy chỉnh dễ dàng
           </motion.p>
 
           <motion.div
