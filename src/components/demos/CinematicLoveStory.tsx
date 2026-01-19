@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
-import { MapPin, Calendar, Clock, Heart, Play, Volume2, ChevronDown, Send, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, Calendar, Clock, Heart, Play, Volume2, ChevronDown, Send, X, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
+import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
 import { MapSection } from '../MapSection';
+import { VideoBgSection } from '../VideoBgSection';
 import { CinematicPreloader } from '../effects/CinematicPreloader';
 
 export function CinematicLoveStory() {
@@ -15,6 +17,9 @@ export function CinematicLoveStory() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const [formData, setFormData] = useState({ name: '', guests: '1', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   
@@ -105,14 +110,6 @@ export function CinematicLoveStory() {
     setLightboxIndex(null);
   };
 
-  const handleRsvpSubmit = () => {
-    setRsvpSubmitted(true);
-    setShowConfetti(true);
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 5000);
-  };
-
   return (
     <div ref={containerRef} className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Music Player - 199K Package: Full Features */}
@@ -193,8 +190,76 @@ export function CinematicLoveStory() {
         </motion.div>
       </motion.section>
 
+      {/* Invitation Section */}
+      <section className="relative py-24 px-6 bg-gradient-to-b from-black to-[#0A0A0A]">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-12 md:p-16 space-y-8 text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ type: "spring", duration: 0.8 }}
+            >
+              <Heart className="w-16 h-16 text-[#C29B43] mx-auto mb-6" />
+            </motion.div>
+            
+            <h2 
+              className="text-4xl md:text-5xl text-[#C29B43] mb-8"
+              style={{ fontFamily: '"Playfair Display", serif' }}
+            >
+              Lời Mời
+            </h2>
+            
+            <div className="space-y-6 text-gray-300 text-lg md:text-xl leading-relaxed">
+              <p className="italic" style={{ fontFamily: '"Playfair Display", serif' }}>
+                Kính thưa Quý khách,
+              </p>
+              
+              <p>
+                Trải qua bao ngày tháng yêu thương và gắn bó, chúng tôi đã quyết định cùng nhau bước vào giai đoạn mới của cuộc đời - hôn nhân. 
+                Đây không chỉ là ngày trọng đại của hai gia đình mà còn là dịp để chúng tôi tri ân những người thân yêu đã luôn bên cạnh, 
+                động viên và chúc phúc cho chúng tôi.
+              </p>
+              
+              <p>
+                Chúng tôi rất mong được đón tiếp Quý khách trong ngày vui của gia đình. Sự hiện diện của Quý khách chính là niềm vinh hạnh 
+                và món quà ý nghĩa nhất mà chúng tôi có thể nhận được.
+              </p>
+              
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="pt-8 border-t border-white/10 mt-8"
+              >
+                <p className="text-2xl md:text-3xl italic text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                  Trân trọng kính mời!
+                </p>
+                <div className="mt-6 flex items-center justify-center gap-8">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-2">Gia đình chú rể</p>
+                    <p className="text-xl font-semibold">Nguyễn Văn Minh</p>
+                  </div>
+                  <Heart className="w-8 h-8 text-[#C29B43] fill-[#C29B43]" />
+                  <div>
+                    <p className="text-sm text-gray-500 mb-2">Gia đình cô dâu</p>
+                    <p className="text-xl font-semibold">Trần Thị Hương</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Love Story Timeline */}
-      <section className="relative py-24 px-6 bg-gradient-to-b from-black via-[#0A0A0A] to-black">
+      <section className="relative py-24 px-6 bg-gradient-to-b from-[#0A0A0A] via-black to-[#0A0A0A]">
         <div className="max-w-5xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
@@ -332,7 +397,10 @@ export function CinematicLoveStory() {
                   </div>
 
                   {/* Button */}
-                  <Button className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white">
+                  <Button 
+                    onClick={() => document.getElementById('map-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white"
+                  >
                     Xem Bản Đồ
                   </Button>
                 </div>
@@ -385,6 +453,65 @@ export function CinematicLoveStory() {
         </div>
       </section>
 
+      {/* Map Section */}
+      <section id="map-section" className="relative py-24 px-6 bg-gradient-to-b from-black via-[#0A0A0A] to-black">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl md:text-6xl text-center mb-20 text-[#C29B43]"
+            style={{ fontFamily: '"Playfair Display", serif' }}
+          >
+            Location
+          </motion.h2>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <MapSection />
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-6 mt-12">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 space-y-4"
+            >
+              <h3 className="text-2xl text-[#C29B43] font-semibold">Nhà Gái</h3>
+              <p className="text-gray-400">123 Nguyễn Huệ, Quận 1, TP.HCM</p>
+              <Button 
+                onClick={() => window.open('https://maps.google.com/?q=123+Nguyen+Hue+District+1+HCMC', '_blank')}
+                className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white"
+              >
+                <MapPin className="w-4 h-4 mr-2" />
+                Mở Google Maps
+              </Button>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 space-y-4"
+            >
+              <h3 className="text-2xl text-[#C29B43] font-semibold">Nhà Trai</h3>
+              <p className="text-gray-400">456 Lê Lợi, Quận 1, TP.HCM</p>
+              <Button 
+                onClick={() => window.open('https://maps.google.com/?q=456+Le+Loi+District+1+HCMC', '_blank')}
+                className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white"
+              >
+                <MapPin className="w-4 h-4 mr-2" />
+                Mở Google Maps
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
@@ -407,48 +534,279 @@ export function CinematicLoveStory() {
         </div>
       )}
 
+      {/* Video Section */}
+      <VideoBgSection
+        title="Xem Video Cưới"
+        subtitle="Câu chuyện tình yêu của chúng tôi"
+        bgGradient="from-[#FFF8F0] via-white to-[#FFF8F0]"
+        titleColor="text-[#C29B43]"
+        subtitleColor="text-[#666]"
+        bokehColors={['rgba(194, 155, 67, 0.15)', 'rgba(247, 218, 218, 0.15)']}
+        playButtonColor="bg-[#C29B43]"
+        borderColor="border-gray-200"
+        accentColor="[#C29B43]"
+      />
+
       {/* RSVP Section */}
       <section className="relative py-24 px-6 bg-gradient-to-b from-black via-[#0A0A0A] to-black">
         <div className="max-w-2xl mx-auto">
-          <motion.div
+          {!rsvpSubmitted ? (
+            <motion.form
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setIsSubmitting(true);
+                try {
+                  await submitRSVPWithFallback({
+                    name: formData.name,
+                    attending: 'yes',
+                    guestCount: parseInt(formData.guests) || 1,
+                    message: formData.message || undefined,
+                    template: 'Cinematic Love Story',
+                  });
+                  setRsvpSubmitted(true);
+                  setShowConfetti(true);
+                  setTimeout(() => setShowConfetti(false), 5000);
+                } catch (error) {
+                  console.error('Error submitting RSVP:', error);
+                  setRsvpSubmitted(true);
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 space-y-8"
+            >
+              <div className="text-center space-y-4">
+                <h2 
+                  className="text-4xl md:text-5xl text-[#C29B43]"
+                  style={{ fontFamily: '"Playfair Display", serif' }}
+                >
+                  RSVP
+                </h2>
+                <p className="text-gray-400">
+                  Vui lòng xác nhận sự tham dự của bạn
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Họ và Tên *</label>
+                  <Input 
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nhập họ và tên"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-500 h-12"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Số Người Tham Dự *</label>
+                  <Input 
+                    type="number"
+                    required
+                    min="1"
+                    max="20"
+                    value={formData.guests}
+                    onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
+                    placeholder="Số lượng khách"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-500 h-12"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Lời Chúc</label>
+                  <Textarea 
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    placeholder="Gửi lời chúc phúc đến đôi uyên ương..."
+                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-500 min-h-[120px]"
+                  />
+                </div>
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white py-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-3 border-white border-t-transparent rounded-full mr-2"
+                      />
+                      Đang Gửi...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Gửi Xác Nhận
+                    </>
+                  )}
+                </Button>
+              </div>
+            </motion.form>
+          ) : (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", duration: 0.8 }}
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-12 md:p-16 text-center space-y-8"
+            >
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 10, 0, -10, 0]
+                }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <Heart className="w-24 h-24 text-[#C29B43] mx-auto" />
+              </motion.div>
+              <h3 
+                className="text-4xl md:text-5xl text-[#C29B43]"
+                style={{ fontFamily: '"Playfair Display", serif' }}
+              >
+                Cảm Ơn Bạn!
+              </h3>
+              <p className="text-xl text-gray-300">
+                Chúng tôi rất vui mừng được đón tiếp bạn trong ngày trọng đại của chúng tôi.
+              </p>
+              <Button
+                onClick={() => {
+                  setRsvpSubmitted(false);
+                  setFormData({ name: '', guests: '1', message: '' });
+                }}
+                variant="outline"
+                className="border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white"
+              >
+                Gửi xác nhận khác
+              </Button>
+            </motion.div>
+          )}
+        </div>
+      </section>
+      {/* Banking/QR Mừng Cưới Section */}
+      <section className="relative py-24 px-6 bg-gradient-to-b from-black via-[#0A0A0A] to-black">
+        <div className="max-w-5xl mx-auto">
+          <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 space-y-8"
+            className="text-5xl md:text-6xl text-center mb-8 text-[#C29B43]"
+            style={{ fontFamily: '"Playfair Display", serif' }}
           >
-            <h2 
-              className="text-4xl md:text-5xl text-center text-[#C29B43]"
-              style={{ fontFamily: '"Playfair Display", serif' }}
-            >
-              RSVP
-            </h2>
-            <p className="text-center text-gray-400">
-              Vui lòng xác nhận sự tham dự của bạn
-            </p>
+            Mừng Cưới
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center text-gray-400 mb-16 max-w-2xl mx-auto"
+          >
+            Thay vì hoa và quà tặng, chúng tôi trân trọng nhận được lời chúc phúc và sự hiện diện của bạn.
+          </motion.p>
 
-            <div className="space-y-6">
-              <Input 
-                placeholder="Họ và tên"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-500"
-              />
-              <Input 
-                type="number"
-                placeholder="Số người tham dự"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-500"
-              />
-              <Textarea 
-                placeholder="Lời chúc đến cô dâu chú rể..."
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-500 min-h-[120px]"
-              />
-              <Button className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white py-6" onClick={handleRsvpSubmit}>
-                <Send className="w-4 h-4 mr-2" />
-                Gửi Xác Nhận
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Bride Banking */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 space-y-6 hover:bg-white/10 transition-all"
+            >
+              <div className="text-center space-y-3 pb-6 border-b border-white/10">
+                <Heart className="w-10 h-10 text-[#C29B43] mx-auto" />
+                <h3 className="text-2xl text-[#C29B43] font-semibold">Cô Dâu</h3>
+                <p className="text-gray-300">Trần Thị Hương</p>
+              </div>
+              <div className="flex justify-center py-4">
+                <div className="p-4 bg-white rounded-xl">
+                  <div className="w-48 h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg">
+                    <Mail className="w-32 h-32 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="p-3 bg-white/5 rounded-lg border border-white/5">
+                  <p className="text-xs text-gray-500 mb-1">Ngân hàng</p>
+                  <p className="text-white font-semibold">Vietcombank</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg border border-white/5">
+                  <p className="text-xs text-gray-500 mb-1">Số tài khoản</p>
+                  <p className="text-white font-mono font-semibold">1234567890</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg border border-white/5">
+                  <p className="text-xs text-gray-500 mb-1">Chủ tài khoản</p>
+                  <p className="text-white font-semibold">TRAN THI HUONG</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Groom Banking */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 space-y-6 hover:bg-white/10 transition-all"
+            >
+              <div className="text-center space-y-3 pb-6 border-b border-white/10">
+                <Heart className="w-10 h-10 text-[#C29B43] mx-auto" />
+                <h3 className="text-2xl text-[#C29B43] font-semibold">Chú Rể</h3>
+                <p className="text-gray-300">Nguyễn Văn Minh</p>
+              </div>
+              <div className="flex justify-center py-4">
+                <div className="p-4 bg-white rounded-xl">
+                  <div className="w-48 h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg">
+                    <Mail className="w-32 h-32 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="p-3 bg-white/5 rounded-lg border border-white/5">
+                  <p className="text-xs text-gray-500 mb-1">Ngân hàng</p>
+                  <p className="text-white font-semibold">Techcombank</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg border border-white/5">
+                  <p className="text-xs text-gray-500 mb-1">Số tài khoản</p>
+                  <p className="text-white font-mono font-semibold">0987654321</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg border border-white/5">
+                  <p className="text-xs text-gray-500 mb-1">Chủ tài khoản</p>
+                  <p className="text-white font-semibold">NGUYEN VAN MINH</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Share Link */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-12 text-center"
+          >
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 space-y-6 max-w-2xl mx-auto">
+              <h3 className="text-2xl text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>Chia Sẻ Thiệp Cưới</h3>
+              <div className="p-4 bg-white/5 rounded-lg border border-white/5">
+                <code className="text-sm text-gray-400 break-all">
+                  https://thiepcuoi.vn/minh-huong-2025
+                </code>
+              </div>
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText('https://thiepcuoi.vn/minh-huong-2025');
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="bg-[#C29B43] hover:bg-[#A88434] text-white"
+              >
+                {copied ? '✓ Đã Sao Chép!' : '📋 Sao Chép Link'}
               </Button>
             </div>
           </motion.div>
         </div>
       </section>
-
       {/* Confetti */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">

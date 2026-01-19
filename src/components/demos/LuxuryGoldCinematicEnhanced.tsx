@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { MapPin, Calendar, Clock, Heart, Send, Home, ChevronLeft, ChevronRight, QrCode, X, Sparkles } from 'lucide-react';
+import { MapPin, Calendar, Clock, Heart, Send, Home, ChevronLeft, ChevronRight, QrCode, X, Sparkles, Mail } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { MusicPlayer } from '../MusicPlayer';
 import { MapSection } from '../MapSection';
+import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 
 export function LuxuryGoldCinematicEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -14,6 +15,8 @@ export function LuxuryGoldCinematicEnhanced() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [attending, setAttending] = useState<'yes' | 'no' | null>(null);
   const [guestCount, setGuestCount] = useState(1);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const pages = ['cover', 'story', 'gallery', 'details', 'map', 'rsvp', 'qr'];
 
@@ -724,9 +727,27 @@ export function LuxuryGoldCinematicEnhanced() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    setRsvpSubmitted(true);
+                    if (!attending) return;
+                    
+                    setIsSubmitting(true);
+                    try {
+                      await submitRSVPWithFallback({
+                        name: formData.name,
+                        email: formData.email || undefined,
+                        attending: attending,
+                        guestCount: attending === 'yes' ? guestCount : 0,
+                        message: formData.message || undefined,
+                        template: 'Luxury Gold Cinematic Enhanced',
+                      });
+                      setRsvpSubmitted(true);
+                    } catch (error) {
+                      console.error('Error submitting RSVP:', error);
+                      setRsvpSubmitted(true);
+                    } finally {
+                      setIsSubmitting(false);
+                    }
                   }}
                   className="p-12 bg-black/30 backdrop-blur-md rounded-3xl border-2 border-[#FFD700]/30 space-y-6"
                 >
@@ -774,8 +795,21 @@ export function LuxuryGoldCinematicEnhanced() {
                         <Input
                           placeholder="Họ và tên *"
                           required
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           className="h-16 text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl text-white placeholder:text-white/50"
                         />
+                        
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]" />
+                          <Input
+                            type="email"
+                            placeholder="Email (không bắt buộc)"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="h-16 pl-12 text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl text-white placeholder:text-white/50"
+                          />
+                        </div>
                         
                         <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border-2 border-[#FFD700]/30">
                           <label className="text-white/90 text-lg flex-1">Số lượng khách:</label>
@@ -801,6 +835,8 @@ export function LuxuryGoldCinematicEnhanced() {
                         <Textarea
                           placeholder="Lời nhắn (không bắt buộc)"
                           rows={4}
+                          value={formData.message}
+                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                           className="text-lg bg-white/10 border-2 border-[#FFD700]/30 focus:border-[#FFD700] rounded-xl resize-none text-white placeholder:text-white/50"
                         />
                       </motion.div>
@@ -810,10 +846,24 @@ export function LuxuryGoldCinematicEnhanced() {
                   {attending && (
                     <Button 
                       type="submit"
-                      className="w-full h-16 text-xl font-bold bg-gradient-to-r from-[#FFD700] to-[#C29B43] hover:from-[#FFF] hover:to-[#FFD700] text-black rounded-xl shadow-lg"
+                      disabled={isSubmitting}
+                      className="w-full h-16 text-xl font-bold bg-gradient-to-r from-[#FFD700] to-[#C29B43] hover:from-[#FFF] hover:to-[#FFD700] text-black rounded-xl shadow-lg disabled:opacity-50"
                     >
-                      <Send className="w-6 h-6 mr-2" />
-                      Gửi Xác Nhận
+                      {isSubmitting ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            className="w-6 h-6 mr-2 border-2 border-black border-t-transparent rounded-full"
+                          />
+                          Đang gửi...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-6 h-6 mr-2" />
+                          Gửi Xác Nhận
+                        </>
+                      )}
                     </Button>
                   )}
                 </motion.form>

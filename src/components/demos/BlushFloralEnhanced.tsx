@@ -6,6 +6,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 
 export function BlushFloralEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -1036,17 +1037,29 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
   setSubmitted: (value: boolean) => void;
   onNext: () => void;
 }) {
-  const [formData, setFormData] = useState({ name: '', guests: 1, message: '', attending: 'yes' });
+  const [formData, setFormData] = useState({ name: '', email: '', guests: 1, message: '', attending: 'yes' });
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await submitRSVPWithFallback({
+        name: formData.name,
+        email: formData.email || undefined,
+        attending: formData.attending as 'yes' | 'no',
+        guestCount: formData.attending === 'yes' ? formData.guests : 0,
+        message: formData.message || undefined,
+        template: 'Blush Floral Enhanced',
+      });
       setSubmitted(true);
-    }, 1500);
+    } catch (error) {
+      console.error('Error submitting RSVP:', error);
+      setSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

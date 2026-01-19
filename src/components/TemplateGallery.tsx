@@ -130,7 +130,7 @@ const templates = [
     image: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
     style: 'Art Deco',
     demoUrl: '/demo/art-deco-royal',
-    package: '219k' as PackageType,
+    package: '199k' as PackageType,
     description: 'Hoàng gia Art Deco',
     features: ['Art Deco', 'Royal', 'Luxury'],
   },
@@ -139,7 +139,7 @@ const templates = [
     image: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0250.jpg',
     style: 'Tropical',
     demoUrl: '/demo/tropical-sunset',
-    package: '219k' as PackageType,
+    package: '199k' as PackageType,
     description: 'Nhiệt đới hoàng hôn',
     features: ['Tropical', 'Vibrant', 'Unique'],
   },
@@ -400,7 +400,7 @@ export function TemplateGallery() {
               onClick={() => navigateTo('/templates')}
               className="bg-[#1B2A41] hover:bg-[#0F1A2E] text-white px-8 py-6 rounded-full"
             >
-              Xem tất cả 45+ mẫu thiệp
+              Xem tất cả mẫu thiệp
             </Button>
           </motion.div>
         </motion.div>
