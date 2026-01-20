@@ -58,12 +58,12 @@ export function InvitationMessage() {
 
         <motion.div
           initial={{ width: 0 }}
-          whileInView={{ width: '120px' }}
+          whileInView={{ width: '750px' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.5 }}
           className="h-[1px] bg-[#C9A24D] mx-auto mb-8"
         />
-
+<br/>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -78,10 +78,10 @@ export function InvitationMessage() {
           <br />
           trong ngày trọng đại.
         </motion.p>
-
+<br />
         <motion.div
           initial={{ width: 0 }}
-          whileInView={{ width: '120px' }}
+          whileInView={{ width: '750px' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 1 }}
           className="h-[1px] bg-[#C9A24D] mx-auto mt-8"

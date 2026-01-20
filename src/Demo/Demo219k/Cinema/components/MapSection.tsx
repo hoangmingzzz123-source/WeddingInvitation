@@ -33,14 +33,14 @@ export function MapSection() {
               RIVERSIDE PALACE
             </h3>
           </motion.div>
-
-          <motion.div
+<br/>
+          {/* <motion.div
             initial={{ width: 0 }}
             whileInView={{ width: '100px' }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className="h-[1px] bg-[#C9A24D] mx-auto mb-12"
-          />
+          /> */}
 
           {/* Map Container with Gold Frame */}
           <motion.div
@@ -95,7 +95,7 @@ export function MapSection() {
               </motion.div>
             </div>
           </motion.div>
-
+<br/>
           {/* Action Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

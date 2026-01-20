@@ -4,13 +4,14 @@ import { Button } from './ui/button';
 import { Eye, Music, MapPin, Smartphone } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { navigateTo } from '../Router';
+import { PREMIUM_GALLERY_IMAGES, TEMPLATE_GALLERY_IMAGES, UNSPLASH_IMAGES } from '../utils/imageConstants';
 
 type PackageType = 'all' | '109k' | '159k' | '199k';
 
 const templates = [
   {
     name: 'Classic Minimalist',
-    image: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
+    image: PREMIUM_GALLERY_IMAGES.anhvien_mimosa_korea,
     style: 'Minimalist',
     demoUrl: '/demo/classic-minimalist',
     package: '109k' as PackageType,
@@ -19,7 +20,7 @@ const templates = [
   },
   {
     name: 'Blush Floral',
-    image: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg',
+    image: PREMIUM_GALLERY_IMAGES.calibridal_wedding,
     style: 'Floral',
     demoUrl: '/demo/blush-floral',
     package: '109k' as PackageType,
@@ -28,7 +29,7 @@ const templates = [
   },
   {
     name: 'Soft Fade Floral',
-    image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-13.jpg',
+    image: TEMPLATE_GALLERY_IMAGES.bloomCrystal,
     style: 'Watercolor Pastel',
     demoUrl: '/demo/soft-fade-floral',
     package: '109k' as PackageType,
@@ -37,7 +38,7 @@ const templates = [
   },
   {
     name: 'Minimal Slide Clean',
-    image: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-19.jpeg',
+    image: TEMPLATE_GALLERY_IMAGES.minimalElegant,
     style: 'Modern Clean',
     demoUrl: '/demo/minimal-slide-clean',
     package: '109k' as PackageType,
@@ -46,7 +47,7 @@ const templates = [
   },
   {
     name: 'Modern Dark Blue',
-    image: 'https://renbridal.vn/wp-content/uploads/2023/01/4-Concept-chup-anh-cuoi-day-y-nghia-ma-dau-re-khong-nen-bo-qua-3-768x1075.jpg',
+    image: TEMPLATE_GALLERY_IMAGES.luxuryGold,
     style: 'Modern',
     demoUrl: '/demo/modern-dark-blue',
     package: '109k' as PackageType,
@@ -55,7 +56,7 @@ const templates = [
   },
   {
     name: 'Minimal Elegant',
-    image: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMHdlZGRpbmclMjBtaW5pbWFsaXN0JTIwZWxlZ2FudHxlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    image: PREMIUM_GALLERY_IMAGES.afamilycdn_1,
     style: 'Luxury Editorial',
     demoUrl: '/demo/minimal-elegant-basic',
     package: '159k' as PackageType,
@@ -64,7 +65,7 @@ const templates = [
   },
   {
     name: 'Luxury Gold Frame',
-    image: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp', 
+    image: PREMIUM_GALLERY_IMAGES.pinimg_1, 
     style: 'Luxury',
     demoUrl: '/demo/luxury-gold-frame',
     package: '159k' as PackageType,
@@ -73,7 +74,7 @@ const templates = [
   },
   {
     name: 'Luxury Gold Cinematic',
-    image: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
+    image: PREMIUM_GALLERY_IMAGES.pinimg_11,
     style: 'Cinematic Luxury',
     demoUrl: '/demo/luxury-gold-cinematic',
     package: '159k' as PackageType,
@@ -82,7 +83,7 @@ const templates = [
   },
   {
     name: 'Vintage Film Memory',
-    image: 'https://mimosawedding.vn/wp-content/uploads/2022/07/phong-cach-chup-anh-cuoi-vintage-81.jpg',
+    image: PREMIUM_GALLERY_IMAGES.pinimg_4,
     style: 'Vintage',
     demoUrl: '/demo/vintage-film',
     package: '159k' as PackageType,
@@ -91,7 +92,7 @@ const templates = [
   },
   {
     name: 'Romantic Watercolor',
-    image: 'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
+    image: PREMIUM_GALLERY_IMAGES.pinimg_3,
     style: 'Romantic',
     demoUrl: '/demo/romantic-watercolor',
     package: '159k' as PackageType,
@@ -100,7 +101,7 @@ const templates = [
   },
   {
     name: 'Cinematic Love Story',
-    image: 'https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwYnJpZGUlMjBncm9vbSUyMGNpbmVtYXRpY3xlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    image: PREMIUM_GALLERY_IMAGES.toplist_beewedding,
     style: 'Cinematic Film',
     demoUrl: '/demo/cinematic-love-story',
     package: '199k' as PackageType,
@@ -109,7 +110,7 @@ const templates = [
   },
   {
     name: 'Vietnamese Traditional',
-    image: 'https://images.unsplash.com/photo-1765248227263-cfd048f2c5c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtZXNlJTIwdHJhZGl0aW9uYWwlMjB3ZWRkaW5nJTIwYW8lMjBkYWl8ZW58MXx8fHwxNzY1NzMwMTYwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    image: PREMIUM_GALLERY_IMAGES.hstudio_aodai,
     style: 'Traditional Luxury',
     demoUrl: '/demo/vietnamese-traditional',
     package: '199k' as PackageType,
@@ -118,7 +119,7 @@ const templates = [
   },
   {
     name: '3D Bloom Crystal',
-    image: 'https://lightthatstudio.com/wp-content/uploads/2025/07/Light-That-Studio-Studio-Han-QuocZFK_3275-scaled.jpg',
+    image: TEMPLATE_GALLERY_IMAGES.korean_studio,
     style: '3D Effect',
     demoUrl: '/demo/bloom-crystal-3d',
     package: '199k' as PackageType,
@@ -127,7 +128,7 @@ const templates = [
   },
   {
     name: 'Art Deco Royal',
-    image: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
+    image: TEMPLATE_GALLERY_IMAGES.luxe_venue,
     style: 'Art Deco',
     demoUrl: '/demo/art-deco-royal',
     package: '199k' as PackageType,
@@ -136,7 +137,7 @@ const templates = [
   },
   {
     name: 'Tropical Sunset',
-    image: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0250.jpg',
+    image: PREMIUM_GALLERY_IMAGES.pinimg_5,
     style: 'Tropical',
     demoUrl: '/demo/tropical-sunset',
     package: '199k' as PackageType,

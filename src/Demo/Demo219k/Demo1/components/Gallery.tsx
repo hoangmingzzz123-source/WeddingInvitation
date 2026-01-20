@@ -2,42 +2,43 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useInView } from './hooks/useInView';
+import { DEMO1_GALLERY_IMAGES, PREMIUM_GALLERY_IMAGES } from '../../../../utils/imageConstants';
 
 const photos = [
   {
-    url: 'https://images.unsplash.com/photo-1762941744800-385b067dff21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwZWxlZ2FudHxlbnwxfHx8fDE3NjQ3ODcwMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: DEMO1_GALLERY_IMAGES.weddingVenue,
     caption: 'Khoảnh khắc hạnh phúc'
   },
   {
-    url: 'https://images.unsplash.com/photo-1763739906235-7a0612174ac8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGNvdXBsZSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2NDcyMzM1N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: DEMO1_GALLERY_IMAGES.coupleBeachSunset,
     caption: 'Tình yêu chân thành'
   },
   {
-    url: 'https://images.unsplash.com/photo-1714972383570-44ddc9738355?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwZGFuY2luZ3xlbnwxfHx8fDE3NjQ3ODg4MzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: DEMO1_GALLERY_IMAGES.coupleDancing,
     caption: 'Những bước nhảy đầu tiên'
   },
   {
-    url: 'https://images.unsplash.com/photo-1506014299253-3725319c0f69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VwbGUlMjBob2xkaW5nJTIwaGFuZHN8ZW58MXx8fHwxNzY0NzQwOTUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: DEMO1_GALLERY_IMAGES.coupleHolding,
     caption: 'Nắm tay nhau đi'
   },
   {
-    url: 'https://images.unsplash.com/photo-1726251903562-4af66fc61634?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VwbGUlMjBiZWFjaCUyMHN1bnNldHxlbnwxfHx8fDE3NjQ3ODg3MzF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: PREMIUM_GALLERY_IMAGES.pinimg_2,
     caption: 'Hoàng hôn bên em'
   },
   {
-    url: 'https://images.unsplash.com/photo-1664530140722-7e3bdbf2b870?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwZGVjb3JhdGlvbiUyMGZsb3dlcnN8ZW58MXx8fHwxNzY0Nzc5NDk4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: DEMO1_GALLERY_IMAGES.decorationFlowers,
     caption: 'Trang trí tiệc cưới'
   },
   {
-    url: 'https://images.unsplash.com/photo-1675048524538-9d0c531eaed2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwdmVudWUlMjBlbGVnYW50fGVufDF8fHx8MTc2NDc4MzY4OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: PREMIUM_GALLERY_IMAGES.pinimg_14,
     caption: 'Không gian tiệc cưới'
   },
   {
-    url: 'https://images.unsplash.com/photo-1671116810331-894618e447b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VwbGUlMjBsYXVnaGluZyUyMHRvZ2V0aGVyfGVufDF8fHx8MTc2NDc2NDExMXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: PREMIUM_GALLERY_IMAGES.pinimg_7,
     caption: 'Tiếng cười hạnh phúc'
   },
   {
-    url: 'https://images.unsplash.com/photo-1731515672817-0491d19c9f19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY2VyZW1vbnklMjBvdXRkb29yfGVufDF8fHx8MTc2NDc1MDEwN3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    url: PREMIUM_GALLERY_IMAGES.pinimg_3,
     caption: 'Lễ cưới ngoài trời'
   }
 ];

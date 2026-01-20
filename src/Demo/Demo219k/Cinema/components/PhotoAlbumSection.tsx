@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { GALLERY_IMAGES } from '../../../../utils/imageConstants';
 
 export function PhotoAlbumSection() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -11,41 +12,41 @@ export function PhotoAlbumSection() {
     { 
       id: 1, 
       alt: 'Elegant couple portrait',
-      url: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+      url: GALLERY_IMAGES.studio_couple,
     },
     { 
       id: 2, 
       alt: 'Bride and groom portrait',
-      url: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'},
+      url: GALLERY_IMAGES.tuarts_couple_3},
     { 
       id: 3, 
       alt: 'Romantic outdoor sunset',
-      url: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
+      url: GALLERY_IMAGES.tuarts_couple_1,
     },
     { 
       id: 4, 
       alt: 'Couple holding hands',
-      url: 'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+      url: GALLERY_IMAGES.tuarts_couple_2,
     },
     { 
       id: 5, 
       alt: 'Bride in white dress',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+      url: GALLERY_IMAGES.encrypted_couple,
     },
     { 
       id: 6, 
       alt: 'Couple dancing',
-      url: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
+      url: GALLERY_IMAGES.demxanh_studio,
     },
     { 
       id: 7, 
       alt: 'Groom smiling',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
+      url: GALLERY_IMAGES.tuarts_bride,
     },
     { 
       id: 8, 
       alt: 'Couple in nature',
-      url: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
+      url: GALLERY_IMAGES.tuarts_couple_3,
     },
   ];
 

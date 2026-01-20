@@ -7,6 +7,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { PREMIUM_GALLERY_IMAGES } from '../../utils/imageConstants';
 
 export function BlushFloral() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -257,19 +258,19 @@ function StoryPage({ onNext }: { onNext: () => void }) {
               title: "Lần Đầu Gặp Gỡ",
               date: "Mùa Xuân 2020",
               text: "Một buổi sáng xuân tươi đẹp, chúng mình đã gặp nhau trong khoảnh khắc tình cờ đẹp như mơ...",
-              image: "https://images.unsplash.com/photo-1560113406-36a33855c51e?w=600",
+              image: PREMIUM_GALLERY_IMAGES.pinimg_11,
             },
             {
               title: "Yêu Thương Bắt Đầu",
               date: "Mùa Hè 2020",
               text: "Từ những cuộc trò chuyện đêm khuya, chúng mình dần nhận ra rằng đây là tình yêu đích thực...",
-              image: "https://images.unsplash.com/photo-1761285367066-5875252d7558?w=600",
+              image: PREMIUM_GALLERY_IMAGES.pinimg_2,
             },
             {
               title: "Lời Cầu Hôn",
               date: "Mùa Đông 2024",
               text: "Dưới bầu trời sao lấp lánh, anh đã quỳ gối và hỏi em câu hỏi quan trọng nhất...",
-              image: "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?w=600",
+              image: PREMIUM_GALLERY_IMAGES.pinimg_4,
             },
           ].map((story, index) => (
             <motion.div
@@ -416,12 +417,14 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
 }) {
   const images = [
     'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
-    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
     'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
-    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
-    
+    'https://demxanh.com/media/news/2810_studio-thai-binh-3.jpg' ,
+    PREMIUM_GALLERY_IMAGES.pinimg_11,
+    PREMIUM_GALLERY_IMAGES.pinimg_2,
+    PREMIUM_GALLERY_IMAGES.pinimg_4,
+    PREMIUM_GALLERY_IMAGES.pinimg_5,
+    PREMIUM_GALLERY_IMAGES.pinimg_6,
+    PREMIUM_GALLERY_IMAGES.pinimg_7,
   ];
 
   return (

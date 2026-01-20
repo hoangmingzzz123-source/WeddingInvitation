@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
+import { PREMIUM_GALLERY_IMAGES } from '../../../../utils/imageConstants';
 
 export function Cover() {
   const scrollToContent = () => {
@@ -21,9 +22,9 @@ export function Cover() {
         transition={{ duration: 1.5, ease: 'easeOut' }}
       >
         <div 
-          className="w-full h-full bg-cover bg-center"
+          className="w-full h-full bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1762941744800-385b067dff21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwZWxlZ2FudHxlbnwxfHx8fDE3NjQ3ODcwMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${PREMIUM_GALLERY_IMAGES.pinimg_16})`,
           }}
         />
       </motion.div>

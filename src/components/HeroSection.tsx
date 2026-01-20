@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Button } from './ui/button';
 import { Sparkles, Heart, Play } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { HERO_IMAGES } from '../utils/imageConstants';
 
 export function HeroSection() {
   return (
@@ -246,7 +247,7 @@ export function HeroSection() {
                 }}
               />
               <ImageWithFallback
-                src="https://thiepcuoionline.huythanhjewelry.vn/img/home-banner.webp"
+                src={HERO_IMAGES.banner}
                 alt="Wedding Invitation Card"
                 className="relative w-full h-auto rounded-3xl shadow-2xl"
               />

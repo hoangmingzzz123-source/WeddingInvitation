@@ -7,6 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
 import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
+import { PREMIUM_GALLERY_IMAGES } from '../../utils/imageConstants';
 
 export function BlushFloralEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -311,7 +312,7 @@ function CoverPage({ onNext }: { onNext: () => void }) {
           {/* Couple Names */}
           <motion.h1 
             className="text-7xl md:text-9xl font-bold bg-gradient-to-r from-[#FF69B4] via-[#FFB6C1] to-[#FF69B4] bg-clip-text text-transparent"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+            style={{ fontFamily: '"Allura", cursive' }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.5, delay: 1 }}
@@ -401,7 +402,7 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
         >
           <h2 
             className="text-5xl md:text-6xl text-[#FF69B4] font-bold mb-4"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+            style={{ fontFamily: '"Allura", cursive' }}
           >
             Câu Chuyện Tình Yêu
           </h2>
@@ -523,13 +524,12 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-     'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
-    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
-    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
-    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
-    
+    PREMIUM_GALLERY_IMAGES.pinimg_11,
+    PREMIUM_GALLERY_IMAGES.pinimg_2,
+    PREMIUM_GALLERY_IMAGES.pinimg_4,
+    PREMIUM_GALLERY_IMAGES.pinimg_5,
+    PREMIUM_GALLERY_IMAGES.pinimg_6,
+    PREMIUM_GALLERY_IMAGES.pinimg_7,
   ];
 
   return (
@@ -544,7 +544,7 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
         >
           <h2 
             className="text-5xl md:text-6xl text-[#FF69B4] font-bold mb-4"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+            style={{ fontFamily: '"Allura", cursive' }}
           >
             Khoảnh Khắc Hạnh Phúc
           </h2>
@@ -689,7 +689,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
         >
           <h2 
             className="text-5xl md:text-6xl text-[#FF69B4] font-bold mb-4"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+            style={{ fontFamily: '"Allura", cursive' }}
           >
             Thông Tin Sự Kiện
           </h2>
@@ -961,7 +961,7 @@ function MapPage({ onNext }: { onNext: () => void }) {
         >
           <h2 
             className="text-5xl md:text-6xl text-[#FF69B4] font-bold mb-4"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+            style={{ fontFamily: '"Allura", cursive' }}
           >
             Địa Điểm Tổ Chức
           </h2>
@@ -1094,7 +1094,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
           
           <h2
             className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-[#FF69B4] via-[#FFB6C1] to-[#FF69B4] bg-clip-text text-transparent"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+            style={{ fontFamily: '"Allura", cursive' }}
           >
             Xác Nhận Tham Dự
           </h2>
@@ -1465,7 +1465,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
           >
             <h3 
               className="text-5xl font-bold bg-gradient-to-r from-[#FF69B4] to-[#FFB6C1] bg-clip-text text-transparent"
-              style={{ fontFamily: '"Great Vibes", cursive' }}
+              style={{ fontFamily: '"Allura", cursive' }}
             >
               Cảm Ơn Bạn!
             </h3>
@@ -1529,7 +1529,7 @@ function QRCodePage({ copied, setCopied, guestName }: { copied: boolean; setCopi
         >
           <h2 
             className="text-5xl md:text-6xl text-[#FF69B4] font-bold mb-4"
-            style={{ fontFamily: '"Great Vibes", cursive' }}
+            style={{ fontFamily: '"Allura", cursive' }}
           >
             Chia Sẻ Thiệp Mời
           </h2>

@@ -9,6 +9,7 @@ import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
 import { MapSection } from '../MapSection';
 import { VideoBgSection } from '../VideoBgSection';
+import { UNSPLASH_IMAGES } from '../../utils/imageConstants';
 
 export function VietnameseTraditional() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -151,9 +152,14 @@ export function VietnameseTraditional() {
     },
   ];
 
-  const gallery = Array(6).fill(0).map((_, i) => 
-    `https://images.unsplash.com/photo-${['1765248227263-cfd048f2c5c9', '1688789675055-a39c53d4abd6', '1755838280152-1ff8ec65dd02', '1626531805607-c3cd1ddce3f0', '1755838279349-f5471c4ffdd3', '1519027156611-f83273d3333a'][i]}?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800`
-  );
+  const gallery = [
+    UNSPLASH_IMAGES.vietnameseGallery1,
+    UNSPLASH_IMAGES.vietnameseGallery2,
+    UNSPLASH_IMAGES.vietnameseGallery3,
+    UNSPLASH_IMAGES.vietnameseGallery4,
+    UNSPLASH_IMAGES.vietnameseGallery5,
+    UNSPLASH_IMAGES.vietnameseGallery6
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] via-white to-[#FFF8E7]">

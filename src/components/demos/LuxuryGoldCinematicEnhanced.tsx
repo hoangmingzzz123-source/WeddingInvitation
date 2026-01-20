@@ -7,6 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { MusicPlayer } from '../MusicPlayer';
 import { MapSection } from '../MapSection';
 import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
+import { PREMIUM_GALLERY_IMAGES } from '../../utils/imageConstants';
 
 export function LuxuryGoldCinematicEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -21,13 +22,12 @@ export function LuxuryGoldCinematicEnhanced() {
   const pages = ['cover', 'story', 'gallery', 'details', 'map', 'rsvp', 'qr'];
 
   const gallery = [
-       'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
-    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
-    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
-    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
-    
+      PREMIUM_GALLERY_IMAGES.calibridal_wedding,
+      PREMIUM_GALLERY_IMAGES.pinimg_11,
+      PREMIUM_GALLERY_IMAGES.pinimg_2,
+      PREMIUM_GALLERY_IMAGES.tuart_studio,
+      PREMIUM_GALLERY_IMAGES.pinimg_5,
+      PREMIUM_GALLERY_IMAGES.pinimg_6,
   ];
 
   useEffect(() => {

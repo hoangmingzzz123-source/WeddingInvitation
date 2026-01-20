@@ -43,14 +43,14 @@ export function HeroSection() {
           >
             29 • 03 • 2026
           </motion.h1>
-
+          <br/>
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: '200px' }}
+            animate={{ width: '750px' }}
             transition={{ duration: 1, delay: 1.1 }}
             className="h-[1px] bg-[#C9A24D] mx-auto mb-12"
           />
-
+          <br/>
           <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -64,7 +64,7 @@ export function HeroSection() {
             <Play className="group-hover:scale-110 transition-transform" size={20} fill="currentColor" />
             <span className="tracking-[0.1em]">Watch Our Story</span>
           </motion.button>
-
+<br/>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

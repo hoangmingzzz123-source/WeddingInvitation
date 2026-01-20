@@ -1,19 +1,22 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { GALLERY_IMAGES, PREMIUM_GALLERY_IMAGES } from '../../../../utils/imageConstants';
 
 export function AlbumSection() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   // Placeholder images - in real app these would be actual wedding photos
   const photos = [
-
-   'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
-    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
-    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
+    GALLERY_IMAGES.studio_couple,
+    GALLERY_IMAGES.tuarts_couple_1,
+    GALLERY_IMAGES.tuarts_couple_2,
+    PREMIUM_GALLERY_IMAGES.anhvien_mimosa_korea,
+    PREMIUM_GALLERY_IMAGES.calibridal_wedding,
+    PREMIUM_GALLERY_IMAGES.afamilycdn_1,
+    PREMIUM_GALLERY_IMAGES.pinimg_4,
+    PREMIUM_GALLERY_IMAGES.pinimg_5,
+    PREMIUM_GALLERY_IMAGES.pinimg_6,
    ];
 
   return (

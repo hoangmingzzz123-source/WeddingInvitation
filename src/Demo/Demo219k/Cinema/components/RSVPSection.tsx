@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Check, Users, Ticket, User, MessageSquare } from 'lucide-react';
 import { submitRSVPWithFallback } from '../../../../utils/rsvpSubmission';
 
@@ -63,19 +63,32 @@ export function RSVPSection() {
   };
 
   return (
-    <section className="min-h-screen bg-[#1C1C1C] flex items-center justify-center px-6 py-20 relative overflow-hidden">
-      {/* Central spotlight */}
+    <section className="min-h-screen bg-gradient-to-br from-[#1C1C1C] via-[#2a1a1f] to-[#1C1C1C] flex items-center justify-center px-6 py-20 relative overflow-hidden">
+      {/* Dual spotlight effect */}
       <motion.div
         animate={{ 
-          scale: [1, 1.15, 1],
-          opacity: [0.08, 0.12, 0.08]
+          scale: [1, 1.2, 1],
+          opacity: [0.06, 0.1, 0.06]
         }}
         transition={{ 
-          duration: 5,
+          duration: 7,
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#C9A24D] blur-[150px] rounded-full"
+        className="absolute top-1/3 left-1/3 w-[700px] h-[700px] bg-[#C9A24D] blur-[200px] rounded-full"
+      />
+      <motion.div
+        animate={{ 
+          scale: [1.1, 0.9, 1.1],
+          opacity: [0.05, 0.08, 0.05]
+        }}
+        transition={{ 
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+        className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[#C9A24D]/50 blur-[200px] rounded-full"
       />
 
       <div className="w-full flex justify-center items-center">
@@ -98,38 +111,42 @@ export function RSVPSection() {
           </motion.div>
 
           {/* Title */}
-          <motion.h3
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+          <motion.h2
+            initial={{ opacity: 0, y: -30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-[#F6F1EB] text-3xl md:text-5xl tracking-[0.2em] mb-12 text-center"
-            style={{ fontFamily: 'Playfair Display, serif' }}
+            className="text-[#F6F1EB] text-4xl md:text-6xl tracking-[0.12em] mb-6 text-center font-light"
+            style={{ fontFamily: '"Playfair Display", serif' }}
           >
             XÁC NHẬN THAM DỰ
-          </motion.h3>
+          </motion.h2>
 
           <motion.div
             initial={{ width: 0 }}
-            whileInView={{ width: '120px' }}
+            whileInView={{ width: '100px' }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="h-[1px] bg-[#C9A24D] mx-auto mb-12"
+            transition={{ duration: 1, delay: 0.7 }}
+            className="h-[2px] bg-gradient-to-r from-transparent via-[#C9A24D] to-transparent mx-auto mb-16"
           />
 
-          {!isSubmitted ? (
-            <motion.form
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              onSubmit={handleSubmit}
-              className="bg-gradient-to-br from-[#F6F1EB] to-[#F6F1EB]/95 rounded-2xl p-8 md:p-12 shadow-2xl border-2 border-[#C9A24D]/30"
-            >
+          <AnimatePresence mode="wait">
+            {!isSubmitted ? (
+              <motion.form
+                key="form"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.9 }}
+                onSubmit={handleSubmit}
+                className="bg-gradient-to-br from-[#F6F1EB] via-[#F6F1EB]/98 to-[#F6F1EB]/95 rounded-3xl p-10 md:p-14 shadow-2xl border border-[#C9A24D]/20 relative z-10 max-w-2xl w-full backdrop-blur-sm"
+              >
               {/* Name field */}
-              <div className="mb-6">
-                <label className="block text-[#5A1E2A] mb-3 tracking-[0.1em] text-lg" style={{ fontFamily: 'Lora, serif' }}>
-                  Họ và Tên *
+              <div className="mb-8">
+                <label className="block text-[#5A1E2A] mb-3 tracking-[0.08em] text-lg font-medium" style={{ fontFamily: 'Lora, serif' }}>
+                  Họ và Tên
                 </label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5A1E2A]/60" size={20} />
@@ -138,7 +155,7 @@ export function RSVPSection() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full pl-14 pr-5 py-4 rounded-xl bg-white border-2 border-[#C9A24D]/30 text-[#1C1C1C] focus:border-[#C9A24D] focus:outline-none transition-all shadow-sm text-lg"
+                    className="w-full pl-14 pr-5 py-4 rounded-2xl bg-white border-2 border-[#C9A24D]/20 text-[#1C1C1C] focus:border-[#C9A24D] focus:outline-none focus:shadow-lg transition-all shadow-sm text-lg"
                     style={{ fontFamily: 'Lora, serif' }}
                     placeholder="Nhập họ và tên của bạn"
                     required
@@ -147,9 +164,9 @@ export function RSVPSection() {
               </div>
 
               {/* Attending field */}
-              <div className="mb-6">
-                <label className="block text-[#5A1E2A] mb-3 tracking-[0.1em] text-lg" style={{ fontFamily: 'Lora, serif' }}>
-                  Bạn có tham dự không? *
+              <div className="mb-8">
+                <label className="block text-[#5A1E2A] mb-4 tracking-[0.08em] text-lg font-medium" style={{ fontFamily: 'Lora, serif' }}>
+                  Bạn có tham dự không?
                 </label>
                 <div className="flex gap-4">
                   <label className="flex-1 cursor-pointer">
@@ -161,8 +178,8 @@ export function RSVPSection() {
                       onChange={handleChange}
                       className="peer sr-only"
                     />
-                    <div className="px-5 py-4 rounded-xl bg-white border-2 border-[#C9A24D]/30 peer-checked:border-[#C9A24D] peer-checked:bg-[#C9A24D]/10 text-center transition-all shadow-sm">
-                      <span className="text-lg" style={{ fontFamily: 'Lora, serif' }}>Có, tôi sẽ đến</span>
+                    <div className="px-5 py-4 rounded-2xl bg-white border-2 border-[#C9A24D]/20 peer-checked:border-[#C9A24D] peer-checked:bg-[#C9A24D]/15 peer-checked:shadow-md text-center transition-all shadow-sm hover:border-[#C9A24D]/40">
+                      <span className="text-lg font-medium" style={{ fontFamily: 'Lora, serif' }}>Có, tôi sẽ đến</span>
                     </div>
                   </label>
                   <label className="flex-1 cursor-pointer">
@@ -174,17 +191,17 @@ export function RSVPSection() {
                       onChange={handleChange}
                       className="peer sr-only"
                     />
-                    <div className="px-5 py-4 rounded-xl bg-white border-2 border-[#C9A24D]/30 peer-checked:border-[#C9A24D] peer-checked:bg-[#C9A24D]/10 text-center transition-all shadow-sm">
-                      <span className="text-lg" style={{ fontFamily: 'Lora, serif' }}>Xin lỗi, không thể</span>
+                    <div className="px-5 py-4 rounded-2xl bg-white border-2 border-[#C9A24D]/20 peer-checked:border-[#C9A24D] peer-checked:bg-[#C9A24D]/15 peer-checked:shadow-md text-center transition-all shadow-sm hover:border-[#C9A24D]/40">
+                      <span className="text-lg font-medium" style={{ fontFamily: 'Lora, serif' }}>Xin lỗi, không thể</span>
                     </div>
                   </label>
                 </div>
               </div>
 
               {/* Guests field */}
-              <div className="mb-6">
-                <label className="block text-[#5A1E2A] mb-3 tracking-[0.1em] text-lg" style={{ fontFamily: 'Lora, serif' }}>
-                  Số Lượng Khách *
+              <div className="mb-8">
+                <label className="block text-[#5A1E2A] mb-3 tracking-[0.08em] text-lg font-medium" style={{ fontFamily: 'Lora, serif' }}>
+                  Số Lượng Khách
                 </label>
                 <div className="relative">
                   <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5A1E2A]/60" size={20} />
@@ -192,7 +209,7 @@ export function RSVPSection() {
                     name="guests"
                     value={formData.guests}
                     onChange={handleChange}
-                    className="w-full pl-14 pr-5 py-4 rounded-xl bg-white border-2 border-[#C9A24D]/30 text-[#1C1C1C] focus:border-[#C9A24D] focus:outline-none transition-all shadow-sm text-lg appearance-none cursor-pointer"
+                    className="w-full pl-14 pr-5 py-4 rounded-2xl bg-white border-2 border-[#C9A24D]/20 text-[#1C1C1C] focus:border-[#C9A24D] focus:outline-none focus:shadow-lg transition-all shadow-sm text-lg appearance-none cursor-pointer"
                     style={{ fontFamily: 'Lora, serif' }}
                     required
                   >
@@ -206,8 +223,8 @@ export function RSVPSection() {
               </div>
 
               {/* Message field */}
-              <div className="mb-8">
-                <label className="block text-[#5A1E2A] mb-3 tracking-[0.1em] text-lg" style={{ fontFamily: 'Lora, serif' }}>
+              <div className="mb-10">
+                <label className="block text-[#5A1E2A] mb-3 tracking-[0.08em] text-lg font-medium" style={{ fontFamily: 'Lora, serif' }}>
                   Lời Nhắn (Tùy chọn)
                 </label>
                 <div className="relative">
@@ -216,8 +233,8 @@ export function RSVPSection() {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    rows={3}
-                    className="w-full pl-14 pr-5 py-4 rounded-xl bg-white border-2 border-[#C9A24D]/30 text-[#1C1C1C] focus:border-[#C9A24D] focus:outline-none transition-all resize-none shadow-sm"
+                    rows={4}
+                    className="w-full pl-14 pr-5 py-4 rounded-2xl bg-white border-2 border-[#C9A24D]/20 text-[#1C1C1C] focus:border-[#C9A24D] focus:outline-none focus:shadow-lg transition-all resize-none shadow-sm"
                     style={{ fontFamily: 'Lora, serif' }}
                     placeholder="Ghi chú đặc biệt (ăn chay, dị ứng thực phẩm...)"
                   />
@@ -225,17 +242,23 @@ export function RSVPSection() {
               </div>
 
               {submitError && (
-                <div className="mb-4 p-4 bg-red-100 border-2 border-red-300 rounded-xl text-red-700 text-center" style={{ fontFamily: 'Lora, serif' }}>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 p-4 bg-red-100/90 border-2 border-red-300 rounded-xl text-red-700 text-center text-sm" style={{ fontFamily: 'Lora, serif' }}
+                >
                   {submitError}
-                </div>
+                </motion.div>
               )}
 
               {/* Submit button */}
-              <button
+              <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-5 rounded-full bg-gradient-to-r from-[#C9A24D] via-[#C9A24D] to-[#C9A24D]/80 text-[#1C1C1C] text-lg hover:shadow-2xl hover:shadow-[#C9A24D]/50 transition-all duration-300 group relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-6 rounded-full bg-gradient-to-r from-[#C9A24D] via-[#C9A24D] to-[#C9A24D]/80 text-[#1C1C1C] text-lg font-semibold hover:shadow-2xl hover:shadow-[#C9A24D]/50 transition-all duration-300 group relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontFamily: 'Lora, serif' }}
+                whileHover={{ y: -2 }}
+                whileTap={{ y: 0 }}
               >
                 {!isSubmitting && (
                   <motion.div
@@ -245,45 +268,59 @@ export function RSVPSection() {
                   />
                 )}
                 <span className="relative tracking-[0.15em] flex items-center justify-center gap-3">
-                  <Ticket size={20} className="group-hover:rotate-12 transition-transform" />
+                  <Ticket size={22} className="group-hover:rotate-12 transition-transform" />
                   {isSubmitting ? 'ĐANG GỬI...' : 'GỬI XÁC NHẬN'}
                 </span>
-              </button>
+              </motion.button>
 
-              <p className="text-[#5A1E2A]/60 text-sm text-center mt-6" style={{ fontFamily: 'Lora, serif' }}>
+              <p className="text-[#5A1E2A]/60 text-sm text-center mt-8 tracking-[0.05em]" style={{ fontFamily: 'Lora, serif' }}>
                 Vui lòng xác nhận trước ngày 15.03.2026
               </p>
             </motion.form>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-gradient-to-br from-[#F6F1EB] to-[#F6F1EB]/95 rounded-2xl p-16 text-center shadow-2xl border-2 border-[#C9A24D]/30"
-            >
+            ) : (
               <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", duration: 0.8 }}
-                className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-[#C9A24D] to-[#C9A24D]/70 mb-6 shadow-lg"
+                key="success"
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                className="bg-gradient-to-br from-[#F6F1EB] to-[#F6F1EB]/95 rounded-3xl p-16 text-center shadow-2xl border border-[#C9A24D]/20 relative z-10 max-w-2xl w-full"
               >
-                <Check className="text-[#1C1C1C]" size={48} strokeWidth={3} />
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", duration: 0.8, delay: 0.1 }}
+                  className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-br from-[#C9A24D] to-[#C9A24D]/70 mb-8 shadow-xl"
+                >
+                  <Check className="text-[#1C1C1C]" size={56} strokeWidth={2.5} />
+                </motion.div>
+
+                <motion.h3
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-[#5A1E2A] text-4xl mb-3 tracking-[0.08em] font-light" style={{ fontFamily: '"Playfair Display", serif' }}
+                >
+                  Xác Nhận Thành Công!
+                </motion.h3>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-[#5A1E2A]/80 text-lg leading-relaxed" style={{ fontFamily: 'Lora, serif' }}
+                >
+                  Cảm ơn bạn đã xác nhận. Chúng tôi rất mong được gặp bạn!
+                </motion.p>
+
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: '100px' }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  className="h-[2px] bg-[#C9A24D] mx-auto mt-8"
+                />
               </motion.div>
-              
-              <h4 className="text-[#5A1E2A] text-3xl mb-3 tracking-[0.1em]" style={{ fontFamily: 'Playfair Display, serif' }}>
-                Xác Nhận Thành Công!
-              </h4>
-              <p className="text-[#5A1E2A]/80 text-lg" style={{ fontFamily: 'Lora, serif' }}>
-                Cảm ơn bạn đã xác nhận. Chúng tôi rất mong được gặp bạn!
-              </p>
-              
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '100px' }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="h-[1px] bg-[#C9A24D] mx-auto mt-6"
-              />
-            </motion.div>
-          )}
+            )}
+          </AnimatePresence>
+
         </motion.div>
       </div>
     </section>

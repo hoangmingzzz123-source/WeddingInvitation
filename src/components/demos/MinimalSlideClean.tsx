@@ -7,6 +7,7 @@ import { Input } from '../ui/input';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
 import { MapSection } from '../MapSection';
+import { PREMIUM_GALLERY_IMAGES } from '../../utils/imageConstants';
 
 export function MinimalSlideClean() {
   const [currentTab, setCurrentTab] = useState(0);
@@ -82,19 +83,13 @@ function HomeTab() {
         >
           <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
             <ImageWithFallback
-              src="https://tphcm.cdnchinhphu.vn/334895287454388224/2023/1/20/img20230120004105-16741501441981810620786.jpg"
+              src="https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp"
               alt="Couple"
               className="w-full h-full object-cover"
             />
           </div>
           {/* Clean accent line */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="absolute -bottom-4 -right-4 w-32 h-32 border-4 border-[#1E40AF] rounded-3xl"
-            style={{ originX: 0 }}
-          />
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] rounded-full shadow-lg"></div>
         </motion.div>
 
         {/* Right - Text slides from right */}
@@ -219,13 +214,12 @@ function InfoTab() {
 
 function AlbumTab() {
   const images = [
-    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
-    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
-    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
-    'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg'
+    PREMIUM_GALLERY_IMAGES.calibridal_wedding,
+    PREMIUM_GALLERY_IMAGES.pinimg_11,
+    PREMIUM_GALLERY_IMAGES.pinimg_2,
+    PREMIUM_GALLERY_IMAGES.pinimg_4,
+    PREMIUM_GALLERY_IMAGES.pinimg_5,
+    PREMIUM_GALLERY_IMAGES.pinimg_6,
   ];
 
   return (

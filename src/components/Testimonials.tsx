@@ -3,13 +3,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { Button } from './ui/button';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { TESTIMONIAL_AVATARS } from '../utils/imageConstants';
 
 const testimonials = [
   {
     id: 1,
     name: 'Nguyễn Thị Lan Anh',
     wedding: 'Đám cưới 15/08/2024',
-    avatar: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0516.jpg',
+    avatar: TESTIMONIAL_AVATARS.bride_1,
     rating: 5,
     content: 'Thiệp cưới online quá đẹp và sang trọng! Khách mời ai cũng khen ngợi. Giao diện dễ sử dụng, hiệu ứng mượt mà. Đội ngũ hỗ trợ nhiệt tình. Rất đáng tiền!',
   },
@@ -17,7 +18,7 @@ const testimonials = [
     id: 2,
     name: 'Trần Minh Đức',
     wedding: 'Đám cưới 22/09/2024',
-    avatar: 'https://watermark.lovepik.com/photo/20211209/large/lovepik-groom-image-picture_501759121.jpg',
+    avatar: TESTIMONIAL_AVATARS.groom_1,
     rating: 5,
     content: 'Tính năng xác nhận tham dự và QR mừng cưới rất tiện lợi. Giúp mình quản lý khách mời dễ dàng hơn nhiều. Mẫu thiệp đa dạng, hiệu ứng 3D cực kỳ ấn tượng!',
   },
@@ -25,7 +26,7 @@ const testimonials = [
     id: 3,
     name: 'Lê Thu Hà & Phạm Tuấn Anh',
     wedding: 'Đám cưới 10/10/2024',
-    avatar: 'https://images.pexels.com/photos/34952489/pexels-photo-34952489.jpeg?cs=srgb&dl=pexels-le-hao-quang-249157828-34952489.jpg&fm=jpg',
+    avatar: TESTIMONIAL_AVATARS.couple_1,
     rating: 5,
     content: 'Chúng mình chọn gói Diamond Premium và hoàn toàn hài lòng! Album ảnh không giới hạn, video nhúng mượt mà, guestbook đẹp lung linh. Recommend cho các cặp đôi!',
   },

@@ -7,6 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
 import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
+import { PREMIUM_GALLERY_IMAGES } from '../../utils/imageConstants';
 
 export function MinimalElegantEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -159,7 +160,7 @@ function CoverPage({ onNext, opacity, guestName }: { onNext: () => void; opacity
         style={{ opacity }}
       >
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?w=1920"
+          src={PREMIUM_GALLERY_IMAGES.calibridal_wedding}
           alt="Background"
           className="w-full h-full object-cover"
         />

@@ -10,6 +10,7 @@ import { MusicPlayer } from '../MusicPlayer';
 import { MapSection } from '../MapSection';
 import { VideoBgSection } from '../VideoBgSection';
 import { CinematicPreloader } from '../effects/CinematicPreloader';
+import { PREMIUM_GALLERY_IMAGES, UNSPLASH_IMAGES } from '../../utils/imageConstants';
 
 export function CinematicLoveStory() {
   const [isLoading, setIsLoading] = useState(true);
@@ -38,28 +39,28 @@ export function CinematicLoveStory() {
       month: 'Tháng 3',
       title: 'Lần Đầu Gặp Gỡ',
       story: 'Một buổi sáng xuân tươi đẹp, định mệnh đã sắp đặt để chúng mình gặp nhau tại quán cà phê nhỏ. Ánh mắt anh, nụ cười em - tất cả như một khởi đầu của chuyện tình cổ tích.',
-      image: 'https://images.unsplash.com/photo-1755838279349-f5471c4ffdd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwY291cGxlJTIwbG92ZSUyMHN0b3J5fGVufDF8fHx8MTc2NTczMDE2MXww&ixlib=rb-4.1.0&q=80&w=1080'
+      image: PREMIUM_GALLERY_IMAGES.pinimg_2
     },
     {
       year: '2019',
       month: 'Tháng 12',
       title: 'Lời Tỏ Tình',
       story: 'Dưới ánh đèn lung linh của Giáng sinh, anh đã quỳ gối và hỏi em câu hỏi quan trọng nhất đời anh. Giọt nước mắt hạnh phúc của em chính là câu trả lời.',
-      image: 'https://images.unsplash.com/photo-1519027156611-f83273d3333a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMHdlZGRpbmclMjB0aW1lbGluZXxlbnwxfHx8fDE3NjU3MzAxNjF8MA&ixlib=rb-4.1.0&q=80&w=1080'
+      image: PREMIUM_GALLERY_IMAGES.pinimg_11
     },
     {
       year: '2023',
       month: 'Tháng 6',
       title: 'Lễ Đính Hôn',
       story: 'Được gia đình hai bên chúc phúc, chúng mình chính thức trở thành gia đình. Ngày hôm đó, hạnh phúc tràn ngập trên khuôn mặt mọi người.',
-      image: 'https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwYnJpZGUlMjBncm9vbSUyMGNpbmVtYXRpY3xlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080'
+      image: PREMIUM_GALLERY_IMAGES.afamilycdn_1
     },
     {
       year: '2025',
       month: 'Tháng 3',
       title: 'Lễ Cưới',
       story: 'Và cuối cùng, chúng mình sẽ nắm tay nhau bước vào hôn lễ thiêng liêng, khởi đầu cho hành trình mới - cùng nhau đến cuối con đường.',
-      image: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMHdlZGRpbmclMjBtaW5pbWFsaXN0JTIwZWxlZ2FudHxlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080'
+      image: PREMIUM_GALLERY_IMAGES.pinimg_4
     }
   ];
 
@@ -90,9 +91,14 @@ export function CinematicLoveStory() {
     }
   ];
 
-  const gallery = Array(6).fill(0).map((_, i) => 
-    `https://images.unsplash.com/photo-${['1755838280152-1ff8ec65dd02', '1626531805607-c3cd1ddce3f0', '1755838279349-f5471c4ffdd3', '1519027156611-f83273d3333a', '1688789675055-a39c53d4abd6', '1765248227263-cfd048f2c5c9'][i]}?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800`
-  );
+  const gallery = [
+    PREMIUM_GALLERY_IMAGES.pinimg_11,
+    PREMIUM_GALLERY_IMAGES.pinimg_2,
+    PREMIUM_GALLERY_IMAGES.pinimg_4,
+    PREMIUM_GALLERY_IMAGES.pinimg_5,
+    PREMIUM_GALLERY_IMAGES.pinimg_6,
+    PREMIUM_GALLERY_IMAGES.pinimg_7,
+  ];
 
   useEffect(() => {
     // Simulate loading time
@@ -134,7 +140,7 @@ export function CinematicLoveStory() {
           style={{ scale: heroScale }}
         >
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwYnJpZGUlMjBncm9vbSUyMGNpbmVtYXRpY3xlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+            src={PREMIUM_GALLERY_IMAGES.pinimg_11}
             alt="Hero"
             className="w-full h-full object-cover"
           />

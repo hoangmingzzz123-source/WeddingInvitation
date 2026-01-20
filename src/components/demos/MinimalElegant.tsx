@@ -7,6 +7,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { MusicPlayer } from '../MusicPlayer';
+import { PREMIUM_GALLERY_IMAGES } from '../../utils/imageConstants';
 
 export function MinimalElegant() {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
@@ -48,9 +49,14 @@ export function MinimalElegant() {
     },
   ];
 
-  const gallery = Array(9).fill(0).map((_, i) => 
-    `https://images.unsplash.com/photo-${['1626531805607-c3cd1ddce3f0', '1755838280152-1ff8ec65dd02', '1755838279349-f5471c4ffdd3', '1519027156611-f83273d3333a', '1688789675055-a39c53d4abd6', '1765248227263-cfd048f2c5c9', '1626531805607-c3cd1ddce3f0', '1755838280152-1ff8ec65dd02', '1755838279349-f5471c4ffdd3'][i]}?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800`
-  );
+  const gallery = [
+    PREMIUM_GALLERY_IMAGES.calibridal_wedding,
+    PREMIUM_GALLERY_IMAGES.pinimg_11,
+    PREMIUM_GALLERY_IMAGES.pinimg_2,
+    PREMIUM_GALLERY_IMAGES.pinimg_4,
+    PREMIUM_GALLERY_IMAGES.pinimg_5,
+    PREMIUM_GALLERY_IMAGES.pinimg_6,
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -114,7 +120,7 @@ export function MinimalElegant() {
         {/* Background Image */}
         <div className="absolute inset-0 opacity-10">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920"
+            src={PREMIUM_GALLERY_IMAGES.calibridal_wedding}
             alt="Hero Background"
             className="w-full h-full object-cover"
           />

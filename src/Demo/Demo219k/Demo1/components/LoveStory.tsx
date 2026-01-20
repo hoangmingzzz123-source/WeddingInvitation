@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Heart, Sparkles, MessageCircleHeart, Church, Calendar } from 'lucide-react';
 import { useInView } from './hooks/useInView';
+import { PREMIUM_GALLERY_IMAGES } from '../../../../utils/imageConstants';
 
 const timeline = [
   {
@@ -8,8 +9,7 @@ const timeline = [
     date: '01.03.2019',
     title: 'Lần Đầu Gặp Gỡ',
     description: 'Định mệnh đã sắp đặt để hai chúng tôi gặp nhau trong một buổi chiều mưa phùn tại quán cà phê nhỏ. Ánh mắt anh và nụ cười em đã làm nên câu chuyện tình yêu này.',
-    image: 'https://images.unsplash.com/photo-1506014299253-3725319c0f69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VwbGUlMjBob2xkaW5nJTIwaGFuZHN8ZW58MXx8fHwxNzY0NzQwOTUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
-  },
+    image: PREMIUM_GALLERY_IMAGES.pinimg_17 },
   {
     icon: Sparkles,
     date: '15.05.2019',
@@ -29,15 +29,13 @@ const timeline = [
     date: '10.01.2025',
     title: 'Ăn Hỏi',
     description: 'Ngày trọng đại khi hai gia đình chính thức kết thân, cùng nhau chuẩn bị cho đám cưới sắp tới với bao nhiêu niềm vui và háo hức.',
-    image: 'https://images.unsplash.com/photo-1763739906235-7a0612174ac8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGNvdXBsZSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2NDcyMzM1N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
-  },
+    image: PREMIUM_GALLERY_IMAGES.pinimg_14  },
   {
     icon: Church,
     date: '15.06.2025',
     title: 'Đám Cưới',
     description: 'Ngày mà chúng tôi chính thức trở thành vợ chồng, bắt đầu hành trình mới với tư cách là một gia đình. Cảm ơn bạn đã đồng hành cùng chúng tôi!',
-    image: 'https://images.unsplash.com/photo-1731515672817-0491d19c9f19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY2VyZW1vbnklMjBvdXRkb29yfGVufDF8fHx8MTc2NDc1MDEwN3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
-  }
+    image: PREMIUM_GALLERY_IMAGES.pinimg_4  },
 ];
 
 export function LoveStory() {
