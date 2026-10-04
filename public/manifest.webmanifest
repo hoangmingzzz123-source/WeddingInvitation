@@ -1,0 +1,19 @@
+{
+  "name": "Wedding Invitation MP",
+  "short_name": "Wedding MP",
+  "description": "Thiệp cưới online cá nhân hóa với album, RSVP, bản đồ và âm nhạc.",
+  "lang": "vi",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#faf7f2",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
