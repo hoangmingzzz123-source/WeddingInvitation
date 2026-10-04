@@ -2,6 +2,9 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 
 const HomePage = lazy(() => import('./components/HomePage').then((module) => ({ default: module.HomePage })));
 const TemplatesPage = lazy(() => import('./components/TemplatesPage').then((module) => ({ default: module.TemplatesPage })));
+const InvitationCreatorPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.InvitationCreatorPage })));
+const GeneratedInvitationPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.GeneratedInvitationPage })));
+const DemoShell = lazy(() => import('./components/DemoShell').then((module) => ({ default: module.DemoShell })));
 const ClassicMinimalist = lazy(() => import('./components/demos/ClassicMinimalist').then((module) => ({ default: module.ClassicMinimalist })));
 const BlushFloral = lazy(() => import('./components/demos/BlushFloral').then((module) => ({ default: module.BlushFloral })));
 const BlushFloralEnhanced = lazy(() => import('./components/demos/BlushFloralEnhanced').then((module) => ({ default: module.BlushFloralEnhanced })));
@@ -56,6 +59,10 @@ export function Router() {
     window.scrollTo({ top: 0, behavior: 'auto' });
     if (currentRoute === '/') {
       document.title = 'Wedding Invitation MP | Thiệp cưới online';
+    } else if (currentRoute === '/tao-thiep') {
+      document.title = 'Tự tạo demo thiệp cưới | Wedding Invitation MP';
+    } else if (currentRoute === '/tao-thiep/preview') {
+      document.title = 'Demo thiệp cưới | Wedding Invitation MP';
     } else if (currentRoute.startsWith('/demo/')) {
       document.title = 'Xem mẫu thiệp | Wedding Invitation MP';
     }
@@ -64,6 +71,8 @@ export function Router() {
   const routes: Record<string, ReactNode> = {
     '/': <HomePage />,
     '/templates': <TemplatesPage />,
+    '/tao-thiep': <InvitationCreatorPage />,
+    '/tao-thiep/preview': <GeneratedInvitationPage />,
     '/demo/classic-minimalist': <ClassicMinimalist />,
     '/demo/blush-floral': <BlushFloral />,
     '/demo/soft-fade-floral': <SoftFadeFloral />,
@@ -86,7 +95,13 @@ export function Router() {
     '/demo/minimal-elegant-basic': <MinimalElegant />,
   };
 
-  return <Suspense fallback={<RouteLoader />}>{routes[currentRoute] ?? <NotFoundPage />}</Suspense>;
+  const page = routes[currentRoute] ?? <NotFoundPage />;
+
+  return (
+    <Suspense fallback={<RouteLoader />}>
+      {currentRoute.startsWith('/demo/') ? <DemoShell route={currentRoute}>{page}</DemoShell> : page}
+    </Suspense>
+  );
 }
 
 export function navigateTo(path: string) {
