@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { MotionConfig } from 'motion/react';
 import { Router } from './Router';
 
 export default function App() {
-  return <Router />;
+  return (
+    <MotionConfig reducedMotion="user">
+      <Router />
+    </MotionConfig>
+  );
 }
