@@ -13,7 +13,7 @@ export function TemplateCard({ template, priority = false }: TemplateCardProps) 
   const isExternal = Boolean(template.externalUrl);
 
   return (
-    <article className={`template-card template-card--${template.tier}`}>
+    <article className={`template-card template-card--${template.tier}${template.realWedding ? ' template-card--real' : ''}`}>
       <a
         className="template-card__link"
         href={href}

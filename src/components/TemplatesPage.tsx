@@ -8,6 +8,7 @@ import {
   type TemplateTier,
 } from '../data/templates';
 import { TemplateCard } from './TemplateCard';
+import { InvitationCreationLauncher } from './InvitationCreationDialog';
 
 type TierFilter = 'all' | TemplateTier;
 
@@ -71,14 +72,13 @@ export function TemplatesPage() {
           >
             Wedding Invitation <span>MP</span>
           </a>
-          <a
-            className="templates-contact"
-            href="https://forms.gle/2qBNf4tHBiq6vavZ6"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Tạo thiệp riêng
-          </a>
+          <InvitationCreationLauncher>
+            {(openOptions) => (
+              <button type="button" className="templates-contact" onClick={openOptions}>
+                Tạo thiệp riêng
+              </button>
+            )}
+          </InvitationCreationLauncher>
         </div>
       </header>
 
@@ -102,6 +102,16 @@ export function TemplatesPage() {
             <span><strong>{weddingTemplates.length}</strong> mẫu đang hoạt động</span>
             <span><strong>3</strong> mức ngân sách</span>
             <span><strong>100%</strong> responsive</span>
+          </div>
+          <div className="templates-hero__actions">
+            <button type="button" onClick={() => document.querySelector('.templates-catalog')?.scrollIntoView({ behavior: 'smooth' })}>
+              Khám phá bộ sưu tập
+            </button>
+            <InvitationCreationLauncher>
+              {(openOptions) => (
+                <button type="button" onClick={openOptions}>Tự tạo demo miễn phí</button>
+              )}
+            </InvitationCreationLauncher>
           </div>
         </motion.div>
       </section>

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
 import { Menu, X } from 'lucide-react';
 import logoWeb from '../asset/logoweb.jpg';
+import { InvitationCreationLauncher } from './InvitationCreationDialog';
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -65,13 +66,17 @@ export function Navigation() {
                 {item.label}
               </a>
             ))}
-            <Button
-              className="bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-2 rounded-full"
-              style={{ fontFamily: '"Poppins", sans-serif' }}
-              onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Tạo thiệp ngay
-            </Button>
+            <InvitationCreationLauncher>
+              {(openOptions) => (
+                <Button
+                  className="bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-2 rounded-full"
+                  style={{ fontFamily: '"Poppins", sans-serif' }}
+                  onClick={openOptions}
+                >
+                  Tạo thiệp ngay
+                </Button>
+              )}
+            </InvitationCreationLauncher>
           </div>
 
           {/* Mobile Menu Button */}
@@ -110,16 +115,20 @@ export function Navigation() {
                   {item.label}
                 </a>
               ))}
-              <Button
-                className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-3 rounded-full"
-                style={{ fontFamily: '"Poppins", sans-serif' }}
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Tạo thiệp ngay
-              </Button>
+              <InvitationCreationLauncher>
+                {(openOptions) => (
+                  <Button
+                    className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-3 rounded-full"
+                    style={{ fontFamily: '"Poppins", sans-serif' }}
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openOptions();
+                    }}
+                  >
+                    Tạo thiệp ngay
+                  </Button>
+                )}
+              </InvitationCreationLauncher>
             </div>
           </motion.div>
         )}

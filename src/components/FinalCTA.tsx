@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Button } from './ui/button';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { weddingTemplates } from '../data/templates';
+import { InvitationCreationLauncher } from './InvitationCreationDialog';
 
 export function FinalCTA() {
   return (
@@ -157,19 +158,23 @@ export function FinalCTA() {
               ease: "easeInOut",
             }}
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                onClick={() => window.open('https://forms.gle/2qBNf4tHBiq6vavZ6', '_blank', 'noopener,noreferrer')}
-                className="bg-[#C29B43] hover:bg-[#A88434] text-white px-10 py-7 rounded-full shadow-2xl text-lg transition-all"
-                style={{ fontFamily: '"Poppins", sans-serif' }}
-              >
-                Bắt Đầu Tạo Thiệp Ngay
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </motion.div>
+            <InvitationCreationLauncher>
+              {(openOptions) => (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    onClick={openOptions}
+                    className="bg-[#C29B43] hover:bg-[#A88434] text-white px-10 py-7 rounded-full shadow-2xl text-lg transition-all"
+                    style={{ fontFamily: '"Poppins", sans-serif' }}
+                  >
+                    Bắt Đầu Tạo Thiệp Ngay
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </motion.div>
+              )}
+            </InvitationCreationLauncher>
           </motion.div>
 
           <motion.div
