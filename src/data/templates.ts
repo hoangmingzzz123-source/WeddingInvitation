@@ -22,7 +22,7 @@ export const weddingTemplates: WeddingTemplate[] = [
     name: 'Hà Phương & Hoàng Minh 2026',
     style: 'Cinematic Vietnamese',
     description: 'Mẫu thiệp thực tế với trải nghiệm mở thiệp, album, RSVP và âm nhạc.',
-    thumbnail: 'https://mp-wedding-2026.vercel.app/media/story-1.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1769812343590-485512e27838?auto=format&fit=crop&w=1600&q=85',
     externalUrl: 'https://mp-wedding-2026.vercel.app/',
     tier: '199k',
     features: ['Mở thiệp tương tác', 'Album', 'RSVP', 'Âm nhạc'],
