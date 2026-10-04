@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Phone, Mail, MapPin, Facebook, MessageCircle, Send, Heart, Shield, Award, Clock } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Send, Heart, Shield, Award, Clock } from 'lucide-react';
 
 export function EnhancedFooter() {
   const currentYear = new Date().getFullYear();
@@ -9,14 +9,14 @@ export function EnhancedFooter() {
     { label: 'Trang chủ', href: '#home' },
     { label: 'Gói thiệp', href: '#packages' },
     { label: 'Mẫu thiệp', href: '#templates' },
-    { label: 'Hướng dẫn', href: '#video' },
+    { label: 'Video demo', href: '#video-section-pointer' },
   ];
 
-  const policies = [
-    { label: 'Chính sách bảo mật', href: '#' },
-    { label: 'Điều khoản sử dụng', href: '#' },
-    { label: 'Chính sách hoàn tiền', href: '#' },
-    { label: 'Câu hỏi thường gặp', href: '#' },
+  const commitments = [
+    'Bảo mật thông tin khách mời',
+    'Chỉnh sửa rõ ràng theo từng gói',
+    'Hỗ trợ sau khi bàn giao',
+    'Tư vấn phong cách trước thiết kế',
   ];
 
   const paymentMethods = [
@@ -138,17 +138,12 @@ export function EnhancedFooter() {
             className="space-y-4"
           >
             <h4 className="text-lg text-[#C29B43]" style={{ fontFamily: '"Poppins", sans-serif' }}>
-              Chính sách
+              Cam kết dịch vụ
             </h4>
             <ul className="space-y-2">
-              {policies.map((link, i) => (
+              {commitments.map((commitment, i) => (
                 <motion.li key={i} whileHover={{ x: 5 }}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-gray-300 hover:text-[#C29B43] transition-colors duration-200"
-                  >
-                    {link.label}
-                  </a>
+                  <span className="text-sm text-gray-300">{commitment}</span>
                 </motion.li>
               ))}
             </ul>
@@ -175,7 +170,7 @@ export function EnhancedFooter() {
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <Mail className="w-4 h-4 mt-0.5 text-[#C29B43] flex-shrink-0" />
-                <a href="mailto:contact@thiepcuoi.vn" className="hover:text-[#C29B43] transition-colors">
+                <a href="mailto:wedding.invitation.mp@gmail.com" className="hover:text-[#C29B43] transition-colors">
                   wedding.invitation.mp@gmail.com
                 </a>
               </li>
@@ -188,13 +183,14 @@ export function EnhancedFooter() {
             {/* Social Links */}
             <div className="flex gap-3 pt-2">
               {[
-                { icon: Facebook, color: '#1877F2', label: 'Facebook' },
-                { icon: MessageCircle, color: '#0088CC', label: 'Zalo' },
-                { icon: Send, color: '#E91E63', label: 'Messenger' },
+                { icon: Facebook, color: '#1877F2', label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61585450214107' },
+                { icon: Send, color: '#E91E63', label: 'Gửi yêu cầu', href: 'https://forms.gle/2qBNf4tHBiq6vavZ6' },
               ].map((social, i) => (
                 <motion.a
                   key={i}
-                  href="#"
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.15, y: -3 }}
                   whileTap={{ scale: 0.95 }}
                   className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300"

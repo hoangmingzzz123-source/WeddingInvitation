@@ -4,10 +4,11 @@ import { Button } from './ui/button';
 import { Sparkles, Heart, Play } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { HERO_IMAGES } from '../utils/imageConstants';
+import { weddingTemplates } from '../data/templates';
 
 export function HeroSection() {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center px-4 md:px-16 py-16 overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center px-4 md:px-16 pt-28 pb-16 overflow-hidden">
       {/* Animated Background Gradient */}
       <motion.div 
         className="absolute inset-0 z-0"
@@ -26,7 +27,7 @@ export function HeroSection() {
       />
 
       {/* Floating Golden Particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
         {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
             key={i}
@@ -67,7 +68,7 @@ export function HeroSection() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFF4D3] rounded-full shadow-lg"
           >
             <Sparkles className="w-4 h-4 text-[#C29B43]" />
-            <span className="text-sm text-[#A88434]">Sang trọng & Hiện đại</span>
+            <span className="text-sm text-[#A88434]">Cá nhân hóa · Tinh tế · Tối ưu mobile</span>
           </motion.div>
 
           <motion.h1
@@ -94,7 +95,7 @@ export function HeroSection() {
                 ease: "easeInOut",
               }}
             >
-              Wedding Invitation
+              Thiệp Cưới Online
             </motion.span>
           </motion.h1>
 
@@ -108,7 +109,7 @@ export function HeroSection() {
               fontWeight: 300,
             }}
           >
-            ✨ Cá Nhân Hóa – Đa Hiệu Ứng – Thiết Kế Hiện Đại
+            Một đường link nhỏ, trọn vẹn câu chuyện của hai bạn.
 
           </motion.p>
 
@@ -151,7 +152,7 @@ export function HeroSection() {
 
                 <span className="relative z-10 flex items-center">
                   <Heart className="w-5 h-5 mr-2" />
-                  Xem 45+ Mẫu Thiệp Cưới
+                  Xem {weddingTemplates.length} mẫu thiệp
                 </span>
               </Button>
             </motion.div>
@@ -193,7 +194,7 @@ export function HeroSection() {
                 whileHover={{ scale: 1.1, y: -2 }}
                 onClick={() => {
                   const priceNum = pkg.label.replace(/\D/g, '');
-                  window.location.hash = `#templates-filter-${priceNum}k`;
+                  window.location.hash = `templates-filter-${priceNum}k`;
                   setTimeout(() => {
                     document.getElementById('templates')?.scrollIntoView({ 
                       behavior: 'smooth',
@@ -248,7 +249,7 @@ export function HeroSection() {
               />
               <ImageWithFallback
                 src={HERO_IMAGES.banner}
-                alt="Wedding Invitation Card"
+                alt="Mẫu thiệp cưới online hiển thị trên điện thoại"
                 className="relative w-full h-auto rounded-3xl shadow-2xl"
               />
             </div>
