@@ -26,13 +26,13 @@ export function ClassicMinimalist() {
   };
 
   const images = [
-    'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
-    'https://tiff.vn/wp-content/uploads/2025/06/nghi-thuc-rai-hoa-trong-dam-cuoi-da-co-lich-su-tu-lau-doi.jpg',
-    'https://tphcm.cdnchinhphu.vn/334895287454388224/2023/1/20/tiec-cuoi-1-1674150641907468449774.jpg',
-    'https://static-images.vnncdn.net/vps_images_publish/000001/000003/2024/9/10/dam-cuoi-xuc-dong-cua-dien-vien-anh-duc-va-vo-kem-12-tuoi-4891.jpg?width=0&s=dd3S-SiZ9fG9l2zACWLx6g',
-    'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
-    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    ];
+    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=82',
+    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=82',
+    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=82',
+    'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1200&q=82',
+    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=82',
+    'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=1200&q=82',
+  ];
 
   return (
     <div className="min-h-screen bg-[#FAF7F2]">

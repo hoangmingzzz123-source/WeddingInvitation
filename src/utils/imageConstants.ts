@@ -2,8 +2,6 @@
  * Image URLs Constants
  * Centralized image URLs for the wedding invitation website
  */
-import videoCover from '../asset/videoCover.png';
-
 // Gallery Images - Wedding Photos
 export const GALLERY_IMAGES = {
   // Standard gallery photos (used in multiple templates)
@@ -18,7 +16,7 @@ export const GALLERY_IMAGES = {
 
 // Home/Hero Images
 export const HERO_IMAGES = {
-  banner: videoCover,
+  banner: 'https://thiepcuoionline.huythanhjewelry.vn/img/home-banner.webp',
 };
 
 // Template Gallery Images - Featured Templates

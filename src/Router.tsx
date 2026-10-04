@@ -1,4 +1,11 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
+import { weddingTemplates } from './data/templates';
+
+const productionUrl = 'https://wedding-invitation-five-orpin.vercel.app';
+
+function updateMeta(selector: string, attribute: string, value: string) {
+  document.querySelector<HTMLMetaElement>(selector)?.setAttribute(attribute, value);
+}
 
 const HomePage = lazy(() => import('./components/HomePage').then((module) => ({ default: module.HomePage })));
 const TemplatesPage = lazy(() => import('./components/TemplatesPage').then((module) => ({ default: module.TemplatesPage })));
@@ -57,15 +64,47 @@ export function Router() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
+    const demoTemplate = weddingTemplates.find((template) => template.route === currentRoute);
+    let title = 'Wedding Invitation MP | Thiệp cưới online';
+    let description = 'Thư viện thiệp cưới online cá nhân hóa, tối ưu điện thoại với album, RSVP, bản đồ và âm nhạc.';
+
     if (currentRoute === '/') {
-      document.title = 'Wedding Invitation MP | Thiệp cưới online';
+      title = 'Wedding Invitation MP | Thiệp cưới online';
+    } else if (currentRoute === '/templates') {
+      title = 'Thư viện mẫu thiệp cưới | Wedding Invitation MP';
+      description = `Khám phá ${weddingTemplates.length} mẫu thiệp cưới online hiện đại, responsive và giàu tương tác.`;
     } else if (currentRoute === '/tao-thiep') {
-      document.title = 'Tự tạo demo thiệp cưới | Wedding Invitation MP';
+      title = 'Tự tạo demo thiệp cưới | Wedding Invitation MP';
+      description = 'Tạo nhanh bản demo thiệp cưới online từ thông tin và phong cách của bạn.';
     } else if (currentRoute === '/tao-thiep/preview') {
-      document.title = 'Demo thiệp cưới | Wedding Invitation MP';
-    } else if (currentRoute.startsWith('/demo/')) {
-      document.title = 'Xem mẫu thiệp | Wedding Invitation MP';
+      title = 'Demo thiệp cưới | Wedding Invitation MP';
+      description = 'Bản xem trước thiệp cưới online được cá nhân hóa.';
+    } else if (demoTemplate) {
+      title = `${demoTemplate.name} | Mẫu thiệp cưới MP`;
+      description = demoTemplate.description;
+    } else {
+      title = 'Không tìm thấy trang | Wedding Invitation MP';
+      description = 'Trang bạn tìm không tồn tại. Khám phá thư viện mẫu thiệp cưới online của Wedding Invitation MP.';
     }
+
+    document.title = title;
+    document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+      ?.setAttribute('href', `${productionUrl}${currentRoute === '/' ? '/' : currentRoute}`);
+    updateMeta('meta[name="description"]', 'content', description);
+    updateMeta('meta[property="og:title"]', 'content', title);
+    updateMeta('meta[property="og:description"]', 'content', description);
+    updateMeta('meta[property="og:url"]', 'content', `${productionUrl}${currentRoute === '/' ? '/' : currentRoute}`);
+    updateMeta('meta[name="twitter:title"]', 'content', title);
+    updateMeta('meta[name="twitter:description"]', 'content', description);
+    const isIndexableRoute = currentRoute === '/'
+      || currentRoute === '/templates'
+      || currentRoute === '/tao-thiep'
+      || Boolean(demoTemplate);
+    updateMeta(
+      'meta[name="robots"]',
+      'content',
+      isIndexableRoute ? 'index, follow, max-image-preview:large' : 'noindex, nofollow',
+    );
   }, [currentRoute]);
 
   const routes: Record<string, ReactNode> = {

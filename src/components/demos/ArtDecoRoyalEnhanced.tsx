@@ -468,7 +468,7 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
     'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800',
     'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
     'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    'https://images.unsplash.com/photo-1525258441167-d6ced3f01c95?w=800',
+    'https://images.unsplash.com/photo-1506014299253-3725319c0f69?auto=format&fit=crop&w=800&q=82',
   ];
 
   return (

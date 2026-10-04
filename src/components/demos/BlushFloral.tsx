@@ -417,8 +417,8 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
 }) {
   const images = [
     'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg' ,
-    'https://demxanh.com/media/news/2810_studio-thai-binh-3.jpg' ,
+    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=82',
+    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=82',
     PREMIUM_GALLERY_IMAGES.pinimg_11,
     PREMIUM_GALLERY_IMAGES.pinimg_2,
     PREMIUM_GALLERY_IMAGES.pinimg_4,

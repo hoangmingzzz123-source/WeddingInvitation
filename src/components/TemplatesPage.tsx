@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, ArrowUp, Filter, Search, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowUp, Filter, Heart, Search, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { navigateTo } from '../Router';
 import {
@@ -9,6 +9,7 @@ import {
 } from '../data/templates';
 import { TemplateCard } from './TemplateCard';
 import { InvitationCreationLauncher } from './InvitationCreationDialog';
+import { readTemplateFavorites, TEMPLATE_FAVORITES_EVENT } from '../utils/templateFavorites';
 
 type TierFilter = 'all' | TemplateTier;
 
@@ -23,13 +24,22 @@ export function TemplatesPage() {
   const [selectedTier, setSelectedTier] = useState<TierFilter>(readInitialTier);
   const [searchTerm, setSearchTerm] = useState('');
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState(() => readTemplateFavorites());
 
   useEffect(() => {
     document.title = 'Thư viện mẫu thiệp cưới | Wedding Invitation MP';
     const handleScroll = () => setShowBackToTop(window.scrollY > 640);
+    const syncFavorites = () => setFavoriteIds(readTemplateFavorites());
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener(TEMPLATE_FAVORITES_EVENT, syncFavorites);
+    window.addEventListener('storage', syncFavorites);
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener(TEMPLATE_FAVORITES_EVENT, syncFavorites);
+      window.removeEventListener('storage', syncFavorites);
+    };
   }, []);
 
   const filteredTemplates = useMemo(() => {
@@ -37,6 +47,7 @@ export function TemplatesPage() {
 
     return weddingTemplates.filter((template) => {
       const matchesTier = selectedTier === 'all' || template.tier === selectedTier;
+      const matchesFavorite = !favoritesOnly || favoriteIds.includes(template.id);
       const matchesSearch =
         !normalizedSearch ||
         [template.name, template.style, template.description, ...template.features]
@@ -44,9 +55,9 @@ export function TemplatesPage() {
           .toLocaleLowerCase('vi')
           .includes(normalizedSearch);
 
-      return matchesTier && matchesSearch;
+      return matchesTier && matchesFavorite && matchesSearch;
     });
-  }, [searchTerm, selectedTier]);
+  }, [favoriteIds, favoritesOnly, searchTerm, selectedTier]);
 
   const selectTier = (tier: TierFilter) => {
     setSelectedTier(tier);
@@ -130,6 +141,16 @@ export function TemplatesPage() {
           </label>
 
           <div className="templates-filters" aria-label="Lọc theo gói">
+            <button
+              type="button"
+              className={favoritesOnly ? 'is-active' : ''}
+              aria-pressed={favoritesOnly}
+              onClick={() => setFavoritesOnly((currentValue) => !currentValue)}
+            >
+              <Heart aria-hidden="true" fill={favoritesOnly ? 'currentColor' : 'none'} />
+              Đã lưu
+              <span>{favoriteIds.length}</span>
+            </button>
             {tierOrder.map((tier) => {
               const count = tier === 'all'
                 ? weddingTemplates.length
@@ -158,6 +179,7 @@ export function TemplatesPage() {
           <p>
             Hiển thị <strong>{filteredTemplates.length}</strong> mẫu
             {searchTerm && <> cho “{searchTerm.trim()}”</>}
+            {favoritesOnly && <> trong danh sách đã lưu</>}
           </p>
         </div>
 
@@ -184,6 +206,7 @@ export function TemplatesPage() {
               type="button"
               onClick={() => {
                 setSearchTerm('');
+                setFavoritesOnly(false);
                 selectTier('all');
               }}
             >
