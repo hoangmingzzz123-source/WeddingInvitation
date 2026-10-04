@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Button } from './ui/button';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import { weddingTemplates } from '../data/templates';
+import { InvitationCreationLauncher } from './InvitationCreationDialog';
 
 export function FinalCTA() {
   return (
@@ -107,8 +109,8 @@ export function FinalCTA() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-xl text-[#4A4A4A] max-w-2xl mx-auto"
         >
-          Chỉ cần 5 phút để có một thiệp cưới online đẹp lung linh, 
-          chia sẻ tình yêu đến mọi người thật dễ dàng
+          Chọn mẫu bạn yêu thích, gửi nội dung và cùng chúng tôi hoàn thiện một lời mời
+          mang dấu ấn riêng của hai bạn.
         </motion.p>
 
         {/* Stats */}
@@ -120,9 +122,9 @@ export function FinalCTA() {
           className="grid grid-cols-3 gap-8 max-w-3xl mx-auto py-8"
         >
           {[
-            { number: '50+', label: 'Cặp đôi tin tưởng' },
-            { number: '45+', label: 'Mẫu thiệp đẹp' },
-            { number: '4.9★', label: 'Đánh giá trung bình' },
+            { number: `${weddingTemplates.length}`, label: 'Mẫu đang hoạt động' },
+            { number: '3', label: 'Gói linh hoạt' },
+            { number: '100%', label: 'Tối ưu điện thoại' },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -156,19 +158,23 @@ export function FinalCTA() {
               ease: "easeInOut",
             }}
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                onClick={() => window.open('https://forms.gle/2qBNf4tHBiq6vavZ6', '_blank')}
-                className="bg-[#C29B43] hover:bg-[#A88434] text-white px-10 py-7 rounded-full shadow-2xl text-lg transition-all"
-                style={{ fontFamily: '"Poppins", sans-serif' }}
-              >
-                Bắt Đầu Tạo Thiệp Ngay
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </motion.div>
+            <InvitationCreationLauncher>
+              {(openOptions) => (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    onClick={openOptions}
+                    className="bg-[#C29B43] hover:bg-[#A88434] text-white px-10 py-7 rounded-full shadow-2xl text-lg transition-all"
+                    style={{ fontFamily: '"Poppins", sans-serif' }}
+                  >
+                    Bắt Đầu Tạo Thiệp Ngay
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </motion.div>
+              )}
+            </InvitationCreationLauncher>
           </motion.div>
 
           <motion.div
@@ -176,7 +182,7 @@ export function FinalCTA() {
             whileTap={{ scale: 0.95 }}
           >
             <Button 
-              onClick={() => window.open('https://www.facebook.com/profile.php?id=61585450214107', '_blank')}
+              onClick={() => window.open('https://www.facebook.com/profile.php?id=61585450214107', '_blank', 'noopener,noreferrer')}
               variant="outline"
               className="border-2 border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white px-10 py-7 rounded-full text-lg transition-all"
               style={{ fontFamily: '"Poppins", sans-serif' }}
@@ -204,13 +210,13 @@ export function FinalCTA() {
             <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span>Hỗ trợ 24/7</span>
+            <span>Hỗ trợ sau bàn giao</span>
           </div>
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span>Sửa đổi không giới hạn</span>
+            <span>Chỉnh sửa theo gói</span>
           </div>
         </motion.div>
       </div>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import logoWeb from '../asset/logoweb.jpg';
+import { InvitationCreationLauncher } from './InvitationCreationDialog';
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,26 +31,28 @@ export function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      aria-label="Điều hướng chính"
+      className={`site-nav fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-white/95 backdrop-blur-md shadow-lg'
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between h-28 md:h-32">
+        <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
-          <motion.div
+          <motion.a
             whileHover={{ scale: 1.05 }}
             className="flex items-center gap-3 cursor-pointer"
-            onClick={() => window.location.href = '/'}
+            href="/"
+            aria-label="Wedding Invitation MP - Trang chủ"
           >
             <img 
               src={logoWeb} 
               alt="Thiệp Cưới Online Logo" 
-              className="h-24 md:h-28 w-auto object-contain"
+              className="h-16 md:h-20 w-auto object-contain"
             />
-          </motion.div>
+          </motion.a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -63,19 +66,27 @@ export function Navigation() {
                 {item.label}
               </a>
             ))}
-            <Button
-              className="bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-2 rounded-full"
-              style={{ fontFamily: '"Poppins", sans-serif' }}
-              onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Tạo thiệp ngay
-            </Button>
+            <InvitationCreationLauncher>
+              {(openOptions) => (
+                <Button
+                  className="bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-2 rounded-full"
+                  style={{ fontFamily: '"Poppins", sans-serif' }}
+                  onClick={openOptions}
+                >
+                  Tạo thiệp ngay
+                </Button>
+              )}
+            </InvitationCreationLauncher>
           </div>
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             className="md:hidden w-10 h-10 flex items-center justify-center text-[#C29B43]"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? 'Đóng menu' : 'Mở menu'}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -86,6 +97,7 @@ export function Navigation() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
+            id="mobile-navigation"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -103,16 +115,17 @@ export function Navigation() {
                   {item.label}
                 </a>
               ))}
-              <Button
-                className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-3 rounded-full"
-                style={{ fontFamily: '"Poppins", sans-serif' }}
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Tạo thiệp ngay
-              </Button>
+              <InvitationCreationLauncher>
+                {(openOptions) => (
+                  <Button
+                    className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-3 rounded-full"
+                    style={{ fontFamily: '"Poppins", sans-serif' }}
+                    onClick={openOptions}
+                  >
+                    Tạo thiệp ngay
+                  </Button>
+                )}
+              </InvitationCreationLauncher>
             </div>
           </motion.div>
         )}

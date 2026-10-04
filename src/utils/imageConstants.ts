@@ -2,22 +2,23 @@
  * Image URLs Constants
  * Centralized image URLs for the wedding invitation website
  */
+import videoCover from '../asset/videoCover.png';
 
 // Gallery Images - Wedding Photos
 export const GALLERY_IMAGES = {
   // Standard gallery photos (used in multiple templates)
-  studio_couple: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-  tuarts_couple_1: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
-  tuarts_couple_2: 'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
-  encrypted_couple: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrwtVDQB3iSQHP8hKhCyVCD1ictAV_LqN0YA&s',
+  studio_couple: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
+  tuarts_couple_1: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=80',
+  tuarts_couple_2: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=80',
+  encrypted_couple: 'https://images.unsplash.com/photo-1506014299253-3725319c0f69?auto=format&fit=crop&w=1200&q=80',
   demxanh_studio: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg',
-  tuarts_bride: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgBiu-e-SK8GBBxhEhYa1XLBqDTlM91kAqe4Y5bL0VU_xoJSfbswLSloKC9NM8JbKhdCY&usqp=CAU',
-  tuarts_couple_3: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
+  tuarts_bride: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1200&q=80',
+  tuarts_couple_3: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=1200&q=80',
 };
 
 // Home/Hero Images
 export const HERO_IMAGES = {
-  banner: 'https://thiepcuoionline.huythanhjewelry.vn/img/home-banner.webp',
+  banner: videoCover,
 };
 
 // Template Gallery Images - Featured Templates
@@ -35,7 +36,7 @@ export const TEMPLATE_GALLERY_IMAGES = {
   vietnamese_dress: 'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
   
   // 199k Package
-  korean_studio: 'https://lightthatstudio.com/wp-content/uploads/2025/07/Light-That-Studio-Studio-Han-QuocZFK_3275-scaled.jpg',
+  korean_studio: 'https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?auto=format&fit=crop&w=1200&q=80',
   luxe_venue: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
   photo_session: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0250.jpg',
 };
@@ -76,7 +77,7 @@ export const UNSPLASH_IMAGES = {
   weddingRings: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800',
   brideAndGroom: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
   weddingTable: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-  couplesPortrait: 'https://images.unsplash.com/photo-1525258441167-d6ced3f01c95?w=800',
+  couplesPortrait: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80',
 };
 
 // Demo1/Figma Gallery Images
@@ -146,15 +147,15 @@ export const PREMIUM_GALLERY_IMAGES = {
   pinimg_4: 'https://i.pinimg.com/474x/8b/18/48/8b1848fa7f71d814564d3b74d70ee966.jpg',
   pinimg_5: 'https://i.pinimg.com/236x/6a/d6/ae/6ad6aefe9e49c4b032896ca05894a980.jpg',
   toplist_beewedding: 'https://toplist.vn/images/800px/beewedding-1265748.jpg',
-  tuart_studio: 'https://tuart.net/wp-content/uploads/2025/10/560045750_1189266393019293_8342282536697983955_n-2-1024x683.jpg',
+  tuart_studio: 'https://images.unsplash.com/photo-1738800076744-c37b80b37d31?auto=format&fit=crop&w=1200&q=80',
   pinimg_6: 'https://i.pinimg.com/236x/01/d8/29/01d82903330afb23f85d4ab7e57aaae0.jpg',
-  noah_wedding_concept: 'https://noahwedding.com/wp-content/uploads/2024/05/noah-wedding-concept-Ballad-of-Love-14.jpg',
-  mimosa_wedding: 'https://mimosawedding.vn/wp-content/uploads/2023/08/gia-chup-anh-cuoi-de-cong-4.jpg',
+  noah_wedding_concept: 'https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?auto=format&fit=crop&w=1200&q=80',
+  mimosa_wedding: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=1200&q=80',
   pinimg_7: 'https://i.pinimg.com/736x/5f/e9/30/5fe930a3278998245aad5b8e9ae3e407.jpg',
   pinimg_8: 'https://i.pinimg.com/236x/82/5b/6c/825b6c487f4e06c856aa2aec213dacbc.jpg',
   calibridal_wedding: 'https://calibridal.com.vn/wp-content/uploads/2021/07/tao-dang-chup-anh-cuoi-1.jpg',
-  googleusercontent_concept: 'https://lh7-us.googleusercontent.com/IUL_6cCmvmXHRdG3KMNASivUFppcATsb7xQFvvdFGCAef_mhpuKe1Wk1jGTdcu_Hl7IoEO-6wJ77Jj0_R6E_vexswUS73TMaD9OJCJ3TLiRJfkgG9GEwvMoOTjdLVMhP9L7asKAcf3U4UZQOJMZeS4w',
-  hstudio_aodai: 'https://2hstudio.vn/ao-dai-nhat-binh-2h-studio/jin_4050/',
+  googleusercontent_concept: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
+  hstudio_aodai: 'https://images.unsplash.com/photo-1765868113625-3ef2ee2d5295?auto=format&fit=crop&w=1200&q=80',
   anhvien_mimosa_korea: 'https://anhvienmimosa.com.vn/wp-content/uploads/2022/03/chup-anh-cuoi-han-quoc-14-2.jpg',
   pinimg_9: 'https://i.pinimg.com/236x/a4/db/87/a4db87cb2ccbfe529582ffffdc8602d6.jpg',
   pinimg_10: 'https://i.pinimg.com/236x/9b/cb/76/9bcb766177b0e694af03f11a3dbeb209.jpg',
@@ -163,6 +164,6 @@ export const PREMIUM_GALLERY_IMAGES = {
   pinimg_13: 'https://i.pinimg.com/736x/31/79/f7/3179f76106289c0b09cba5f42e77e754.jpg',
   pinimg_14: 'https://i.pinimg.com/736x/b2/88/2a/b2882a4218fdaa6f24a1c856f0f58ab1.jpg',
   pinimg_15: 'https://i.pinimg.com/originals/2a/d6/8c/2ad68cdec42ed6b33cac242c0a0929c8.jpg',
-  pinimg_16: 'https://noahwedding.com/wp-content/uploads/2024/07/noah-wedding-concept-Pure-Bliss-14.jpg',
+  pinimg_16: 'https://images.unsplash.com/photo-1761285367066-5875252d7558?auto=format&fit=crop&w=1200&q=80',
   pinimg_17: 'https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2021/04/tips-chup-anh-couple-khi-di-du-lich-4.jpg',
 };
