@@ -8,6 +8,8 @@ Website giới thiệu dịch vụ và thư viện mẫu thiệp cưới online,
 - Thư viện mẫu có tìm kiếm, lọc theo gói và responsive trên mobile/desktop.
 - Hơn 20 demo thiệp với nhiều phong cách: tối giản, điện ảnh, truyền thống, Art Deco, 3D.
 - Hỗ trợ cả demo nội bộ và sample website bên ngoài.
+- CTA tạo thiệp có hai luồng: gửi nội dung qua Google Form hoặc tự tạo demo online.
+- Studio demo online hỗ trợ xem trước trực tiếp, 3 theme, ảnh cover tuyển chọn, lưu nháp và link chia sẻ.
 - Lazy-load từng demo để giảm bundle tải ban đầu.
 - Tôn trọng thiết lập `prefers-reduced-motion` của người dùng.
 
@@ -37,11 +39,19 @@ src/
 │   ├── demos/              # Các mẫu thiệp nội bộ
 │   ├── TemplateCard.tsx    # Card dùng chung cho catalog
 │   ├── TemplateGallery.tsx # Danh sách nổi bật ở trang chủ
-│   └── TemplatesPage.tsx   # Toàn bộ thư viện mẫu
+│   ├── TemplatesPage.tsx   # Toàn bộ thư viện mẫu
+│   ├── InvitationCreator.tsx       # Form tạo demo và trang preview chia sẻ
+│   └── InvitationCreationDialog.tsx # Hộp chọn luồng tạo thiệp
 ├── data/templates.ts       # Nguồn dữ liệu duy nhất của catalog
 ├── styles/site.css         # UI/UX cho trang chủ và catalog
 └── Router.tsx              # Router và lazy-load demo
 ```
+
+## Luồng tạo demo online
+
+- `/tao-thiep`: nhập thông tin, chọn phong cách và xem trước theo thời gian thực.
+- `/tao-thiep/preview?data=...`: bản demo có thể chia sẻ bằng link, không cần backend.
+- Bản nháp được lưu trong `localStorage`; dữ liệu chỉ nằm trong URL khi người dùng chủ động tạo link.
 
 ## Thêm một mẫu mới
 
