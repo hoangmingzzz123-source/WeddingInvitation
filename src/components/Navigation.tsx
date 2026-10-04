@@ -120,10 +120,7 @@ export function Navigation() {
                   <Button
                     className="w-full bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-3 rounded-full"
                     style={{ fontFamily: '"Poppins", sans-serif' }}
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      openOptions();
-                    }}
+                    onClick={openOptions}
                   >
                     Tạo thiệp ngay
                   </Button>

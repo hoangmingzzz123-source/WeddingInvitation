@@ -35,7 +35,7 @@ export function MusicToggle() {
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 1 }}
-        className="fixed bottom-8 right-8 z-40"
+        className="demo-music-control fixed bottom-8 right-8 z-40"
       >
         <button
           onClick={toggleMusic}

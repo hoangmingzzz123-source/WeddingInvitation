@@ -1,0 +1,422 @@
+[
+  {
+    "id": "ha-phuong-hoang-minh-2026",
+    "source": "https://images.unsplash.com/photo-1769812343590-485512e27838?auto=format&fit=crop&w=800&q=80",
+    "originalWidth": 800,
+    "originalHeight": 534,
+    "variants": [
+      {
+        "file": "ha-phuong-hoang-minh-2026-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 26124
+      },
+      {
+        "file": "ha-phuong-hoang-minh-2026-800.webp",
+        "width": 800,
+        "height": 534,
+        "bytes": 54132
+      }
+    ]
+  },
+  {
+    "id": "luxury-gold-cinematic",
+    "source": "https://i.pinimg.com/736x/00/60/2d/00602df2c2f744c08d58970d7b0715d2.jpg",
+    "originalWidth": 683,
+    "originalHeight": 1366,
+    "variants": [
+      {
+        "file": "luxury-gold-cinematic-480.webp",
+        "width": 480,
+        "height": 960,
+        "bytes": 33164
+      },
+      {
+        "file": "luxury-gold-cinematic-800.webp",
+        "width": 800,
+        "height": 1600,
+        "bytes": 70038
+      }
+    ]
+  },
+  {
+    "id": "luxury-gold-frame",
+    "source": "https://i.pinimg.com/736x/1a/12/e8/1a12e8bc953320bc8e7e9325c1557f01.jpg",
+    "originalWidth": 660,
+    "originalHeight": 986,
+    "variants": [
+      {
+        "file": "luxury-gold-frame-480.webp",
+        "width": 480,
+        "height": 717,
+        "bytes": 52954
+      },
+      {
+        "file": "luxury-gold-frame-800.webp",
+        "width": 800,
+        "height": 1195,
+        "bytes": 106850
+      }
+    ]
+  },
+  {
+    "id": "vintage-film",
+    "source": "https://xanhwedding.com/wp-content/uploads/2021/03/chup-anh-cuoi-tai-studio-29.jpg",
+    "originalWidth": 800,
+    "originalHeight": 1198,
+    "variants": [
+      {
+        "file": "vintage-film-480.webp",
+        "width": 480,
+        "height": 719,
+        "bytes": 34510
+      },
+      {
+        "file": "vintage-film-800.webp",
+        "width": 800,
+        "height": 1198,
+        "bytes": 75194
+      }
+    ]
+  },
+  {
+    "id": "art-deco-royal",
+    "source": "https://i.pinimg.com/736x/1b/c6/f3/1bc6f3ed6d129724d1c086ee584c5ce0.jpg",
+    "originalWidth": 736,
+    "originalHeight": 1077,
+    "variants": [
+      {
+        "file": "art-deco-royal-480.webp",
+        "width": 480,
+        "height": 702,
+        "bytes": 25198
+      },
+      {
+        "file": "art-deco-royal-800.webp",
+        "width": 800,
+        "height": 1171,
+        "bytes": 57866
+      }
+    ]
+  },
+  {
+    "id": "romantic-watercolor",
+    "source": "https://i.pinimg.com/736x/8b/18/48/8b1848fa7f71d814564d3b74d70ee966.jpg",
+    "originalWidth": 736,
+    "originalHeight": 1104,
+    "variants": [
+      {
+        "file": "romantic-watercolor-480.webp",
+        "width": 480,
+        "height": 720,
+        "bytes": 73650
+      },
+      {
+        "file": "romantic-watercolor-800.webp",
+        "width": 800,
+        "height": 1200,
+        "bytes": 141744
+      }
+    ]
+  },
+  {
+    "id": "cinematic-love-story",
+    "source": "https://afamilycdn.com/2018/6/26/photo-1-153001045695050999925.jpg",
+    "originalWidth": 708,
+    "originalHeight": 960,
+    "variants": [
+      {
+        "file": "cinematic-love-story-480.webp",
+        "width": 480,
+        "height": 651,
+        "bytes": 35620
+      },
+      {
+        "file": "cinematic-love-story-800.webp",
+        "width": 800,
+        "height": 1085,
+        "bytes": 85244
+      }
+    ]
+  },
+  {
+    "id": "bloom-crystal-3d",
+    "source": "https://i.pinimg.com/736x/6a/d6/ae/6ad6aefe9e49c4b032896ca05894a980.jpg",
+    "originalWidth": 736,
+    "originalHeight": 1104,
+    "variants": [
+      {
+        "file": "bloom-crystal-3d-480.webp",
+        "width": 480,
+        "height": 720,
+        "bytes": 43426
+      },
+      {
+        "file": "bloom-crystal-3d-800.webp",
+        "width": 800,
+        "height": 1200,
+        "bytes": 79130
+      }
+    ]
+  },
+  {
+    "id": "bloom-crystal-3d-basic",
+    "source": "https://images.unsplash.com/photo-1738800076744-c37b80b37d31?auto=format&fit=crop&w=800&q=80",
+    "originalWidth": 800,
+    "originalHeight": 533,
+    "variants": [
+      {
+        "file": "bloom-crystal-3d-basic-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 3036
+      },
+      {
+        "file": "bloom-crystal-3d-basic-800.webp",
+        "width": 800,
+        "height": 533,
+        "bytes": 6384
+      }
+    ]
+  },
+  {
+    "id": "modern-dark-blue",
+    "source": "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?auto=format&fit=crop&w=800&q=80",
+    "originalWidth": 800,
+    "originalHeight": 1200,
+    "variants": [
+      {
+        "file": "modern-dark-blue-480.webp",
+        "width": 480,
+        "height": 720,
+        "bytes": 22858
+      },
+      {
+        "file": "modern-dark-blue-800.webp",
+        "width": 800,
+        "height": 1200,
+        "bytes": 42528
+      }
+    ]
+  },
+  {
+    "id": "minimal-elegant",
+    "source": "https://i.pinimg.com/736x/01/d8/29/01d82903330afb23f85d4ab7e57aaae0.jpg",
+    "originalWidth": 736,
+    "originalHeight": 1104,
+    "variants": [
+      {
+        "file": "minimal-elegant-480.webp",
+        "width": 480,
+        "height": 720,
+        "bytes": 24164
+      },
+      {
+        "file": "minimal-elegant-800.webp",
+        "width": 800,
+        "height": 1200,
+        "bytes": 43232
+      }
+    ]
+  },
+  {
+    "id": "minimal-elegant-basic",
+    "source": "https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=800&q=80",
+    "originalWidth": 800,
+    "originalHeight": 1202,
+    "variants": [
+      {
+        "file": "minimal-elegant-basic-480.webp",
+        "width": 480,
+        "height": 721,
+        "bytes": 29220
+      },
+      {
+        "file": "minimal-elegant-basic-800.webp",
+        "width": 800,
+        "height": 1202,
+        "bytes": 56600
+      }
+    ]
+  },
+  {
+    "id": "minimal-slide-clean",
+    "source": "https://i.pinimg.com/736x/5f/e9/30/5fe930a3278998245aad5b8e9ae3e407.jpg",
+    "originalWidth": 683,
+    "originalHeight": 1366,
+    "variants": [
+      {
+        "file": "minimal-slide-clean-480.webp",
+        "width": 480,
+        "height": 960,
+        "bytes": 37412
+      },
+      {
+        "file": "minimal-slide-clean-800.webp",
+        "width": 800,
+        "height": 1600,
+        "bytes": 75758
+      }
+    ]
+  },
+  {
+    "id": "tropical-sunset",
+    "source": "https://calibridal.com.vn/wp-content/uploads/2021/07/tao-dang-chup-anh-cuoi-1.jpg",
+    "originalWidth": 683,
+    "originalHeight": 1026,
+    "variants": [
+      {
+        "file": "tropical-sunset-480.webp",
+        "width": 480,
+        "height": 721,
+        "bytes": 60918
+      },
+      {
+        "file": "tropical-sunset-800.webp",
+        "width": 800,
+        "height": 1202,
+        "bytes": 116962
+      }
+    ]
+  },
+  {
+    "id": "classic-minimalist",
+    "source": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80",
+    "originalWidth": 800,
+    "originalHeight": 533,
+    "variants": [
+      {
+        "file": "classic-minimalist-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 8274
+      },
+      {
+        "file": "classic-minimalist-800.webp",
+        "width": 800,
+        "height": 533,
+        "bytes": 16046
+      }
+    ]
+  },
+  {
+    "id": "blush-floral",
+    "source": "https://images.unsplash.com/photo-1765868113625-3ef2ee2d5295?auto=format&fit=crop&w=800&q=80",
+    "originalWidth": 800,
+    "originalHeight": 1200,
+    "variants": [
+      {
+        "file": "blush-floral-480.webp",
+        "width": 480,
+        "height": 720,
+        "bytes": 46964
+      },
+      {
+        "file": "blush-floral-800.webp",
+        "width": 800,
+        "height": 1200,
+        "bytes": 111074
+      }
+    ]
+  },
+  {
+    "id": "soft-fade-floral",
+    "source": "https://anhvienmimosa.com.vn/wp-content/uploads/2022/03/chup-anh-cuoi-han-quoc-14-2.jpg",
+    "originalWidth": 683,
+    "originalHeight": 1024,
+    "variants": [
+      {
+        "file": "soft-fade-floral-480.webp",
+        "width": 480,
+        "height": 720,
+        "bytes": 14466
+      },
+      {
+        "file": "soft-fade-floral-800.webp",
+        "width": 800,
+        "height": 1199,
+        "bytes": 25810
+      }
+    ]
+  },
+  {
+    "id": "vietnamese-traditional",
+    "source": "https://i.pinimg.com/736x/82/5b/6c/825b6c487f4e06c856aa2aec213dacbc.jpg",
+    "originalWidth": 736,
+    "originalHeight": 1117,
+    "variants": [
+      {
+        "file": "vietnamese-traditional-480.webp",
+        "width": 480,
+        "height": 728,
+        "bytes": 21120
+      },
+      {
+        "file": "vietnamese-traditional-800.webp",
+        "width": 800,
+        "height": 1214,
+        "bytes": 42896
+      }
+    ]
+  },
+  {
+    "id": "vintage-grain",
+    "source": "https://i.pinimg.com/736x/a4/db/87/a4db87cb2ccbfe529582ffffdc8602d6.jpg",
+    "originalWidth": 736,
+    "originalHeight": 981,
+    "variants": [
+      {
+        "file": "vintage-grain-480.webp",
+        "width": 480,
+        "height": 640,
+        "bytes": 26196
+      },
+      {
+        "file": "vintage-grain-800.webp",
+        "width": 800,
+        "height": 1066,
+        "bytes": 45756
+      }
+    ]
+  },
+  {
+    "id": "green-elegance",
+    "source": "https://i.pinimg.com/736x/9b/cb/76/9bcb766177b0e694af03f11a3dbeb209.jpg",
+    "originalWidth": 736,
+    "originalHeight": 981,
+    "variants": [
+      {
+        "file": "green-elegance-480.webp",
+        "width": 480,
+        "height": 640,
+        "bytes": 22768
+      },
+      {
+        "file": "green-elegance-800.webp",
+        "width": 800,
+        "height": 1066,
+        "bytes": 43006
+      }
+    ]
+  },
+  {
+    "id": "art-deco-royal-basic",
+    "source": "https://i.pinimg.com/736x/67/2c/d9/672cd9b839480fe84f16b032bfe06971.jpg",
+    "originalWidth": 735,
+    "originalHeight": 490,
+    "variants": [
+      {
+        "file": "art-deco-royal-basic-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 7264
+      },
+      {
+        "file": "art-deco-royal-basic-800.webp",
+        "width": 800,
+        "height": 533,
+        "bytes": 14374
+      }
+    ]
+  }
+]

@@ -15,13 +15,13 @@ export function ImageWithFallback(props: ImageWithFallbackProps) {
 
   useEffect(() => {
     setErrorCount(0)
-  }, [props.src])
+  }, [props.src, props.srcSet, props.fallbackSrc])
 
   const handleError = () => {
     setErrorCount((count) => count + 1)
   }
 
-  const { src, alt, style, className, fallbackSrc = DEFAULT_WEDDING_FALLBACK, ...rest } = props
+  const { src, srcSet, sizes, alt, style, className, fallbackSrc = DEFAULT_WEDDING_FALLBACK, ...rest } = props
 
   return errorCount > 1 ? (
     <div
@@ -35,6 +35,8 @@ export function ImageWithFallback(props: ImageWithFallbackProps) {
   ) : (
     <img
       src={errorCount === 1 ? fallbackSrc : src}
+      srcSet={errorCount === 0 ? srcSet : undefined}
+      sizes={errorCount === 0 ? sizes : undefined}
       alt={alt}
       className={className}
       style={style}

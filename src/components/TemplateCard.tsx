@@ -73,6 +73,12 @@ export function TemplateCard({ template, priority = false }: TemplateCardProps) 
         <div className="template-card__media">
           <ImageWithFallback
             src={template.thumbnail}
+            srcSet={template.thumbnailSrcSet}
+            sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 960px) calc((100vw - 3.5rem) / 2), (max-width: 1280px) calc((100vw - 7rem) / 3), 400px"
+            width={800}
+            height={1000}
+            decoding="async"
+            fallbackSrc="/images/templates/ha-phuong-hoang-minh-2026-800.webp"
             alt={`Ảnh xem trước mẫu thiệp ${template.name}`}
             className="template-card__image"
             loading={priority ? 'eager' : 'lazy'}

@@ -7,6 +7,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
 import {
   ArrowLeft,
   ArrowUp,
@@ -61,31 +62,48 @@ const demoAccents: Record<string, string> = {
 };
 
 function getSectionLabel(section: HTMLElement, index: number) {
-  const explicitLabel = section.dataset.sectionTitle || section.getAttribute('aria-label');
+  const explicitLabel =
+    section.dataset.sectionTitle || section.getAttribute('aria-label');
   const heading = section.querySelector<HTMLElement>('h1, h2, h3');
   const label = explicitLabel || heading?.innerText || `Phần ${index + 1}`;
   const normalized = label.replace(/\s+/g, ' ').trim();
   return normalized.length > 36 ? `${normalized.slice(0, 33)}…` : normalized;
 }
 
-export function DemoShell({ route, children }: { route: string; children: ReactNode }) {
+export function DemoShell({
+  route,
+  children,
+}: {
+  route: string;
+  children: ReactNode;
+}) {
   const template = weddingTemplates.find((item) => item.route === route);
   const internalTemplates = useMemo(
     () => weddingTemplates.filter((item) => Boolean(item.route)),
     [],
   );
-  const templateIndex = internalTemplates.findIndex((item) => item.route === route);
-  const previousTemplate = internalTemplates[(templateIndex - 1 + internalTemplates.length) % internalTemplates.length];
-  const nextTemplate = internalTemplates[(templateIndex + 1) % internalTemplates.length];
+  const templateIndex = internalTemplates.findIndex(
+    (item) => item.route === route,
+  );
+  const previousTemplate =
+    internalTemplates[
+      (templateIndex - 1 + internalTemplates.length) % internalTemplates.length
+    ];
+  const nextTemplate =
+    internalTemplates[(templateIndex + 1) % internalTemplates.length];
   const [sections, setSections] = useState<DemoSection[]>([]);
   const [activeSection, setActiveSection] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showOverview, setShowOverview] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(() => template ? isTemplateFavorite(template.id) : false);
-  const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
+  const [isFavorite, setIsFavorite] = useState(() =>
+    template ? isTemplateFavorite(template.id) : false,
+  );
+  const [isFullscreen, setIsFullscreen] = useState(
+    Boolean(document.fullscreenElement),
+  );
   const [toastMessage, setToastMessage] = useState('');
   const toastTimer = useRef<number | null>(null);
-  const accent = template ? demoAccents[template.id] ?? '#d9b764' : '#d9b764';
+  const accent = template ? (demoAccents[template.id] ?? '#d9b764') : '#d9b764';
   const shellStyle = { '--demo-accent': accent } as CSSProperties;
 
   const showToast = useCallback((message: string) => {
@@ -94,21 +112,28 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
     toastTimer.current = window.setTimeout(() => setToastMessage(''), 2800);
   }, []);
 
-  const openTemplate = useCallback((destination: typeof previousTemplate, direction: 'previous' | 'next') => {
-    if (!destination?.route) return;
-    trackEvent('demo_template_navigate', {
-      from_template_id: template?.id,
-      to_template_id: destination.id,
-      direction,
-    });
-    navigateTo(destination.route);
-  }, [template?.id]);
+  const openTemplate = useCallback(
+    (destination: typeof previousTemplate, direction: 'previous' | 'next') => {
+      if (!destination?.route) return;
+      trackEvent('demo_template_navigate', {
+        from_template_id: template?.id,
+        to_template_id: destination.id,
+        direction,
+      });
+      navigateTo(destination.route);
+    },
+    [template?.id],
+  );
 
   const toggleFavorite = useCallback(() => {
     if (!template) return;
     const nextFavoriteState = toggleTemplateFavorite(template.id);
     setIsFavorite(nextFavoriteState);
-    showToast(nextFavoriteState ? 'Đã lưu mẫu vào danh sách yêu thích' : 'Đã bỏ mẫu khỏi danh sách yêu thích');
+    showToast(
+      nextFavoriteState
+        ? 'Đã lưu mẫu vào danh sách yêu thích'
+        : 'Đã bỏ mẫu khỏi danh sách yêu thích',
+    );
     trackEvent('template_favorite_toggle', {
       template_id: template.id,
       is_favorite: nextFavoriteState,
@@ -136,7 +161,9 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
       trackEvent('demo_share', { template_id: template?.id });
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return;
-      showToast('Chưa thể chia sẻ. Hãy thử sao chép liên kết trên trình duyệt.');
+      showToast(
+        'Chưa thể chia sẻ. Hãy thử sao chép liên kết trên trình duyệt.',
+      );
     }
   }, [showToast, template]);
 
@@ -144,7 +171,8 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
     try {
       const willEnterFullscreen = !document.fullscreenElement;
       if (!willEnterFullscreen) await document.exitFullscreen();
-      else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+      else if (document.documentElement.requestFullscreen)
+        await document.documentElement.requestFullscreen();
       else {
         showToast('Trình duyệt này chưa hỗ trợ chế độ toàn màn hình');
         return;
@@ -164,7 +192,10 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
     setActiveSection(0);
     setIsFavorite(template ? isTemplateFavorite(template.id) : false);
     if (template) {
-      trackEvent('demo_view', { template_id: template.id, template_tier: template.tier });
+      trackEvent('demo_view', {
+        template_id: template.id,
+        template_tier: template.tier,
+      });
     }
 
     let frame = 0;
@@ -172,14 +203,20 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
 
     const updatePosition = () => {
       frame = 0;
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(scrollableHeight > 0 ? Math.min(window.scrollY / scrollableHeight, 1) : 0);
+      const scrollableHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(
+        scrollableHeight > 0
+          ? Math.min(window.scrollY / scrollableHeight, 1)
+          : 0,
+      );
 
       if (!pageSections.length) return;
       let currentSection = 0;
       const focusLine = window.innerHeight * 0.42;
       pageSections.forEach((section, index) => {
-        if (section.getBoundingClientRect().top <= focusLine) currentSection = index;
+        if (section.getBoundingClientRect().top <= focusLine)
+          currentSection = index;
       });
       setActiveSection(currentSection);
     };
@@ -189,11 +226,15 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
     };
 
     const initializeSections = () => {
-      pageSections = Array.from(document.querySelectorAll<HTMLElement>('.demo-shell section'));
-      setSections(pageSections.map((element, index) => ({
-        element,
-        label: getSectionLabel(element, index),
-      })));
+      pageSections = Array.from(
+        document.querySelectorAll<HTMLElement>('.demo-shell section'),
+      );
+      setSections(
+        pageSections.map((element, index) => ({
+          element,
+          label: getSectionLabel(element, index),
+        })),
+      );
       updatePosition();
     };
 
@@ -210,14 +251,22 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
   }, [route, template]);
 
   useEffect(() => {
-    const syncFavorite = () => setIsFavorite(template ? isTemplateFavorite(template.id) : false);
-    const syncFullscreen = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    const syncFavorite = () =>
+      setIsFavorite(template ? isTemplateFavorite(template.id) : false);
+    const syncFullscreen = () =>
+      setIsFullscreen(Boolean(document.fullscreenElement));
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      const isTyping = target?.matches('input, textarea, select, [contenteditable="true"]');
+      const isTyping = target?.closest(
+        'input, textarea, select, [contenteditable]:not([contenteditable="false"])',
+      );
 
-      if (event.key === 'Escape') setShowOverview(false);
-      if (isTyping) return;
+      if (
+        event.defaultPrevented ||
+        isTyping ||
+        document.querySelector('[role="dialog"]')
+      )
+        return;
 
       if (event.altKey && event.key === 'ArrowLeft') {
         event.preventDefault();
@@ -225,12 +274,22 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
       } else if (event.altKey && event.key === 'ArrowRight') {
         event.preventDefault();
         openTemplate(nextTemplate, 'next');
-      } else if (!event.altKey && !event.ctrlKey && !event.metaKey && event.key.toLowerCase() === 'f') {
+      } else if (
+        !event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        event.key.toLowerCase() === 'f'
+      ) {
         event.preventDefault();
         toggleFavorite();
       } else if (event.key === '?') {
         showToast('Phím tắt: F lưu mẫu · Alt + ←/→ đổi mẫu · I xem thông tin');
-      } else if (!event.altKey && !event.ctrlKey && !event.metaKey && event.key.toLowerCase() === 'i') {
+      } else if (
+        !event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        event.key.toLowerCase() === 'i'
+      ) {
         setShowOverview(true);
       }
     };
@@ -246,7 +305,14 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
       window.removeEventListener('keydown', handleKeyDown);
       if (toastTimer.current) window.clearTimeout(toastTimer.current);
     };
-  }, [nextTemplate, openTemplate, previousTemplate, showToast, template, toggleFavorite]);
+  }, [
+    nextTemplate,
+    openTemplate,
+    previousTemplate,
+    showToast,
+    template,
+    toggleFavorite,
+  ]);
 
   const scrollToSection = (section: DemoSection, index: number) => {
     setActiveSection(index);
@@ -259,159 +325,230 @@ export function DemoShell({ route, children }: { route: string; children: ReactN
   };
 
   return (
-    <div className="demo-shell" style={shellStyle}>
-      <div className="demo-toolbar">
-        <button type="button" onClick={() => navigateTo('/templates')}>
-          <ArrowLeft aria-hidden="true" />
-          <span>Thư viện</span>
-        </button>
-
-        <button
-          type="button"
-          className="demo-toolbar__overview"
-          onClick={() => setShowOverview(true)}
-          aria-label={`Xem thông tin mẫu ${template?.name ?? 'thiệp cưới'}`}
-        >
-          <Sparkles aria-hidden="true" />
-          <span><small>Đang xem demo</small>{template?.name ?? 'Mẫu thiệp cưới'}</span>
-          <Info aria-hidden="true" />
-        </button>
-
-        <InvitationCreationLauncher>
-          {(openOptions) => (
-            <button type="button" className="demo-toolbar__cta" onClick={openOptions}>Tạo thiệp từ mẫu này</button>
-          )}
-        </InvitationCreationLauncher>
-
-        <span className="demo-toolbar__progress" aria-hidden="true">
-          <i style={{ transform: `scaleX(${scrollProgress})` }} />
-        </span>
-      </div>
-
-      {sections.length > 1 && (
-        <nav className="demo-section-nav" aria-label="Mục trong mẫu thiệp">
-          <strong>{String(activeSection + 1).padStart(2, '0')}<small>/{String(sections.length).padStart(2, '0')}</small></strong>
-          <div>
-            {sections.map((section, index) => (
-              <button
-                type="button"
-                key={`${section.label}-${index}`}
-                className={activeSection === index ? 'is-active' : ''}
-                onClick={() => scrollToSection(section, index)}
-                aria-label={`Đi tới ${section.label}`}
-                aria-current={activeSection === index ? 'step' : undefined}
-              >
-                <i />
-                <span>{section.label}</span>
-              </button>
-            ))}
-          </div>
-        </nav>
-      )}
-
-      <div className="demo-action-dock" role="toolbar" aria-label="Công cụ mẫu thiệp">
-        <button
-          type="button"
-          className={isFavorite ? 'is-active' : ''}
-          onClick={toggleFavorite}
-          aria-label={isFavorite ? 'Bỏ lưu mẫu này' : 'Lưu mẫu yêu thích'}
-          aria-pressed={isFavorite}
-          data-tooltip={isFavorite ? 'Đã lưu' : 'Lưu mẫu'}
-        >
-          <Heart aria-hidden="true" fill={isFavorite ? 'currentColor' : 'none'} />
-        </button>
-        <button type="button" onClick={shareDemo} aria-label="Chia sẻ mẫu" data-tooltip="Chia sẻ">
-          <Share2 aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          onClick={toggleFullscreen}
-          aria-label={isFullscreen ? 'Thoát toàn màn hình' : 'Xem toàn màn hình'}
-          data-tooltip={isFullscreen ? 'Thu nhỏ' : 'Toàn màn hình'}
-        >
-          {isFullscreen ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
-        </button>
-        <button
-          type="button"
-          onClick={() => showToast('Phím tắt: F lưu mẫu · Alt + ←/→ đổi mẫu · I xem thông tin')}
-          aria-label="Xem phím tắt"
-          data-tooltip="Phím tắt"
-        >
-          <Keyboard aria-hidden="true" />
-        </button>
-      </div>
-
-      <button
-        type="button"
-        className={`demo-back-top${scrollProgress > 0.08 ? ' is-visible' : ''}`}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        aria-label="Về đầu mẫu thiệp"
-      >
-        <ArrowUp aria-hidden="true" />
-      </button>
-
-      <div className={`demo-toast${toastMessage ? ' is-visible' : ''}`} role="status" aria-live="polite">
-        {toastMessage}
-      </div>
-
-      {children}
-
-      {showOverview && (
-        <div
-          className="demo-overview__backdrop"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setShowOverview(false);
-          }}
-        >
-          <section
-            className="demo-overview"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="demo-overview-title"
+    <Dialog.Root open={showOverview} onOpenChange={setShowOverview}>
+      <div className="demo-shell" style={shellStyle}>
+        <div className="demo-toolbar">
+          <button
+            type="button"
+            aria-label="Về thư viện mẫu"
+            onClick={() => navigateTo('/templates')}
           >
+            <ArrowLeft aria-hidden="true" />
+            <span>Thư viện</span>
+          </button>
+
+          <Dialog.Trigger asChild>
             <button
               type="button"
-              className="demo-overview__close"
-              onClick={() => setShowOverview(false)}
-              aria-label="Đóng thông tin mẫu"
+              className="demo-toolbar__overview"
+              aria-label={`Xem thông tin mẫu ${template?.name ?? 'thiệp cưới'}`}
             >
-              <X aria-hidden="true" />
+              <Sparkles aria-hidden="true" />
+              <span>
+                <small>Đang xem demo</small>
+                {template?.name ?? 'Mẫu thiệp cưới'}
+              </span>
+              <Info aria-hidden="true" />
             </button>
+          </Dialog.Trigger>
 
-            <div className="demo-overview__eyebrow">
-              <Layers3 aria-hidden="true" />
-              <span>{template ? templateTierLabels[template.tier] : 'Mẫu thiệp cưới'}</span>
-              <i />
-              <span>{template?.style}</span>
-            </div>
-            <h2 id="demo-overview-title">{template?.name ?? 'Mẫu thiệp cưới'}</h2>
-            <p>{template?.description}</p>
-
-            <div className="demo-overview__features">
-              {template?.features.map((feature) => <span key={feature}>{feature}</span>)}
-            </div>
-
-            <InvitationCreationLauncher>
-              {(openOptions) => (
-                <button type="button" className="demo-overview__cta" onClick={openOptions}>
-                  Tạo thiệp theo mẫu này <ChevronRight aria-hidden="true" />
-                </button>
-              )}
-            </InvitationCreationLauncher>
-
-            <div className="demo-overview__switcher">
-              <button type="button" onClick={() => openTemplate(previousTemplate, 'previous')}>
-                <ChevronLeft aria-hidden="true" />
-                <span><small>Mẫu trước</small>{previousTemplate.name}</span>
+          <InvitationCreationLauncher>
+            {(openOptions) => (
+              <button
+                type="button"
+                className="demo-toolbar__cta"
+                onClick={openOptions}
+                aria-label="Tạo thiệp từ mẫu này"
+              >
+                <span className="demo-toolbar__cta-label--full">
+                  Tạo thiệp từ mẫu này
+                </span>
+                <span
+                  className="demo-toolbar__cta-label--short"
+                  aria-hidden="true"
+                >
+                  Tạo thiệp
+                </span>
               </button>
-              <button type="button" onClick={() => openTemplate(nextTemplate, 'next')}>
-                <span><small>Mẫu tiếp theo</small>{nextTemplate.name}</span>
-                <ChevronRight aria-hidden="true" />
-              </button>
-            </div>
-          </section>
+            )}
+          </InvitationCreationLauncher>
+
+          <span className="demo-toolbar__progress" aria-hidden="true">
+            <i style={{ transform: `scaleX(${scrollProgress})` }} />
+          </span>
         </div>
-      )}
-    </div>
+
+        {sections.length > 1 && (
+          <nav className="demo-section-nav" aria-label="Mục trong mẫu thiệp">
+            <strong>
+              {String(activeSection + 1).padStart(2, '0')}
+              <small>/{String(sections.length).padStart(2, '0')}</small>
+            </strong>
+            <div>
+              {sections.map((section, index) => (
+                <button
+                  type="button"
+                  key={`${section.label}-${index}`}
+                  className={activeSection === index ? 'is-active' : ''}
+                  onClick={() => scrollToSection(section, index)}
+                  aria-label={`Đi tới ${section.label}`}
+                  aria-current={activeSection === index ? 'step' : undefined}
+                >
+                  <i />
+                  <span>{section.label}</span>
+                </button>
+              ))}
+            </div>
+          </nav>
+        )}
+
+        <div
+          className="demo-action-dock"
+          role="toolbar"
+          aria-label="Công cụ mẫu thiệp"
+        >
+          <button
+            type="button"
+            className={isFavorite ? 'is-active' : ''}
+            onClick={toggleFavorite}
+            aria-label={isFavorite ? 'Bỏ lưu mẫu này' : 'Lưu mẫu yêu thích'}
+            aria-pressed={isFavorite}
+            data-tooltip={isFavorite ? 'Đã lưu' : 'Lưu mẫu'}
+          >
+            <Heart
+              aria-hidden="true"
+              fill={isFavorite ? 'currentColor' : 'none'}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={shareDemo}
+            aria-label="Chia sẻ mẫu"
+            data-tooltip="Chia sẻ"
+          >
+            <Share2 aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            aria-label={
+              isFullscreen ? 'Thoát toàn màn hình' : 'Xem toàn màn hình'
+            }
+            data-tooltip={isFullscreen ? 'Thu nhỏ' : 'Toàn màn hình'}
+          >
+            {isFullscreen ? (
+              <Minimize2 aria-hidden="true" />
+            ) : (
+              <Maximize2 aria-hidden="true" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              showToast(
+                'Phím tắt: F lưu mẫu · Alt + ←/→ đổi mẫu · I xem thông tin',
+              )
+            }
+            aria-label="Xem phím tắt"
+            data-tooltip="Phím tắt"
+          >
+            <Keyboard aria-hidden="true" />
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className={`demo-back-top${scrollProgress > 0.08 ? ' is-visible' : ''}`}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Về đầu mẫu thiệp"
+          tabIndex={scrollProgress > 0.08 ? 0 : -1}
+          aria-hidden={scrollProgress <= 0.08}
+        >
+          <ArrowUp aria-hidden="true" />
+        </button>
+
+        <div
+          className={`demo-toast${toastMessage ? ' is-visible' : ''}`}
+          role="status"
+          aria-live="polite"
+        >
+          {toastMessage}
+        </div>
+
+        {children}
+
+        <Dialog.Portal>
+          <Dialog.Overlay
+            className="demo-overview__backdrop"
+            style={shellStyle}
+          >
+            <Dialog.Content className="demo-overview">
+              <button
+                type="button"
+                className="demo-overview__close"
+                onClick={() => setShowOverview(false)}
+                aria-label="Đóng thông tin mẫu"
+              >
+                <X aria-hidden="true" />
+              </button>
+
+              <div className="demo-overview__eyebrow">
+                <Layers3 aria-hidden="true" />
+                <span>
+                  {template
+                    ? templateTierLabels[template.tier]
+                    : 'Mẫu thiệp cưới'}
+                </span>
+                <i />
+                <span>{template?.style}</span>
+              </div>
+              <Dialog.Title>{template?.name ?? 'Mẫu thiệp cưới'}</Dialog.Title>
+              <Dialog.Description>{template?.description}</Dialog.Description>
+
+              <div className="demo-overview__features">
+                {template?.features.map((feature) => (
+                  <span key={feature}>{feature}</span>
+                ))}
+              </div>
+
+              <InvitationCreationLauncher>
+                {(openOptions) => (
+                  <button
+                    type="button"
+                    className="demo-overview__cta"
+                    onClick={openOptions}
+                  >
+                    Tạo thiệp theo mẫu này <ChevronRight aria-hidden="true" />
+                  </button>
+                )}
+              </InvitationCreationLauncher>
+
+              <div className="demo-overview__switcher">
+                <button
+                  type="button"
+                  onClick={() => openTemplate(previousTemplate, 'previous')}
+                >
+                  <ChevronLeft aria-hidden="true" />
+                  <span>
+                    <small>Mẫu trước</small>
+                    {previousTemplate.name}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openTemplate(nextTemplate, 'next')}
+                >
+                  <span>
+                    <small>Mẫu tiếp theo</small>
+                    {nextTemplate.name}
+                  </span>
+                  <ChevronRight aria-hidden="true" />
+                </button>
+              </div>
+            </Dialog.Content>
+          </Dialog.Overlay>
+        </Dialog.Portal>
+      </div>
+    </Dialog.Root>
   );
 }

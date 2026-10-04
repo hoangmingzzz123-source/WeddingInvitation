@@ -789,7 +789,7 @@ body {
 .creation-dialog__backdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 180;
   display: grid;
   padding: 1.25rem;
   overflow-y: auto;
@@ -802,7 +802,9 @@ body {
   position: relative;
   width: min(100%, 54rem);
   padding: clamp(1.5rem, 4vw, 3rem);
-  overflow: hidden;
+  max-height: calc(100dvh - 2.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 2rem;
   background:
@@ -1009,7 +1011,22 @@ body {
 }
 
 .demo-shell {
+  --demo-safe-bottom: env(safe-area-inset-bottom, 0px);
   min-height: 100vh;
+}
+
+.demo-shell .demo-music-control {
+  top: calc(5.75rem + env(safe-area-inset-top, 0px));
+  right: 1rem;
+  bottom: auto;
+}
+
+.demo-toolbar button:focus-visible,
+.demo-back-top:focus-visible,
+.demo-overview button:focus-visible,
+.creation-dialog button:focus-visible {
+  outline: 2px solid #bd536f;
+  outline-offset: 3px;
 }
 
 .demo-toolbar {
@@ -1056,6 +1073,10 @@ body {
   font-weight: 600;
 }
 
+.demo-toolbar__cta-label--short {
+  display: none;
+}
+
 .demo-toolbar__overview {
   justify-self: center;
   max-width: min(38vw, 23rem);
@@ -1064,16 +1085,16 @@ body {
 }
 
 .demo-toolbar__overview > span {
-  display: flex;
+  display: block;
   max-width: 20rem;
   overflow: hidden;
   text-align: center;
-  flex-direction: column;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .demo-toolbar__overview small {
+  display: block;
   margin-bottom: 0.22rem;
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.54rem;
@@ -1349,7 +1370,9 @@ body {
   position: relative;
   width: min(100%, 38rem);
   padding: clamp(1.5rem, 4vw, 3rem);
-  overflow: hidden;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid color-mix(in srgb, var(--demo-accent) 32%, #fff);
   border-radius: 1.75rem;
   background:
@@ -1368,6 +1391,7 @@ body {
   border: 1px solid color-mix(in srgb, var(--demo-accent) 28%, transparent);
   border-radius: 50%;
   content: '';
+  pointer-events: none;
 }
 
 .demo-overview__close {
@@ -1395,6 +1419,8 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding-right: 2.5rem;
+  flex-wrap: wrap;
   margin-bottom: 1.4rem;
   color: #6f7785;
   letter-spacing: 0.07em;
@@ -1419,8 +1445,9 @@ body {
   max-width: 30rem;
   margin: 0;
   color: #172033;
-  font: 600 clamp(2.25rem, 7vw, 4.15rem)/0.98 "Playfair Display", serif;
-  letter-spacing: -0.045em;
+  font: 600 2rem/1.2 "Playfair Display", serif;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .demo-overview > p {
@@ -2528,8 +2555,8 @@ body {
   }
 
   .creation-dialog {
-    max-height: 92vh;
-    padding: 1.4rem 1rem 1.2rem;
+    max-height: 92dvh;
+    padding: 1.4rem 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
     border-radius: 1.5rem 1.5rem 0 0;
   }
@@ -2557,13 +2584,27 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .demo-shell {
+    --demo-toolbar-height: 4rem;
+    --demo-controls-height: calc(9rem + var(--demo-safe-bottom));
+    padding-bottom: var(--demo-controls-height);
+  }
+
+  .demo-shell .demo-music-control {
+    top: calc(0.75rem + env(safe-area-inset-top, 0px));
+    right: 0.75rem;
+  }
+
   .demo-toolbar {
     top: auto;
     right: 0.75rem;
-    bottom: 0.75rem;
+    bottom: calc(0.75rem + var(--demo-safe-bottom));
     left: 0.75rem;
-    grid-template-columns: auto 1fr auto;
-    min-height: 3.7rem;
+    grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+    gap: 0.35rem;
+    width: auto;
+    height: var(--demo-toolbar-height);
+    min-height: 0;
     border-radius: 1rem;
   }
 
@@ -2572,14 +2613,23 @@ body {
     padding: 0 0.7rem;
   }
 
-  .demo-toolbar button > span,
-  .demo-toolbar__cta {
-    font-size: 0;
+  .demo-toolbar > button:first-child {
+    width: 2.75rem;
+    padding: 0;
+    justify-content: center;
   }
 
-  .demo-toolbar__cta::after {
+  .demo-toolbar > button:first-child > span {
+    display: none;
+  }
+
+  .demo-toolbar .demo-toolbar__cta-label--full {
+    display: none;
+  }
+
+  .demo-toolbar .demo-toolbar__cta-label--short {
+    display: block;
     font: 600 0.68rem/1 "Poppins", sans-serif;
-    content: 'Tạo thiệp';
   }
 
   .demo-toolbar__overview > svg:first-child,
@@ -2588,31 +2638,34 @@ body {
   }
 
   .demo-toolbar__overview > span {
-    max-width: 11rem;
+    max-width: 100%;
     font-size: 0.65rem;
   }
 
   .demo-toolbar__overview {
     max-width: 100%;
     min-width: 0;
+    width: 100%;
     padding-inline: 0.35rem;
   }
 
   .demo-back-top {
     right: 0.9rem;
-    bottom: 5.2rem;
-    width: 2.55rem;
-    height: 2.55rem;
+    bottom: calc(var(--demo-toolbar-height) + 1.5rem + var(--demo-safe-bottom));
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .demo-action-dock {
-    bottom: 5.2rem;
+    bottom: calc(var(--demo-toolbar-height) + 1.5rem + var(--demo-safe-bottom));
     left: 0.75rem;
+    gap: 0.25rem;
+    padding: 0.3rem;
   }
 
   .demo-action-dock button {
-    width: 2.15rem;
-    height: 2.15rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .demo-action-dock button::after {
@@ -2620,7 +2673,7 @@ body {
   }
 
   .demo-toast {
-    bottom: 8.8rem;
+    bottom: calc(var(--demo-controls-height) + 0.75rem);
     border-radius: 0.85rem;
     font-size: 0.64rem;
   }
@@ -2632,15 +2685,15 @@ body {
 
   .demo-overview {
     width: 100%;
-    max-height: 90vh;
-    padding: 1.7rem 1rem 1rem;
+    max-height: 90dvh;
+    padding: 1.7rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
     border-radius: 1.5rem 1.5rem 0 0;
   }
 
   .demo-overview h2 {
     padding-right: 2.5rem;
-    font-size: clamp(2.2rem, 11vw, 3.3rem);
+    font-size: 1.75rem;
   }
 
   .demo-overview__switcher {
