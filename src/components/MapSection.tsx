@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Navigation } from 'lucide-react';
+import { Navigation } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface MapSectionProps {
@@ -19,9 +19,18 @@ export function MapSection({
   address = 'Địa chỉ sẽ được cập nhật', 
   mapUrl = 'https://maps.google.com',
   premium = false,
-  className = ''
+  className = '',
+  latitude,
+  longitude,
+  center,
 }: MapSectionProps) {
   const [mapType, setMapType] = useState<'roadmap' | 'satellite'>('roadmap');
+  const mapDestination = latitude !== undefined && longitude !== undefined
+    ? `${latitude},${longitude}`
+    : center
+      ? `${center.lat},${center.lng}`
+      : `${location}, ${address}`;
+  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapDestination)}&output=embed&t=${mapType === 'satellite' ? 'k' : 'm'}`;
 
   return (
     <section className={`py-16 px-4 ${className}`}>
@@ -75,52 +84,21 @@ export function MapSection({
 
           {/* Map Container */}
           <div className="relative aspect-video bg-gradient-to-br from-[#FAF7F2] to-white">
-            {/* Placeholder map - In real app, use Google Maps iframe */}
+            {/* Tạo bản đồ theo địa điểm của từng mẫu */}
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.0634203876657!2d106.67557!3d10.79797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQ3JzUyLjciTiAxMDbCsDQwJzM5LjMiRQ!5e0!3m2!1svi!2s!4v1234567890"
+              src={mapEmbedUrl}
+              title={`Bản đồ đến ${location}`}
               width="100%"
-              height="400"
+              height="100%"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              className="w-full"
+              className="w-full h-full"
             ></iframe>
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Animated Pin */}
-              <motion.div
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ 
-                  delay: 0.5,
-                  duration: 0.6,
-                  repeat: 3,
-                  repeatType: "reverse"
-                }}
-                className="relative"
-              >
-                <MapPin className="w-16 h-16 text-[#C29B43]" fill="#C29B43" />
-                
-                {/* Pulsing glow for premium */}
-                {premium && (
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.5, 0, 0.5],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                    className="absolute inset-0 bg-[#C29B43] rounded-full blur-xl"
-                  />
-                )}
-              </motion.div>
-            </div>
 
             {/* Overlay with location info */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+            <div className="absolute bottom-0 left-0 right-0 pointer-events-none bg-gradient-to-t from-black/60 to-transparent p-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

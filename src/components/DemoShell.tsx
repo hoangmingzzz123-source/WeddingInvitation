@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { navigateTo } from '../Router';
 import { templateTierLabels, weddingTemplates } from '../data/templates';
+import { getWeddingPackage } from '../data/packages';
 import { trackEvent } from '../utils/analytics';
 import {
   isTemplateFavorite,
@@ -59,6 +60,9 @@ const demoAccents: Record<string, string> = {
   'vietnamese-traditional': '#d84743',
   'vintage-grain': '#af7b4f',
   'green-elegance': '#557d65',
+  'rose-storybook-219k': '#d78ca8',
+  'vietnamese-traditional-219k': '#d84743',
+  'burgundy-cinema-219k': '#c9a24d',
 };
 
 function getSectionLabel(section: HTMLElement, index: number) {
@@ -78,6 +82,7 @@ export function DemoShell({
   children: ReactNode;
 }) {
   const template = weddingTemplates.find((item) => item.route === route);
+  const packageInfo = template ? getWeddingPackage(template.tier) : null;
   const internalTemplates = useMemo(
     () => weddingTemplates.filter((item) => Boolean(item.route)),
     [],
@@ -103,6 +108,7 @@ export function DemoShell({
   );
   const [toastMessage, setToastMessage] = useState('');
   const toastTimer = useRef<number | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const accent = template ? (demoAccents[template.id] ?? '#d9b764') : '#d9b764';
   const shellStyle = { '--demo-accent': accent } as CSSProperties;
 
@@ -226,9 +232,18 @@ export function DemoShell({
     };
 
     const initializeSections = () => {
-      pageSections = Array.from(
-        document.querySelectorAll<HTMLElement>('.demo-shell section'),
+      const nextPageSections = Array.from(
+        contentRef.current?.querySelectorAll<HTMLElement>('section') ?? [],
       );
+      if (
+        nextPageSections.length === pageSections.length
+        && nextPageSections.every((section, index) => section === pageSections[index])
+      ) return;
+
+      pageSections = nextPageSections;
+      pageSections.forEach((section, index) => {
+        section.dataset.demoHero = index === 0 ? 'true' : 'false';
+      });
       setSections(
         pageSections.map((element, index) => ({
           element,
@@ -238,12 +253,20 @@ export function DemoShell({
       updatePosition();
     };
 
+    const contentObserver = new MutationObserver(initializeSections);
+    if (contentRef.current) {
+      contentObserver.observe(contentRef.current, {
+        childList: true,
+        subtree: true,
+      });
+    }
     const initializeTimer = window.setTimeout(initializeSections, 120);
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
 
     return () => {
       window.clearTimeout(initializeTimer);
+      contentObserver.disconnect();
       window.cancelAnimationFrame(frame);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
@@ -475,7 +498,9 @@ export function DemoShell({
           {toastMessage}
         </div>
 
-        {children}
+        <div className="demo-page-content" data-template={template?.id} ref={contentRef}>
+          {children}
+        </div>
 
         <Dialog.Portal>
           <Dialog.Overlay
@@ -504,6 +529,21 @@ export function DemoShell({
               </div>
               <Dialog.Title>{template?.name ?? 'Mẫu thiệp cưới'}</Dialog.Title>
               <Dialog.Description>{template?.description}</Dialog.Description>
+
+              {packageInfo && (
+                <section className="demo-overview__package" aria-label={`Quyền lợi ${packageInfo.name}`}>
+                  <div>
+                    <span>GÓI {packageInfo.name.toUpperCase()}</span>
+                    <strong>{packageInfo.price}</strong>
+                  </div>
+                  <p>Trong gói này có</p>
+                  <ul>
+                    {packageInfo.features.slice(0, 4).map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
               <div className="demo-overview__features">
                 {template?.features.map((feature) => (

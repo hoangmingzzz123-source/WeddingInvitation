@@ -12,6 +12,7 @@ import { MapSection } from '../MapSection';
 export function ClassicMinimalist() {
   const [rsvpData, setRsvpData] = useState({ name: '', guests: '1', note: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   // Get guest name from URL parameter
   const getGuestName = () => {
@@ -84,7 +85,7 @@ export function ClassicMinimalist() {
             Linh & Khánh
           </h1>
           <div className="w-24 h-px bg-[#C29B43] mx-auto" />
-          <p className="text-xl text-[#666]">20 • 12 • 2025</p>
+          <p className="text-xl text-[#666]">18 • 12 • 2027</p>
         </motion.div>
 
         <motion.div
@@ -120,7 +121,7 @@ export function ClassicMinimalist() {
                   <Calendar className="w-8 h-8 text-[#C29B43]" />
                 </div>
                 <h3 className="text-xl">Ngày Cưới</h3>
-                <p className="text-[#666]">Thứ 7 • 20/12/2025</p>
+                <p className="text-[#666]">Thứ 7 • 18/12/2027</p>
               </div>
 
               {/* Time */}
@@ -296,15 +297,20 @@ export function ClassicMinimalist() {
               />
             </div>
             <Button
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Đã copy link thiệp!');
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(window.location.href);
+                  setLinkCopied(true);
+                  window.setTimeout(() => setLinkCopied(false), 2000);
+                } catch (error) {
+                  console.error('Could not copy invitation link:', error);
+                }
               }}
               variant="outline"
               className="border-[#C29B43] text-[#C29B43] hover:bg-[#C29B43] hover:text-white"
             >
               <Share2 className="w-4 h-4 mr-2" />
-              Sao Chép Link
+              {linkCopied ? 'Đã sao chép link' : 'Sao chép link'}
             </Button>
           </div>
         </motion.div>

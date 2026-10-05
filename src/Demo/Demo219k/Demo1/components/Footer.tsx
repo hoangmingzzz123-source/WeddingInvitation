@@ -33,8 +33,8 @@ export function Footer() {
               <h4 className="text-xl font-serif text-rose-900 mb-4">Minh Anh</h4>
               <div className="space-y-2 text-gray-700">
                 <p>Ngân hàng: <strong>Vietcombank</strong></p>
-                <p>STK: <strong>0123456789</strong></p>
-                <p>Chủ TK: <strong>NGUYEN THI MINH ANH</strong></p>
+                <p>Số tài khoản: <strong>Được cá nhân hóa</strong></p>
+                <p>Chủ tài khoản: <strong>Thông tin minh họa</strong></p>
               </div>
             </div>
 
@@ -44,11 +44,14 @@ export function Footer() {
               <h4 className="text-xl font-serif text-rose-900 mb-4">Tuấn Kiệt</h4>
               <div className="space-y-2 text-gray-700">
                 <p>Ngân hàng: <strong>Techcombank</strong></p>
-                <p>STK: <strong>9876543210</strong></p>
-                <p>Chủ TK: <strong>LE TUAN KIET</strong></p>
+                <p>Số tài khoản: <strong>Được cá nhân hóa</strong></p>
+                <p>Chủ tài khoản: <strong>Thông tin minh họa</strong></p>
               </div>
             </div>
           </div>
+          <p className="text-xs text-gray-500 mt-4">
+            Tài khoản và mã QR trong bản demo chỉ là dữ liệu minh họa.
+          </p>
 
           {/* QR Code Section */}
           <div className="mt-8">
@@ -71,7 +74,7 @@ export function Footer() {
                   <div className="bg-gray-100 aspect-square rounded-lg flex items-center justify-center">
                     <div className="text-center text-gray-500">
                       <p className="text-sm">QR Code</p>
-                      <p className="text-xs mt-2">Scan để chuyển khoản</p>
+                      <p className="text-xs mt-2">Mã minh họa</p>
                     </div>
                   </div>
                 </div>
@@ -80,7 +83,7 @@ export function Footer() {
                   <div className="bg-gray-100 aspect-square rounded-lg flex items-center justify-center">
                     <div className="text-center text-gray-500">
                       <p className="text-sm">QR Code</p>
-                      <p className="text-xs mt-2">Scan để chuyển khoản</p>
+                      <p className="text-xs mt-2">Mã minh họa</p>
                     </div>
                   </div>
                 </div>
@@ -121,7 +124,7 @@ export function Footer() {
 
           {/* Copyright */}
           <div className="text-gray-500 text-sm">
-            <p className="mb-2">© 2025 Minh Anh & Tuấn Kiệt</p>
+            <p className="mb-2">© 2027 Minh Anh & Tuấn Kiệt</p>
             <p className="flex items-center justify-center gap-2">
               Made with <Heart className="w-4 h-4 text-rose-500 fill-rose-500" /> for our special day
             </p>

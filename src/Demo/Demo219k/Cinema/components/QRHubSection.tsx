@@ -155,6 +155,9 @@ export function QRHubSection() {
           >
             Sự hiện diện của bạn là món quà ý nghĩa nhất với chúng tôi
           </motion.p>
+          <p className="text-[#F6F1EB]/50 text-center mt-3 text-xs" style={{ fontFamily: 'Lora, serif' }}>
+            Mã QR trong bản demo là hình minh họa, không dùng để chuyển khoản.
+          </p>
         </motion.div>
       </div>
     </section>

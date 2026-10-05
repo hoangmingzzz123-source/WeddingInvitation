@@ -33,14 +33,14 @@ export function ModernDarkBlue() {
     {
       title: 'Lễ Vu Quy',
       time: '08:00 AM',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Nhà Gái',
       address: '123 Nguyễn Huệ, Q.1, TP.HCM',
     },
     {
       title: 'Lễ Thành Hôn',
       time: '18:00 PM',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Grand Palace Hotel',
       address: '456 Lê Lợi, Q.1, TP.HCM',
     },
@@ -48,7 +48,7 @@ export function ModernDarkBlue() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] text-white relative overflow-hidden">
-      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
@@ -152,7 +152,7 @@ export function ModernDarkBlue() {
 
               <div className="flex items-center gap-4 text-xl text-gray-300">
                 <Calendar className="w-5 h-5 text-[#3B82F6]" />
-                <span>15 • 03 • 2025</span>
+                <span>13 • 03 • 2027</span>
               </div>
             </div>
 

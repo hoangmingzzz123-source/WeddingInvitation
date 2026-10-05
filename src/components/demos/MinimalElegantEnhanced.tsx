@@ -59,7 +59,7 @@ export function MinimalElegantEnhanced() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} />
 
       {/* Subtle Grid Background */}
       <div 
@@ -233,7 +233,7 @@ function CoverPage({ onNext, opacity, guestName }: { onNext: () => void; opacity
             className="text-sm tracking-[0.3em] text-[#666]"
             style={{ fontFamily: '"Montserrat", sans-serif' }}
           >
-            03 • 2025
+            03 • 2027
           </p>
         </motion.div>
 
@@ -367,7 +367,7 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
             { year: '2019', event: 'Gặp Gỡ' },
             { year: '2020', event: 'Hẹn Hò' },
             { year: '2024', event: 'Đính Hôn' },
-            { year: '2025', event: 'Kết Hôn' },
+            { year: '2027', event: 'Kết Hôn' },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -567,21 +567,21 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
     {
       type: 'Lễ Gia Tiên',
       time: '07:00',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Tư Gia Nhà Gái',
       address: '123 Nguyễn Huệ, Quận 1, TP.HCM',
     },
     {
       type: 'Lễ Thành Hôn',
       time: '11:00',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Nhà Thờ Đức Bà',
       address: '01 Công xã Paris, Quận 1, TP.HCM',
     },
     {
       type: 'Tiệc Cưới',
       time: '18:00',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Grand Palace Hotel',
       address: '789 Lê Lợi, Quận 1, TP.HCM',
     },

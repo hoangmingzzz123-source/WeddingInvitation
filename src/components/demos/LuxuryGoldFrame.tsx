@@ -28,13 +28,13 @@ export function LuxuryGoldFrame() {
   }));
 
   const events = [
-    { title: 'Lễ Vu Quy', time: '08:00', date: '15/03/2025', location: 'Tư gia nhà gái' },
-    { title: 'Lễ Cưới', time: '18:00', date: '15/03/2025', location: 'Grand Palace Hotel' },
+    { title: 'Lễ Vu Quy', time: '08:00', date: '13/03/2027', location: 'Tư gia nhà gái' },
+    { title: 'Lễ Cưới', time: '18:00', date: '13/03/2027', location: 'Grand Palace Hotel' },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1510] via-[#2D2416] to-[#1A1510] text-white relative overflow-hidden">
-      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
@@ -202,7 +202,7 @@ export function LuxuryGoldFrame() {
                 <div className="space-y-3 text-[#E5D4A0]">
                   <div className="flex items-center justify-center md:justify-start gap-3">
                     <Calendar className="w-5 h-5 text-[#C29B43]" />
-                    <span className="text-xl">15 • Tháng 3 • 2025</span>
+                    <span className="text-xl">13 • Tháng 3 • 2027</span>
                   </div>
                   <p className="text-lg leading-relaxed">
                     Trân trọng kính mời <span className="font-semibold text-[#FFD700]">{getGuestName()}</span> đến dự lễ cưới của chúng tôi

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowLeft,
+  ArrowRight,
   CalendarDays,
   Check,
   Clipboard,
@@ -10,6 +11,7 @@ import {
   Heart,
   MapPin,
   Palette,
+  Pencil,
   Save,
   Sparkles,
   WandSparkles,
@@ -68,6 +70,21 @@ const defaultDraft: InvitationDraft = {
   theme: 'champagne',
   cover: coverOptions[0].url,
 };
+
+const creationSteps = [
+  { title: 'Đôi bạn', heading: 'Ai là nhân vật chính?', hint: 'Bắt đầu bằng tên hai bạn để thiệp mang dấu ấn riêng.' },
+  { title: 'Thời gian', heading: 'Chọn ngày vui', hint: 'Thêm ngày và giờ để khách mời dễ sắp xếp.' },
+  { title: 'Địa điểm', heading: 'Hẹn nhau ở đâu?', hint: 'Cho khách biết tên sảnh tiệc và cách tìm đến nơi.' },
+  { title: 'Lời mời', heading: 'Gửi một lời thật riêng', hint: 'Viết lời nhắn theo cách của hai bạn, hoặc chọn một gợi ý có sẵn.' },
+  { title: 'Phong cách', heading: 'Chọn không khí cho tấm thiệp', hint: 'Thử bảng màu và ảnh bìa, bản xem trước sẽ đổi ngay.' },
+  { title: 'Rà soát', heading: 'Sẵn sàng gửi lời mời chưa?', hint: 'Kiểm tra lại thông tin một lượt. Bạn vẫn có thể quay lại chỉnh sửa.' },
+];
+
+const invitationMessageIdeas = [
+  'Trân trọng mời bạn đến chung vui trong ngày hạnh phúc của chúng mình.',
+  'Ngày vui sẽ trọn vẹn hơn khi có bạn ở bên. Hẹn gặp bạn nhé!',
+  'Hai chúng mình sắp về chung một nhà. Mời bạn đến nâng ly chúc mừng!',
+];
 
 function isInvitationTheme(value: unknown): value is InvitationTheme {
   return value === 'champagne' || value === 'blush' || value === 'emerald';
@@ -174,6 +191,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
 export function InvitationCreatorPage() {
   const [draft, setDraft] = useState<InvitationDraft>(readSavedDraft);
   const [errors, setErrors] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
   const [saveStatus, setSaveStatus] = useState('Bản nháp được lưu tự động');
 
   useEffect(() => {
@@ -189,24 +207,41 @@ export function InvitationCreatorPage() {
     return () => window.clearTimeout(timeout);
   }, [draft]);
 
-  const completedFields = useMemo(() => (
-    [draft.brideName, draft.groomName, draft.weddingDate, draft.venue].filter(Boolean).length
-  ), [draft]);
-
   const updateDraft = <Key extends keyof InvitationDraft>(key: Key, value: InvitationDraft[Key]) => {
     setDraft((current) => ({ ...current, [key]: value }));
     if (errors.length) setErrors([]);
   };
 
-  const generateDemo = () => {
+  const validateStep = (step: number) => {
     const missingFields: string[] = [];
-    if (!draft.brideName.trim()) missingFields.push('Tên cô dâu');
-    if (!draft.groomName.trim()) missingFields.push('Tên chú rể');
-    if (!draft.weddingDate) missingFields.push('Ngày cưới');
-    if (!draft.venue.trim()) missingFields.push('Địa điểm');
+    if (step === 0) {
+      if (!draft.brideName.trim()) missingFields.push('Tên cô dâu');
+      if (!draft.groomName.trim()) missingFields.push('Tên chú rể');
+    }
+    if (step === 1 && !draft.weddingDate) missingFields.push('Ngày cưới');
+    if (step === 2 && !draft.venue.trim()) missingFields.push('Địa điểm tổ chức');
 
     if (missingFields.length) {
       setErrors(missingFields);
+      return false;
+    }
+
+    setErrors([]);
+    return true;
+  };
+
+  const generateDemo = () => {
+    const firstMissingStep = !draft.brideName.trim() || !draft.groomName.trim()
+      ? 0
+      : !draft.weddingDate
+        ? 1
+        : !draft.venue.trim()
+          ? 2
+          : -1;
+
+    if (firstMissingStep >= 0) {
+      setCurrentStep(firstMissingStep);
+      validateStep(firstMissingStep);
       document.querySelector('.creator-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
@@ -214,6 +249,14 @@ export function InvitationCreatorPage() {
     saveDraft(draft);
     navigateTo(`/tao-thiep/preview?data=${encodeDraft(draft)}`);
   };
+
+  const advanceStep = () => {
+    if (!validateStep(currentStep)) return;
+    if (currentStep === creationSteps.length - 1) generateDemo();
+    else setCurrentStep((step) => step + 1);
+  };
+
+  const activeStep = creationSteps[currentStep];
 
   return (
     <main className="creator-page">
@@ -231,111 +274,168 @@ export function InvitationCreatorPage() {
       <section className="creator-intro">
         <div>
           <p><WandSparkles aria-hidden="true" /> Studio demo online</p>
-          <h1>Tự tay tạo một lời mời mang dấu ấn của hai bạn</h1>
-          <span>Nhập thông tin bên trái và xem thiệp thay đổi tức thì. Không cần đăng nhập hay kỹ năng thiết kế.</span>
+          <h1>Thiệp cưới của hai bạn, bắt đầu từ vài lựa chọn nhỏ</h1>
+          <span>Đi qua 6 bước ngắn, xem thiết kế thành hình ngay bên cạnh và tạo link demo để gửi người thân xem thử.</span>
         </div>
-        <div className="creator-progress" aria-label={`${completedFields} trên 4 thông tin chính đã hoàn thành`}>
-          <strong>{completedFields}/4</strong>
-          <span>thông tin chính</span>
-          <div><i style={{ width: `${completedFields * 25}%` }} /></div>
+        <div className="creator-progress" aria-label={`Bước ${currentStep + 1} trên ${creationSteps.length}: ${activeStep.title}`}>
+          <strong>0{currentStep + 1}<small> / 0{creationSteps.length}</small></strong>
+          <span>{activeStep.title}</span>
+          <div><i style={{ width: `${((currentStep + 1) / creationSteps.length) * 100}%` }} /></div>
         </div>
       </section>
 
       <div className="creator-workspace">
-        <form className="creator-form" onSubmit={(event) => { event.preventDefault(); generateDemo(); }}>
+        <form className="creator-form" onSubmit={(event) => { event.preventDefault(); advanceStep(); }}>
           {errors.length > 0 && (
             <div className="creator-errors" role="alert">
-              <strong>Vui lòng bổ sung:</strong> {errors.join(', ')}.
+              <strong>Thiếu một chút nữa thôi:</strong> {errors.join(', ')}.
             </div>
           )}
 
-          <fieldset>
-            <legend><span>01</span> Thông tin đôi bạn</legend>
-            <div className="creator-fields creator-fields--two">
-              <label>
-                Tên cô dâu <b>*</b>
-                <input value={draft.brideName} onChange={(event) => updateDraft('brideName', event.target.value)} placeholder="Ví dụ: Hà Phương" />
-              </label>
-              <label>
-                Tên chú rể <b>*</b>
-                <input value={draft.groomName} onChange={(event) => updateDraft('groomName', event.target.value)} placeholder="Ví dụ: Hoàng Minh" />
-              </label>
-            </div>
-          </fieldset>
+          <nav className="creator-stepper" aria-label="Các bước tạo thiệp">
+            {creationSteps.map((step, index) => (
+              <button
+                key={step.title}
+                type="button"
+                className={`${index === currentStep ? 'is-current' : ''}${index < currentStep ? ' is-complete' : ''}`}
+                onClick={() => { if (index < currentStep) { setCurrentStep(index); setErrors([]); } }}
+                disabled={index > currentStep}
+                aria-current={index === currentStep ? 'step' : undefined}
+              >
+                <i>{index < currentStep ? <Check aria-hidden="true" /> : `0${index + 1}`}</i>
+                <span>{step.title}</span>
+              </button>
+            ))}
+          </nav>
 
-          <fieldset>
-            <legend><span>02</span> Thời gian &amp; địa điểm</legend>
-            <div className="creator-fields creator-fields--two">
-              <label>
-                <CalendarDays aria-hidden="true" /> Ngày cưới <b>*</b>
-                <input type="date" value={draft.weddingDate} onChange={(event) => updateDraft('weddingDate', event.target.value)} />
-              </label>
-              <label>
-                <Clock3 aria-hidden="true" /> Giờ đón khách
-                <input type="time" value={draft.weddingTime} onChange={(event) => updateDraft('weddingTime', event.target.value)} />
-              </label>
-              <label className="creator-field--wide">
-                Tên địa điểm <b>*</b>
-                <input value={draft.venue} onChange={(event) => updateDraft('venue', event.target.value)} placeholder="Ví dụ: Riverside Palace" />
-              </label>
-              <label className="creator-field--wide">
-                Địa chỉ
-                <input value={draft.address} onChange={(event) => updateDraft('address', event.target.value)} placeholder="Địa chỉ chi tiết của buổi tiệc" />
-              </label>
-            </div>
-          </fieldset>
+          <motion.fieldset
+            key={currentStep}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22 }}
+          >
+            <legend><span>0{currentStep + 1}</span> {activeStep.heading}</legend>
+            <p className="creator-step-hint">{activeStep.hint}</p>
 
-          <fieldset>
-            <legend><span>03</span> Lời mời</legend>
-            <label>
-              Thông điệp gửi khách mời
-              <textarea rows={4} maxLength={180} value={draft.message} onChange={(event) => updateDraft('message', event.target.value)} />
-              <small>{draft.message.length}/180 ký tự</small>
-            </label>
-          </fieldset>
+            {currentStep === 0 && (
+              <div className="creator-fields creator-fields--two">
+                <label>
+                  Tên cô dâu <b>*</b>
+                  <input autoFocus value={draft.brideName} onChange={(event) => updateDraft('brideName', event.target.value)} placeholder="Ví dụ: Hà Phương" />
+                </label>
+                <label>
+                  Tên chú rể <b>*</b>
+                  <input value={draft.groomName} onChange={(event) => updateDraft('groomName', event.target.value)} placeholder="Ví dụ: Hoàng Minh" />
+                </label>
+              </div>
+            )}
 
-          <fieldset>
-            <legend><span>04</span> Phong cách</legend>
-            <div className="creator-theme-grid">
-              {themeOptions.map((theme) => (
-                <button
-                  type="button"
-                  key={theme.id}
-                  className={`creator-theme creator-theme--${theme.id}${draft.theme === theme.id ? ' is-active' : ''}`}
-                  onClick={() => updateDraft('theme', theme.id)}
-                  aria-pressed={draft.theme === theme.id}
-                >
-                  <i><Palette aria-hidden="true" /></i>
-                  <strong>{theme.name}</strong>
-                  <small>{theme.description}</small>
-                  {draft.theme === theme.id && <Check aria-hidden="true" />}
-                </button>
-              ))}
-            </div>
+            {currentStep === 1 && (
+              <div className="creator-fields creator-fields--two">
+                <label>
+                  <CalendarDays aria-hidden="true" /> Ngày cưới <b>*</b>
+                  <input autoFocus type="date" value={draft.weddingDate} onChange={(event) => updateDraft('weddingDate', event.target.value)} />
+                </label>
+                <label>
+                  <Clock3 aria-hidden="true" /> Giờ đón khách
+                  <input type="time" value={draft.weddingTime} onChange={(event) => updateDraft('weddingTime', event.target.value)} />
+                </label>
+              </div>
+            )}
 
-            <p className="creator-cover-label">Chọn ảnh cover</p>
-            <div className="creator-cover-grid">
-              {coverOptions.map((cover) => (
-                <button
-                  type="button"
-                  key={cover.id}
-                  className={draft.cover === cover.url ? 'is-active' : ''}
-                  onClick={() => updateDraft('cover', cover.url)}
-                  aria-pressed={draft.cover === cover.url}
-                >
-                  <img src={cover.url} alt="" loading="lazy" />
-                  <span>{cover.label}</span>
-                  {draft.cover === cover.url && <Check aria-hidden="true" />}
-                </button>
-              ))}
-            </div>
-          </fieldset>
+            {currentStep === 2 && (
+              <div className="creator-fields">
+                <label>
+                  Tên địa điểm <b>*</b>
+                  <input autoFocus value={draft.venue} onChange={(event) => updateDraft('venue', event.target.value)} placeholder="Ví dụ: Riverside Palace" />
+                </label>
+                <label>
+                  Địa chỉ chi tiết
+                  <input value={draft.address} onChange={(event) => updateDraft('address', event.target.value)} placeholder="Số nhà, đường, quận/huyện, tỉnh/thành" />
+                </label>
+                <p className="creator-field-note"><MapPin aria-hidden="true" /> Địa chỉ sẽ giúp khách mời tìm đường thuận tiện hơn.</p>
+              </div>
+            )}
 
-          <button type="submit" className="creator-generate">
-            <Sparkles aria-hidden="true" />
-            Tạo demo &amp; lấy liên kết
-          </button>
-          <p className="creator-privacy">Thông tin chỉ được lưu trên thiết bị và nằm trong link khi bạn chủ động chia sẻ.</p>
+            {currentStep === 3 && (
+              <div className="creator-fields">
+                <label>
+                  Lời nhắn gửi khách mời
+                  <textarea autoFocus rows={4} maxLength={180} value={draft.message} onChange={(event) => updateDraft('message', event.target.value)} placeholder="Viết vài dòng theo cách của hai bạn..." />
+                  <small>{draft.message.length}/180 ký tự</small>
+                </label>
+                <div className="creator-message-ideas" aria-label="Gợi ý lời mời">
+                  <span>Gợi ý nhanh</span>
+                  {invitationMessageIdeas.map((idea, index) => (
+                    <button type="button" key={idea} onClick={() => updateDraft('message', idea)}>
+                      {['Trang trọng', 'Thân mật', 'Vui tươi'][index]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <>
+                <div className="creator-theme-grid">
+                  {themeOptions.map((theme) => (
+                    <button
+                      type="button"
+                      key={theme.id}
+                      className={`creator-theme creator-theme--${theme.id}${draft.theme === theme.id ? ' is-active' : ''}`}
+                      onClick={() => updateDraft('theme', theme.id)}
+                      aria-pressed={draft.theme === theme.id}
+                    >
+                      <i><Palette aria-hidden="true" /></i>
+                      <strong>{theme.name}</strong>
+                      <small>{theme.description}</small>
+                      {draft.theme === theme.id && <Check aria-hidden="true" />}
+                    </button>
+                  ))}
+                </div>
+
+                <p className="creator-cover-label">Ảnh bìa</p>
+                <div className="creator-cover-grid">
+                  {coverOptions.map((cover) => (
+                    <button
+                      type="button"
+                      key={cover.id}
+                      className={draft.cover === cover.url ? 'is-active' : ''}
+                      onClick={() => updateDraft('cover', cover.url)}
+                      aria-pressed={draft.cover === cover.url}
+                    >
+                      <img src={cover.url} alt="" loading="lazy" />
+                      <span>{cover.label}</span>
+                      {draft.cover === cover.url && <Check aria-hidden="true" />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {currentStep === 5 && (
+              <div className="creator-review">
+                <img src={draft.cover} alt="" />
+                <div className="creator-review__rows">
+                  <div><span>Cô dâu &amp; chú rể</span><strong>{draft.brideName || 'Cô dâu'} &amp; {draft.groomName || 'Chú rể'}</strong><button type="button" onClick={() => setCurrentStep(0)} aria-label="Sửa tên đôi bạn"><Pencil aria-hidden="true" /></button></div>
+                  <div><span>Ngày &amp; giờ</span><strong>{formatWeddingDate(draft.weddingDate)} · {draft.weddingTime || '18:00'}</strong><button type="button" onClick={() => setCurrentStep(1)} aria-label="Sửa ngày và giờ"><Pencil aria-hidden="true" /></button></div>
+                  <div><span>Địa điểm</span><strong>{draft.venue || 'Chưa thêm địa điểm'}{draft.address ? ` · ${draft.address}` : ''}</strong><button type="button" onClick={() => setCurrentStep(2)} aria-label="Sửa địa điểm"><Pencil aria-hidden="true" /></button></div>
+                  <div><span>Phong cách</span><strong>{themeOptions.find((theme) => theme.id === draft.theme)?.name}</strong><button type="button" onClick={() => setCurrentStep(4)} aria-label="Sửa phong cách"><Pencil aria-hidden="true" /></button></div>
+                </div>
+                <blockquote>“{draft.message || defaultDraft.message}”</blockquote>
+              </div>
+            )}
+          </motion.fieldset>
+
+          <div className="creator-step-actions">
+            <button type="button" className="creator-step-back" onClick={() => { setErrors([]); setCurrentStep((step) => Math.max(0, step - 1)); }} disabled={currentStep === 0}>
+              <ArrowLeft aria-hidden="true" /> Quay lại
+            </button>
+            <button type="submit" className="creator-generate">
+              {currentStep === creationSteps.length - 1 ? <><Sparkles aria-hidden="true" /> Xem thiệp &amp; tạo link</> : <>Tiếp tục <ArrowRight aria-hidden="true" /></>}
+            </button>
+          </div>
+          <p className="creator-privacy">Bản nháp được lưu trên thiết bị này. Link demo chứa nội dung thiệp để bạn gửi người thân xem thử.</p>
         </form>
 
         <aside className="creator-preview-panel" aria-label="Xem trước thiệp">
@@ -414,4 +514,3 @@ export function GeneratedInvitationPage() {
     </main>
   );
 }
-

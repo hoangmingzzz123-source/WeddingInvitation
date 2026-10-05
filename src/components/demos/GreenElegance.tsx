@@ -22,7 +22,7 @@ export function GreenElegance() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E8F5E9] via-[#F1F8E9] to-[#E8F5E9] overflow-hidden relative">
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
       <FloatingParticles theme="green" density="medium" />
 
       {/* Intro Animation */}
@@ -173,7 +173,7 @@ function CoverPage() {
           className="text-2xl text-[#2E7D32]"
           style={{ fontFamily: '"Poppins", sans-serif' }}
         >
-          12 • 12 • 2025
+          11 • 12 • 2027
         </motion.p>
 
         <motion.div
@@ -204,7 +204,7 @@ function StoryPage() {
     { year: '2020', event: 'Lần đầu gặp gỡ', icon: '💚' },
     { year: '2021', event: 'Bắt đầu hẹn hò', icon: '💕' },
     { year: '2023', event: 'Cầu hôn', icon: '💍' },
-    { year: '2025', event: 'Đám cưới', icon: '💐' },
+    { year: '2027', event: 'Đám cưới', icon: '💐' },
   ];
 
   return (
@@ -349,8 +349,7 @@ function DetailsPage() {
             </div>
             <div className="text-sm text-[#558B2F]">
               Nếu bạn muốn gửi lời chúc, vui lòng chuyển khoản:<br />
-              STK: 1234567890 - Ngân hàng ABC<br />
-              Chủ TK: NGUYEN VAN A
+              Thông tin tài khoản sẽ được cập nhật khi cá nhân hóa thiệp.
             </div>
           </motion.div>
 

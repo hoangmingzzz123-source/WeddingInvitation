@@ -49,6 +49,7 @@ export function VideoSection() {
             {/* Play Button */}
             <motion.button
               onClick={() => setShowVideo(true)}
+              aria-label="Xem vị trí video cưới mẫu"
               whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.95 }}
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"
@@ -79,18 +80,19 @@ export function VideoSection() {
                 onClick={(e) => e.stopPropagation()}
                 className="relative w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl"
               >
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                  title="Wedding Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-rose-950 via-rose-900 to-pink-800 text-white p-8">
+                  <div className="max-w-lg text-center">
+                    <Play className="w-12 h-12 mx-auto mb-5 text-rose-200" />
+                    <p className="text-xs tracking-[0.3em] uppercase text-rose-200 mb-3">Khung video cưới</p>
+                    <h3 className="text-2xl md:text-3xl font-serif mb-4">Khoảnh khắc của hai bạn</h3>
+                    <p className="text-sm md:text-base text-white/75 leading-relaxed">
+                      Video YouTube hoặc Vimeo sẽ được cá nhân hóa tại đây khi hoàn thiện thiệp.
+                    </p>
+                  </div>
+                </div>
                 <button
                   onClick={() => setShowVideo(false)}
+                  aria-label="Đóng video cưới mẫu"
                   className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -35,10 +35,10 @@ export function VideoSection() {
           >
             <Film className="inline-block text-[#C9A24D] mb-4" size={48} />
             <p className="text-[#C9A24D] text-sm tracking-[0.3em] mb-2" style={{ fontFamily: 'Lora, serif' }}>
-              COMING SOON
+              WEDDING FILM
             </p>
             <h3 className="text-[#F6F1EB] text-3xl md:text-4xl tracking-[0.2em]" style={{ fontFamily: 'Playfair Display, serif' }}>
-              OFFICIAL TRAILER
+              A MEMORY IN MOTION
             </h3>
           </motion.div>
 
@@ -121,10 +121,10 @@ export function VideoSection() {
                   <div className="text-center p-8">
                     <Play className="mx-auto mb-4 text-[#C9A24D]" size={64} />
                     <p className="text-xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
-                      Wedding Highlight Video
+                      Khung phim của hai bạn
                     </p>
                     <p className="text-sm text-[#F6F1EB]/60" style={{ fontFamily: 'Lora, serif' }}>
-                      Video will be embedded here
+                      Video cưới được cá nhân hóa sẽ hiển thị tại đây
                     </p>
                   </div>
                 </div>

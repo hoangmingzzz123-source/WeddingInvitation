@@ -20,6 +20,7 @@ export function BloomCrystal3D() {
   ]);
   const [newMessage, setNewMessage] = useState({ name: '', message: '', sticker: '❤️' });
   const [showQR, setShowQR] = useState(false);
+  const [copiedAccount, setCopiedAccount] = useState(false);
 
   const stickers = ['❤️', '💝', '🌸', '🎉', '💐', '🥂', '💍', '✨'];
 
@@ -34,13 +35,13 @@ export function BloomCrystal3D() {
   ];
 
   const pages = [
-    'Cover',
+    'Trang bìa',
     'Thông Tin',
     'Video',
     'Album',
     'Mừng Cưới',
-    'RSVP',
-    'Guestbook'
+    'Xác Nhận',
+    'Lời Chúc'
   ];
 
   // Handle swipe gestures
@@ -84,7 +85,7 @@ export function BloomCrystal3D() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 relative overflow-hidden">
       {/* Music Player - 199K Package: Full Control */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Back to Home Button */}
       <div className="fixed top-20 left-4 z-50">
@@ -225,7 +226,7 @@ export function BloomCrystal3D() {
                   <div className="h-px w-24 bg-gradient-to-l from-transparent to-[#C29B43]" />
                 </div>
 
-                <p className="text-3xl text-[#666]">20 • 12 • 2025</p>
+                <p className="text-3xl text-[#666]">18 • 12 • 2027</p>
 
                 <Button
                   onClick={() => setCurrentPage(1)}
@@ -253,7 +254,7 @@ export function BloomCrystal3D() {
 
                 <div className="grid md:grid-cols-3 gap-6">
                   {[
-                    { icon: Calendar, title: 'Ngày Cưới', content: 'Thứ 7, 20/12/2025' },
+                    { icon: Calendar, title: 'Ngày Cưới', content: 'Thứ 7, 18/12/2027' },
                     { icon: Clock, title: 'Thời Gian', content: '11:00 AM' },
                     { icon: MapPin, title: 'Địa Điểm', content: 'Riverside Palace, Q4' },
                   ].map((item, index) => (
@@ -385,6 +386,7 @@ export function BloomCrystal3D() {
                   <p className="text-lg text-[#666]">
                     Thay lời chúc phúc, bạn có thể gửi lời chúc và mừng cưới cho chúng tôi
                   </p>
+                  <p className="text-sm text-[#777]">Thông tin tài khoản và mã QR dưới đây là dữ liệu minh họa.</p>
                 </div>
 
                 {/* 3 QR Codes Grid */}
@@ -393,21 +395,21 @@ export function BloomCrystal3D() {
                     { 
                       icon: '📱', 
                       title: 'Momo',
-                      account: '0987654321',
+                      account: 'Dữ liệu minh họa',
                       name: 'NGUYEN VAN MINH',
                       color: '#A50064'
                     },
                     { 
                       icon: '🏦', 
                       title: 'Ngân Hàng',
-                      account: '1234567890',
+                      account: 'Dữ liệu minh họa',
                       name: 'Vietcombank',
                       color: '#C29B43'
                     },
                     { 
                       icon: '💬', 
                       title: 'Zalo/Facebook',
-                      account: '@wedding2025',
+                      account: '@wedding2027',
                       name: 'Kết nối với chúng tôi',
                       color: '#0068FF'
                     }
@@ -447,13 +449,18 @@ export function BloomCrystal3D() {
                         </div>
 
                         <Button
-                          onClick={() => {
-                            navigator.clipboard.writeText(qr.account);
-                            alert('Đã copy: ' + qr.account);
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(qr.account);
+                              setCopiedAccount(true);
+                              window.setTimeout(() => setCopiedAccount(false), 2000);
+                            } catch (error) {
+                              console.error('Could not copy demo account:', error);
+                            }
                           }}
                           className="bg-[#C29B43] hover:bg-[#A88434] text-white px-6 py-2 rounded-full"
                         >
-                          Copy {qr.title === 'Ngân Hàng' ? 'STK' : 'ID'}
+                          {copiedAccount ? 'Đã sao chép' : `Sao chép ${qr.title === 'Ngân Hàng' ? 'STK' : 'ID'}`}
                         </Button>
                       </div>
                     </motion.div>

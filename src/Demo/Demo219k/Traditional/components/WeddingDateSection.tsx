@@ -103,10 +103,10 @@ export function WeddingDateSection() {
               
               <div className="flex items-center justify-center gap-3 mb-3 relative z-10">
                 <Calendar className="text-[#8B1E1E]" size={24} />
-                <h3 className="text-[#8B1E1E] text-center">Chủ Nhật</h3>
+                <h3 className="text-[#8B1E1E] text-center">Thứ Bảy</h3>
               </div>
               <p className="text-center text-2xl text-[#3A2F2F] relative z-10">
-                29 tháng 03 năm 2026
+                17 tháng 04 năm 2027
               </p>
             </motion.div>
 

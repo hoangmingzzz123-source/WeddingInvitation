@@ -15,7 +15,11 @@ export interface WeddingTemplate {
   realWedding?: boolean;
 }
 
-const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] = [
+type TemplateDetails = Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'> & {
+  thumbnailId?: string;
+};
+
+const templateDetails: TemplateDetails[] = [
   {
     id: 'ha-phuong-hoang-minh-2026',
     name: 'Hà Phương & Hoàng Minh 2026',
@@ -213,13 +217,46 @@ const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] 
     features: ['Art Deco', 'Trang nhã'],
     description: 'Phiên bản tinh gọn của phong cách Art Deco hoàng gia.',
   },
+  {
+    id: 'rose-storybook-219k',
+    name: 'Rose Storybook',
+    style: 'Romantic Rose',
+    route: '/demo/rose-storybook-219k',
+    thumbnailId: 'blush-floral',
+    tier: '199k',
+    features: ['Câu chuyện tình yêu', 'Album', 'Video cưới', 'RSVP'],
+    description: 'Thiệp tông hồng kể câu chuyện tình yêu qua album, video và lời mời dự tiệc.',
+  },
+  {
+    id: 'vietnamese-traditional-219k',
+    name: 'Nét Việt Truyền Thống',
+    style: 'Vietnamese Heritage',
+    route: '/demo/vietnamese-traditional-219k',
+    thumbnailId: 'vietnamese-traditional',
+    tier: '199k',
+    features: ['Song Hỷ', 'Bản đồ', 'Mừng cưới QR', 'Lời chúc'],
+    description: 'Sắc đỏ và vàng trang trọng, kết hợp nghi thức cưới Việt cùng tiện ích khách mời.',
+  },
+  {
+    id: 'burgundy-cinema-219k',
+    name: 'Burgundy Cinema',
+    style: 'Cinematic Romance',
+    route: '/demo/burgundy-cinema-219k',
+    thumbnailId: 'luxury-gold-cinematic',
+    tier: '199k',
+    features: ['Mở thiệp điện ảnh', 'Album & video', 'Guestbook', 'RSVP'],
+    description: 'Trải nghiệm màu đỏ burgundy như một thước phim, với album, guestbook và RSVP.',
+  },
 ];
 
-export const weddingTemplates: WeddingTemplate[] = templateDetails.map((template) => ({
-  ...template,
-  thumbnail: `/images/templates/${template.id}-800.webp`,
-  thumbnailSrcSet: `/images/templates/${template.id}-480.webp 480w, /images/templates/${template.id}-800.webp 800w`,
-}));
+export const weddingTemplates: WeddingTemplate[] = templateDetails.map((template) => {
+  const { thumbnailId = template.id, ...details } = template;
+  return {
+    ...details,
+    thumbnail: `/images/templates/${thumbnailId}-800.webp`,
+    thumbnailSrcSet: `/images/templates/${thumbnailId}-480.webp 480w, /images/templates/${thumbnailId}-800.webp 800w`,
+  };
+});
 
 export const templateTierLabels: Record<TemplateTier, string> = {
   '109k': 'Gói 109K',

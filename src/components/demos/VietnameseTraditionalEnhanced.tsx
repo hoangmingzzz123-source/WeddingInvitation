@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Calendar, Clock, Heart, Users, Gift, Send, Phone, Home, QrCode, Image as ImageIcon, ChevronLeft, ChevronRight, X, Mail } from 'lucide-react';
 import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
@@ -12,8 +12,8 @@ import { PREMIUM_GALLERY_IMAGES } from '../../utils/imageConstants';
 export function VietnameseTraditionalEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const [rsvpError, setRsvpError] = useState('');
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [showFireworks, setShowFireworks] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', guests: '1', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -33,171 +33,38 @@ export function VietnameseTraditionalEnhanced() {
     PREMIUM_GALLERY_IMAGES.calibridal_wedding,
   ];
 
-  // Fireworks on page change
-  useEffect(() => {
-    setShowFireworks(true);
-    const timer = setTimeout(() => setShowFireworks(false), 2000);
-    return () => clearTimeout(timer);
-  }, [currentPage]);
-
-  // Floating lotus petals
-  const FloatingLotus = () => (
-    <>
-      {Array.from({ length: 15 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute pointer-events-none"
-          initial={{
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            y: -100,
-            rotate: Math.random() * 360,
-            scale: 0.5 + Math.random() * 0.5,
-          }}
-          animate={{
-            y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 100,
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            rotate: Math.random() * 720 + 360,
-            opacity: [0, 0.8, 0.8, 0],
-          }}
-          transition={{
-            duration: 12 + Math.random() * 8,
-            repeat: Infinity,
-            delay: Math.random() * 10,
-            ease: "linear",
-          }}
-        >
-          <div
-            className="w-10 h-10 rounded-full blur-sm"
-            style={{
-              background: i % 3 === 0 
-                ? 'radial-gradient(circle, rgba(220, 20, 60, 0.8), rgba(255, 105, 180, 0.4))' 
-                : i % 3 === 1
-                ? 'radial-gradient(circle, rgba(255, 215, 0, 0.8), rgba(194, 155, 67, 0.4))'
-                : 'radial-gradient(circle, rgba(255, 192, 203, 0.8), rgba(255, 182, 193, 0.4))',
-            }}
-          />
-        </motion.div>
-      ))}
-    </>
-  );
-
-  // Fireworks particles
-  const Fireworks = () => (
-    <AnimatePresence>
-      {showFireworks && (
-        <>
-          {Array.from({ length: 30 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 rounded-full"
-              style={{
-                left: '50%',
-                top: '30%',
-                background: i % 2 === 0 ? '#FFD700' : '#DC143C',
-              }}
-              initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
-              animate={{
-                scale: [0, 1, 0],
-                x: Math.cos((i / 30) * Math.PI * 2) * (100 + Math.random() * 200),
-                y: Math.sin((i / 30) * Math.PI * 2) * (100 + Math.random() * 200),
-                opacity: [1, 1, 0],
-              }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-            />
-          ))}
-        </>
-      )}
-    </AnimatePresence>
-  );
-
-  // Red lanterns decoration
-  const RedLanterns = () => (
-    <>
-      {[...Array(4)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-16 h-24 pointer-events-none z-10"
-          style={{
-            left: i < 2 ? `${10 + i * 30}%` : 'auto',
-            right: i >= 2 ? `${10 + (i - 2) * 30}%` : 'auto',
-            top: '5%',
-          }}
-          animate={{
-            y: [0, -15, 0],
-            rotate: [0, 5, 0, -5, 0],
-          }}
-          transition={{
-            duration: 3 + i * 0.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          {/* Lantern top */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-b from-[#8B4513] to-[#654321] rounded-t-xl" />
-          {/* Lantern body */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-14 h-16 bg-gradient-to-br from-[#DC143C] via-[#C41E3A] to-[#8B0000] rounded-2xl shadow-2xl border-2 border-[#FFD700]" />
-          {/* Gold trim */}
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 w-14 h-1 bg-[#FFD700]" />
-          <div className="absolute top-15 left-1/2 -translate-x-1/2 w-14 h-1 bg-[#FFD700]" />
-          {/* Tassel */}
-          <div className="absolute top-19 left-1/2 -translate-x-1/2 w-1 h-8 bg-gradient-to-b from-[#FFD700] to-transparent" />
-          <motion.div
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-6 bg-gradient-to-b from-[#FFD700] to-[#C29B43] rounded-b-full"
-            animate={{ rotate: [0, 10, 0, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {/* Glow effect */}
-          <div className="absolute inset-0 bg-[#FFD700] opacity-20 blur-xl rounded-full" />
-        </motion.div>
-      ))}
-    </>
-  );
-
   const renderPage = () => {
     switch (pages[currentPage]) {
       case 'cover':
         return (
           <motion.div
             key="cover"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.32, ease: 'easeOut' }}
             className="min-h-screen flex items-center justify-center px-6 py-20 relative"
           >
             {/* Traditional corner ornaments */}
-            <div className="absolute top-12 left-12 w-40 h-40 border-t-8 border-l-8 border-[#DC143C]/40 rounded-tl-[3rem] opacity-50" />
-            <div className="absolute top-12 right-12 w-40 h-40 border-t-8 border-r-8 border-[#DC143C]/40 rounded-tr-[3rem] opacity-50" />
-            <div className="absolute bottom-12 left-12 w-40 h-40 border-b-8 border-l-8 border-[#DC143C]/40 rounded-bl-[3rem] opacity-50" />
-            <div className="absolute bottom-12 right-12 w-40 h-40 border-b-8 border-r-8 border-[#DC143C]/40 rounded-br-[3rem] opacity-50" />
+            <div className="absolute top-12 left-12 w-28 h-28 border-t border-l border-[#DC143C]/40 rounded-tl-[2rem] opacity-50" />
+            <div className="absolute top-12 right-12 w-28 h-28 border-t border-r border-[#DC143C]/40 rounded-tr-[2rem] opacity-50" />
+            <div className="absolute bottom-12 left-12 w-28 h-28 border-b border-l border-[#DC143C]/40 rounded-bl-[2rem] opacity-50" />
+            <div className="absolute bottom-12 right-12 w-28 h-28 border-b border-r border-[#DC143C]/40 rounded-br-[2rem] opacity-50" />
 
             <div className="relative z-10 text-center space-y-12 max-w-4xl">
-              {/* Double Happiness Symbol with glow */}
+              {/* Double happiness emblem */}
               <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ duration: 1.2, delay: 0.3, type: "spring" }}
-                className="relative"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.15 }}
+                className="text-[8rem] leading-none md:text-[10rem] select-none"
+                aria-hidden="true"
+                style={{
+                  color: '#A62C36',
+                  fontFamily: '"Noto Serif", Georgia, serif',
+                }}
               >
-                <motion.div
-                  className="absolute inset-0 blur-3xl opacity-40"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.5, 0.3],
-                  }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  <div className="text-[250px] text-[#DC143C]">囍</div>
-                </motion.div>
-                <div className="relative text-[200px] md:text-[250px] select-none" style={{
-                  background: 'linear-gradient(135deg, #DC143C 0%, #FFD700 50%, #DC143C 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  filter: 'drop-shadow(0 0 20px rgba(220, 20, 60, 0.5))',
-                }}>
-                  囍
-                </div>
+                囍
               </motion.div>
 
               {/* Title */}
@@ -207,16 +74,7 @@ export function VietnameseTraditionalEnhanced() {
                 transition={{ delay: 0.8 }}
                 className="space-y-6"
               >
-                <motion.div
-                  animate={{
-                    textShadow: [
-                      '0 0 20px rgba(220, 20, 60, 0.3)',
-                      '0 0 40px rgba(255, 215, 0, 0.5)',
-                      '0 0 20px rgba(220, 20, 60, 0.3)',
-                    ],
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
+                <div>
                   <p className="text-xl tracking-[0.5em] text-[#DC143C] uppercase font-bold mb-3">
                     Hỷ Sự
                   </p>
@@ -231,7 +89,7 @@ export function VietnameseTraditionalEnhanced() {
                   >
                     Lễ Thành Hôn
                   </h1>
-                </motion.div>
+                </div>
               </motion.div>
 
               {/* Names with elegant animation */}
@@ -243,27 +101,23 @@ export function VietnameseTraditionalEnhanced() {
               >
                 <div className="space-y-3">
                   <p className="text-base text-[#8B4513] tracking-widest">CHÚ RỂ</p>
-                  <motion.h2 
-                    whileHover={{ scale: 1.05 }}
-                    className="text-6xl md:text-7xl font-bold cursor-pointer"
+                  <h2
+                    className="text-6xl md:text-7xl font-bold"
                     style={{ 
                       fontFamily: '"Great Vibes", cursive',
                       color: '#C29B43',
-                      filter: 'drop-shadow(0 2px 10px rgba(194, 155, 67, 0.3))',
                     }}
                   >
                     Nguyễn Văn Minh
-                  </motion.h2>
+                  </h2>
                 </div>
                 
                 <div className="flex items-center justify-center gap-12">
-                  <motion.div 
+                  <div
                     className="w-24 h-px"
                     style={{
                       background: 'linear-gradient(to right, transparent, #C29B43)',
                     }}
-                    animate={{ scaleX: [0.5, 1, 0.5] }}
-                    transition={{ duration: 3, repeat: Infinity }}
                   />
                   <motion.div
                     animate={{ 
@@ -307,17 +161,7 @@ export function VietnameseTraditionalEnhanced() {
                 transition={{ delay: 1.5 }}
                 className="inline-block relative"
               >
-                <motion.div
-                  className="absolute inset-0 border-4 border-[#DC143C] rounded-3xl"
-                  animate={{
-                    boxShadow: [
-                      '0 0 20px rgba(220, 20, 60, 0.3)',
-                      '0 0 40px rgba(255, 215, 0, 0.5)',
-                      '0 0 20px rgba(220, 20, 60, 0.3)',
-                    ],
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
+                <div className="absolute inset-0 border border-[#DC143C]/25 rounded-3xl" />
                 <div className="relative px-12 py-8 bg-gradient-to-br from-white/95 to-[#FFF8E7]/95 backdrop-blur-sm rounded-3xl">
                   <p className="text-sm text-[#8B4513] mb-3 tracking-widest">NGÀY CƯỚI</p>
                   <p className="text-4xl md:text-5xl font-bold" style={{
@@ -325,7 +169,7 @@ export function VietnameseTraditionalEnhanced() {
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                   }}>
-                    15 • 03 • 2025
+                    13 • 03 • 2027
                   </p>
                 </div>
               </motion.div>
@@ -337,8 +181,6 @@ export function VietnameseTraditionalEnhanced() {
                 transition={{ delay: 2 }}
               >
                 <motion.div
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
                   className="flex flex-col items-center gap-2 text-[#C29B43]"
                 >
                   <p className="text-sm tracking-widest">VUỐT ĐỂ XEM THÊM</p>
@@ -408,7 +250,7 @@ export function VietnameseTraditionalEnhanced() {
                   { year: '2019', title: 'Gặp Gỡ', icon: '👋' },
                   { year: '2021', title: 'Yêu Nhau', icon: '❤️' },
                   { year: '2024', title: 'Cầu Hôn', icon: '💍' },
-                  { year: '2025', title: 'Kết Hôn', icon: '💒' },
+                  { year: '2027', title: 'Kết Hôn', icon: '💒' },
                 ].map((item, i) => (
                   <motion.div
                     key={i}
@@ -538,7 +380,7 @@ export function VietnameseTraditionalEnhanced() {
                   {
                     title: 'Lễ Ăn Hỏi',
                     side: 'Nhà Gái',
-                    date: 'Thứ Sáu, 14/03/2025',
+                    date: 'Thứ Sáu, 12/03/2027',
                     time: '09:00 Sáng',
                     location: 'Tư Gia Nhà Gái',
                     address: '123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM',
@@ -548,7 +390,7 @@ export function VietnameseTraditionalEnhanced() {
                   {
                     title: 'Rước Dâu',
                     side: 'Nhà Gái',
-                    date: 'Thứ Bảy, 15/03/2025',
+                    date: 'Thứ Bảy, 13/03/2027',
                     time: '07:00 Sáng',
                     location: 'Tư Gia Nhà Gái',
                     address: '123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM',
@@ -558,7 +400,7 @@ export function VietnameseTraditionalEnhanced() {
                   {
                     title: 'Lễ Gia Tiên',
                     side: 'Nhà Trai',
-                    date: 'Thứ Bảy, 15/03/2025',
+                    date: 'Thứ Bảy, 13/03/2027',
                     time: '11:00 Sáng',
                     location: 'Tư Gia Nhà Trai',
                     address: '456 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
@@ -568,7 +410,7 @@ export function VietnameseTraditionalEnhanced() {
                   {
                     title: 'Tiệc Cưới',
                     side: 'Nhà Trai',
-                    date: 'Thứ Bảy, 15/03/2025',
+                    date: 'Thứ Bảy, 13/03/2027',
                     time: '18:00 Chiều',
                     location: 'Nhà Hàng Tiệc Cưới Hoa Sen',
                     address: '789 Võ Văn Tần, Quận 3, TP.HCM',
@@ -736,9 +578,10 @@ export function VietnameseTraditionalEnhanced() {
                   transition={{ delay: 0.3 }}
                   onSubmit={async (e) => {
                     e.preventDefault();
+                    setRsvpError('');
                     setIsSubmitting(true);
                     try {
-                      await submitRSVPWithFallback({
+                      const submitted = await submitRSVPWithFallback({
                         name: formData.name,
                         email: formData.phone,
                         attending: 'yes',
@@ -746,10 +589,11 @@ export function VietnameseTraditionalEnhanced() {
                         message: formData.message || undefined,
                         template: 'Vietnamese Traditional Enhanced',
                       });
-                      setRsvpSubmitted(true);
+                      if (submitted) setRsvpSubmitted(true);
+                      else setRsvpError('Chưa gửi được xác nhận đến gia đình. Vui lòng thử lại hoặc liên hệ cô dâu chú rể.');
                     } catch (error) {
                       console.error('Error submitting RSVP:', error);
-                      setRsvpSubmitted(true);
+                      setRsvpError('Chưa gửi được xác nhận. Vui lòng thử lại.');
                     } finally {
                       setIsSubmitting(false);
                     }
@@ -856,6 +700,12 @@ export function VietnameseTraditionalEnhanced() {
                         </div>
                       </motion.div>
                     </div>
+
+                    {rsvpError && (
+                      <p role="alert" className="text-center text-sm text-red-700">
+                        {rsvpError}
+                      </p>
+                    )}
 
                     {/* Submit Button */}
                     <motion.div
@@ -1011,6 +861,7 @@ export function VietnameseTraditionalEnhanced() {
                 </div>
                 <p className="text-lg text-[#666] max-w-2xl mx-auto">
                   Thay vì hoa và quà tặng, chúng tôi trân trọng nhận được lời chúc phúc và sự hiện diện của bạn.
+                  <span className="block mt-2 text-sm text-[#8B4513]/75">Thông tin tài khoản và mã QR dưới đây là dữ liệu minh họa cho bản demo.</span>
                 </p>
               </motion.div>
 
@@ -1027,7 +878,7 @@ export function VietnameseTraditionalEnhanced() {
                   <div className="absolute -top-2 -left-2 w-16 h-16 border-t-4 border-l-4 border-[#DC143C]/40 rounded-tl-2xl pointer-events-none z-10" />
                   <div className="absolute -bottom-2 -right-2 w-16 h-16 border-b-4 border-r-4 border-[#DC143C]/40 rounded-br-2xl pointer-events-none z-10" />
                   
-                  <div className="p-8 bg-gradient-to-br from-[#FFE5E5] via-white to-[#FFF8E7] rounded-2xl shadow-2xl border-4 border-[#FFD700]/30 space-y-6 hover:scale-[1.02] transition-transform">
+                  <div className="p-8 bg-gradient-to-br from-[#FFE5E5] via-white to-[#FFF8E7] rounded-2xl shadow-2xl border-4 border-[#FFD700]/30 space-y-6">
                     {/* Title */}
                     <div className="text-center space-y-2 pb-4 border-b-2 border-[#DC143C]/20">
                       <Heart className="w-8 h-8 mx-auto text-[#DC143C] fill-[#DC143C]" />
@@ -1054,7 +905,7 @@ export function VietnameseTraditionalEnhanced() {
                       </div>
                       <div className="p-4 bg-white/80 rounded-xl border-2 border-[#DC143C]/20">
                         <p className="text-sm text-[#8B4513] font-semibold mb-1">Số tài khoản</p>
-                        <p className="text-lg font-bold text-[#333] font-mono">1234567890</p>
+                        <p className="text-lg font-bold text-[#333] font-mono">Dữ liệu minh họa</p>
                       </div>
                       <div className="p-4 bg-white/80 rounded-xl border-2 border-[#DC143C]/20">
                         <p className="text-sm text-[#8B4513] font-semibold mb-1">Chủ tài khoản</p>
@@ -1075,7 +926,7 @@ export function VietnameseTraditionalEnhanced() {
                   <div className="absolute -top-2 -left-2 w-16 h-16 border-t-4 border-l-4 border-[#C29B43]/40 rounded-tl-2xl pointer-events-none z-10" />
                   <div className="absolute -bottom-2 -right-2 w-16 h-16 border-b-4 border-r-4 border-[#C29B43]/40 rounded-br-2xl pointer-events-none z-10" />
                   
-                  <div className="p-8 bg-gradient-to-br from-[#FFF8E7] via-white to-[#FFE5E5] rounded-2xl shadow-2xl border-4 border-[#FFD700]/30 space-y-6 hover:scale-[1.02] transition-transform">
+                  <div className="p-8 bg-gradient-to-br from-[#FFF8E7] via-white to-[#FFE5E5] rounded-2xl shadow-2xl border-4 border-[#FFD700]/30 space-y-6">
                     {/* Title */}
                     <div className="text-center space-y-2 pb-4 border-b-2 border-[#C29B43]/20">
                       <Heart className="w-8 h-8 mx-auto text-[#C29B43] fill-[#C29B43]" />
@@ -1102,7 +953,7 @@ export function VietnameseTraditionalEnhanced() {
                       </div>
                       <div className="p-4 bg-white/80 rounded-xl border-2 border-[#C29B43]/20">
                         <p className="text-sm text-[#8B4513] font-semibold mb-1">Số tài khoản</p>
-                        <p className="text-lg font-bold text-[#333] font-mono">0987654321</p>
+                        <p className="text-lg font-bold text-[#333] font-mono">Dữ liệu minh họa</p>
                       </div>
                       <div className="p-4 bg-white/80 rounded-xl border-2 border-[#C29B43]/20">
                         <p className="text-sm text-[#8B4513] font-semibold mb-1">Chủ tài khoản</p>
@@ -1163,19 +1014,24 @@ export function VietnameseTraditionalEnhanced() {
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-xl font-semibold text-[#333]">Quét mã QR để xem thiệp</p>
+                  <p className="text-xl font-semibold text-[#333]">Mã QR xem thiệp</p>
+                  <p className="text-sm text-[#777]">Mã thật sẽ được tạo theo liên kết thiệp khi cá nhân hóa.</p>
                   <div className="p-4 bg-[#F5F5F5] rounded-xl">
                     <code className="text-sm text-[#666] break-all">
-                      https://thiepcuoi.vn/minh-huong-2025
+                      {typeof window !== 'undefined' ? window.location.href : 'Liên kết thiệp của bạn'}
                     </code>
                   </div>
                 </div>
 
                 <Button
-                  onClick={() => {
-                    navigator.clipboard.writeText('https://thiepcuoi.vn/minh-huong-2025');
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(window.location.href);
+                      setCopied(true);
+                      window.setTimeout(() => setCopied(false), 2000);
+                    } catch (error) {
+                      console.error('Could not copy invitation link:', error);
+                    }
                   }}
                   className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[#DC143C] to-[#C29B43] hover:from-[#C41E3A] hover:to-[#B8860B] text-white rounded-xl shadow-lg transition-all"
                 >
@@ -1202,19 +1058,10 @@ export function VietnameseTraditionalEnhanced() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF8E7] via-white to-[#FFE5E5] relative overflow-hidden">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
-
-      {/* Floating effects */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <FloatingLotus />
-        <Fireworks />
-      </div>
-
-      {/* Red Lanterns */}
-      <RedLanterns />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Traditional pattern background */}
-      <div className="fixed inset-0 pointer-events-none opacity-30">
+      <div className="fixed inset-0 pointer-events-none opacity-10">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="lotus-pattern" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">

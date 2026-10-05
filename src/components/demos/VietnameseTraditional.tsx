@@ -21,6 +21,7 @@ export function VietnameseTraditional() {
   const [formData, setFormData] = useState({ name: '', phone: '', guests: '1', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [rsvpError, setRsvpError] = useState('');
   const [wishes, setWishes] = useState<Array<{ name: string; message: string; side: string }>>([
     { name: 'Anh Tuấn', message: 'Chúc hai em hạnh phúc bên nhau mãi mãi! 💕', side: 'Nhà Trai' },
     { name: 'Chị Lan', message: 'Đẹp lắm em! Một tương lai tươi sáng đang chờ đón hai em.', side: 'Nhà Gái' },
@@ -73,51 +74,11 @@ export function VietnameseTraditional() {
     </svg>
   );
 
-  // Floating lotus petals
-  const FloatingLotus = () => (
-    <>
-      {Array.from({ length: 12 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute pointer-events-none"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: -50,
-            rotate: Math.random() * 360,
-            opacity: 0,
-          }}
-          animate={{
-            y: window.innerHeight + 50,
-            rotate: Math.random() * 720,
-            opacity: [0, 0.6, 0],
-          }}
-          transition={{
-            duration: 15 + Math.random() * 10,
-            repeat: Infinity,
-            delay: Math.random() * 5,
-            ease: "linear",
-          }}
-        >
-          <div
-            className="w-8 h-8 rounded-full"
-            style={{
-              background: i % 3 === 0 ? 'radial-gradient(circle, #DC143C, #FF69B4)' : 
-                         i % 3 === 1 ? 'radial-gradient(circle, #FFD700, #C29B43)' :
-                         'radial-gradient(circle, #FFC0CB, #FFB6C1)',
-              filter: 'blur(1px)',
-              opacity: 0.7,
-            }}
-          />
-        </motion.div>
-      ))}
-    </>
-  );
-
   const events = [
     {
       title: 'Lễ Ăn Hỏi',
       side: 'Nhà Gái',
-      date: 'Thứ Sáu, 14/03/2025',
+      date: 'Thứ Sáu, 12/03/2027',
       time: '09:00 Sáng',
       location: 'Tư Gia Nhà Gái',
       address: '123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM',
@@ -126,7 +87,7 @@ export function VietnameseTraditional() {
     {
       title: 'Rước Dâu',
       side: 'Nhà Gái',
-      date: 'Thứ Bảy, 15/03/2025',
+      date: 'Thứ Bảy, 13/03/2027',
       time: '07:00 Sáng',
       location: 'Tư Gia Nhà Gái',
       address: '123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM',
@@ -135,7 +96,7 @@ export function VietnameseTraditional() {
     {
       title: 'Lễ Gia Tiên',
       side: 'Nhà Trai',
-      date: 'Thứ Bảy, 15/03/2025',
+      date: 'Thứ Bảy, 13/03/2027',
       time: '11:00 Sáng',
       location: 'Tư Gia Nhà Trai',
       address: '456 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
@@ -144,7 +105,7 @@ export function VietnameseTraditional() {
     {
       title: 'Tiệc Cưới',
       side: 'Nhà Trai',
-      date: 'Thứ Bảy, 15/03/2025',
+      date: 'Thứ Bảy, 13/03/2027',
       time: '18:00 Chiều',
       location: 'Nhà Hàng Tiệc Cưới Hoa Sen',
       address: '789 Võ Văn Tần, Quận 3, TP.HCM',
@@ -164,7 +125,7 @@ export function VietnameseTraditional() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] via-white to-[#FFF8E7]">
       {/* Music Player - 199K Package */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Traditional Pattern Background */}
       <div className="fixed inset-0 pointer-events-none">
@@ -173,20 +134,10 @@ export function VietnameseTraditional() {
 
       {/* Hero Section - Red & Gold Traditional - Modern Luxury */}
       <section className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden">
-        {/* Animated Gradient Background */}
+        {/* Soft, static light accents */}
         <div className="absolute inset-0">
-          <motion.div
-            initial={{ opacity: 0.3 }}
-            animate={{ opacity: 0.6 }}
-            transition={{ duration: 8, repeat: Infinity, repeatType: 'reverse' }}
-            className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-[#DC143C]/10 to-transparent rounded-full blur-3xl"
-          />
-          <motion.div
-            initial={{ opacity: 0.3 }}
-            animate={{ opacity: 0.6 }}
-            transition={{ duration: 8, repeat: Infinity, repeatType: 'reverse', delay: 1 }}
-            className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-[#C29B43]/10 to-transparent rounded-full blur-3xl"
-          />
+          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-[#DC143C]/8 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-[#C29B43]/8 to-transparent rounded-full blur-3xl" />
         </div>
 
         {/* Decorative Lines */}
@@ -209,25 +160,16 @@ export function VietnameseTraditional() {
           transition={{ duration: 1.2 }}
           className="relative z-10 text-center space-y-12 max-w-4xl"
         >
-          {/* Double Happiness Symbol (囍) - Luxury Glass Effect */}
+          {/* Double happiness symbol */}
           <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 1.2, delay: 0.3, type: 'spring', stiffness: 100 }}
-            className="relative"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="text-8xl md:text-9xl leading-none text-[#A62C36]/90 select-none"
+            aria-hidden="true"
+            style={{ fontFamily: '"Noto Serif", Georgia, serif' }}
           >
-            <div className="text-9xl md:text-[200px] text-[#DC143C] opacity-10 select-none">
-              囍
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <motion.div
-                animate={{ boxShadow: ['0 0 20px rgba(220, 20, 60, 0.3)', '0 0 40px rgba(220, 20, 60, 0.6)', '0 0 20px rgba(220, 20, 60, 0.3)'] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="w-24 h-24 bg-gradient-to-br from-[#DC143C] via-[#E83E4E] to-[#C29B43] rounded-full flex items-center justify-center backdrop-blur-md border border-white/20 shadow-2xl"
-              >
-                <Heart className="w-12 h-12 text-white" />
-              </motion.div>
-            </div>
+            囍
           </motion.div>
 
           {/* Title */}
@@ -237,13 +179,7 @@ export function VietnameseTraditional() {
             transition={{ delay: 0.6 }}
             className="space-y-4"
           >
-            <motion.p 
-              className="text-sm tracking-[0.3em] text-[#C29B43] uppercase font-light"
-              animate={{ letterSpacing: ['0.3em', '0.4em', '0.3em'] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            >
-              ✨ Hỷ Sự ✨
-            </motion.p>
+            <p className="text-sm tracking-[0.3em] text-[#C29B43] uppercase font-light">Hỷ Sự</p>
             <h1 
               className="text-5xl md:text-7xl bg-gradient-to-r from-[#DC143C] via-[#C29B43] to-[#DC143C] bg-clip-text text-transparent font-bold"
               style={{ fontFamily: '"Playfair Display", serif', letterSpacing: '0.05em' }}
@@ -283,13 +219,7 @@ export function VietnameseTraditional() {
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-              <motion.span 
-                className="text-4xl flex-shrink-0"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                💕
-              </motion.span>
+              <Heart className="w-6 h-6 flex-shrink-0 text-[#A62C36]" aria-hidden="true" />
               <motion.div 
                 className="w-px h-full bg-gradient-to-b from-[#DC143C] to-transparent"
                 animate={{ opacity: [0.5, 1, 0.5] }}
@@ -303,13 +233,7 @@ export function VietnameseTraditional() {
               transition={{ delay: 1.1 }}
               className="md:hidden"
             >
-              <motion.span 
-                className="text-5xl"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                💕
-              </motion.span>
+              <Heart className="w-6 h-6 text-[#A62C36]" aria-hidden="true" />
             </motion.div>
 
             <motion.div 
@@ -336,7 +260,7 @@ export function VietnameseTraditional() {
           >
             <p className="text-xs tracking-widest text-[#C29B43] uppercase mb-3 font-light">Ngày Trọng Đại</p>
             <p className="text-4xl md:text-5xl font-bold text-[#DC143C] tracking-wider">
-              15 • 03 • 2025
+              13 • 03 • 2027
             </p>
           </motion.div>
         </motion.div>
@@ -366,9 +290,7 @@ export function VietnameseTraditional() {
             >
               <div className="text-center space-y-6">
                 <motion.div 
-                  animate={{ boxShadow: ['0 0 20px rgba(194, 155, 67, 0.3)', '0 0 40px rgba(194, 155, 67, 0.6)', '0 0 20px rgba(194, 155, 67, 0.3)'] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="w-20 h-20 mx-auto bg-gradient-to-br from-[#C29B43] to-[#FFD700] rounded-full flex items-center justify-center shadow-lg border border-white/30"
+                className="w-20 h-20 mx-auto bg-gradient-to-br from-[#C29B43] to-[#FFD700] rounded-full flex items-center justify-center shadow-lg border border-white/30"
                 >
                   <Users className="w-10 h-10 text-white" />
                 </motion.div>
@@ -416,9 +338,7 @@ export function VietnameseTraditional() {
             >
               <div className="text-center space-y-6">
                 <motion.div 
-                  animate={{ boxShadow: ['0 0 20px rgba(220, 20, 60, 0.3)', '0 0 40px rgba(220, 20, 60, 0.6)', '0 0 20px rgba(220, 20, 60, 0.3)'] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                  className="w-20 h-20 mx-auto bg-gradient-to-br from-[#DC143C] to-[#FF69B4] rounded-full flex items-center justify-center shadow-lg border border-white/30"
+                className="w-20 h-20 mx-auto bg-gradient-to-br from-[#DC143C] to-[#FF69B4] rounded-full flex items-center justify-center shadow-lg border border-white/30"
                 >
                   <Users className="w-10 h-10 text-white" />
                 </motion.div>
@@ -670,6 +590,7 @@ export function VietnameseTraditional() {
             <p className="text-lg text-[#666]">
               Nếu vui lòng gửi những lời chúc và quà tặng đến cho chúng tôi
             </p>
+            <p className="text-sm text-[#8B4513]/75">Thông tin tài khoản và mã QR trong bản xem này chỉ là dữ liệu minh họa.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -692,7 +613,7 @@ export function VietnameseTraditional() {
                 </div>
                 <div className="p-4 bg-[#FFF8E7] rounded-xl border border-[#C29B43]/20">
                   <p className="text-xs text-[#666] mb-2">Số tài khoản</p>
-                  <p className="text-lg text-[#1B2A41] font-mono font-semibold">1234567890</p>
+                  <p className="text-lg text-[#1B2A41] font-mono font-semibold">Dữ liệu minh họa</p>
                 </div>
                 <div className="p-4 bg-white border border-[#C29B43]/30 rounded-xl">
                   <p className="text-xs text-[#666] mb-2">Chủ tài khoản</p>
@@ -727,7 +648,7 @@ export function VietnameseTraditional() {
                 </div>
                 <div className="p-4 bg-[#FFF8E7] rounded-xl border border-[#C29B43]/20">
                   <p className="text-xs text-[#666] mb-2">Số tài khoản</p>
-                  <p className="text-lg text-[#1B2A41] font-mono font-semibold">0987654321</p>
+                  <p className="text-lg text-[#1B2A41] font-mono font-semibold">Dữ liệu minh họa</p>
                 </div>
                 <div className="p-4 bg-white border border-[#C29B43]/30 rounded-xl">
                   <p className="text-xs text-[#666] mb-2">Chủ tài khoản</p>
@@ -838,29 +759,31 @@ export function VietnameseTraditional() {
                 onSubmit={async (e) => {
                   e.preventDefault();
                   if (!formData.name.trim() || parseInt(formData.guests) < 1) {
-                    alert('Vui lòng điền đầy đủ thông tin');
+                    setRsvpError('Vui lòng nhập họ tên và số khách hợp lệ.');
                     return;
                   }
+                  setRsvpError('');
                   setIsSubmitting(true);
                   try {
-                    await submitRSVPWithFallback({
+                    const submitted = await submitRSVPWithFallback({
                       name: formData.name,
                       attending: 'yes',
                       guestCount: parseInt(formData.guests) || 1,
                       message: formData.message || 'Không có lời nhắn',
                       template: 'Vietnamese Traditional',
                     });
-                    setRsvpSubmitted(true);
+                    if (submitted) setRsvpSubmitted(true);
+                    else setRsvpError('Chưa gửi được xác nhận đến gia đình. Vui lòng thử lại hoặc liên hệ cô dâu chú rể.');
                   } catch (error) {
                     console.error('RSVP submission error:', error);
-                    alert('Gửi thành công! Cảm ơn sự xác nhận của bạn.');
-                    setRsvpSubmitted(true);
+                    setRsvpError('Chưa gửi được xác nhận đến gia đình. Vui lòng thử lại hoặc liên hệ cô dâu chú rể.');
                   } finally {
                     setIsSubmitting(false);
                   }
                 }}
                 className="space-y-6"
               >
+                {rsvpError && <p role="alert" className="text-sm text-red-700">{rsvpError}</p>}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}

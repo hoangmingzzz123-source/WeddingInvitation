@@ -74,7 +74,7 @@ export function WeddingDetailsSection() {
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <Calendar className="text-[#5A1E2A]" size={24} />
                   <h3 className="text-[#5A1E2A] text-4xl md:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}>
-                    MARCH 29, 2026
+                    APRIL 17, 2027
                   </h3>
                 </div>
                 <div className="flex items-center justify-center gap-3">

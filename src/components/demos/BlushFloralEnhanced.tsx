@@ -71,7 +71,7 @@ Chúng tôi trân trọng kính mời Quý khách đến chung vui trong ngày t
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE4E1 50%, #FFF0F5 100%)' }}>
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} />
 
       {/* Watercolor Gradient Overlay */}
       <motion.div 
@@ -350,7 +350,7 @@ function CoverPage({ onNext }: { onNext: () => void }) {
               className="text-2xl md:text-3xl text-[#C75B7A] font-medium"
               style={{ fontFamily: '"Libre Baskerville", serif' }}
             >
-              15 • 02 • 2025
+              13 • 02 • 2027
             </p>
           </div>
 
@@ -466,7 +466,7 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
           {[
             { year: '2020', event: 'Gặp Gỡ Đầu Tiên', icon: '💕' },
             { year: '2022', event: 'Yêu Nhau Chính Thức', icon: '💑' },
-            { year: '2025', event: 'Kết Hôn', icon: '💍' },
+            { year: '2027', event: 'Kết Hôn', icon: '💍' },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -654,7 +654,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
     {
       title: 'Lễ Vu Quy',
       time: '08:00 AM',
-      date: '15/02/2025',
+      date: '13/02/2027',
       location: 'Nhà Gái - 123 Đường Hoa Mai, Quận 5, TP.HCM',
       icon: '🏡',
       color: 'from-[#FFB6C1] to-[#FFC0CB]',
@@ -662,7 +662,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
     {
       title: 'Lễ Thành Hôn',
       time: '11:00 AM',
-      date: '15/02/2025',
+      date: '13/02/2027',
       location: 'Nhà Trai - 456 Đường Phú Lộc, Quận 7, TP.HCM',
       icon: '💒',
       color: 'from-[#FF69B4] to-[#FFB6C1]',
@@ -670,7 +670,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
     {
       title: 'Tiệc Cưới',
       time: '06:00 PM',
-      date: '15/02/2025',
+      date: '13/02/2027',
       location: 'Trung Tâm Tiệc Cưới Hoa Phượng, Quận 1, TP.HCM',
       icon: '🎊',
       color: 'from-[#FF1493] to-[#FF69B4]',

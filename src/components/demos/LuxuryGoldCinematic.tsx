@@ -40,7 +40,7 @@ export function LuxuryGoldCinematic() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#0A0A0A] text-white overflow-hidden">
       {/* Music Player - 159K Package: Custom Music Allowed */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Bokeh Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -248,7 +248,7 @@ function CoverPage() {
             transition={{ delay: 1.5 }}
             className="text-2xl text-[#C29B43] tracking-widest"
           >
-            12 • 12 • 2025
+            11 • 12 • 2027
           </motion.p>
         </motion.div>
 
@@ -282,7 +282,7 @@ function InvitationPage({ guestName }: { guestName: string }) {
 
           <div className="space-y-8 text-center">
             {[
-              { icon: Calendar, text: 'Thứ 7, 12.12.2025' },
+              { icon: Calendar, text: 'Thứ 7, 11.12.2027' },
               { icon: Clock, text: '18:00 - 20:00' },
               { icon: MapPin, text: 'The Imperial Palace Hotel' },
             ].map((item, i) => (
@@ -328,7 +328,7 @@ function TimelinePage() {
       objectPosition: '30% 18%', // Lấy phần đầu ảnh
     },
     {
-      year: '2025',
+      year: '2027',
       title: 'Mãi Mãi Bên Nhau',
       desc: 'Chúng tôi nói lời "I Do" 💍',
       image: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',

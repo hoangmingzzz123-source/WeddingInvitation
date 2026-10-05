@@ -24,7 +24,7 @@ export function MinimalElegant() {
       type: 'Lễ Gia Tiên',
       date: '15',
       month: 'Tháng 3',
-      year: '2025',
+      year: '2027',
       time: '07:00 AM',
       location: 'Tư gia nhà gái',
       address: '123 Nguyễn Huệ, Quận 1, TP.HCM',
@@ -33,7 +33,7 @@ export function MinimalElegant() {
       type: 'Lễ Cưới',
       date: '15',
       month: 'Tháng 3',
-      year: '2025',
+      year: '2027',
       time: '11:00 AM',
       location: 'Nhà Thờ Đức Bà',
       address: '01 Công xã Paris, Quận 1, TP.HCM',
@@ -42,7 +42,7 @@ export function MinimalElegant() {
       type: 'Tiệc Cưới',
       date: '15',
       month: 'Tháng 3',
-      year: '2025',
+      year: '2027',
       time: '18:00 PM',
       location: 'Grand Palace Hotel',
       address: '789 Lê Lợi, Quận 1, TP.HCM',
@@ -61,7 +61,7 @@ export function MinimalElegant() {
   return (
     <div className="min-h-screen bg-white">
       {/* Music Player - 159K Package */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Hero Section - Clean & Minimal */}
       <section className="relative h-screen flex items-center justify-center px-6 overflow-hidden">
@@ -150,7 +150,7 @@ export function MinimalElegant() {
               </p>
               <div className="w-20 h-px bg-[#C29B43]" />
             </div>
-            <p className="text-lg tracking-widest text-[#666]">03 • 2025</p>
+            <p className="text-lg tracking-widest text-[#666]">03 • 2027</p>
           </motion.div>
 
           {/* Names */}
@@ -523,7 +523,7 @@ export function MinimalElegant() {
               RSVP
             </h3>
             <p className="text-[#666]">
-              Vui lòng xác nhận sự tham dự của bạn trước ngày 01/03/2025
+              Vui lòng xác nhận sự tham dự của bạn trước ngày 11/03/2027
             </p>
             
             <div className="space-y-4">

@@ -42,13 +42,13 @@ export function RomanticWatercolor() {
   }));
 
   const events = [
-    { title: 'Lễ Vu Quy', time: '08:00 AM', date: '15/03/2025', location: 'Nhà Gái' },
-    { title: 'Tiệc Cưới', time: '18:00 PM', date: '15/03/2025', location: 'Riverside Palace' },
+    { title: 'Lễ Vu Quy', time: '08:00 AM', date: '13/03/2027', location: 'Nhà Gái' },
+    { title: 'Tiệc Cưới', time: '18:00 PM', date: '13/03/2027', location: 'Riverside Palace' },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF8F0] via-[#FFF0F5] to-[#F0F8FF] relative overflow-hidden">
-      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
@@ -235,7 +235,7 @@ export function RomanticWatercolor() {
               <div className="space-y-3 text-[#666]">
                 <div className="flex items-center gap-3">
                   <Calendar className="w-5 h-5 text-[#FF69B4]" />
-                  <span className="text-xl">15 • Tháng 3 • 2025</span>
+                  <span className="text-xl">13 • Tháng 3 • 2027</span>
                 </div>
                 <p className="text-lg leading-relaxed">
                   Tình yêu là bức tranh đẹp nhất mà chúng tôi vẽ nên. 

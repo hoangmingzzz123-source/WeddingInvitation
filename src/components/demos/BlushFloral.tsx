@@ -52,7 +52,7 @@ export function BlushFloral() {
   return (
     <div className="min-h-screen bg-[#FAF7F2] relative overflow-hidden">
       {/* Music Player - 109K Package */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} />
 
       {/* Paper Grain Texture */}
       <div 
@@ -221,7 +221,7 @@ function CoverPage({ displayedText, onNext }: { displayedText: string; onNext: (
             className="text-2xl text-[#8B4513] font-bold"
             style={{ fontFamily: '"Montserrat", sans-serif' }}
           >
-            15 • 03 • 2025
+            13 • 03 • 2027
           </p>
 
           <Button
@@ -338,14 +338,14 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
           {[
             {
               title: "Lễ Thành Hôn",
-              date: "15 Tháng 3, 2025",
+              date: "13 Tháng 3, 2027",
               time: "10:00 Sáng",
               location: "Nhà Hàng Tiệc Cưới",
               address: "123 Nguyễn Huệ, Q.1, TP.HCM",
             },
             {
               title: "Tiệc Cưới",
-              date: "15 Tháng 3, 2025",
+              date: "13 Tháng 3, 2027",
               time: "18:00 Tối",
               location: "Trung Tâm Hội Nghị",
               address: "456 Lê Lợi, Q.1, TP.HCM",

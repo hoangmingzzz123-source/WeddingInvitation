@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Calendar, Clock, Send, Home, QrCode, Copy, Check, Heart, Crown, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -10,55 +10,16 @@ import { submitRSVPWithFallback } from '../../utils/rsvpSubmission';
 
 export function ArtDecoRoyalEnhanced() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [displayedText, setDisplayedText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
 
   const loveStory = `Trong ánh vàng rực rỡ của Art Deco, chúng tôi tìm thấy nhau. Tình yêu của chúng tôi là sự kết hợp hoàn hảo giữa sự thanh lịch cổ điển và đam mê hiện đại. Như những đường nét geometric sang trọng, tình yêu của chúng tôi được xây dựng với sự chính xác và vẻ đẹp vượt thời gian. Hôm nay, chúng tôi viết nên chương mới trong câu chuyện hoàng gia của riêng mình.`;
 
-  // Typewriter effect
-  useEffect(() => {
-    if (currentPage === 1 && isTyping) {
-      let index = 0;
-      const interval = setInterval(() => {
-        if (index <= loveStory.length) {
-          setDisplayedText(loveStory.slice(0, index));
-          index++;
-        } else {
-          setIsTyping(false);
-          clearInterval(interval);
-        }
-      }, 30);
-      return () => clearInterval(interval);
-    } else if (currentPage !== 1) {
-      setDisplayedText('');
-      setIsTyping(true);
-    }
-  }, [currentPage, isTyping]);
-
-  // Art Deco Geometric Particles
-  const geometricShapes = Array(25).fill(0).map((_, i) => ({
-    id: i,
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 100}%`,
-    delay: Math.random() * 5,
-    duration: 10 + Math.random() * 10,
-    size: 30 + Math.random() * 60,
-    shape: ['diamond', 'circle', 'triangle', 'hexagon'][Math.floor(Math.random() * 4)],
-  }));
-
-  // Gold Ripple Effect
-  const ripples = Array(5).fill(0).map((_, i) => ({
-    id: i,
-    delay: i * 0.8,
-  }));
-
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#1A1A2E]">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} />
 
       {/* Art Deco Pattern Background */}
       <div className="fixed inset-0 opacity-10">
@@ -80,69 +41,6 @@ export function ArtDecoRoyalEnhanced() {
         </svg>
       </div>
 
-      {/* Floating Geometric Shapes */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {geometricShapes.map((shape) => (
-          <motion.div
-            key={shape.id}
-            className="absolute"
-            style={{ left: shape.left, top: shape.top }}
-            animate={{
-              y: ['0vh', '120vh'],
-              rotate: [0, 360],
-              opacity: [0, 0.6, 0],
-            }}
-            transition={{
-              duration: shape.duration,
-              delay: shape.delay,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            {shape.shape === 'diamond' && (
-              <svg width={shape.size} height={shape.size} viewBox="0 0 50 50">
-                <polygon points="25,5 45,25 25,45 5,25" fill="#C29B43" opacity="0.6" />
-              </svg>
-            )}
-            {shape.shape === 'circle' && (
-              <svg width={shape.size} height={shape.size} viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" fill="#FFD700" opacity="0.5" />
-              </svg>
-            )}
-            {shape.shape === 'triangle' && (
-              <svg width={shape.size} height={shape.size} viewBox="0 0 50 50">
-                <polygon points="25,5 45,45 5,45" fill="#C29B43" opacity="0.6" />
-              </svg>
-            )}
-            {shape.shape === 'hexagon' && (
-              <svg width={shape.size} height={shape.size} viewBox="0 0 50 50">
-                <polygon points="25,2 45,15 45,35 25,48 5,35 5,15" fill="#FFD700" opacity="0.5" />
-              </svg>
-            )}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Gold Ripple Pulse */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-        {ripples.map((ripple) => (
-          <motion.div
-            key={ripple.id}
-            className="absolute w-32 h-32 border-2 border-[#C29B43] rounded-full"
-            animate={{
-              scale: [1, 3],
-              opacity: [0.8, 0],
-            }}
-            transition={{
-              duration: 4,
-              delay: ripple.delay,
-              repeat: Infinity,
-              ease: "easeOut",
-            }}
-          />
-        ))}
-      </div>
-
       {/* Back Button */}
       <Button
         onClick={() => window.location.hash = '#/'}
@@ -159,11 +57,9 @@ export function ArtDecoRoyalEnhanced() {
             key={index}
             onClick={() => {
               setCurrentPage(index);
-              if (index === 1) {
-                setDisplayedText('');
-                setIsTyping(true);
-              }
             }}
+            aria-label={`Mở phần ${label}`}
+            aria-current={currentPage === index ? 'step' : undefined}
             className={`transition-all duration-500 ${
               currentPage === index 
                 ? 'w-10 h-3 bg-gradient-to-r from-[#C29B43] to-[#FFD700] rounded-full shadow-lg shadow-[#FFD700]/50' 
@@ -178,14 +74,14 @@ export function ArtDecoRoyalEnhanced() {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPage}
-          initial={{ opacity: 0, rotateY: -90, scale: 0.8 }}
-          animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-          exit={{ opacity: 0, rotateY: 90, scale: 0.8 }}
-          transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.32, ease: 'easeOut' }}
           className="min-h-screen"
         >
           {currentPage === 0 && <CoverPage onNext={() => setCurrentPage(1)} />}
-          {currentPage === 1 && <StoryPage displayedText={displayedText} onNext={() => setCurrentPage(2)} />}
+          {currentPage === 1 && <StoryPage displayedText={loveStory} onNext={() => setCurrentPage(2)} />}
           {currentPage === 2 && <GalleryPage onNext={() => setCurrentPage(3)} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />}
           {currentPage === 3 && <DetailsPage onNext={() => setCurrentPage(4)} />}
           {currentPage === 4 && <MapPage onNext={() => setCurrentPage(5)} />}
@@ -307,7 +203,7 @@ function CoverPage({ onNext }: { onNext: () => void }) {
           </div>
 
           <p className="text-4xl text-[#C29B43] font-light" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
-            20 • 04 • 2025
+            17 • 04 • 2027
           </p>
         </motion.div>
 
@@ -357,7 +253,7 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
               textShadow: '0 0 20px rgba(194, 155, 67, 0.3)',
             }}
           >
-            Our Royal Journey
+            Hành trình của chúng mình
           </h2>
           <div className="flex items-center justify-center gap-6">
             <svg width="60" height="2">
@@ -383,18 +279,11 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
           <div className="absolute bottom-0 left-0 w-16 h-16 border-b-4 border-l-4 border-[#FFD700]" />
           <div className="absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-[#FFD700]" />
 
-          <p 
+          <p
             className="text-3xl md:text-4xl text-[#C29B43] leading-relaxed text-center"
             style={{ fontFamily: '"Cormorant Garamond", serif' }}
           >
             {displayedText}
-            <motion.span
-              animate={{ opacity: [1, 0] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-              className="text-[#FFD700]"
-            >
-              |
-            </motion.span>
           </p>
         </motion.div>
 
@@ -406,10 +295,10 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
           className="grid md:grid-cols-4 gap-10"
         >
           {[
-            { year: '2019', event: 'First Meet', icon: '✨' },
-            { year: '2021', event: 'In Love', icon: '💛' },
-            { year: '2024', event: 'Engaged', icon: '💍' },
-            { year: '2025', event: 'Wedding', icon: '👑' },
+            { year: '2019', event: 'Lần đầu gặp gỡ', icon: Heart },
+            { year: '2021', event: 'Bắt đầu hẹn hò', icon: Heart },
+            { year: '2024', event: 'Lời cầu hôn', icon: Crown },
+            { year: '2027', event: 'Ngày thành hôn', icon: Calendar },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -425,7 +314,7 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
                 </svg>
               </div>
               
-              <div className="text-6xl mb-6">{item.icon}</div>
+              <item.icon className="mx-auto mb-6 h-7 w-7 text-[#C29B43]" aria-hidden="true" />
               <p className="text-5xl font-light text-[#FFD700] mb-3" style={{ fontFamily: '"Playfair Display", serif' }}>
                 {item.year}
               </p>
@@ -486,7 +375,7 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
             className="text-7xl md:text-8xl text-[#FFD700] font-light"
             style={{ fontFamily: '"Playfair Display", serif' }}
           >
-            Royal Gallery
+            Album kỷ niệm
           </h2>
         </motion.div>
 
@@ -495,8 +384,8 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
           {images.map((src, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
-              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: index * 0.1 }}
               className="group relative aspect-square overflow-hidden cursor-pointer border-4 border-[#C29B43] hover:border-[#FFD700] transition-all shadow-2xl"
               onClick={() => setSelectedImage(index)}
@@ -535,9 +424,9 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
               onClick={() => setSelectedImage(null)}
             >
               <motion.div
-                initial={{ scale: 0.8, rotateY: -90 }}
-                animate={{ scale: 1, rotateY: 0 }}
-                exit={{ scale: 0.8, rotateY: 90 }}
+                initial={{ scale: 0.98, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.98, opacity: 0 }}
                 className="relative max-w-5xl max-h-[90vh] border-8 border-[#C29B43] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -586,7 +475,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '🏛️',
       title: 'Royal Ceremony',
       time: '10:00 AM',
-      date: '20/04/2025',
+      date: '17/04/2027',
       location: 'Grand Cathedral',
       address: '456 Art Deco Boulevard, District 1, HCMC',
     },
@@ -594,7 +483,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '👑',
       title: 'Wedding Reception',
       time: '18:00 PM',
-      date: '20/04/2025',
+      date: '17/04/2027',
       location: 'Royal Palace Hotel',
       address: '789 Golden Street, District 1, HCMC',
     },
@@ -800,20 +689,20 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
             <form onSubmit={handleSubmit} className="space-y-10">
               <div className="space-y-4">
                 <label className="text-sm text-[#C29B43] uppercase tracking-[0.3em]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-                  Full Name *
+                  Họ và tên *
                 </label>
                 <Input
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="p-5 text-xl bg-[#1A1A2E] border-2 border-[#C29B43] focus:border-[#FFD700] text-[#C29B43]"
-                  placeholder="Enter your full name"
+                  placeholder="Nhập họ và tên"
                 />
               </div>
 
               <div className="space-y-4">
                 <label className="text-sm text-[#C29B43] uppercase tracking-[0.3em]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-                  Email (Optional)
+                  Email (không bắt buộc)
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#C29B43]" />
@@ -822,14 +711,14 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="p-5 pl-14 text-xl bg-[#1A1A2E] border-2 border-[#C29B43] focus:border-[#FFD700] text-[#C29B43]"
-                    placeholder="your.email@example.com"
+                    placeholder="email@example.com"
                   />
                 </div>
               </div>
 
               <div className="space-y-4">
                 <label className="text-sm text-[#C29B43] uppercase tracking-[0.3em]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-                  Number of Guests *
+                  Số lượng khách *
                 </label>
                 <Input
                   type="number"
@@ -843,13 +732,13 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
 
               <div className="space-y-4">
                 <label className="text-sm text-[#C29B43] uppercase tracking-[0.3em]" style={{ fontFamily: '"Montserrat", sans-serif' }}>
-                  Message
+                  Lời nhắn
                 </label>
                 <Textarea
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="p-5 text-xl bg-[#1A1A2E] border-2 border-[#C29B43] focus:border-[#FFD700] text-[#C29B43] min-h-40"
-                  placeholder="Send your wishes to the couple..."
+                  placeholder="Gửi lời chúc đến cô dâu chú rể..."
                 />
               </div>
 
@@ -865,7 +754,7 @@ function RSVPPage({ submitted, setSubmitted, onNext }: {
                       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                       className="w-5 h-5 mr-2 border-2 border-[#1A1A2E] border-t-transparent rounded-full"
                     />
-                    Sending...
+                    Đang gửi...
                   </>
                 ) : (
                   <>
