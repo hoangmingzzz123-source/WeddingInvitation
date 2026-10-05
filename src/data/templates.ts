@@ -37,8 +37,8 @@ const templateDetails: TemplateDetails[] = [
     style: 'Cinematic Luxury',
     route: '/demo/luxury-gold-cinematic',
     tier: '159k',
-    features: ['7 trang', 'RSVP', 'QR Code', 'Âm nhạc'],
-    description: 'Thiết kế điện ảnh với ánh vàng tinh tế và chuyển động cao cấp.',
+    features: ['Câu chuyện', 'Album', 'Bản đồ', 'RSVP'],
+    description: 'Bố cục điện ảnh trên nền tối, điểm ánh vàng và hình ảnh giàu cảm xúc.',
     featured: true,
   },
   {
@@ -97,8 +97,8 @@ const templateDetails: TemplateDetails[] = [
     style: '3D Crystal',
     route: '/demo/bloom-crystal-3d',
     tier: '199k',
-    features: ['3D', 'Parallax', 'Album'],
-    description: 'Hoa pha lê và hiệu ứng chiều sâu tạo nên trải nghiệm thị giác nổi bật.',
+    features: ['Album', 'Video cưới', 'Mừng cưới demo', 'Sổ lưu bút'],
+    description: 'Khung ảnh vòm, sắc tím pha lê và các tiện ích tương tác của gói Diamond.',
   },
   {
     id: 'bloom-crystal-3d-basic',
@@ -115,7 +115,7 @@ const templateDetails: TemplateDetails[] = [
     style: 'Modern Dark',
     route: '/demo/modern-dark-blue',
     tier: '109k',
-    features: ['Dark theme', 'Hiện đại', 'Responsive'],
+    features: ['Navy', 'Album cơ bản', 'Bản đồ', 'RSVP'],
     description: 'Tông xanh navy hiện đại, mạnh mẽ nhưng vẫn thanh lịch.',
   },
   {
@@ -124,8 +124,8 @@ const templateDetails: TemplateDetails[] = [
     style: 'Luxury Minimal',
     route: '/demo/minimal-elegant',
     tier: '199k',
-    features: ['Tối giản', 'Album', 'Chuyển động'],
-    description: 'Khoảng trắng rộng và typography tinh tế theo phong cách editorial.',
+    features: ['Tối giản', 'Video cưới', 'Album', 'Sổ lưu bút'],
+    description: 'Khoảng trắng rộng, typography editorial và trải nghiệm Diamond đầy đủ.',
   },
   {
     id: 'minimal-elegant-basic',
@@ -214,8 +214,8 @@ const templateDetails: TemplateDetails[] = [
     style: 'Art Deco',
     route: '/demo/art-deco-royal-basic',
     tier: '159k',
-    features: ['Art Deco', 'Trang nhã'],
-    description: 'Phiên bản tinh gọn của phong cách Art Deco hoàng gia.',
+    features: ['Art Deco', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
+    description: 'Họa tiết hình học, sắc vàng trầm và nội dung vừa đủ cho ngày trọng đại.',
   },
   {
     id: 'rose-storybook-219k',

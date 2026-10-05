@@ -283,7 +283,10 @@ function MapTab() {
         </motion.h2>
 
         <MapSection
-          className="w-full h-[500px] rounded-lg shadow-xl"
+          showHeading={false}
+          className="!px-0 !py-0"
+          location="San Francisco"
+          address="California, Hoa Kỳ"
           center={{ lat: 37.7749, lng: -122.4194 }}
         />
       </div>

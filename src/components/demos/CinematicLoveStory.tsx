@@ -478,7 +478,12 @@ export function CinematicLoveStory() {
             viewport={{ once: true }}
             className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden"
           >
-            <MapSection />
+            <MapSection
+              showHeading={false}
+              className="!px-0 !py-0"
+              location="Grand Palace"
+              address="789 Lê Lợi, Quận 1, TP.HCM"
+            />
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6 mt-12">

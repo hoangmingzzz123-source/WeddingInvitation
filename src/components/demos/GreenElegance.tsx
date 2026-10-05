@@ -369,23 +369,13 @@ function MapPage() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className="min-h-screen flex items-center justify-center p-8"
+      className="min-h-screen flex items-center justify-center px-4 py-16 sm:px-6"
     >
-      <div className="max-w-2xl w-full">
-        <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl space-y-6">
-          <h2 
-            className="text-4xl text-center text-[#1B5E20]"
-            style={{ fontFamily: '"Playfair Display", serif' }}
-          >
-            Bản Đồ Địa Điểm
-          </h2>
-
-          <MapSection
-            address="123 Đường Hoa, Hà Nội"
-            className="w-full h-96"
-          />
-        </motion.div>
-      </div>
+      <MapSection
+        location="Vườn Xuân Green Garden"
+        address="123 Đường Hoa, Hà Nội, Việt Nam"
+        className="!px-0 !py-0"
+      />
     </motion.div>
   );
 }

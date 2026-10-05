@@ -498,7 +498,11 @@ export function VietnameseTraditionalEnhanced() {
                 transition={{ delay: 0.3 }}
                 className="bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-[#FFD700]/30"
               >
-                <MapSection />
+                <MapSection
+                  showHeading={false}
+                  location="Nhà Hàng Tiệc Cưới Hoa Sen"
+                  address="789 Võ Văn Tần, Quận 3, TP.HCM"
+                />
               </motion.div>
 
               <motion.div

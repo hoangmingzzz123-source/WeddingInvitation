@@ -692,7 +692,11 @@ export function LuxuryGoldCinematicEnhanced() {
                 transition={{ delay: 0.3 }}
                 className="bg-black/30 backdrop-blur-md rounded-3xl overflow-hidden border-4 border-[#FFD700]/30"
               >
-                <MapSection />
+                <MapSection
+                  showHeading={false}
+                  location="Khách Sạn Sang Trọng"
+                  address="123 Đại Lộ Vàng, Quận 1, TP.HCM"
+                />
               </motion.div>
             </div>
           </motion.div>

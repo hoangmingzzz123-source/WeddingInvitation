@@ -401,7 +401,12 @@ function MapPage() {
               Find us at The Grand Ballroom, Royal Hotel
             </p>
 
-            <MapSection className="w-full h-96" />
+            <MapSection
+              showHeading={false}
+              className="!px-0 !py-0"
+              location="The Grand Ballroom, Royal Hotel"
+              address="Địa chỉ sẽ được cập nhật"
+            />
           </div>
         </div>
       </motion.div>

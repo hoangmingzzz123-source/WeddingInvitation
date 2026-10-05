@@ -271,7 +271,10 @@ function MapTab() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-2xl mx-auto w-full"
       >
-        <MapSection />
+        <MapSection
+          location="Grand Convention Center"
+          address="Địa chỉ sẽ được cập nhật"
+        />
       </motion.div>
     </section>
   );

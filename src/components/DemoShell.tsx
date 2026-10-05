@@ -65,6 +65,15 @@ const demoAccents: Record<string, string> = {
   'burgundy-cinema-219k': '#c9a24d',
 };
 
+const signatureDemoIds = new Set([
+  'art-deco-royal-basic',
+  'luxury-gold-cinematic',
+  'luxury-gold-frame',
+  'bloom-crystal-3d',
+  'modern-dark-blue',
+  'minimal-elegant',
+]);
+
 function getSectionLabel(section: HTMLElement, index: number) {
   const explicitLabel =
     section.dataset.sectionTitle || section.getAttribute('aria-label');
@@ -498,7 +507,11 @@ export function DemoShell({
           {toastMessage}
         </div>
 
-        <div className="demo-page-content" data-template={template?.id} ref={contentRef}>
+        <div
+          className={`demo-page-content${template && signatureDemoIds.has(template.id) ? ' demo-page-content--signature' : ''}`}
+          data-template={template?.id}
+          ref={contentRef}
+        >
           {children}
         </div>
 
