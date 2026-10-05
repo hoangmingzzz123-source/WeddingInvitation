@@ -16,6 +16,7 @@ import { MusicPlayer } from '../MusicPlayer';
 import type { TemplateTier } from '../../data/templates';
 
 export type SignatureDemoId =
+  | 'art-deco-royal'
   | 'art-deco-royal-basic'
   | 'luxury-gold-cinematic'
   | 'luxury-gold-frame'
@@ -25,6 +26,7 @@ export type SignatureDemoId =
 
 interface SignatureDemoContent {
   id: SignatureDemoId;
+  visualStyle?: 'art-deco-royal-basic';
   tier: TemplateTier;
   label: string;
   bride: string;
@@ -45,11 +47,19 @@ const photo = (id: string, width = 1600) =>
 
 const demos: Record<SignatureDemoId, SignatureDemoContent> = {
   'art-deco-royal-basic': {
-    id: 'art-deco-royal-basic', tier: '159k', label: 'THE GRAND AFFAIR',
+    id: 'art-deco-royal-basic', tier: '159k', label: 'THE GARDEN EDIT',
     bride: 'Ngọc Hà', groom: 'Bảo Long', date: '2027-03-13', dateLabel: '13 · 03 · 2027', time: '18:00',
-    venue: 'The Grand Ballroom', address: 'Số 12 Tràng Tiền, Hoàn Kiếm', city: 'Hà Nội',
-    story: 'Từ một cuộc gặp tình cờ đến lời hẹn trăm năm. Chúng mình mong được cùng gia đình và bạn bè nâng ly trong đêm tiệc đầu tiên của hành trình mới.',
-    hero: photo('photo-1519741497674-611481863552'),
+    venue: 'The Garden Pavilion', address: '24 Quảng An, Tây Hồ', city: 'Hà Nội',
+    story: 'Chúng mình gặp nhau trong một buổi chiều đầy nắng, rồi cùng vun đắp những ngày bình dị thành điều đẹp đẽ. Mong bạn có mặt để mở đầu chương mới ấy cùng chúng mình.',
+    hero: photo('photo-1537633552985-df8429e8048b'),
+    gallery: [photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1606800052052-a08af7148866', 900), photo('photo-1583939003579-730e3918a45a', 900), photo('photo-1465495976277-4387d4b0b4c6', 900)],
+  },
+  'art-deco-royal': {
+    id: 'art-deco-royal', visualStyle: 'art-deco-royal-basic', tier: '199k', label: 'THE OLIVE GARDEN',
+    bride: 'Ngọc Hà', groom: 'Bảo Long', date: '2027-03-13', dateLabel: '13 · 03 · 2027', time: '18:00',
+    venue: 'The Garden Pavilion', address: '24 Quảng An, Tây Hồ', city: 'Hà Nội',
+    story: 'Chúng mình gặp nhau trong một buổi chiều đầy nắng, rồi cùng vun đắp những ngày bình dị thành điều đẹp đẽ. Mong bạn có mặt để mở đầu chương mới ấy cùng chúng mình.',
+    hero: photo('photo-1537633552985-df8429e8048b'),
     gallery: [photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1606800052052-a08af7148866', 900), photo('photo-1583939003579-730e3918a45a', 900), photo('photo-1465495976277-4387d4b0b4c6', 900)],
   },
   'luxury-gold-cinematic': {
@@ -149,7 +159,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
   };
 
   return (
-    <main className={`signature-demo signature-demo--${demo.id}`}>
+    <main className={`signature-demo signature-demo--${demo.id}${demo.visualStyle ? ` signature-demo--${demo.visualStyle}` : ''}`}>
       <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} />
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
@@ -164,7 +174,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
         <a className="signature-nav__rsvp" href="#xac-nhan">Xác nhận tham dự <ArrowUpRight aria-hidden="true" /></a>
       </nav>
 
-      <section className={`signature-hero signature-hero--${demo.id}`} id="trang-chu" aria-label="Thiệp mời cưới">
+      <section className={`signature-hero signature-hero--${demo.visualStyle ?? demo.id}`} id="trang-chu" aria-label="Thiệp mời cưới">
         <div className="signature-hero__ornament" aria-hidden="true" />
         <div className="signature-hero__layout">
           <div className="signature-hero__image">

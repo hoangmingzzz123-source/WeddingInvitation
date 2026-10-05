@@ -18,7 +18,6 @@ const BlushFloral = lazy(() => import('./components/demos/BlushFloral').then((mo
 const BloomCrystal3D = lazy(() => import('./components/demos/BloomCrystal3D').then((module) => ({ default: module.BloomCrystal3D })));
 const SoftFadeFloral = lazy(() => import('./components/demos/SoftFadeFloral').then((module) => ({ default: module.SoftFadeFloral })));
 const MinimalSlideClean = lazy(() => import('./components/demos/MinimalSlideClean').then((module) => ({ default: module.MinimalSlideClean })));
-const ArtDecoRoyalEnhanced = lazy(() => import('./components/demos/ArtDecoRoyalEnhanced').then((module) => ({ default: module.ArtDecoRoyalEnhanced })));
 const RomanticWatercolor = lazy(() => import('./components/demos/RomanticWatercolor').then((module) => ({ default: module.RomanticWatercolor })));
 const TropicalSunset = lazy(() => import('./components/demos/TropicalSunset').then((module) => ({ default: module.TropicalSunset })));
 const VintageGrain = lazy(() => import('./components/demos/VintageGrain').then((module) => ({ default: module.VintageGrain })));
@@ -121,7 +120,7 @@ export function Router() {
     '/demo/romantic-watercolor': <RomanticWatercolor />,
     '/demo/bloom-crystal-3d': <SignatureDemo id="bloom-crystal-3d" />,
     '/demo/tropical-sunset': <TropicalSunset />,
-    '/demo/art-deco-royal': <ArtDecoRoyalEnhanced />,
+    '/demo/art-deco-royal': <SignatureDemo id="art-deco-royal" />,
     '/demo/vintage-grain': <VintageGrain />,
     '/demo/green-elegance': <GreenElegance />,
     '/demo/cinematic-love-story': <CinematicLoveStory />,

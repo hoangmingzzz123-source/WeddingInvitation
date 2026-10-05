@@ -66,6 +66,7 @@ const demoAccents: Record<string, string> = {
 };
 
 const signatureDemoIds = new Set([
+  'art-deco-royal',
   'art-deco-royal-basic',
   'luxury-gold-cinematic',
   'luxury-gold-frame',

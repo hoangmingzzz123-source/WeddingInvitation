@@ -10,7 +10,6 @@ import {
   Clock3,
   ExternalLink,
   Heart,
-  Image as ImageIcon,
   MapPin,
   MessageCircleHeart,
   Play,
@@ -103,12 +102,6 @@ const invitationMessageIdeas = [
   'Hai chúng mình sắp về chung một nhà. Mời bạn đến nâng ly chúc mừng!',
 ];
 
-const packageHighlights: Record<TemplateTier, string[]> = {
-  '109k': ['Album đến 10 ảnh', 'RSVP cơ bản', 'Bản đồ & nhạc nền'],
-  '159k': ['Album đến 30 ảnh', 'Câu chuyện tình yêu', 'RSVP & nhạc riêng'],
-  '199k': ['Album không giới hạn', 'Video & sổ lưu bút', 'QR mừng cưới minh họa'],
-};
-
 function isInvitationTheme(value: unknown): value is InvitationTheme {
   return value === 'champagne' || value === 'blush' || value === 'emerald';
 }
@@ -192,6 +185,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
   const selectedPackage = getWeddingPackage(draft.packageTier);
   const isPremium = draft.packageTier !== '109k';
   const isDiamond = draft.packageTier === '199k';
+  const appliedFontStyle = isPremium ? draft.fontStyle : 'editorial';
   const gallery = coverOptions.map((cover) => cover.url);
   const destination = [draft.venue, draft.address].filter(Boolean).join(', ');
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`;
@@ -238,7 +232,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
   };
 
   return (
-    <article className={`generated-invitation generated-invitation--${draft.theme} generated-invitation--font-${draft.fontStyle} generated-invitation--tier-${draft.packageTier}${compact ? ' is-compact' : ''}`}>
+    <article className={`generated-invitation generated-invitation--${draft.theme} generated-invitation--font-${appliedFontStyle} generated-invitation--tier-${draft.packageTier}${compact ? ' is-compact' : ''}`}>
       <div className="generated-invitation__cover" style={{ backgroundImage: `url("${draft.cover}")` }}>
         <div className="generated-invitation__overlay" />
         <div className="generated-invitation__cover-content">
@@ -352,6 +346,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
             <p className="generated-invitation__section-label">PLEASE REPLY</p>
             <h3>{isDiamond ? 'Hồi đáp & gửi lời chúc' : 'Bạn sẽ đến chứ?'}</h3>
             <label>Tên của bạn<input name="name" required placeholder="Họ và tên" autoComplete="name" /></label>
+            <label>{isPremium ? 'Xác nhận tham dự' : 'Bạn có thể đến chung vui không?'}<select name="attending" defaultValue="yes"><option value="yes">Có, mình sẽ đến</option><option value="no">Rất tiếc, mình bận</option></select></label>
             {isPremium && <label>Email<input type="email" name="email" placeholder="email@example.com" autoComplete="email" /></label>}
             {isPremium && <label>Số khách<select name="guests" defaultValue="1"><option value="1">1 khách</option><option value="2">2 khách</option><option value="3">3 khách</option></select></label>}
             <button type="submit"><Check aria-hidden="true" /> Xác nhận tham dự</button>
@@ -362,10 +357,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
       </section>
 
       {!compact && <div className="generated-invitation__feature-list" aria-label={`Tính năng ${selectedPackage.name}`}>
-        <span><AudioLines aria-hidden="true" /> Nhạc nền</span>
-        <span><MapPin aria-hidden="true" /> Bản đồ &amp; RSVP</span>
-        {isPremium && <span><ImageIcon aria-hidden="true" /> Album &amp; câu chuyện</span>}
-        {isDiamond && <span><QrCode aria-hidden="true" /> Video · QR · Lưu bút</span>}
+        {selectedPackage.features.map((feature) => <span key={feature}><Check aria-hidden="true" /> {feature}</span>)}
       </div>}
 
       {activePhoto !== null && (
@@ -501,8 +493,8 @@ export function InvitationCreatorPage() {
               <span className="creator-package-card__topline">{draft.packageTier === weddingPackage.id ? <Check aria-hidden="true" /> : <Palette aria-hidden="true" />} {draft.packageTier === weddingPackage.id ? 'Đang chọn' : 'Chọn gói'}</span>
               <strong>{weddingPackage.name}</strong>
               <span className="creator-package-card__price">{weddingPackage.price}</span>
-              <p>{weddingPackage.summary}</p>
-              <span className="creator-package-highlights">{packageHighlights[weddingPackage.id].map((highlight) => <span key={highlight}><Check aria-hidden="true" />{highlight}</span>)}</span>
+              <span className="creator-package-card__summary">{weddingPackage.summary}</span>
+              <span className="creator-package-highlights">{weddingPackage.features.map((feature) => <span key={feature}><Check aria-hidden="true" />{feature}</span>)}</span>
             </button>
           ))}
         </div>
@@ -750,7 +742,7 @@ export function GeneratedInvitationPage() {
           <p>Bản xem trước · {selectedPackage.name}</p>
           <h1>Biến thiết kế này thành website cưới hoàn chỉnh</h1>
           <p className="preview-publish-card__summary">Bản demo đang bật các tính năng theo gói {selectedPackage.name} ({selectedPackage.price}):</p>
-          <ul>{selectedPackage.features.slice(0, 5).map((feature) => <li key={feature}><Check aria-hidden="true" /> {feature}</li>)}</ul>
+          <ul>{selectedPackage.features.map((feature) => <li key={feature}><Check aria-hidden="true" /> {feature}</li>)}</ul>
           <button type="button" onClick={() => window.open(REQUEST_FORM_URL, '_blank', 'noopener,noreferrer')}>
             Điền form để xuất bản <ExternalLink aria-hidden="true" />
           </button>
