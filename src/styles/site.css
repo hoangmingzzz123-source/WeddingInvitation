@@ -5097,3 +5097,282 @@ body {
     margin-inline: auto;
   }
 }
+
+/* Guest list, personalized invite links, and RSVP overview for the invitation studio. */
+.creator-stepper { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.creator-guests-editor { display: grid; gap: 1rem; }
+.creator-guests-editor__intro { display: flex; align-items: flex-start; gap: .8rem; padding: 1rem; border: 1px solid rgba(49, 68, 86, .12); border-radius: 1rem; background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(247,244,236,.76)); }
+.creator-guests-editor__intro > span { display: grid; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; border-radius: .8rem; color: #fff; background: #6f806b; place-items: center; }
+.creator-guests-editor__intro svg { width: 1.1rem; height: 1.1rem; }
+.creator-guests-editor__intro strong { display: block; color: #293548; font: 600 .9rem/1.3 "Poppins", sans-serif; }
+.creator-guests-editor__intro p { margin: .25rem 0 0; color: #76808d; font: 400 .66rem/1.55 "Poppins", sans-serif; }
+.creator-guest-add { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(9rem, .8fr) auto; align-items: end; gap: .65rem; }
+.creator-guest-add label { display: grid; gap: .4rem; color: #5b6572; font: 500 .62rem/1.3 "Poppins", sans-serif; }
+.creator-guest-add input,
+.creator-guest-add select { width: 100%; min-height: 2.8rem; padding: 0 .75rem; border: 1px solid rgba(35, 43, 58, .14); border-radius: .7rem; color: #293548; background: #fff; font: 400 .67rem/1.2 "Poppins", sans-serif; }
+.creator-guest-add > button { display: inline-flex; min-height: 2.8rem; align-items: center; justify-content: center; gap: .4rem; padding: 0 .85rem; border-radius: .7rem; color: white; background: #293b4b; font: 600 .63rem/1 "Poppins", sans-serif; cursor: pointer; }
+.creator-guest-add > button:disabled { cursor: not-allowed; opacity: .48; }
+.creator-guest-add > button svg { width: .9rem; height: .9rem; }
+.creator-rsvp-question-picker { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; padding: .9rem 1rem; border: 1px solid rgba(35, 43, 58, .1); border-radius: .9rem; background: rgba(244, 247, 246, .78); }
+.creator-rsvp-question-picker > div { display: grid; gap: .2rem; margin-right: auto; }
+.creator-rsvp-question-picker strong { color: #354254; font: 600 .68rem/1.3 "Poppins", sans-serif; }
+.creator-rsvp-question-picker span { color: #858d97; font: 400 .57rem/1.4 "Poppins", sans-serif; }
+.creator-rsvp-question-picker > label { display: inline-flex; align-items: center; gap: .4rem; color: #566270; font: 500 .61rem/1.3 "Poppins", sans-serif; cursor: pointer; }
+.creator-rsvp-question-picker input { width: 1rem; height: 1rem; accent-color: #6f806b; }
+.creator-guest-list { display: grid; gap: .45rem; max-height: 18rem; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.creator-guest-list > li { display: flex; min-width: 0; align-items: center; gap: .65rem; padding: .65rem .75rem; border: 1px solid rgba(35, 43, 58, .09); border-radius: .85rem; background: rgba(255, 255, 255, .82); }
+.creator-guest-list__avatar,
+.invitation-guest-dashboard__avatar { display: grid; width: 2.25rem; height: 2.25rem; flex: 0 0 auto; border-radius: 50%; color: #5e705f; background: #edf1e8; font: 600 .74rem/1 "Poppins", sans-serif; place-items: center; }
+.creator-guest-list__name { display: grid; min-width: 0; flex: 1; gap: .18rem; }
+.creator-guest-list__name strong { overflow: hidden; color: #303c4b; font: 600 .67rem/1.3 "Poppins", sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.creator-guest-list__name small { color: #8b929b; font: 400 .55rem/1.3 "Poppins", sans-serif; }
+.creator-guest-list > li > button { display: inline-flex; min-height: 2.2rem; align-items: center; justify-content: center; gap: .35rem; padding: 0 .65rem; border: 1px solid rgba(52, 76, 91, .14); border-radius: 999px; color: #52677a; background: #fff; font: 500 .56rem/1 "Poppins", sans-serif; cursor: pointer; }
+.creator-guest-list > li > button svg { width: .83rem; height: .83rem; }
+.creator-guest-list > li > .creator-guest-list__remove { width: 2.2rem; padding: 0; color: #9b6f6a; }
+.creator-guests-empty { display: grid; gap: .25rem; padding: 1.3rem; border: 1px dashed rgba(35, 43, 58, .2); border-radius: .9rem; color: #65717e; text-align: center; }
+.creator-guests-empty strong { font: 600 .68rem/1.4 "Poppins", sans-serif; }
+.creator-guests-empty span { font: 400 .59rem/1.5 "Poppins", sans-serif; }
+.creator-guest-status { margin: 0; color: #477454; font: 500 .62rem/1.5 "Poppins", sans-serif; }
+.creator-guests-locked { display: grid; justify-items: start; gap: .4rem; padding: 1.1rem; border: 1px solid rgba(179, 139, 76, .25); border-radius: .9rem; background: #fffaf0; }
+.creator-guests-locked strong { color: #5e4d35; font: 600 .7rem/1.35 "Poppins", sans-serif; }
+.creator-guests-locked span { color: #827865; font: 400 .6rem/1.5 "Poppins", sans-serif; }
+.creator-guests-locked button { margin-top: .25rem; padding: .55rem .8rem; border-radius: 999px; color: white; background: #7e6847; font: 600 .58rem/1 "Poppins", sans-serif; cursor: pointer; }
+.creator-local-note { margin: 0; padding: .7rem .8rem; border-radius: .65rem; color: #818995; background: #f3f5f6; font: 400 .56rem/1.55 "Poppins", sans-serif; }
+
+.preview-stage--manage { width: min(calc(100% - 2rem), 56rem); grid-template-columns: minmax(0, 1fr); align-items: start; gap: 1.3rem; }
+.preview-stage--manage .preview-stage__invitation { width: min(100%, 42rem); justify-self: center; }
+.preview-toolbar__recipient { overflow: hidden; color: #64717f !important; text-overflow: ellipsis; white-space: nowrap; }
+.invitation-guest-dashboard { min-width: 0; padding: clamp(1rem, 3vw, 1.6rem); border: 1px solid rgba(41, 54, 70, .1); border-radius: 1.35rem; background: rgba(255, 255, 255, .9); box-shadow: 0 18px 45px rgba(35, 43, 58, .08); }
+.invitation-guest-dashboard__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.invitation-guest-dashboard__header > div:first-child > p { display: flex; align-items: center; gap: .4rem; margin: 0 0 .45rem; color: #8a754e; font: 600 .53rem/1 "Poppins", sans-serif; letter-spacing: .13em; }
+.invitation-guest-dashboard__header > div:first-child > p svg { width: .83rem; height: .83rem; }
+.invitation-guest-dashboard__header h2 { margin: 0; color: #263346; font: 500 clamp(1.3rem, 3vw, 1.8rem)/1.15 "Playfair Display", serif; }
+.invitation-guest-dashboard__header > div:first-child > span { display: block; margin-top: .35rem; color: #818994; font: 400 .59rem/1.5 "Poppins", sans-serif; }
+.invitation-guest-dashboard__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: end; gap: .45rem; }
+.invitation-guest-dashboard__actions button { display: inline-flex; min-height: 2.45rem; align-items: center; gap: .38rem; padding: 0 .72rem; border: 1px solid rgba(38, 51, 70, .13); border-radius: 999px; color: #526273; background: #fff; font: 500 .58rem/1 "Poppins", sans-serif; cursor: pointer; }
+.invitation-guest-dashboard__actions button.is-primary { border-color: #354b3d; color: #fff; background: #354b3d; }
+.invitation-guest-dashboard__actions svg { width: .85rem; height: .85rem; }
+.invitation-guest-dashboard__upgrade { color: #999184; font: 500 .53rem/1.4 "Poppins", sans-serif; }
+.invitation-guest-dashboard__stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem; margin: 1.1rem 0; }
+.invitation-guest-dashboard__stats > div { display: grid; gap: .15rem; padding: .75rem; border: 1px solid rgba(41, 54, 70, .08); border-radius: .85rem; background: #f8f8f5; }
+.invitation-guest-dashboard__stats strong { color: #354b3d; font: 600 1.15rem/1.1 "Poppins", sans-serif; }
+.invitation-guest-dashboard__stats span { color: #7f8790; font: 400 .53rem/1.4 "Poppins", sans-serif; }
+.invitation-guest-dashboard__list { display: grid; gap: .35rem; max-height: 23rem; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.invitation-guest-dashboard__list > li { display: flex; min-width: 0; align-items: center; gap: .55rem; padding: .55rem .6rem; border: 1px solid rgba(41, 54, 70, .08); border-radius: .75rem; background: #fff; }
+.invitation-guest-dashboard__name { display: grid; min-width: 0; flex: 1; gap: .12rem; }
+.invitation-guest-dashboard__name strong { overflow: hidden; color: #303c4b; font: 600 .59rem/1.3 "Poppins", sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.invitation-guest-dashboard__name small { color: #8d949d; font: 400 .5rem/1.3 "Poppins", sans-serif; }
+.invitation-guest-dashboard__status { color: #818994; font: 500 .53rem/1.3 "Poppins", sans-serif; }
+.invitation-guest-dashboard__status.is-yes { color: #4c8059; }
+.invitation-guest-dashboard__status.is-no { color: #a16f6a; }
+.invitation-guest-dashboard__list a,
+.invitation-guest-dashboard__list button { display: inline-flex; min-height: 2rem; align-items: center; justify-content: center; gap: .25rem; padding: 0 .5rem; border: 1px solid rgba(41, 54, 70, .12); border-radius: 999px; color: #637287; background: #fff; font: 500 .5rem/1 "Poppins", sans-serif; text-decoration: none; cursor: pointer; }
+.invitation-guest-dashboard__list button { width: 2rem; padding: 0; }
+.invitation-guest-dashboard__list button svg { width: .78rem; height: .78rem; }
+.invitation-guest-dashboard__empty { display: grid; justify-items: center; gap: .35rem; padding: 1.5rem; color: #828b94; text-align: center; }
+.invitation-guest-dashboard__empty svg { width: 1.5rem; height: 1.5rem; margin-bottom: .2rem; color: #879b80; }
+.invitation-guest-dashboard__empty strong { color: #455363; font: 600 .66rem/1.4 "Poppins", sans-serif; }
+.invitation-guest-dashboard__empty span { max-width: 24rem; font: 400 .55rem/1.55 "Poppins", sans-serif; }
+.invitation-guest-dashboard__notice { margin: 1rem 0 0; padding: .65rem .75rem; border-radius: .65rem; color: #8b8171; background: #faf7f0; font: 400 .52rem/1.55 "Poppins", sans-serif; }
+.generated-invitation__cover-content > .generated-invitation__guest-greeting { margin: -.3rem 0 1rem !important; font: 500 .75rem/1.4 "Poppins", sans-serif !important; letter-spacing: .04em; text-transform: none; }
+
+@media (max-width: 760px) {
+  .creator-stepper { grid-template-columns: repeat(7, minmax(5.1rem, 1fr)); }
+  .creator-guest-add { grid-template-columns: 1fr; }
+  .creator-rsvp-question-picker { align-items: flex-start; flex-direction: column; }
+  .creator-rsvp-question-picker > div { margin-right: 0; }
+  .creator-guest-list > li { gap: .4rem; padding-inline: .5rem; }
+  .creator-guest-list > li > button { min-height: 2rem; padding-inline: .5rem; font-size: .5rem; }
+  .creator-guest-list > li > .creator-guest-list__remove { width: 2rem; }
+  .preview-stage--manage { width: min(calc(100% - 1rem), 40rem); padding-top: 1rem; }
+  .invitation-guest-dashboard__header { align-items: flex-start; flex-direction: column; }
+  .invitation-guest-dashboard__actions { justify-content: flex-start; }
+  .invitation-guest-dashboard__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .invitation-guest-dashboard__list > li { flex-wrap: wrap; }
+  .invitation-guest-dashboard__name { min-width: calc(100% - 3.5rem); }
+  .invitation-guest-dashboard__status { flex: 1; margin-left: 2.8rem; }
+}
+
+/* New wedding invitation directions inspired by contemporary Vietnamese collections. */
+.signature-demo--song-hy-contemporary {
+  --sig-paper: #faf5ed;
+  --sig-ink: #542a2b;
+  --sig-muted: #816b63;
+  --sig-accent: #b45b4f;
+  --sig-line: rgba(113, 54, 47, .19);
+  background-image: radial-gradient(ellipse at 92% 8%, rgba(209, 170, 119, .13), transparent 30rem);
+}
+.signature-demo--riviera-blue {
+  --sig-paper: #f1f8f8;
+  --sig-ink: #183c4b;
+  --sig-muted: #607983;
+  --sig-accent: #3986a4;
+  --sig-line: rgba(41, 107, 132, .19);
+}
+.signature-demo--hoa-moc-editorial {
+  --sig-paper: #fbf6f0;
+  --sig-ink: #34483b;
+  --sig-muted: #788275;
+  --sig-accent: #bd806e;
+  --sig-line: rgba(65, 95, 72, .17);
+  background-image: radial-gradient(ellipse at 8% 12%, rgba(207, 164, 145, .12), transparent 27rem);
+}
+.signature-demo--summer-postcard {
+  --sig-paper: #fbf5e6;
+  --sig-ink: #47362c;
+  --sig-muted: #827363;
+  --sig-accent: #cb7554;
+  --sig-line: rgba(157, 97, 63, .2);
+}
+
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero {
+  color: var(--sig-ink);
+  background: linear-gradient(115deg, #faf5ed 0%, #f6eee4 68%, #efe1d3 100%);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__layout {
+  width: min(100%, 74rem);
+  grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+  text-align: left;
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__image {
+  position: relative;
+  inset: auto;
+  min-height: clamp(27rem, 47vw, 39rem);
+  border: .45rem solid rgba(255, 255, 255, .82);
+  outline: 1px solid rgba(151, 91, 66, .42);
+  outline-offset: .28rem;
+  opacity: 1;
+  box-shadow: 0 24px 60px rgba(84, 42, 43, .14);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__image img { filter: saturate(.77) sepia(.06); }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content { width: min(100%, 40rem); text-align: left; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content h1 {
+  color: #542a2b;
+  font-family: "Noto Serif", Georgia, serif !important;
+  font-size: clamp(4rem, 8vw, 6.8rem) !important;
+  line-height: .88 !important;
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content h1 i { color: #b88a4a; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__invitation,
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__side-note { color: #80685d; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__ornament {
+  top: 8%; right: 7%; z-index: 2; display: grid; width: 5.7rem; height: 5.7rem;
+  border: 1px solid rgba(166, 75, 65, .42); color: #a64b41; place-items: center; transform: rotate(45deg);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__ornament::after {
+  content: '囍'; font: 2rem/1 "Noto Serif", Georgia, serif; transform: rotate(-45deg);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__actions a:first-child { color: #fffaf4; border-color: #8e3e38; background: #8e3e38; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-event-card--primary { color: #fffaf4; background: #653334; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-event-card--primary h3 { color: #fffaf4; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-rsvp { background: #653334; }
+
+.demo-page-content .signature-demo--riviera-blue .signature-hero {
+  color: var(--sig-ink);
+  background: radial-gradient(ellipse at 83% 17%, rgba(121, 189, 199, .25), transparent 26rem), linear-gradient(145deg, #f4fbfa, #e8f2f1);
+}
+.demo-page-content .signature-demo--riviera-blue .signature-hero__layout {
+  width: min(100%, 75rem);
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  text-align: left;
+}
+.demo-page-content .signature-demo--riviera-blue .signature-hero__image {
+  position: relative; inset: auto; min-height: clamp(25rem, 42vw, 35rem);
+  border: .55rem solid rgba(255, 255, 255, .85); border-radius: 48% 48% .4rem .4rem;
+  opacity: 1; box-shadow: 0 26px 65px rgba(37, 83, 97, .16);
+}
+.demo-page-content .signature-demo--riviera-blue .signature-hero__image img { filter: saturate(.74) hue-rotate(3deg); }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__content { width: min(100%, 38rem); text-align: left; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__content h1 { color: #183c4b; font-size: clamp(4rem, 8vw, 7rem) !important; line-height: .86 !important; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__content h1 i { color: #3986a4; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__invitation,
+.demo-page-content .signature-demo--riviera-blue .signature-hero__side-note { color: #607983; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__ornament { top: 12%; right: 9%; width: 7rem; height: 7rem; border: 1px solid rgba(57, 134, 164, .28); border-radius: 50%; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__ornament::before { position: absolute; inset: .55rem; border: 1px solid rgba(57, 134, 164, .24); border-radius: 50%; content: ''; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__ornament::after { position: absolute; top: 50%; left: 50%; width: .55rem; height: .55rem; border-radius: 50%; background: #3986a4; content: ''; transform: translate(-50%, -50%); }
+.demo-page-content .signature-demo--riviera-blue .signature-event-card--primary { color: #effafa; background: #1d4e60; }
+.demo-page-content .signature-demo--riviera-blue .signature-event-card--primary h3 { color: #effafa; }
+.demo-page-content .signature-demo--riviera-blue .signature-rsvp { color: #effafa; background: #173b49; }
+
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero {
+  color: var(--sig-ink);
+  background: radial-gradient(circle at 82% 18%, rgba(221, 184, 166, .26), transparent 21rem), #fbf6f0;
+}
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__layout {
+  width: min(100%, 73rem); grid-template-columns: minmax(0, .96fr) minmax(0, 1.04fr); text-align: left;
+}
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__image {
+  position: relative; inset: auto; min-height: clamp(27rem, 47vw, 39rem);
+  border: .65rem solid rgba(255, 255, 255, .82); border-radius: 48% 48% .55rem .55rem;
+  opacity: 1; box-shadow: 0 25px 62px rgba(54, 72, 59, .14);
+}
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__image img { filter: saturate(.68) sepia(.04); }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content { width: min(100%, 39rem); text-align: left; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content h1 { color: #34483b; font-size: clamp(4rem, 8.2vw, 7rem) !important; line-height: .84 !important; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content h1 i { color: #bd806e; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__invitation,
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__side-note { color: #788275; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__ornament { top: 14%; right: 7%; width: 8rem; height: 8rem; border: 1px solid rgba(111, 137, 105, .25); border-radius: 50% 50% 0 50%; transform: rotate(-35deg); }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__ornament::before { position: absolute; top: 50%; left: 50%; width: 3rem; height: 3rem; border: 1px solid rgba(189, 128, 110, .3); border-radius: 50%; content: ''; transform: translate(-50%, -50%); }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-event-card--primary { color: #fffaf4; background: #405747; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-event-card--primary h3 { color: #fffaf4; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-rsvp { background: #405747; }
+
+.demo-page-content .signature-demo--summer-postcard .signature-hero {
+  color: var(--sig-ink);
+  background: radial-gradient(ellipse at 13% 8%, rgba(228, 190, 111, .24), transparent 22rem), #fbf5e6;
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__layout {
+  width: min(100%, 74rem); grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); text-align: left;
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__image {
+  position: relative; inset: auto; min-height: clamp(25rem, 43vw, 36rem);
+  border: .7rem solid #fffdf8; outline: 1px solid rgba(174, 111, 72, .35); outline-offset: .2rem;
+  opacity: 1; box-shadow: 0 23px 55px rgba(94, 65, 43, .17); transform: rotate(-1.1deg);
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__image::after {
+  position: absolute; inset: 0; background: linear-gradient(0deg, rgba(42, 41, 32, .25), transparent 45%); content: ''; pointer-events: none;
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__image img { filter: saturate(.88) sepia(.06); }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__content { width: min(100%, 39rem); text-align: left; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__content h1 { color: #47362c; font-size: clamp(4rem, 8vw, 6.8rem) !important; line-height: .87 !important; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__content h1 i { color: #cb7554; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__invitation,
+.demo-page-content .signature-demo--summer-postcard .signature-hero__side-note { color: #827363; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__ornament { top: 12%; right: 9%; width: 6rem; height: 6rem; border: 1px dashed rgba(203, 117, 84, .58); border-radius: 50%; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__ornament::after { position: absolute; inset: 1.05rem; border: 1px solid rgba(203, 117, 84, .3); border-radius: 50%; content: ''; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__actions a:first-child { color: #fffaf4; border-color: #b66346; background: #b66346; }
+.demo-page-content .signature-demo--summer-postcard .signature-event-card--primary { color: #fffaf4; background: #714635; }
+.demo-page-content .signature-demo--summer-postcard .signature-event-card--primary h3 { color: #fffaf4; }
+.demo-page-content .signature-demo--summer-postcard .signature-rsvp { background: #714635; }
+
+@media (max-width: 760px) {
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__layout,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__layout,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__layout,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__layout { grid-template-columns: 1fr; gap: 1.6rem; text-align: center; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__content,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__content { order: 1; width: min(100%, 34rem); margin-inline: auto; text-align: center; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__actions,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__actions,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__actions,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__actions { justify-content: center; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__image,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__image,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__image,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__image { order: 2; width: min(100%, 27rem); min-height: min(78vw, 25rem) !important; margin-inline: auto; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content h1,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__content h1,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content h1,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__content h1 { font-size: clamp(3.5rem, 14vw, 5.2rem) !important; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__ornament,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__ornament,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__ornament,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__ornament { top: 5rem; right: 7%; width: 4.5rem; height: 4.5rem; }
+}

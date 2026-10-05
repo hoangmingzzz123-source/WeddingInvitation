@@ -63,6 +63,10 @@ const demoAccents: Record<string, string> = {
   'rose-storybook-219k': '#d78ca8',
   'vietnamese-traditional-219k': '#d84743',
   'burgundy-cinema-219k': '#c9a24d',
+  'song-hy-contemporary': '#a7413b',
+  'riviera-blue': '#3f88a8',
+  'hoa-moc-editorial': '#748b6e',
+  'summer-postcard': '#cf7952',
 };
 
 const signatureDemoIds = new Set([
@@ -73,6 +77,10 @@ const signatureDemoIds = new Set([
   'bloom-crystal-3d',
   'modern-dark-blue',
   'minimal-elegant',
+  'song-hy-contemporary',
+  'riviera-blue',
+  'hoa-moc-editorial',
+  'summer-postcard',
 ]);
 
 function getSectionLabel(section: HTMLElement, index: number) {

@@ -8,8 +8,10 @@ import {
   Check,
   Clipboard,
   Clock3,
+  Download,
   ExternalLink,
   Heart,
+  Link2,
   MapPin,
   MessageCircleHeart,
   Play,
@@ -17,7 +19,11 @@ import {
   Pencil,
   QrCode,
   Save,
+  Share2,
   Sparkles,
+  Trash2,
+  UserPlus,
+  UsersRound,
   Video,
   Volume2,
   VolumeX,
@@ -31,11 +37,29 @@ import weddingTrack from '../asset/Le_duong.mp3';
 
 const REQUEST_FORM_URL = 'https://forms.gle/2qBNf4tHBiq6vavZ6';
 const STORAGE_KEY = 'mp-wedding-demo-draft-v1';
+const RSVP_STORAGE_PREFIX = 'mp-wedding-demo-rsvps-v1:';
 
 type InvitationTheme = 'champagne' | 'blush' | 'emerald';
 type InvitationFont = 'editorial' | 'modern' | 'classic';
+type InvitationQuestion = 'transport' | 'meal';
+
+interface InvitationGuest {
+  id: string;
+  name: string;
+  greeting: 'formal' | 'friendly';
+}
+
+interface InvitationRsvp {
+  guestId: string;
+  name: string;
+  attending: 'yes' | 'no';
+  guestCount: number;
+  answers: Partial<Record<InvitationQuestion, string>>;
+  submittedAt: string;
+}
 
 interface InvitationDraft {
+  id: string;
   packageTier: TemplateTier;
   brideName: string;
   groomName: string;
@@ -47,6 +71,8 @@ interface InvitationDraft {
   theme: InvitationTheme;
   fontStyle: InvitationFont;
   cover: string;
+  guests: InvitationGuest[];
+  rsvpQuestions: InvitationQuestion[];
 }
 
 const coverOptions = [
@@ -74,6 +100,7 @@ const themeOptions: Array<{ id: InvitationTheme; name: string; description: stri
 ];
 
 const defaultDraft: InvitationDraft = {
+  id: '',
   packageTier: '109k',
   brideName: '',
   groomName: '',
@@ -85,6 +112,8 @@ const defaultDraft: InvitationDraft = {
   theme: 'champagne',
   fontStyle: 'editorial',
   cover: coverOptions[0].url,
+  guests: [],
+  rsvpQuestions: [],
 };
 
 const creationSteps = [
@@ -92,7 +121,8 @@ const creationSteps = [
   { title: 'Thời gian', heading: 'Chọn ngày vui', hint: 'Thêm ngày và giờ để khách mời dễ sắp xếp.' },
   { title: 'Địa điểm', heading: 'Hẹn nhau ở đâu?', hint: 'Cho khách biết tên sảnh tiệc và cách tìm đến nơi.' },
   { title: 'Lời mời', heading: 'Gửi một lời thật riêng', hint: 'Viết lời nhắn theo cách của hai bạn, hoặc chọn một gợi ý có sẵn.' },
-  { title: 'Phong cách', heading: 'Chọn không khí cho tấm thiệp', hint: 'Thử bảng màu và ảnh bìa, bản xem trước sẽ đổi ngay.' },
+  { title: 'Thiết kế', heading: 'Chọn mẫu và bảng màu', hint: 'Thử màu, kiểu chữ và ảnh bìa. Bạn có thể đổi thiết kế hoặc gói mà không nhập lại thông tin.' },
+  { title: 'Khách mời', heading: 'Chuẩn bị lời mời riêng', hint: 'Thêm tên khách, tạo link cá nhân hóa và chọn thông tin cần hỏi trong RSVP.' },
   { title: 'Rà soát', heading: 'Sẵn sàng gửi lời mời chưa?', hint: 'Kiểm tra lại thông tin một lượt. Bạn vẫn có thể quay lại chỉnh sửa.' },
 ];
 
@@ -115,14 +145,31 @@ function isInvitationFont(value: unknown): value is InvitationFont {
 }
 
 function normalizeDraft(value: Partial<InvitationDraft> | null | undefined): InvitationDraft {
+  const allowedQuestions: InvitationQuestion[] = ['transport', 'meal'];
   return {
     ...defaultDraft,
     ...value,
+    id: typeof value?.id === 'string' && value.id ? value.id : createId('wedding'),
     packageTier: isTemplateTier(value?.packageTier) ? value.packageTier : defaultDraft.packageTier,
     theme: isInvitationTheme(value?.theme) ? value.theme : defaultDraft.theme,
     fontStyle: isInvitationFont(value?.fontStyle) ? value.fontStyle : defaultDraft.fontStyle,
     cover: coverOptions.some((cover) => cover.url === value?.cover) ? value!.cover! : defaultDraft.cover,
+    guests: Array.isArray(value?.guests)
+      ? value.guests
+        .filter((guest): guest is InvitationGuest => Boolean(guest && typeof guest.id === 'string' && typeof guest.name === 'string'))
+        .map((guest) => ({ id: guest.id, name: guest.name.slice(0, 80), greeting: guest.greeting === 'formal' ? 'formal' : 'friendly' }))
+      : [],
+    rsvpQuestions: Array.isArray(value?.rsvpQuestions)
+      ? [...new Set(value.rsvpQuestions.filter((question): question is InvitationQuestion => allowedQuestions.includes(question)))]
+      : [],
   };
+}
+
+function createId(prefix: string) {
+  const suffix = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  return `${prefix}-${suffix}`;
 }
 
 function encodeDraft(draft: InvitationDraft) {
@@ -130,6 +177,10 @@ function encodeDraft(draft: InvitationDraft) {
   let binary = '';
   bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
   return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+}
+
+function encodePublicDraft(draft: InvitationDraft) {
+  return encodeDraft({ ...draft, guests: [] });
 }
 
 function decodeDraft(value: string | null) {
@@ -148,9 +199,9 @@ function decodeDraft(value: string | null) {
 function readSavedDraft() {
   try {
     const savedDraft = localStorage.getItem(STORAGE_KEY);
-    return savedDraft ? normalizeDraft(JSON.parse(savedDraft) as Partial<InvitationDraft>) : defaultDraft;
+    return savedDraft ? normalizeDraft(JSON.parse(savedDraft) as Partial<InvitationDraft>) : normalizeDraft(defaultDraft);
   } catch {
-    return defaultDraft;
+    return normalizeDraft(defaultDraft);
   }
 }
 
@@ -160,6 +211,69 @@ function saveDraft(draft: InvitationDraft) {
   } catch {
     // The live demo still works when storage is unavailable.
   }
+}
+
+function readInvitationRsvps(invitationId: string): InvitationRsvp[] {
+  try {
+    const stored = localStorage.getItem(`${RSVP_STORAGE_PREFIX}${invitationId}`);
+    const rows = stored ? JSON.parse(stored) as InvitationRsvp[] : [];
+    return Array.isArray(rows) ? rows : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveInvitationRsvp(invitationId: string, response: InvitationRsvp) {
+  const current = readInvitationRsvps(invitationId);
+  const next = [...current.filter((row) => row.guestId !== response.guestId), response];
+  try {
+    localStorage.setItem(`${RSVP_STORAGE_PREFIX}${invitationId}`, JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent('mp-wedding-demo-rsvp-updated', { detail: { invitationId } }));
+  } catch {
+    // Keep the current preview usable if storage is unavailable.
+  }
+  return next;
+}
+
+function invitationUrl(draft: InvitationDraft, guest?: InvitationGuest) {
+  const url = new URL('/tao-thiep/preview', window.location.origin);
+  url.searchParams.set('data', encodePublicDraft(draft));
+  if (guest) {
+    url.searchParams.set('guestId', guest.id);
+    url.searchParams.set('guestName', guest.name);
+    url.searchParams.set('greeting', guest.greeting);
+  }
+  return url.toString();
+}
+
+function exportRsvpsCsv(draft: InvitationDraft, rsvps: InvitationRsvp[]) {
+  const byGuest = new Map(rsvps.map((response) => [response.guestId, response]));
+  const questionLabels: Record<InvitationQuestion, string> = { transport: 'Xe đưa đón', meal: 'Chế độ ăn' };
+  const questions = draft.rsvpQuestions;
+  const rows = [
+    ['Khách mời', 'Trạng thái', 'Số người', ...questions.map((question) => questionLabels[question]), 'Thời gian phản hồi'],
+    ...draft.guests.map((guest) => {
+      const response = byGuest.get(guest.id);
+      return [
+        guest.name,
+        response ? (response.attending === 'yes' ? 'Sẽ tham dự' : 'Không tham dự') : 'Chưa phản hồi',
+        response ? String(response.guestCount) : '',
+        ...questions.map((question) => response?.answers[question] ?? ''),
+        response?.submittedAt ?? '',
+      ];
+    }),
+  ];
+  const csv = `\uFEFF${rows.map((row) => row.map((cell) => {
+    const value = String(cell);
+    const safeValue = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+    return `"${safeValue.replaceAll('"', '""')}"`;
+  }).join(',')).join('\r\n')}`;
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `khach-moi-${draft.id}.csv`;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function formatWeddingDate(value: string) {
@@ -173,8 +287,20 @@ function formatWeddingDate(value: string) {
   }).format(date);
 }
 
-function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft; compact?: boolean }) {
-  const [rsvpSent, setRsvpSent] = useState(false);
+function InvitationPreview({
+  draft,
+  compact = false,
+  guest,
+  existingRsvp,
+  onRsvpSaved,
+}: {
+  draft: InvitationDraft;
+  compact?: boolean;
+  guest?: InvitationGuest | null;
+  existingRsvp?: InvitationRsvp;
+  onRsvpSaved?: (response: InvitationRsvp) => void;
+}) {
+  const [rsvpSent, setRsvpSent] = useState(Boolean(existingRsvp));
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [customTrack, setCustomTrack] = useState('');
   const [guestNote, setGuestNote] = useState('');
@@ -185,6 +311,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
   const selectedPackage = getWeddingPackage(draft.packageTier);
   const isPremium = draft.packageTier !== '109k';
   const isDiamond = draft.packageTier === '199k';
+  const activeQuestions = isPremium ? draft.rsvpQuestions : [];
   const appliedFontStyle = isPremium ? draft.fontStyle : 'editorial';
   const gallery = coverOptions.map((cover) => cover.url);
   const destination = [draft.venue, draft.address].filter(Boolean).join(', ');
@@ -194,8 +321,29 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
     if (customTrack) URL.revokeObjectURL(customTrack);
   }, [customTrack]);
 
+  useEffect(() => {
+    setRsvpSent(Boolean(existingRsvp));
+  }, [existingRsvp]);
+
   const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const name = guest?.name || String(form.get('name') ?? '').trim();
+    const response: InvitationRsvp = {
+      guestId: guest?.id ?? createId('public-guest'),
+      name,
+      attending: form.get('attending') === 'no' ? 'no' : 'yes',
+      guestCount: isPremium ? Number(form.get('guestCount') ?? 1) : 1,
+      answers: {
+        ...(activeQuestions.includes('transport') ? { transport: String(form.get('transport') ?? '') } : {}),
+        ...(activeQuestions.includes('meal') ? { meal: String(form.get('meal') ?? '') } : {}),
+      },
+      submittedAt: new Date().toISOString(),
+    };
+    if (!compact) {
+      const updated = saveInvitationRsvp(draft.id, response);
+      onRsvpSaved?.(updated.find((row) => row.guestId === response.guestId) ?? response);
+    }
     setRsvpSent(true);
   };
 
@@ -214,7 +362,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
     const shareData = {
       title: `${draft.brideName || 'Cô dâu'} & ${draft.groomName || 'Chú rể'}`,
       text: 'Mời bạn xem thiệp cưới của chúng mình.',
-      url: window.location.href,
+      url: invitationUrl(draft, guest ?? undefined),
     };
     try {
       if (navigator.share) await navigator.share(shareData);
@@ -240,6 +388,7 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
             {(draft.brideName || 'C').charAt(0)}<Heart />{(draft.groomName || 'R').charAt(0)}
           </span>
           <p>Wedding invitation</p>
+          {guest && <p className="generated-invitation__guest-greeting">{guest.greeting === 'formal' ? 'Trân trọng kính mời' : 'Thân mời'} {guest.name}</p>}
           <h2><span>{draft.brideName || 'Cô dâu'}</span><i>&amp;</i><span>{draft.groomName || 'Chú rể'}</span></h2>
           <time>{formatWeddingDate(draft.weddingDate)}</time>
           <button type="button" className="generated-invitation__music" onClick={toggleMusic} aria-pressed={musicPlaying}>
@@ -345,10 +494,11 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
           <form onSubmit={submitRsvp}>
             <p className="generated-invitation__section-label">PLEASE REPLY</p>
             <h3>{isDiamond ? 'Hồi đáp & gửi lời chúc' : 'Bạn sẽ đến chứ?'}</h3>
-            <label>Tên của bạn<input name="name" required placeholder="Họ và tên" autoComplete="name" /></label>
+            <label>Tên của bạn<input name="name" required placeholder="Họ và tên" autoComplete="name" defaultValue={guest?.name ?? ''} readOnly={Boolean(guest)} /></label>
             <label>{isPremium ? 'Xác nhận tham dự' : 'Bạn có thể đến chung vui không?'}<select name="attending" defaultValue="yes"><option value="yes">Có, mình sẽ đến</option><option value="no">Rất tiếc, mình bận</option></select></label>
-            {isPremium && <label>Email<input type="email" name="email" placeholder="email@example.com" autoComplete="email" /></label>}
-            {isPremium && <label>Số khách<select name="guests" defaultValue="1"><option value="1">1 khách</option><option value="2">2 khách</option><option value="3">3 khách</option></select></label>}
+            {isPremium && <label>Số người tham dự<select name="guestCount" defaultValue="1"><option value="1">1 người</option><option value="2">2 người</option><option value="3">3 người</option><option value="4">4 người</option></select></label>}
+            {activeQuestions.includes('transport') && <label>Cần xe đưa đón?<select name="transport" defaultValue="Không cần"><option>Không cần</option><option>Cần xe đưa đón</option></select></label>}
+            {activeQuestions.includes('meal') && <label>Chế độ ăn<select name="meal" defaultValue="Không yêu cầu"><option>Không yêu cầu</option><option>Ăn chay</option><option>Có dị ứng / lưu ý</option></select></label>}
             <button type="submit"><Check aria-hidden="true" /> Xác nhận tham dự</button>
           </form>
         ) : (
@@ -376,11 +526,104 @@ function InvitationPreview({ draft, compact = false }: { draft: InvitationDraft;
   );
 }
 
+function InvitationGuestDashboard({ draft, rsvps }: { draft: InvitationDraft; rsvps: InvitationRsvp[] }) {
+  const guestIds = new Set(draft.guests.map((guest) => guest.id));
+  const currentRsvps = rsvps.filter((response) => guestIds.has(response.guestId) || response.guestId.startsWith('public-guest-'));
+  const responseByGuest = new Map(currentRsvps.map((response) => [response.guestId, response]));
+  const answeredGuests = draft.guests.filter((guest) => responseByGuest.has(guest.id)).length;
+  const yesResponses = currentRsvps.filter((response) => response.attending === 'yes');
+  const expectedGuests = yesResponses.reduce((total, response) => total + response.guestCount, 0);
+  const outstanding = Math.max(0, draft.guests.length - answeredGuests);
+
+  const copyGeneralLink = async () => {
+    const link = invitationUrl(draft);
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch {
+      window.prompt('Sao chép link thiệp chung:', link);
+    }
+  };
+
+  const copyGuestLink = async (guest: InvitationGuest) => {
+    const link = invitationUrl(draft, guest);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `${draft.brideName} & ${draft.groomName}`, text: `Thiệp cưới gửi riêng cho ${guest.name}`, url: link });
+      } else {
+        await navigator.clipboard.writeText(link);
+      }
+    } catch {
+      try {
+        await navigator.clipboard.writeText(link);
+      } catch {
+        window.prompt(`Sao chép link dành cho ${guest.name}:`, link);
+      }
+    }
+  };
+
+  return (
+    <section className="invitation-guest-dashboard" aria-labelledby="invitation-guest-dashboard-title">
+      <header className="invitation-guest-dashboard__header">
+        <div>
+          <p><UsersRound aria-hidden="true" /> KHÁCH MỜI &amp; RSVP</p>
+          <h2 id="invitation-guest-dashboard-title">Theo dõi lời hồi đáp</h2>
+          <span>Link mỗi khách có sẵn tên và lời chào để bạn gửi riêng.</span>
+        </div>
+        <div className="invitation-guest-dashboard__actions">
+          <button type="button" onClick={() => void copyGeneralLink()}><Link2 aria-hidden="true" /> Link chung</button>
+          <button type="button" onClick={() => window.open(REQUEST_FORM_URL, '_blank', 'noopener,noreferrer')}><ExternalLink aria-hidden="true" /> Xuất bản</button>
+          {draft.packageTier === '199k'
+            ? <button type="button" className="is-primary" onClick={() => exportRsvpsCsv(draft, rsvps)}><Download aria-hidden="true" /> Tải CSV</button>
+            : <span className="invitation-guest-dashboard__upgrade">Xuất CSV · Diamond</span>}
+        </div>
+      </header>
+
+      <div className="invitation-guest-dashboard__stats" aria-label="Tổng quan khách mời">
+        <div><strong>{draft.guests.length}</strong><span>Đã mời</span></div>
+        <div><strong>{currentRsvps.length}</strong><span>Đã phản hồi</span></div>
+        <div><strong>{outstanding}</strong><span>Chưa phản hồi</span></div>
+        <div><strong>{expectedGuests}</strong><span>Sẽ tham dự</span></div>
+      </div>
+
+      {draft.guests.length ? (
+        <ul className="invitation-guest-dashboard__list">
+          {draft.guests.map((guest) => {
+            const response = responseByGuest.get(guest.id);
+            const invitation = invitationUrl(draft, guest);
+            return (
+              <li key={guest.id}>
+                <span className="invitation-guest-dashboard__avatar">{guest.name.charAt(0).toLocaleUpperCase('vi')}</span>
+                <span className="invitation-guest-dashboard__name"><strong>{guest.name}</strong><small>{guest.greeting === 'formal' ? 'Trân trọng kính mời' : 'Thân mời'}</small></span>
+                <span className={`invitation-guest-dashboard__status${response ? ` is-${response.attending}` : ''}`}>
+                  {response ? (response.attending === 'yes' ? `Sẽ đến · ${response.guestCount}` : 'Không tham dự') : 'Chưa phản hồi'}
+                </span>
+                <a href={invitation} target="_blank" rel="noopener noreferrer" aria-label={`Xem link của ${guest.name}`}>Xem thiệp</a>
+                <button type="button" onClick={() => void copyGuestLink(guest)} aria-label={`Chia sẻ link của ${guest.name}`}><Share2 aria-hidden="true" /></button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="invitation-guest-dashboard__empty">
+          <UsersRound aria-hidden="true" />
+          <strong>Chưa có khách trong danh sách</strong>
+          <span>Thêm khách ở bước Khách mời để tạo link riêng và theo dõi phản hồi.</span>
+        </div>
+      )}
+
+      <p className="invitation-guest-dashboard__notice">Đây là bản demo lưu RSVP trên trình duyệt hiện tại; khách mở link từ thiết bị khác chưa đồng bộ phản hồi lên đây.</p>
+    </section>
+  );
+}
+
 export function InvitationCreatorPage() {
   const [draft, setDraft] = useState<InvitationDraft>(readSavedDraft);
   const [errors, setErrors] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [saveStatus, setSaveStatus] = useState('Bản nháp được lưu tự động');
+  const [newGuestName, setNewGuestName] = useState('');
+  const [newGuestGreeting, setNewGuestGreeting] = useState<InvitationGuest['greeting']>('friendly');
+  const [guestLinkMessage, setGuestLinkMessage] = useState('');
 
   useEffect(() => {
     document.title = 'Tự tạo demo thiệp cưới | Wedding Invitation MP';
@@ -398,6 +641,43 @@ export function InvitationCreatorPage() {
   const updateDraft = <Key extends keyof InvitationDraft>(key: Key, value: InvitationDraft[Key]) => {
     setDraft((current) => ({ ...current, [key]: value }));
     if (errors.length) setErrors([]);
+  };
+
+  const addGuest = () => {
+    const name = newGuestName.trim();
+    if (!name) return;
+    updateDraft('guests', [...draft.guests, { id: createId('guest'), name, greeting: newGuestGreeting }]);
+    setNewGuestName('');
+    setGuestLinkMessage('');
+  };
+
+  const copyGuestLink = async (guest: InvitationGuest) => {
+    const link = invitationUrl(draft, guest);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `${draft.brideName} & ${draft.groomName}`, text: `Thiệp cưới gửi riêng cho ${guest.name}`, url: link });
+        setGuestLinkMessage(`Đã mở menu chia sẻ cho ${guest.name}.`);
+      } else {
+        await navigator.clipboard.writeText(link);
+        setGuestLinkMessage(`Đã sao chép link dành cho ${guest.name}.`);
+      }
+    } catch {
+      try {
+        await navigator.clipboard.writeText(link);
+        setGuestLinkMessage(`Đã sao chép link dành cho ${guest.name}.`);
+      } catch {
+        window.prompt(`Sao chép link dành cho ${guest.name}:`, link);
+      }
+    }
+  };
+
+  const toggleRsvpQuestion = (question: InvitationQuestion) => {
+    updateDraft(
+      'rsvpQuestions',
+      draft.rsvpQuestions.includes(question)
+        ? draft.rsvpQuestions.filter((item) => item !== question)
+        : [...draft.rsvpQuestions, question],
+    );
   };
 
   const validateStep = (step: number) => {
@@ -435,7 +715,7 @@ export function InvitationCreatorPage() {
     }
 
     saveDraft(draft);
-    navigateTo(`/tao-thiep/preview?data=${encodeDraft(draft)}`);
+    navigateTo(`/tao-thiep/preview?data=${encodePublicDraft(draft)}&manage=1`);
   };
 
   const advanceStep = () => {
@@ -463,7 +743,7 @@ export function InvitationCreatorPage() {
         <div>
           <p><WandSparkles aria-hidden="true" /> Studio demo online</p>
           <h1>Thiệp cưới của hai bạn, bắt đầu từ vài lựa chọn nhỏ</h1>
-          <span>Đi qua 6 bước ngắn, xem thiết kế thành hình ngay bên cạnh và tạo link demo để gửi người thân xem thử.</span>
+          <span>Đi qua 7 bước ngắn, xem thiết kế thành hình ngay bên cạnh và tạo link demo để gửi người thân xem thử.</span>
         </div>
         <div className="creator-progress" aria-label={`Bước ${currentStep + 1} trên ${creationSteps.length}: ${activeStep.title}`}>
           <strong>0{currentStep + 1}<small> / 0{creationSteps.length}</small></strong>
@@ -653,6 +933,69 @@ export function InvitationCreatorPage() {
             )}
 
             {currentStep === 5 && (
+              <div className="creator-guests-editor">
+                <div className="creator-guests-editor__intro">
+                  <span><UserPlus aria-hidden="true" /></span>
+                  <div>
+                    <strong>{draft.packageTier === '109k' ? 'Lời mời riêng theo từng khách' : 'Tạo link riêng có tên khách'}</strong>
+                    <p>{draft.packageTier === '109k' ? 'Tính năng khách mời cá nhân hóa có trong gói Premium trở lên. Nội dung thiệp của bạn vẫn được giữ nguyên.' : 'Mỗi khách nhận một link riêng và thấy lời chào dành cho mình trên thiệp.'}</p>
+                  </div>
+                </div>
+
+                {draft.packageTier !== '109k' && (
+                  <>
+                    <div className="creator-guest-add">
+                      <label>
+                        Tên khách mời
+                        <input value={newGuestName} onChange={(event) => setNewGuestName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addGuest(); } }} placeholder="Ví dụ: Gia đình cô Lan" maxLength={80} />
+                      </label>
+                      <label>
+                        Cách xưng hô
+                        <select value={newGuestGreeting} onChange={(event) => setNewGuestGreeting(event.target.value as InvitationGuest['greeting'])}>
+                          <option value="friendly">Thân mời</option>
+                          <option value="formal">Trân trọng kính mời</option>
+                        </select>
+                      </label>
+                      <button type="button" onClick={addGuest} disabled={!newGuestName.trim()}><UserPlus aria-hidden="true" /> Thêm khách</button>
+                    </div>
+
+                    <div className="creator-rsvp-question-picker">
+                      <div><strong>Câu hỏi RSVP thêm</strong><span>Khách có thể trả lời ngay trên thiệp.</span></div>
+                      <label><input type="checkbox" checked={draft.rsvpQuestions.includes('transport')} onChange={() => toggleRsvpQuestion('transport')} /> Xe đưa đón</label>
+                      <label><input type="checkbox" checked={draft.rsvpQuestions.includes('meal')} onChange={() => toggleRsvpQuestion('meal')} /> Chế độ ăn</label>
+                    </div>
+
+                    {draft.guests.length > 0 ? (
+                      <ul className="creator-guest-list">
+                        {draft.guests.map((guest) => (
+                          <li key={guest.id}>
+                            <span className="creator-guest-list__avatar">{guest.name.charAt(0).toLocaleUpperCase('vi')}</span>
+                            <span className="creator-guest-list__name"><strong>{guest.name}</strong><small>{guest.greeting === 'formal' ? 'Trân trọng kính mời' : 'Thân mời'}</small></span>
+                            <button type="button" onClick={() => void copyGuestLink(guest)} aria-label={`Chia sẻ link cho ${guest.name}`}><Share2 aria-hidden="true" /><span>Chia sẻ</span></button>
+                            <button type="button" className="creator-guest-list__remove" onClick={() => updateDraft('guests', draft.guests.filter((item) => item.id !== guest.id))} aria-label={`Xóa ${guest.name}`}><Trash2 aria-hidden="true" /></button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="creator-guests-empty"><strong>Danh sách đang trống</strong><span>Thêm khách để tạo lời mời cá nhân hóa.</span></div>
+                    )}
+                    {guestLinkMessage && <p className="creator-guest-status" role="status">{guestLinkMessage}</p>}
+                  </>
+                )}
+
+                {draft.packageTier === '109k' && (
+                  <div className="creator-guests-locked">
+                    <strong>Nâng lên Premium để mở quản lý khách</strong>
+                    <span>{draft.guests.length ? `${draft.guests.length} khách đã nhập sẽ được giữ lại khi đổi lên Premium.` : 'Gói này vẫn có link thiệp chung và RSVP Có/Không cơ bản.'}</span>
+                    <button type="button" onClick={() => updateDraft('packageTier', '159k')}>Xem tính năng Premium</button>
+                  </div>
+                )}
+
+                <p className="creator-local-note">Bản demo lưu danh sách và phản hồi trong trình duyệt này. Link mời có tên khách không chứa cả danh sách khách.</p>
+              </div>
+            )}
+
+            {currentStep === 6 && (
               <div className="creator-review">
                 <img src={draft.cover} alt="" />
                 <div className="creator-review__rows">
@@ -661,6 +1004,7 @@ export function InvitationCreatorPage() {
                   <div><span>Địa điểm</span><strong>{draft.venue || 'Chưa thêm địa điểm'}{draft.address ? ` · ${draft.address}` : ''}</strong><button type="button" onClick={() => setCurrentStep(2)} aria-label="Sửa địa điểm"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Phong cách</span><strong>{themeOptions.find((theme) => theme.id === draft.theme)?.name}</strong><button type="button" onClick={() => setCurrentStep(4)} aria-label="Sửa phong cách"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Gói thiệp</span><strong>{getWeddingPackage(draft.packageTier).name} · {getWeddingPackage(draft.packageTier).price}</strong><button type="button" onClick={() => document.querySelector('.creator-package-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} aria-label="Sửa gói thiệp"><Pencil aria-hidden="true" /></button></div>
+                  <div><span>Khách mời</span><strong>{draft.packageTier === '109k' ? 'Link chung' : `${draft.guests.length} lời mời riêng`}</strong><button type="button" onClick={() => setCurrentStep(5)} aria-label="Sửa danh sách khách"><Pencil aria-hidden="true" /></button></div>
                 </div>
                 <blockquote>“{draft.message || defaultDraft.message}”</blockquote>
               </div>
@@ -695,49 +1039,84 @@ export function InvitationCreatorPage() {
 
 export function GeneratedInvitationPage() {
   const [copied, setCopied] = useState(false);
+  const [rsvps, setRsvps] = useState<InvitationRsvp[]>([]);
+  const query = useMemo(() => new URLSearchParams(window.location.search), []);
+  const isManager = query.get('manage') === '1' && !query.has('guestId');
   const draft = useMemo(() => {
-    const sharedDraft = decodeDraft(new URLSearchParams(window.location.search).get('data'));
+    const sharedDraft = decodeDraft(query.get('data'));
+    if (isManager) {
+      const savedDraft = readSavedDraft();
+      return sharedDraft?.id === savedDraft.id ? savedDraft : sharedDraft ?? savedDraft;
+    }
     return sharedDraft ?? readSavedDraft();
-  }, []);
+  }, [isManager, query]);
+  const guest = useMemo<InvitationGuest | null>(() => {
+    const guestName = query.get('guestName')?.trim().slice(0, 80);
+    if (!guestName) return null;
+    return {
+      id: query.get('guestId') || createId('public-guest'),
+      name: guestName,
+      greeting: query.get('greeting') === 'formal' ? 'formal' : 'friendly',
+    };
+  }, [query]);
   const selectedPackage = getWeddingPackage(draft.packageTier);
+
+  useEffect(() => {
+    setRsvps(readInvitationRsvps(draft.id));
+    const refresh = () => setRsvps(readInvitationRsvps(draft.id));
+    window.addEventListener('mp-wedding-demo-rsvp-updated', refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener('mp-wedding-demo-rsvp-updated', refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, [draft.id]);
 
   useEffect(() => {
     document.title = `${draft.brideName || 'Cô dâu'} & ${draft.groomName || 'Chú rể'} | Demo thiệp cưới`;
   }, [draft.brideName, draft.groomName]);
 
   const copyLink = async () => {
+    const link = invitationUrl(draft);
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(link);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
-      window.prompt('Sao chép đường link demo:', window.location.href);
+      window.prompt('Sao chép link thiệp chung:', link);
     }
   };
 
   return (
     <main className={`invitation-preview-page invitation-preview-page--${draft.theme}`}>
       <header className="preview-toolbar">
-        <button type="button" onClick={() => navigateTo('/tao-thiep')}>
-          <ArrowLeft aria-hidden="true" /> Chỉnh sửa
-        </button>
+        {isManager
+          ? <button type="button" onClick={() => navigateTo('/tao-thiep')}><ArrowLeft aria-hidden="true" /> Chỉnh sửa</button>
+          : <span className="preview-toolbar__recipient">{guest ? `Thiệp gửi riêng cho ${guest.name}` : 'Lời mời cưới online'}</span>}
         <span><Sparkles aria-hidden="true" /> {selectedPackage.name} · {selectedPackage.price}</span>
         <button type="button" onClick={copyLink}>
-          <Clipboard aria-hidden="true" /> {copied ? 'Đã sao chép' : 'Sao chép link'}
+          <Clipboard aria-hidden="true" /> {copied ? 'Đã sao chép' : 'Sao chép link chung'}
         </button>
       </header>
 
-      <section className="preview-stage">
+      <section className={`preview-stage${isManager ? ' preview-stage--manage' : ''}`}>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           className="preview-stage__invitation"
         >
-          <InvitationPreview draft={draft} />
+          <InvitationPreview
+            draft={draft}
+            guest={guest}
+            existingRsvp={guest ? rsvps.find((response) => response.guestId === guest.id) : undefined}
+            onRsvpSaved={() => setRsvps(readInvitationRsvps(draft.id))}
+          />
         </motion.div>
 
-        <aside className="preview-publish-card">
+        {isManager && draft.packageTier !== '109k' ? (
+          <InvitationGuestDashboard draft={draft} rsvps={rsvps} />
+        ) : <aside className="preview-publish-card">
           <span><WandSparkles aria-hidden="true" /></span>
           <p>Bản xem trước · {selectedPackage.name}</p>
           <h1>Biến thiết kế này thành website cưới hoàn chỉnh</h1>
@@ -747,7 +1126,7 @@ export function GeneratedInvitationPage() {
             Điền form để xuất bản <ExternalLink aria-hidden="true" />
           </button>
           <small>RSVP, guestbook và QR trong bản này là tương tác minh họa. Đính kèm link demo trong form để đội ngũ giữ đúng phong cách bạn đã chọn.</small>
-        </aside>
+        </aside>}
       </section>
     </main>
   );

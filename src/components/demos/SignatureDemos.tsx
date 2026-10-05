@@ -22,7 +22,11 @@ export type SignatureDemoId =
   | 'luxury-gold-frame'
   | 'bloom-crystal-3d'
   | 'modern-dark-blue'
-  | 'minimal-elegant';
+  | 'minimal-elegant'
+  | 'song-hy-contemporary'
+  | 'riviera-blue'
+  | 'hoa-moc-editorial'
+  | 'summer-postcard';
 
 interface SignatureDemoContent {
   id: SignatureDemoId;
@@ -101,6 +105,38 @@ const demos: Record<SignatureDemoId, SignatureDemoContent> = {
     story: 'Không cần điều gì quá lớn lao. Chỉ cần một mái nhà, những bữa cơm dài và người mình muốn kể nghe mọi chuyện. Chúng mình rất mong được gặp bạn trong ngày vui.',
     hero: photo('photo-1537633552985-df8429e8048b'),
     gallery: [photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1591604466107-ec97de577aff', 900), photo('photo-1519741497674-611481863552', 900), photo('photo-1606800052052-a08af7148866', 900)],
+  },
+  'song-hy-contemporary': {
+    id: 'song-hy-contemporary', tier: '159k', label: 'THIỆP HỒNG · SONG HỶ',
+    bride: 'Minh Châu', groom: 'Đình Phúc', date: '2027-10-24', dateLabel: '24 · 10 · 2027', time: '17:30',
+    venue: 'Gốm Sứ Palace', address: '45 Hàng Bông, Hoàn Kiếm', city: 'Hà Nội',
+    story: 'Từ những lần trò chuyện bên tách trà đến một lời hẹn trăm năm, chúng mình đã cùng nhau đi qua nhiều mùa đáng nhớ. Ngày vui sẽ đẹp hơn khi có gia đình và bạn bè cùng chứng kiến.',
+    hero: photo('photo-1591604466107-ec97de577aff'),
+    gallery: [photo('photo-1519741497674-611481863552', 900), photo('photo-1537633552985-df8429e8048b', 900), photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1583939003579-730e3918a45a', 900)],
+  },
+  'riviera-blue': {
+    id: 'riviera-blue', tier: '109k', label: 'A LITTLE LOVE BY THE SEA',
+    bride: 'Hải Yến', groom: 'Trọng Nhân', date: '2027-06-19', dateLabel: '19 · 06 · 2027', time: '16:30',
+    venue: 'La Mer Garden', address: '12 Võ Nguyên Giáp, Sơn Trà', city: 'Đà Nẵng',
+    story: 'Chúng mình gặp nhau trong một chuyến đi và từ đó đã cùng nhau góp nhặt những ngày nhiều nắng. Hẹn gặp bạn bên biển để cùng nâng ly chúc mừng khởi đầu mới.',
+    hero: photo('photo-1537633552985-df8429e8048b'),
+    gallery: [photo('photo-1523438885200-e635ba2c371e', 900), photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1519741497674-611481863552', 900)],
+  },
+  'hoa-moc-editorial': {
+    id: 'hoa-moc-editorial', tier: '159k', label: 'A GARDEN GATHERING',
+    bride: 'Thùy Dương', groom: 'Hoàng Nam', date: '2027-04-10', dateLabel: '10 · 04 · 2027', time: '17:00',
+    venue: 'Mộc Garden House', address: '18 Ngõ 36 Đào Tấn, Ba Đình', city: 'Hà Nội',
+    story: 'Chúng mình yêu những điều mộc mạc: một khu vườn sau mưa, bữa tối kéo dài và câu chuyện chẳng cần vội kết thúc. Thật vui nếu bạn dành buổi chiều này để ở bên chúng mình.',
+    hero: photo('photo-1519225421980-715cb0215aed'),
+    gallery: [photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1606800052052-a08af7148866', 900), photo('photo-1583939003579-730e3918a45a', 900), photo('photo-1591604466107-ec97de577aff', 900)],
+  },
+  'summer-postcard': {
+    id: 'summer-postcard', tier: '199k', label: 'GREETINGS FROM OUR WEDDING',
+    bride: 'Ngọc Mai', groom: 'Anh Khoa', date: '2027-08-08', dateLabel: '08 · 08 · 2027', time: '17:00',
+    venue: 'The Coast Retreat', address: '24 Trần Phú, Nha Trang', city: 'Khánh Hòa',
+    story: 'Chúng mình muốn ngày cưới giống như một chuyến đi mùa hè: đầy nắng, nhiều tiếng cười và có những người mình thương ở bên. Tấm thiệp này là lời nhắn nhỏ, mong bạn nhận lời ghé chơi.',
+    hero: photo('photo-1529636798458-92182e662485'),
+    gallery: [photo('photo-1519741497674-611481863552', 900), photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1523438885200-e635ba2c371e', 900), photo('photo-1519225421980-715cb0215aed', 900)],
   },
 };
 

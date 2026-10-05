@@ -132,6 +132,10 @@ export function Router() {
     '/demo/rose-storybook-219k': <DemoThiep219kThiep1 />,
     '/demo/vietnamese-traditional-219k': <DemoThiep219kTraditional />,
     '/demo/burgundy-cinema-219k': <DemoThiep219kCinema />,
+    '/demo/song-hy-contemporary': <SignatureDemo id="song-hy-contemporary" />,
+    '/demo/riviera-blue': <SignatureDemo id="riviera-blue" />,
+    '/demo/hoa-moc-editorial': <SignatureDemo id="hoa-moc-editorial" />,
+    '/demo/summer-postcard': <SignatureDemo id="summer-postcard" />,
   };
 
   const page = routes[currentRoute] ?? <NotFoundPage />;
