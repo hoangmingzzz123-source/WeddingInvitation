@@ -11,6 +11,7 @@ import {
   Download,
   ExternalLink,
   Heart,
+  ImagePlus,
   Link2,
   MapPin,
   MessageCircleHeart,
@@ -71,6 +72,7 @@ interface InvitationDraft {
   theme: InvitationTheme;
   fontStyle: InvitationFont;
   cover: string;
+  albumPhotos: string[];
   guests: InvitationGuest[];
   rsvpQuestions: InvitationQuestion[];
 }
@@ -93,6 +95,10 @@ const coverOptions = [
   },
 ] as const;
 
+const MAX_EMBEDDED_IMAGE_CHARS = 720_000;
+const MAX_SINGLE_IMAGE_CHARS = 180_000;
+const MAX_IMAGE_FILE_BYTES = 15 * 1024 * 1024;
+
 const themeOptions: Array<{ id: InvitationTheme; name: string; description: string }> = [
   { id: 'champagne', name: 'Champagne', description: 'Ấm áp · Sang trọng' },
   { id: 'blush', name: 'Blush Rose', description: 'Nhẹ nhàng · Lãng mạn' },
@@ -112,6 +118,7 @@ const defaultDraft: InvitationDraft = {
   theme: 'champagne',
   fontStyle: 'editorial',
   cover: coverOptions[0].url,
+  albumPhotos: [],
   guests: [],
   rsvpQuestions: [],
 };
@@ -121,7 +128,7 @@ const creationSteps = [
   { title: 'Thời gian', heading: 'Chọn ngày vui', hint: 'Thêm ngày và giờ để khách mời dễ sắp xếp.' },
   { title: 'Địa điểm', heading: 'Hẹn nhau ở đâu?', hint: 'Cho khách biết tên sảnh tiệc và cách tìm đến nơi.' },
   { title: 'Lời mời', heading: 'Gửi một lời thật riêng', hint: 'Viết lời nhắn theo cách của hai bạn, hoặc chọn một gợi ý có sẵn.' },
-  { title: 'Thiết kế', heading: 'Chọn mẫu và bảng màu', hint: 'Thử màu, kiểu chữ và ảnh bìa. Bạn có thể đổi thiết kế hoặc gói mà không nhập lại thông tin.' },
+  { title: 'Thiết kế', heading: 'Chọn mẫu và bảng màu', hint: 'Thử màu, kiểu chữ, tải ảnh bìa và thêm ảnh album. Bạn có thể đổi thiết kế hoặc gói mà không nhập lại thông tin.' },
   { title: 'Khách mời', heading: 'Chuẩn bị lời mời riêng', hint: 'Thêm tên khách, tạo link cá nhân hóa và chọn thông tin cần hỏi trong RSVP.' },
   { title: 'Rà soát', heading: 'Sẵn sàng gửi lời mời chưa?', hint: 'Kiểm tra lại thông tin một lượt. Bạn vẫn có thể quay lại chỉnh sửa.' },
 ];
@@ -144,8 +151,85 @@ function isInvitationFont(value: unknown): value is InvitationFont {
   return value === 'editorial' || value === 'modern' || value === 'classic';
 }
 
+function isUploadedImage(value: unknown): value is string {
+  return typeof value === 'string'
+    && /^data:image\/(?:jpeg|png|webp);base64,/i.test(value)
+    && value.length <= MAX_SINGLE_IMAGE_CHARS;
+}
+
+function getAlbumPhotoLimit(tier: TemplateTier) {
+  if (tier === '109k') return 10;
+  if (tier === '159k') return 30;
+  return Number.POSITIVE_INFINITY;
+}
+
+function normalizeAlbumPhotos(value: unknown, availableChars: number) {
+  if (!Array.isArray(value)) return [];
+  const photos: string[] = [];
+  let usedChars = 0;
+  for (const photo of value) {
+    if (!isUploadedImage(photo) || usedChars + photo.length > availableChars) continue;
+    photos.push(photo);
+    usedChars += photo.length;
+  }
+  return photos;
+}
+
+function compressInvitationImage(file: File, maxDimension: number) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    return Promise.reject(new Error('Hãy chọn ảnh JPG, PNG hoặc WebP.'));
+  }
+  if (file.size > MAX_IMAGE_FILE_BYTES) {
+    return Promise.reject(new Error('Ảnh gốc cần nhỏ hơn 15 MB.'));
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  return new Promise<string>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+      let resizeScale = scale;
+
+      for (let attempt = 0; attempt < 7; attempt += 1) {
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.naturalWidth * resizeScale));
+        canvas.height = Math.max(1, Math.round(image.naturalHeight * resizeScale));
+        const context = canvas.getContext('2d');
+        if (!context) {
+          reject(new Error('Không thể xử lý ảnh trên trình duyệt này.'));
+          return;
+        }
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        for (const quality of [0.78, 0.68, 0.58]) {
+          const result = canvas.toDataURL('image/jpeg', quality);
+          if (result.length <= MAX_SINGLE_IMAGE_CHARS) {
+            resolve(result);
+            return;
+          }
+        }
+        resizeScale *= 0.82;
+      }
+
+      reject(new Error('Ảnh này quá phức tạp để nén. Hãy thử ảnh khác.'));
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Không thể mở ảnh này. Hãy thử JPG, PNG hoặc WebP.'));
+    };
+    image.src = objectUrl;
+  });
+}
+
 function normalizeDraft(value: Partial<InvitationDraft> | null | undefined): InvitationDraft {
   const allowedQuestions: InvitationQuestion[] = ['transport', 'meal'];
+  const cover = coverOptions.some((option) => option.url === value?.cover)
+    ? value!.cover!
+    : isUploadedImage(value?.cover) ? value!.cover! : defaultDraft.cover;
+  const coverChars = cover.startsWith('data:image/') ? cover.length : 0;
   return {
     ...defaultDraft,
     ...value,
@@ -153,7 +237,8 @@ function normalizeDraft(value: Partial<InvitationDraft> | null | undefined): Inv
     packageTier: isTemplateTier(value?.packageTier) ? value.packageTier : defaultDraft.packageTier,
     theme: isInvitationTheme(value?.theme) ? value.theme : defaultDraft.theme,
     fontStyle: isInvitationFont(value?.fontStyle) ? value.fontStyle : defaultDraft.fontStyle,
-    cover: coverOptions.some((cover) => cover.url === value?.cover) ? value!.cover! : defaultDraft.cover,
+    cover,
+    albumPhotos: normalizeAlbumPhotos(value?.albumPhotos, MAX_EMBEDDED_IMAGE_CHARS - coverChars),
     guests: Array.isArray(value?.guests)
       ? value.guests
         .filter((guest): guest is InvitationGuest => Boolean(guest && typeof guest.id === 'string' && typeof guest.name === 'string'))
@@ -313,7 +398,9 @@ function InvitationPreview({
   const isDiamond = draft.packageTier === '199k';
   const activeQuestions = isPremium ? draft.rsvpQuestions : [];
   const appliedFontStyle = isPremium ? draft.fontStyle : 'editorial';
-  const gallery = coverOptions.map((cover) => cover.url);
+  const albumLimit = getAlbumPhotoLimit(draft.packageTier);
+  const uploadedGallery = draft.albumPhotos.slice(0, albumLimit);
+  const gallery = uploadedGallery.length ? uploadedGallery : coverOptions.map((cover) => cover.url);
   const destination = [draft.venue, draft.address].filter(Boolean).join(', ');
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`;
 
@@ -437,8 +524,8 @@ function InvitationPreview({
           <h3>Một hành trình, nhiều kỷ niệm</h3>
           <p className="generated-invitation__story-copy">Từ ngày đầu gặp gỡ đến lời hẹn trăm năm, mỗi khoảnh khắc đều đáng được lưu giữ.</p>
           <div className="generated-invitation__gallery" aria-label={`Album ảnh, tối đa ${isDiamond ? 'không giới hạn' : '30'} hình`}>
-            {gallery.map((src, index) => (
-              <button key={src} type="button" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
+            {(compact ? gallery.slice(0, 4) : gallery).map((src, index) => (
+              <button key={`${index}-${src.slice(0, 32)}`} type="button" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
                 <img src={src} alt={`Ảnh cưới ${index + 1}`} loading="lazy" />
               </button>
             ))}
@@ -453,8 +540,8 @@ function InvitationPreview({
           <p className="generated-invitation__section-label">OUR ALBUM</p>
           <h3>Những khoảnh khắc của chúng mình</h3>
           <div className="generated-invitation__gallery" aria-label="Album ảnh demo, tối đa 10 hình">
-            {gallery.slice(0, 3).map((src, index) => (
-              <button key={src} type="button" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
+            {(compact ? gallery.slice(0, 3) : gallery).map((src, index) => (
+              <button key={`${index}-${src.slice(0, 32)}`} type="button" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
                 <img src={src} alt={`Ảnh cưới ${index + 1}`} loading="lazy" />
               </button>
             ))}
@@ -465,7 +552,7 @@ function InvitationPreview({
 
       {isDiamond && (
         <section className="generated-invitation__diamond" aria-label="Tính năng gói Diamond">
-          <div className="generated-invitation__video-card" style={{ backgroundImage: `linear-gradient(0deg, rgba(20,18,23,.72), rgba(20,18,23,.08)), url("${gallery[1]}")` }}>
+          <div className="generated-invitation__video-card" style={{ backgroundImage: `linear-gradient(0deg, rgba(20,18,23,.72), rgba(20,18,23,.08)), url("${gallery[1] ?? gallery[0]}")` }}>
             <button type="button" onClick={() => setVideoOpen(true)} aria-label="Mở video cưới demo"><Play fill="currentColor" aria-hidden="true" /></button>
             <span><Video aria-hidden="true" /> VIDEO CƯỚI</span>
           </div>
@@ -624,6 +711,8 @@ export function InvitationCreatorPage() {
   const [newGuestName, setNewGuestName] = useState('');
   const [newGuestGreeting, setNewGuestGreeting] = useState<InvitationGuest['greeting']>('friendly');
   const [guestLinkMessage, setGuestLinkMessage] = useState('');
+  const [imageUploadStatus, setImageUploadStatus] = useState('');
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
 
   useEffect(() => {
     document.title = 'Tự tạo demo thiệp cưới | Wedding Invitation MP';
@@ -641,6 +730,70 @@ export function InvitationCreatorPage() {
   const updateDraft = <Key extends keyof InvitationDraft>(key: Key, value: InvitationDraft[Key]) => {
     setDraft((current) => ({ ...current, [key]: value }));
     if (errors.length) setErrors([]);
+  };
+
+  const uploadCoverPhoto = async (file: File) => {
+    setIsUploadingImages(true);
+    setImageUploadStatus('Đang tối ưu ảnh bìa...');
+    try {
+      const photo = await compressInvitationImage(file, 1600);
+      const albumChars = draft.albumPhotos.reduce((total, item) => total + item.length, 0);
+      if (photo.length + albumChars > MAX_EMBEDDED_IMAGE_CHARS) {
+        throw new Error('Album đang dùng gần hết dung lượng ảnh. Hãy xóa bớt ảnh rồi thử lại.');
+      }
+      updateDraft('cover', photo);
+      setImageUploadStatus('Đã cập nhật ảnh bìa. Ảnh sẽ hiện trong hero và bản xem trước.');
+    } catch (error) {
+      setImageUploadStatus(error instanceof Error ? error.message : 'Không thể tải ảnh lên.');
+    } finally {
+      setIsUploadingImages(false);
+    }
+  };
+
+  const uploadAlbumPhotos = async (files: File[]) => {
+    const photoLimit = getAlbumPhotoLimit(draft.packageTier);
+    const availableCount = Math.max(0, photoLimit - draft.albumPhotos.length);
+    if (!availableCount) {
+      setImageUploadStatus(`Gói này đã đạt giới hạn ${photoLimit} ảnh album.`);
+      return;
+    }
+
+    setIsUploadingImages(true);
+    setImageUploadStatus('Đang tối ưu ảnh album...');
+    try {
+      const currentCoverChars = draft.cover.startsWith('data:image/') ? draft.cover.length : 0;
+      let usedChars = currentCoverChars + draft.albumPhotos.reduce((total, item) => total + item.length, 0);
+      const nextPhotos = [...draft.albumPhotos];
+      const selectedFiles = files.slice(0, availableCount);
+      let skipped = files.length - selectedFiles.length;
+
+      for (const [index, file] of selectedFiles.entries()) {
+        try {
+          const photo = await compressInvitationImage(file, 1200);
+          if (usedChars + photo.length > MAX_EMBEDDED_IMAGE_CHARS) {
+            skipped += selectedFiles.length - index;
+            break;
+          }
+          nextPhotos.push(photo);
+          usedChars += photo.length;
+        } catch {
+          skipped += 1;
+        }
+      }
+
+      const added = nextPhotos.length - draft.albumPhotos.length;
+      if (added) updateDraft('albumPhotos', nextPhotos);
+      setImageUploadStatus(added
+        ? `Đã thêm ${added} ảnh vào album${skipped ? `; ${skipped} ảnh chưa thêm vì giới hạn gói hoặc dung lượng` : ''}.`
+        : 'Chưa thêm ảnh. Có thể đã hết dung lượng dành cho ảnh trong link demo.');
+    } finally {
+      setIsUploadingImages(false);
+    }
+  };
+
+  const removeAlbumPhoto = (index: number) => {
+    updateDraft('albumPhotos', draft.albumPhotos.filter((_, photoIndex) => photoIndex !== index));
+    setImageUploadStatus('Đã xóa ảnh khỏi album.');
   };
 
   const addGuest = () => {
@@ -915,6 +1068,13 @@ export function InvitationCreatorPage() {
 
                 <p className="creator-cover-label">Ảnh bìa</p>
                 <div className="creator-cover-grid">
+                  {draft.cover.startsWith('data:image/') && (
+                    <div className="creator-cover-uploaded">
+                      <img src={draft.cover} alt="Ảnh bìa đã tải lên" />
+                      <span>Ảnh của bạn · đang dùng</span>
+                      <button type="button" onClick={() => updateDraft('cover', coverOptions[0].url)}>Dùng ảnh gợi ý</button>
+                    </div>
+                  )}
                   {coverOptions.map((cover) => (
                     <button
                       type="button"
@@ -928,6 +1088,55 @@ export function InvitationCreatorPage() {
                       {draft.cover === cover.url && <Check aria-hidden="true" />}
                     </button>
                   ))}
+                </div>
+
+                <label className={`creator-image-upload${isUploadingImages ? ' is-disabled' : ''}`}>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={isUploadingImages}
+                    onChange={(event) => {
+                      const file = event.currentTarget.files?.[0];
+                      event.currentTarget.value = '';
+                      if (file) void uploadCoverPhoto(file);
+                    }}
+                  />
+                  <span className="creator-image-upload__icon"><ImagePlus aria-hidden="true" /></span>
+                  <span><strong>{isUploadingImages ? 'Đang xử lý ảnh...' : 'Tải ảnh bìa của bạn'}</strong><small>Ảnh sẽ thay thế hero và hiện ngay trong bản xem trước.</small></span>
+                </label>
+
+                <div className="creator-album-uploader">
+                  <div className="creator-album-uploader__heading">
+                    <div><strong>Ảnh album</strong><span>{draft.albumPhotos.length} ảnh · {Number.isFinite(getAlbumPhotoLimit(draft.packageTier)) ? `tối đa ${getAlbumPhotoLimit(draft.packageTier)}` : 'không giới hạn'} theo gói</span></div>
+                    <label className={`creator-image-upload creator-image-upload--compact${isUploadingImages || draft.albumPhotos.length >= getAlbumPhotoLimit(draft.packageTier) ? ' is-disabled' : ''}`}>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        multiple
+                        disabled={isUploadingImages || draft.albumPhotos.length >= getAlbumPhotoLimit(draft.packageTier)}
+                        onChange={(event) => {
+                          const files = Array.from(event.currentTarget.files ?? []);
+                          event.currentTarget.value = '';
+                          if (files.length) void uploadAlbumPhotos(files);
+                        }}
+                      />
+                      <ImagePlus aria-hidden="true" /><span>Thêm ảnh</span>
+                    </label>
+                  </div>
+                  {draft.albumPhotos.length ? (
+                    <div className="creator-album-thumbnails">
+                      {draft.albumPhotos.map((photo, index) => (
+                        <div key={`${photo.slice(0, 48)}-${index}`}>
+                          <img src={photo} alt={`Ảnh album ${index + 1}`} />
+                          <button type="button" onClick={() => removeAlbumPhoto(index)} aria-label={`Xóa ảnh album ${index + 1}`}><X aria-hidden="true" /></button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="creator-album-empty">Tải ảnh cưới lên để xem chúng xuất hiện ngay trong album thiệp.</p>
+                  )}
+                  {imageUploadStatus && <p className="creator-image-upload-status" role="status" aria-live="polite">{imageUploadStatus}</p>}
+                  <p className="creator-image-upload-status">Ảnh JPG, PNG hoặc WebP · tối đa 15 MB mỗi ảnh · tự nén tổng ảnh tối đa 720 KB cho link demo.</p>
                 </div>
               </>
             )}
@@ -1003,6 +1212,7 @@ export function InvitationCreatorPage() {
                   <div><span>Ngày &amp; giờ</span><strong>{formatWeddingDate(draft.weddingDate)} · {draft.weddingTime || '18:00'}</strong><button type="button" onClick={() => setCurrentStep(1)} aria-label="Sửa ngày và giờ"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Địa điểm</span><strong>{draft.venue || 'Chưa thêm địa điểm'}{draft.address ? ` · ${draft.address}` : ''}</strong><button type="button" onClick={() => setCurrentStep(2)} aria-label="Sửa địa điểm"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Phong cách</span><strong>{themeOptions.find((theme) => theme.id === draft.theme)?.name}</strong><button type="button" onClick={() => setCurrentStep(4)} aria-label="Sửa phong cách"><Pencil aria-hidden="true" /></button></div>
+                  <div><span>Ảnh thiệp</span><strong>{draft.cover.startsWith('data:image/') ? 'Ảnh bìa riêng' : 'Ảnh bìa gợi ý'} · {draft.albumPhotos.length ? `${draft.albumPhotos.length} ảnh album` : 'album gợi ý'}</strong><button type="button" onClick={() => setCurrentStep(4)} aria-label="Sửa ảnh bìa và album"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Gói thiệp</span><strong>{getWeddingPackage(draft.packageTier).name} · {getWeddingPackage(draft.packageTier).price}</strong><button type="button" onClick={() => document.querySelector('.creator-package-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} aria-label="Sửa gói thiệp"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Khách mời</span><strong>{draft.packageTier === '109k' ? 'Link chung' : `${draft.guests.length} lời mời riêng`}</strong><button type="button" onClick={() => setCurrentStep(5)} aria-label="Sửa danh sách khách"><Pencil aria-hidden="true" /></button></div>
                 </div>
