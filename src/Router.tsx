@@ -11,6 +11,10 @@ const HomePage = lazy(() => import('./components/HomePage').then((module) => ({ 
 const TemplatesPage = lazy(() => import('./components/TemplatesPage').then((module) => ({ default: module.TemplatesPage })));
 const InvitationCreatorPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.InvitationCreatorPage })));
 const GeneratedInvitationPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.GeneratedInvitationPage })));
+const CustomerRequestPage = lazy(() => import('./components/CustomerRequestPage').then((module) => ({ default: module.CustomerRequestPage })));
+const PublicDemoPage = lazy(() => import('./components/PublicDemoPage').then((module) => ({ default: module.PublicDemoPage })));
+const AdminLoginPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminLoginPage })));
+const AdminDashboardPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminDashboardPage })));
 const DemoShell = lazy(() => import('./components/DemoShell').then((module) => ({ default: module.DemoShell })));
 const ClassicMinimalist = lazy(() => import('./components/demos/ClassicMinimalist').then((module) => ({ default: module.ClassicMinimalist })));
 const BlushFloral = lazy(() => import('./components/demos/BlushFloral').then((module) => ({ default: module.BlushFloral })));
@@ -79,6 +83,15 @@ export function Router() {
     } else if (currentRoute === '/tao-thiep/preview') {
       title = 'Demo thiệp cưới | Wedding Invitation MP';
       description = 'Bản xem trước thiệp cưới online được cá nhân hóa.';
+    } else if (currentRoute === '/yeu-cau-thiep') {
+      title = 'Gửi yêu cầu làm thiệp | Wedding Invitation MP';
+      description = 'Gửi thông tin ngày cưới để nhận bản demo thiệp online được cá nhân hóa.';
+    } else if (currentRoute.startsWith('/preview/')) {
+      title = 'Bản demo riêng | Wedding Invitation MP';
+      description = 'Bản xem trước thiệp cưới dành riêng cho khách hàng.';
+    } else if (currentRoute.startsWith('/admin')) {
+      title = 'Quản trị | Wedding Invitation MP';
+      description = 'Khu vực quản trị nội bộ.';
     } else if (demoTemplate) {
       title = `${demoTemplate.name} | Mẫu thiệp cưới MP`;
       description = demoTemplate.description;
@@ -99,6 +112,7 @@ export function Router() {
     const isIndexableRoute = currentRoute === '/'
       || currentRoute === '/templates'
       || currentRoute === '/tao-thiep'
+      || currentRoute === '/yeu-cau-thiep'
       || Boolean(demoTemplate);
     updateMeta(
       'meta[name="robots"]',
@@ -112,6 +126,9 @@ export function Router() {
     '/templates': <TemplatesPage />,
     '/tao-thiep': <InvitationCreatorPage />,
     '/tao-thiep/preview': <GeneratedInvitationPage />,
+    '/yeu-cau-thiep': <CustomerRequestPage />,
+    '/admin/login': <AdminLoginPage />,
+    '/admin': <AdminDashboardPage />,
     '/demo/classic-minimalist': <ClassicMinimalist />,
     '/demo/blush-floral': <BlushFloral />,
     '/demo/soft-fade-floral': <SoftFadeFloral />,
@@ -134,7 +151,10 @@ export function Router() {
     '/demo/minimal-elegant-basic': <MinimalElegant />,
   };
 
-  const page = routes[currentRoute] ?? <NotFoundPage />;
+  const previewToken = currentRoute.startsWith('/preview/')
+    ? decodeURIComponent(currentRoute.slice('/preview/'.length))
+    : '';
+  const page = previewToken ? <PublicDemoPage token={previewToken} /> : routes[currentRoute] ?? <NotFoundPage />;
 
   return (
     <Suspense fallback={<RouteLoader />}>

@@ -8,7 +8,7 @@ Website giới thiệu dịch vụ và thư viện mẫu thiệp cưới online,
 - Thư viện mẫu có tìm kiếm, lọc theo gói và responsive trên mobile/desktop.
 - Hơn 20 demo thiệp với nhiều phong cách: tối giản, điện ảnh, truyền thống, Art Deco, 3D.
 - Hỗ trợ cả demo nội bộ và sample website bên ngoài.
-- CTA tạo thiệp có hai luồng: gửi nội dung qua Google Form hoặc tự tạo demo online.
+- CTA tạo thiệp có hai luồng: gửi yêu cầu vào hệ thống quản trị hoặc tự tạo demo online.
 - Studio demo online hỗ trợ xem trước trực tiếp, 3 theme, ảnh cover tuyển chọn, lưu nháp và link chia sẻ.
 - Lazy-load từng demo để giảm bundle tải ban đầu.
 - Tôn trọng thiết lập `prefers-reduced-motion` của người dùng.
@@ -52,6 +52,17 @@ src/
 - `/tao-thiep`: nhập thông tin, chọn phong cách và xem trước theo thời gian thực.
 - `/tao-thiep/preview?data=...`: bản demo có thể chia sẻ bằng link, không cần backend.
 - Bản nháp được lưu trong `localStorage`; dữ liệu chỉ nằm trong URL khi người dùng chủ động tạo link.
+
+## Quản trị khách hàng và demo riêng
+
+Hệ thống có khu vực quản trị nội bộ tại `/admin/login`, dùng Supabase Auth + PostgreSQL RLS để:
+
+- Quản lý khách hàng nhận từ form website hoặc nhập thủ công.
+- Chọn mẫu và tạo link preview riêng có token/hạn dùng.
+- Hiển thị popup xác nhận đây là bản demo trước khi khách xem.
+- Xác nhận khách đặt mẫu và xuất source code thiệp thành file ZIP qua Vercel Function.
+
+Xem hướng dẫn cấu hình tại [`ADMIN_SETUP.md`](./ADMIN_SETUP.md). Không commit `.env.local` hoặc Supabase secret key.
 
 ## Thêm một mẫu mới
 

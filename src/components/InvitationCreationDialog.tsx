@@ -10,8 +10,6 @@ import {
 } from 'lucide-react';
 import { navigateTo } from '../Router';
 
-const REQUEST_FORM_URL = 'https://forms.gle/2qBNf4tHBiq6vavZ6';
-
 interface InvitationCreationLauncherProps {
   children: (
     openOptions: (event?: MouseEvent<HTMLElement>) => void,
@@ -37,7 +35,7 @@ export function InvitationCreationLauncher({
 
   const openRequestForm = () => {
     setIsOpen(false);
-    window.open(REQUEST_FORM_URL, '_blank', 'noopener,noreferrer');
+    navigateTo('/yeu-cau-thiep');
   };
 
   return (
@@ -105,8 +103,8 @@ export function InvitationCreationLauncher({
                       </span>
                       <strong>Điền form như hiện tại</strong>
                       <small>
-                        Gửi nội dung, hình ảnh và yêu cầu chi tiết. Phù hợp khi
-                        bạn đã chọn được gói.
+                        Gửi nội dung và yêu cầu vào hệ thống để đội ngũ tạo link
+                        demo riêng cho bạn.
                       </small>
                     </span>
                     <ArrowRight

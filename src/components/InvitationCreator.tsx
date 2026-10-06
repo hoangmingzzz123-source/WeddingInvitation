@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { navigateTo } from '../Router';
 
-const REQUEST_FORM_URL = 'https://forms.gle/2qBNf4tHBiq6vavZ6';
 const STORAGE_KEY = 'mp-wedding-demo-draft-v1';
 
 type InvitationTheme = 'champagne' | 'blush' | 'emerald';
@@ -405,7 +404,7 @@ export function GeneratedInvitationPage() {
             <li><Check aria-hidden="true" /> RSVP, bản đồ và QR mừng cưới</li>
             <li><Check aria-hidden="true" /> Tên miền và hỗ trợ cá nhân hóa</li>
           </ul>
-          <button type="button" onClick={() => window.open(REQUEST_FORM_URL, '_blank', 'noopener,noreferrer')}>
+          <button type="button" onClick={() => navigateTo('/yeu-cau-thiep')}>
             Điền form để xuất bản <ExternalLink aria-hidden="true" />
           </button>
           <small>Đính kèm link demo này trong form để đội ngũ giữ đúng phong cách bạn đã chọn.</small>
@@ -414,4 +413,3 @@ export function GeneratedInvitationPage() {
     </main>
   );
 }
-
