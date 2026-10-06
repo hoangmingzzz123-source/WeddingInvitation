@@ -70,7 +70,7 @@ export function BloomCrystal3DEnhanced() {
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 100%)' }}>
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} />
 
       {/* 3D Crystal Particles */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -284,7 +284,7 @@ function CoverPage({ onNext }: { onNext: () => void }) {
           </div>
 
           <p className="text-3xl text-white/90" style={{ fontFamily: '"Crimson Text", serif' }}>
-            15 • 03 • 2025
+            13 • 03 • 2027
           </p>
         </motion.div>
 
@@ -388,7 +388,7 @@ function StoryPage({ displayedText, onNext }: { displayedText: string; onNext: (
             { year: '2020', event: 'Gặp Gỡ', icon: '💫' },
             { year: '2021', event: 'Yêu Nhau', icon: '💝' },
             { year: '2024', event: 'Đính Hôn', icon: '💍' },
-            { year: '2025', event: 'Kết Hôn', icon: '💒' },
+            { year: '2027', event: 'Kết Hôn', icon: '💒' },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -564,7 +564,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '🏠',
       title: 'Lễ Gia Tiên',
       time: '07:00 AM',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Tư Gia Nhà Gái',
       address: '123 Nguyễn Huệ, Quận 1, TP.HCM',
     },
@@ -572,7 +572,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '💒',
       title: 'Lễ Thành Hôn',
       time: '11:00 AM',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Nhà Thờ Đức Bà',
       address: '01 Công xã Paris, Quận 1, TP.HCM',
     },
@@ -580,7 +580,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '🎉',
       title: 'Tiệc Cưới',
       time: '18:00 PM',
-      date: '15/03/2025',
+      date: '13/03/2027',
       location: 'Crystal Palace Hotel',
       address: '789 Lê Lợi, Quận 1, TP.HCM',
     },

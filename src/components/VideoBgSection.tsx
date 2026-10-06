@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, X } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { HERO_IMAGES } from '../utils/imageConstants';
 
 interface VideoBgSectionProps {
   title: string;
@@ -26,7 +27,7 @@ export function VideoBgSection({
   bokehColors = ['rgba(194, 155, 67, 0.1)', 'rgba(247, 218, 218, 0.1)'],
   playButtonColor,
   videoUrl = 'https://www.youtube.com/embed/VvkYROIh5qc?si=NzBVHEmRQ-pFrKQ5',
-  thumbnailUrl = 'src/asset/videoCover.png',
+  thumbnailUrl = HERO_IMAGES.banner,
   borderColor = 'border-[#C29B43]/30',
   accentColor = '[#C29B43]',
 }: VideoBgSectionProps) {

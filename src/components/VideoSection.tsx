@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, X } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { HERO_IMAGES } from '../utils/imageConstants';
 
 export function VideoSection() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -54,7 +55,7 @@ export function VideoSection() {
             Xem Video Giới Thiệu
           </h2>
           <p className="text-xl text-[#4A4A4A] max-w-2xl mx-auto ">
-            Khám phá sản phẩm chúng tôi mang lại
+            Khám phá tấm thiệp được cá nhân hóa cho câu chuyện của hai bạn.
           </p>
         </motion.div>
 
@@ -64,12 +65,11 @@ export function VideoSection() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl cursor-pointer group"
-          onClick={() => setIsVideoOpen(true)}
+          className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl group"
         >
           {/* Thumbnail */}
           <ImageWithFallback
-            src="src/asset/videoCover.png"
+            src={HERO_IMAGES.banner}
             alt="Video Preview"
             className="w-full h-full object-cover"
           />
@@ -78,8 +78,11 @@ export function VideoSection() {
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-all" />
 
           {/* Play Button */}
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center"
+          <motion.button
+            type="button"
+            aria-label="Phát video giới thiệu"
+            onClick={() => setIsVideoOpen(true)}
+            className="absolute inset-0 flex cursor-pointer items-center justify-center"
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
           >
@@ -99,7 +102,7 @@ export function VideoSection() {
             >
               <Play className="w-10 h-10 text-white ml-1" fill="white" />
             </motion.div>
-          </motion.div>
+          </motion.button>
         </motion.div>
 
         {/* Video Modal */}
@@ -121,24 +124,21 @@ export function VideoSection() {
               >
                 {/* Close Button */}
                 <button
+                  type="button"
                   onClick={() => setIsVideoOpen(false)}
+                  aria-label="Đóng video"
                   className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm transition-all"
                 >
                   <X className="w-6 h-6 text-white" />
                 </button>
-                <iframe className="w-full h-full"
-                src="https://www.youtube.com/embed/VvkYROIh5qc?si=NzBVHEmRQ-pFrKQ5" 
-                title="YouTube video player" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
-                {/* Video Placeholder */}
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1B2A41] to-[#0F1A2E]">
-                  <div className="text-center text-white space-y-4">
-                    <Play className="w-16 h-16 mx-auto opacity-50" />
-                    <p className="text-xl">Video demo sẽ được chèn vào đây</p>
-                    <p className="text-sm opacity-70">(Sử dụng Youtube embed hoặc MP4)</p>
-                  </div>
-                </div>
+                <iframe
+                  src="https://www.youtube.com/embed/VvkYROIh5qc?si=NzBVHEmRQ-pFrKQ5"
+                  title="Video giới thiệu thiệp cưới online"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
               </motion.div>
             </motion.div>
           )}

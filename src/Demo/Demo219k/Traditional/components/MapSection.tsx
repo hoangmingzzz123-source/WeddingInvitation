@@ -64,57 +64,15 @@ export function MapSection() {
           transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
           className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-[#D4AF37]"
         >
-          {/* Map placeholder with decorative border */}
+          {/* Interactive sample map with decorative border */}
           <div className="relative h-64 md:h-96 bg-gradient-to-br from-[#FBF6EE] to-[#E8DCC8] overflow-hidden">
-            {/* Subtle wave pattern overlay */}
-            <div className="absolute inset-0 opacity-5">
-              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="mapWaves" x="0" y="0" width="200" height="100" patternUnits="userSpaceOnUse">
-                    <path d="M 0 50 Q 50 30 100 50 T 200 50" stroke="#3A2F2F" strokeWidth="1" fill="none" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#mapWaves)" />
-              </svg>
-            </div>
-            
-            {/* Map image with blur-to-clear effect */}
-            <motion.img 
-              src="https://images.unsplash.com/photo-1674970538959-e7475d8d376f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwdmVudWUlMjBlbGVnYW50fGVufDF8fHx8MTc2NzE5ODgyMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-              alt="Wedding venue"
-              className="w-full h-full object-cover opacity-60"
-              initial={{ filter: 'blur(10px)' }}
-              whileInView={{ filter: 'blur(0px)' }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.5, delay: 0.7, ease: "easeOut" }}
+            <iframe
+              className="absolute inset-0 h-full w-full border-0"
+              src="https://maps.google.com/maps?q=123+Le+Loi,+Ben+Nghe,+District+1,+Ho+Chi+Minh+City&output=embed"
+              title="Bản đồ địa điểm mẫu tại Quận 1, Thành phố Hồ Chí Minh"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             />
-            
-            {/* Location pin - gentle drop */}
-            <motion.div
-              initial={{ y: -80, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ 
-                duration: 1.2, 
-                delay: 1.2,
-                ease: [0.34, 1.56, 0.64, 1] // Gentle bounce
-              }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full"
-            >
-              <div className="relative">
-                <motion.div
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <MapPin size={48} className="text-[#8B1E1E] fill-[#8B1E1E] drop-shadow-lg" />
-                </motion.div>
-                <motion.div 
-                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 bg-[#8B1E1E] rounded-full opacity-30 blur-md"
-                  animate={{ scale: [0.8, 1, 0.8], opacity: [0.2, 0.3, 0.2] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </div>
-            </motion.div>
 
             {/* Decorative frame with drawn effect */}
             <motion.div 
@@ -164,7 +122,10 @@ export function MapSection() {
               transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
               className="flex flex-col sm:flex-row gap-4 justify-center relative z-10"
             >
-              <motion.button 
+              <motion.a
+                href="https://www.google.com/maps/search/?api=1&query=123+Le+Loi%2C+Ben+Nghe%2C+District+1%2C+Ho+Chi+Minh+City"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-[#8B1E1E] text-white rounded-lg shadow-md relative overflow-hidden"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -175,9 +136,12 @@ export function MapSection() {
                   transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
                 />
                 <MapPin size={20} />
-                <span>Xem bản đồ</span>
-              </motion.button>
-              <motion.button 
+                <span>Mở bản đồ mẫu</span>
+              </motion.a>
+              <motion.a
+                href="https://www.google.com/maps/dir/?api=1&destination=123+Le+Loi%2C+Ben+Nghe%2C+District+1%2C+Ho+Chi+Minh+City"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-[#D4AF37] text-white rounded-lg shadow-md relative overflow-hidden"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -189,7 +153,7 @@ export function MapSection() {
                 />
                 <Navigation size={20} />
                 <span>Chỉ đường</span>
-              </motion.button>
+              </motion.a>
             </motion.div>
           </div>
         </motion.div>

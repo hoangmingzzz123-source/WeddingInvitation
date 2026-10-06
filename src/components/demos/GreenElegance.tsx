@@ -22,7 +22,7 @@ export function GreenElegance() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E8F5E9] via-[#F1F8E9] to-[#E8F5E9] overflow-hidden relative">
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
       <FloatingParticles theme="green" density="medium" />
 
       {/* Intro Animation */}
@@ -173,7 +173,7 @@ function CoverPage() {
           className="text-2xl text-[#2E7D32]"
           style={{ fontFamily: '"Poppins", sans-serif' }}
         >
-          12 • 12 • 2025
+          11 • 12 • 2027
         </motion.p>
 
         <motion.div
@@ -204,7 +204,7 @@ function StoryPage() {
     { year: '2020', event: 'Lần đầu gặp gỡ', icon: '💚' },
     { year: '2021', event: 'Bắt đầu hẹn hò', icon: '💕' },
     { year: '2023', event: 'Cầu hôn', icon: '💍' },
-    { year: '2025', event: 'Đám cưới', icon: '💐' },
+    { year: '2027', event: 'Đám cưới', icon: '💐' },
   ];
 
   return (
@@ -349,8 +349,7 @@ function DetailsPage() {
             </div>
             <div className="text-sm text-[#558B2F]">
               Nếu bạn muốn gửi lời chúc, vui lòng chuyển khoản:<br />
-              STK: 1234567890 - Ngân hàng ABC<br />
-              Chủ TK: NGUYEN VAN A
+              Thông tin tài khoản sẽ được cập nhật khi cá nhân hóa thiệp.
             </div>
           </motion.div>
 
@@ -370,23 +369,13 @@ function MapPage() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className="min-h-screen flex items-center justify-center p-8"
+      className="min-h-screen flex items-center justify-center px-4 py-16 sm:px-6"
     >
-      <div className="max-w-2xl w-full">
-        <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl space-y-6">
-          <h2 
-            className="text-4xl text-center text-[#1B5E20]"
-            style={{ fontFamily: '"Playfair Display", serif' }}
-          >
-            Bản Đồ Địa Điểm
-          </h2>
-
-          <MapSection
-            address="123 Đường Hoa, Hà Nội"
-            className="w-full h-96"
-          />
-        </motion.div>
-      </div>
+      <MapSection
+        location="Vườn Xuân Green Garden"
+        address="123 Đường Hoa, Hà Nội, Việt Nam"
+        className="!px-0 !py-0"
+      />
     </motion.div>
   );
 }

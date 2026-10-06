@@ -26,7 +26,7 @@ export function ArtDecoRoyal() {
   return (
     <div className="min-h-screen bg-[#1A1A2E] text-white overflow-hidden relative">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Art Deco Pattern Background */}
       <div className="fixed inset-0 opacity-10 pointer-events-none">
@@ -250,7 +250,7 @@ function CoverPage() {
           transition={{ delay: 1.5 }}
           className="text-2xl tracking-wider text-[#C29B43]"
         >
-          25 • 12 • 2025
+          25 • 12 • 2027
         </motion.div>
       </div>
     </section>
@@ -259,7 +259,7 @@ function CoverPage() {
 
 function DetailsPage() {
   const details = [
-    { icon: Calendar, label: 'Date', value: 'Saturday, December 25th, 2025' },
+    { icon: Calendar, label: 'Date', value: 'Saturday, December 25th, 2027' },
     { icon: Clock, label: 'Time', value: '6:00 PM - 10:00 PM' },
     { icon: MapPin, label: 'Venue', value: 'The Grand Ballroom, Royal Hotel' },
   ];
@@ -401,7 +401,12 @@ function MapPage() {
               Find us at The Grand Ballroom, Royal Hotel
             </p>
 
-            <MapSection className="w-full h-96" />
+            <MapSection
+              showHeading={false}
+              className="!px-0 !py-0"
+              location="The Grand Ballroom, Royal Hotel"
+              address="Địa chỉ sẽ được cập nhật"
+            />
           </div>
         </div>
       </motion.div>
@@ -431,7 +436,7 @@ function RSVPPage() {
             </h2>
 
             <p className="text-center text-white/70">
-              Vui lòng xác nhận sự hiện diện của bạn trước ngày 10/12/2025
+              Vui lòng xác nhận sự hiện diện của bạn trước ngày 20/12/2027
             </p>
 
             <Button className="w-full bg-transparent border-2 border-[#C29B43] hover:bg-[#C29B43] text-[#FFD700] hover:text-white py-6 rounded-none transition-all">

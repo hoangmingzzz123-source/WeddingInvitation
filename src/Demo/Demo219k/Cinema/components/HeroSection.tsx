@@ -41,7 +41,7 @@ export function HeroSection() {
             className="text-[#F6F1EB] text-5xl md:text-7xl tracking-[0.15em] mb-8"
             style={{ fontFamily: 'Playfair Display, serif' }}
           >
-            29 • 03 • 2026
+            17 • 04 • 2027
           </motion.h1>
           <br/>
           <motion.div
@@ -101,13 +101,13 @@ export function HeroSection() {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-md aspect-[9/16] bg-[#1C1C1C] rounded-lg overflow-hidden border-2 border-[#C9A24D]"
             >
-              {/* Placeholder for video - replace with actual video embed */}
+              {/* The video slot is intentionally presented as a customization preview. */}
               <div className="w-full h-full flex items-center justify-center text-[#F6F1EB]">
                 <div className="text-center p-8">
                   <Play className="mx-auto mb-4 text-[#C9A24D]" size={48} />
-                  <p style={{ fontFamily: 'Lora, serif' }}>Video trailer will be embedded here</p>
+                  <p style={{ fontFamily: 'Lora, serif' }}>Khung trailer cưới của hai bạn</p>
                   <p className="text-sm text-[#F6F1EB]/60 mt-2" style={{ fontFamily: 'Lora, serif' }}>
-                    (30-45s cinematic wedding trailer)
+                    Video sẽ được cá nhân hóa khi hoàn thiện thiệp
                   </p>
                 </div>
               </div>

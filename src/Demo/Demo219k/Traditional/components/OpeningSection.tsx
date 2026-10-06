@@ -125,11 +125,11 @@ export function OpeningSection() {
         className="text-center relative z-10"
       >
         <div className="flex items-center gap-3 md:gap-4 justify-center" style={{ fontFamily: 'var(--font-family-display)' }}>
-          <span className="text-3xl md:text-4xl text-[#D4AF37]" style={{ fontWeight: 300, letterSpacing: '0.1em' }}>29</span>
+          <span className="text-3xl md:text-4xl text-[#D4AF37]" style={{ fontWeight: 300, letterSpacing: '0.1em' }}>17</span>
           <span className="text-xl md:text-2xl text-[#FBF6EE] opacity-40">·</span>
-          <span className="text-3xl md:text-4xl text-[#D4AF37]" style={{ fontWeight: 300, letterSpacing: '0.1em' }}>03</span>
+          <span className="text-3xl md:text-4xl text-[#D4AF37]" style={{ fontWeight: 300, letterSpacing: '0.1em' }}>04</span>
           <span className="text-xl md:text-2xl text-[#FBF6EE] opacity-40">·</span>
-          <span className="text-3xl md:text-4xl text-[#D4AF37]" style={{ fontWeight: 300, letterSpacing: '0.1em' }}>2026</span>
+          <span className="text-3xl md:text-4xl text-[#D4AF37]" style={{ fontWeight: 300, letterSpacing: '0.1em' }}>2027</span>
         </div>
       </motion.div>
 

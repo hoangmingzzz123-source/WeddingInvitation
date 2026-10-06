@@ -15,7 +15,11 @@ export interface WeddingTemplate {
   realWedding?: boolean;
 }
 
-const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] = [
+type TemplateDetails = Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'> & {
+  thumbnailId?: string;
+};
+
+const templateDetails: TemplateDetails[] = [
   {
     id: 'ha-phuong-hoang-minh-2026',
     name: 'Hà Phương & Hoàng Minh 2026',
@@ -33,8 +37,8 @@ const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] 
     style: 'Cinematic Luxury',
     route: '/demo/luxury-gold-cinematic',
     tier: '159k',
-    features: ['7 trang', 'RSVP', 'QR Code', 'Âm nhạc'],
-    description: 'Thiết kế điện ảnh với ánh vàng tinh tế và chuyển động cao cấp.',
+    features: ['Câu chuyện', 'Album', 'Bản đồ', 'RSVP'],
+    description: 'Bố cục điện ảnh trên nền tối, điểm ánh vàng và hình ảnh giàu cảm xúc.',
     featured: true,
   },
   {
@@ -59,12 +63,13 @@ const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] 
   },
   {
     id: 'art-deco-royal',
-    name: 'Art Deco Royal',
-    style: 'Art Deco',
+    name: 'Olive Garden Editorial',
+    style: 'Botanical Editorial',
     route: '/demo/art-deco-royal',
+    thumbnailId: 'green-elegance',
     tier: '199k',
-    features: ['Art Deco', 'RSVP', 'Âm nhạc', 'Hiệu ứng'],
-    description: 'Họa tiết hình học và sắc vàng hoàng gia đầy ấn tượng.',
+    features: ['Ảnh cưới làm trọng tâm', 'Câu chuyện', 'Video & lưu bút', 'RSVP'],
+    description: 'Chủ đề vườn olive với ảnh vòm, bảng màu ivory–sage và tiện ích Diamond.',
     featured: true,
   },
   {
@@ -88,13 +93,57 @@ const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] 
     featured: true,
   },
   {
+    id: 'song-hy-contemporary',
+    name: 'Song Hỷ Đương Đại',
+    style: 'Vietnamese Contemporary',
+    route: '/demo/song-hy-contemporary',
+    thumbnailId: 'vietnamese-traditional',
+    tier: '159k',
+    features: ['Dấu ấn Song Hỷ', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
+    description: 'Giấy ngà, sắc đỏ son và biểu tượng Song Hỷ được tiết chế theo phong cách hiện đại.',
+    featured: true,
+  },
+  {
+    id: 'riviera-blue',
+    name: 'Riviera Blue',
+    style: 'Mediterranean Editorial',
+    route: '/demo/riviera-blue',
+    thumbnailId: 'romantic-watercolor',
+    tier: '109k',
+    features: ['Xanh Riviera', 'Thông tin lễ cưới', 'Album cơ bản', 'RSVP'],
+    description: 'Thiệp xanh biển thanh thoát, gợi không khí tiệc cưới bên bờ Địa Trung Hải.',
+    featured: true,
+  },
+  {
+    id: 'hoa-moc-editorial',
+    name: 'Hoa Mộc Editorial',
+    style: 'Soft Botanical',
+    route: '/demo/hoa-moc-editorial',
+    thumbnailId: 'green-elegance',
+    tier: '159k',
+    features: ['Hoa lá tối giản', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
+    description: 'Sắc đào phấn và xanh lá dịu, kết hợp bố cục tạp chí dành cho tiệc cưới sân vườn.',
+    featured: true,
+  },
+  {
+    id: 'summer-postcard',
+    name: 'Summer Postcard',
+    style: 'Destination Postcard',
+    route: '/demo/summer-postcard',
+    thumbnailId: 'tropical-sunset',
+    tier: '199k',
+    features: ['Thiệp phong cách postcard', 'Album & video', 'Mừng cưới demo', 'Sổ lưu bút'],
+    description: 'Một tấm bưu thiếp mùa hè kể chuyện ngày cưới bằng ảnh, video và lời chúc.',
+    featured: true,
+  },
+  {
     id: 'bloom-crystal-3d',
     name: 'Bloom Crystal 3D',
     style: '3D Crystal',
     route: '/demo/bloom-crystal-3d',
     tier: '199k',
-    features: ['3D', 'Parallax', 'Album'],
-    description: 'Hoa pha lê và hiệu ứng chiều sâu tạo nên trải nghiệm thị giác nổi bật.',
+    features: ['Album', 'Video cưới', 'Mừng cưới demo', 'Sổ lưu bút'],
+    description: 'Khung ảnh vòm, sắc tím pha lê và các tiện ích tương tác của gói Diamond.',
   },
   {
     id: 'bloom-crystal-3d-basic',
@@ -111,7 +160,7 @@ const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] 
     style: 'Modern Dark',
     route: '/demo/modern-dark-blue',
     tier: '109k',
-    features: ['Dark theme', 'Hiện đại', 'Responsive'],
+    features: ['Navy', 'Album cơ bản', 'Bản đồ', 'RSVP'],
     description: 'Tông xanh navy hiện đại, mạnh mẽ nhưng vẫn thanh lịch.',
   },
   {
@@ -120,8 +169,8 @@ const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] 
     style: 'Luxury Minimal',
     route: '/demo/minimal-elegant',
     tier: '199k',
-    features: ['Tối giản', 'Album', 'Chuyển động'],
-    description: 'Khoảng trắng rộng và typography tinh tế theo phong cách editorial.',
+    features: ['Tối giản', 'Video cưới', 'Album', 'Sổ lưu bút'],
+    description: 'Khoảng trắng rộng, typography editorial và trải nghiệm Diamond đầy đủ.',
   },
   {
     id: 'minimal-elegant-basic',
@@ -206,20 +255,54 @@ const templateDetails: Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'>[] 
   },
   {
     id: 'art-deco-royal-basic',
-    name: 'Art Deco Royal Basic',
-    style: 'Art Deco',
+    name: 'Olive Garden Editorial · Essential',
+    style: 'Botanical Editorial',
     route: '/demo/art-deco-royal-basic',
+    thumbnailId: 'green-elegance',
     tier: '159k',
-    features: ['Art Deco', 'Trang nhã'],
-    description: 'Phiên bản tinh gọn của phong cách Art Deco hoàng gia.',
+    features: ['Ảnh cưới làm trọng tâm', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
+    description: 'Phiên bản tinh gọn theo phong cách vườn olive, có chuyện tình yêu và album.',
+  },
+  {
+    id: 'rose-storybook-219k',
+    name: 'Rose Storybook',
+    style: 'Romantic Rose',
+    route: '/demo/rose-storybook-219k',
+    thumbnailId: 'blush-floral',
+    tier: '199k',
+    features: ['Câu chuyện tình yêu', 'Album', 'Video cưới', 'RSVP'],
+    description: 'Thiệp tông hồng kể câu chuyện tình yêu qua album, video và lời mời dự tiệc.',
+  },
+  {
+    id: 'vietnamese-traditional-219k',
+    name: 'Nét Việt Truyền Thống',
+    style: 'Vietnamese Heritage',
+    route: '/demo/vietnamese-traditional-219k',
+    thumbnailId: 'vietnamese-traditional',
+    tier: '199k',
+    features: ['Song Hỷ', 'Bản đồ', 'Mừng cưới QR', 'Lời chúc'],
+    description: 'Sắc đỏ và vàng trang trọng, kết hợp nghi thức cưới Việt cùng tiện ích khách mời.',
+  },
+  {
+    id: 'burgundy-cinema-219k',
+    name: 'Burgundy Cinema',
+    style: 'Cinematic Romance',
+    route: '/demo/burgundy-cinema-219k',
+    thumbnailId: 'luxury-gold-cinematic',
+    tier: '199k',
+    features: ['Mở thiệp điện ảnh', 'Album & video', 'Guestbook', 'RSVP'],
+    description: 'Trải nghiệm màu đỏ burgundy như một thước phim, với album, guestbook và RSVP.',
   },
 ];
 
-export const weddingTemplates: WeddingTemplate[] = templateDetails.map((template) => ({
-  ...template,
-  thumbnail: `/images/templates/${template.id}-800.webp`,
-  thumbnailSrcSet: `/images/templates/${template.id}-480.webp 480w, /images/templates/${template.id}-800.webp 800w`,
-}));
+export const weddingTemplates: WeddingTemplate[] = templateDetails.map((template) => {
+  const { thumbnailId = template.id, ...details } = template;
+  return {
+    ...details,
+    thumbnail: `/images/templates/${thumbnailId}-800.webp`,
+    thumbnailSrcSet: `/images/templates/${thumbnailId}-480.webp 480w, /images/templates/${thumbnailId}-800.webp 800w`,
+  };
+});
 
 export const templateTierLabels: Record<TemplateTier, string> = {
   '109k': 'Gói 109K',

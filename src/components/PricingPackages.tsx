@@ -2,61 +2,14 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Check, Crown, Flower2, Diamond } from 'lucide-react';
+import { Check, Crown, Diamond, Flower2 } from 'lucide-react';
+import { weddingPackages } from '../data/packages';
 
-const packages = [
-  {
-    name: 'Basic Elegant',
-    price: '109.000đ',
-    color: '#F8E7EA',
-    icon: Flower2,
-    features: [
-      '01 trang thiệp đơn giản',
-      'Tối đa 10 hình ảnh',
-      'Form xác nhận khách mời cơ bản',
-      'Bản đồ Google Maps',
-      'Hiệu ứng nhẹ nhàng',
-      'Nhạc nền có sẵn',
-      'Tùy chỉnh màu sắc cơ bản',
-      'Chia sẻ qua link & QR',
-    ],
-    popular: false,
-  },
-  {
-    name: 'Premium Interactive',
-    price: '159.000đ',
-    color: '#E7EDF7',
-    icon: Crown,
-    features: [
-      '03 trang thiệp đầy đủ',
-      'Tối đa 30 hình ảnh',
-      'Form xác nhận khách mời nâng cao + Email',
-      'Hiệu ứng hoạt hình nâng cao',
-      'Upload nhạc nền riêng',
-      'Nút chia sẻ Zalo/Messenger',
-      'Thiết kế theo chủ đề',
-      'Tùy chỉnh font chữ',
-    ],
-    popular: true,
-  },
-  {
-    name: 'Diamond Premium',
-    price: '199.000đ',
-    color: '#FFF4D3',
-    icon: Diamond,
-    features: [
-      '05 trang thiệp cao cấp',
-      'Album ảnh không giới hạn',
-      'Video cưới nhúng',
-      'Mừng cưới online - QR Banking',
-      'Guestbook với sticker',
-      'Hiệu ứng 3D & Animation',
-      'Thiết kế concept riêng',
-      'Cá nhân hóa hoàn toàn',
-    ],
-    popular: false,
-  },
-];
+const packageIcons = {
+  '109k': Flower2,
+  '159k': Crown,
+  '199k': Diamond,
+} as const;
 
 export function PricingPackages() {
   return (
@@ -83,11 +36,11 @@ export function PricingPackages() {
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {packages.map((pkg, index) => {
-            const Icon = pkg.icon;
+          {weddingPackages.map((pkg, index) => {
+            const Icon = packageIcons[pkg.id];
             return (
               <motion.div
-                key={pkg.name}
+                key={pkg.id}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -133,6 +86,8 @@ export function PricingPackages() {
                   {pkg.name}
                 </h3>
 
+                <p className="pricing-package-summary">{pkg.summary}</p>
+
                 {/* Price Badge */}
                 <div className="flex justify-center mb-6">
                   <div className="bg-white px-6 py-2 rounded-full shadow-md">
@@ -164,10 +119,7 @@ export function PricingPackages() {
                 >
                   <Button
                     onClick={() => {
-                      // Extract price and convert to filter format (199.000đ -> 199k)
-                      const priceNum = pkg.price.replace(/[^\d]/g, '').slice(0, 3);
-                      // Set hash to trigger filter
-                      window.location.hash = `#templates-filter-${priceNum}k`;
+                      window.location.hash = `#templates-filter-${pkg.id}`;
                       // Scroll to templates section
                       setTimeout(() => {
                         document.getElementById('templates')?.scrollIntoView({ 

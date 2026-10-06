@@ -44,7 +44,7 @@ export function SoftFadeFloral() {
     {
       image: "https://images.unsplash.com/photo-1738800076744-c37b80b37d31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920",
       title: "Lễ Cưới",
-      subtitle: "15 • 03 • 2025",
+      subtitle: "13 • 03 • 2027",
       caption: "Hãy đến chung vui cùng chúng mình trong ngày trọng đại nhất đời",
     },
   ];
@@ -70,7 +70,7 @@ export function SoftFadeFloral() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#F8F0E8] to-[#E8F4F8] relative overflow-hidden">
       {/* Music Player - 159K Package */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Floral Border Decoration - Left */}
       <div className="fixed left-0 top-0 bottom-0 w-32 opacity-20 pointer-events-none">
@@ -374,7 +374,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
             <div className="space-y-4 text-center text-[#5D4037] font-medium">
               <p className="flex items-center justify-center gap-2">
                 <Calendar className="w-5 h-5 text-[#C29B43]" />
-                <span>Thứ Bảy, 15 tháng 3, 2025</span>
+                <span>Thứ Bảy, 13 tháng 3, 2027</span>
               </p>
               <p className="flex items-center justify-center gap-2">
                 <Clock className="w-5 h-5 text-[#C29B43]" />
@@ -402,7 +402,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
             <div className="space-y-4 text-center text-[#5D4037] font-medium">
               <p className="flex items-center justify-center gap-2">
                 <Calendar className="w-5 h-5 text-[#C29B43]" />
-                <span>Thứ Bảy, 15 tháng 3, 2025</span>
+                <span>Thứ Bảy, 13 tháng 3, 2027</span>
               </p>
               <p className="flex items-center justify-center gap-2">
                 <Clock className="w-5 h-5 text-[#C29B43]" />

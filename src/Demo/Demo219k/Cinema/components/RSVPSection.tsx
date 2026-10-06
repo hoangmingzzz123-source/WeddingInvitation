@@ -274,7 +274,7 @@ export function RSVPSection() {
               </motion.button>
 
               <p className="text-[#5A1E2A]/60 text-sm text-center mt-8 tracking-[0.05em]" style={{ fontFamily: 'Lora, serif' }}>
-                Vui lòng xác nhận trước ngày 15.03.2026
+                Vui lòng xác nhận trước ngày 03.04.2027
               </p>
             </motion.form>
             ) : (

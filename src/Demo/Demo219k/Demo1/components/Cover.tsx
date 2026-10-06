@@ -98,7 +98,7 @@ export function Cover() {
           className="mb-12"
         >
           <div className="inline-block border-t-2 border-b-2 border-white/40 py-4 px-8 backdrop-blur-sm bg-white/5 rounded-lg">
-            <p className="text-2xl md:text-3xl font-serif font-light">15.06.2025</p>
+            <p className="text-2xl md:text-3xl font-serif font-light">17.04.2027</p>
           </div>
         </motion.div>
 

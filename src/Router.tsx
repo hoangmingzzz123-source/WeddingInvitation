@@ -16,22 +16,19 @@ const PublicDemoPage = lazy(() => import('./components/PublicDemoPage').then((mo
 const AdminLoginPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminLoginPage })));
 const AdminDashboardPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminDashboardPage })));
 const DemoShell = lazy(() => import('./components/DemoShell').then((module) => ({ default: module.DemoShell })));
+const SignatureDemo = lazy(() => import('./components/demos/SignatureDemos').then((module) => ({ default: module.SignatureDemo })));
 const ClassicMinimalist = lazy(() => import('./components/demos/ClassicMinimalist').then((module) => ({ default: module.ClassicMinimalist })));
 const BlushFloral = lazy(() => import('./components/demos/BlushFloral').then((module) => ({ default: module.BlushFloral })));
-const BlushFloralEnhanced = lazy(() => import('./components/demos/BlushFloralEnhanced').then((module) => ({ default: module.BlushFloralEnhanced })));
 const BloomCrystal3D = lazy(() => import('./components/demos/BloomCrystal3D').then((module) => ({ default: module.BloomCrystal3D })));
-const BloomCrystal3DEnhanced = lazy(() => import('./components/demos/BloomCrystal3DEnhanced').then((module) => ({ default: module.BloomCrystal3DEnhanced })));
 const SoftFadeFloral = lazy(() => import('./components/demos/SoftFadeFloral').then((module) => ({ default: module.SoftFadeFloral })));
 const MinimalSlideClean = lazy(() => import('./components/demos/MinimalSlideClean').then((module) => ({ default: module.MinimalSlideClean })));
-const LuxuryGoldCinematic = lazy(() => import('./components/demos/LuxuryGoldCinematic').then((module) => ({ default: module.LuxuryGoldCinematic })));
-const LuxuryGoldCinematicEnhanced = lazy(() => import('./components/demos/LuxuryGoldCinematicEnhanced').then((module) => ({ default: module.LuxuryGoldCinematicEnhanced })));
-const ArtDecoRoyal = lazy(() => import('./components/demos/ArtDecoRoyal').then((module) => ({ default: module.ArtDecoRoyal })));
+const RomanticWatercolor = lazy(() => import('./components/demos/RomanticWatercolor').then((module) => ({ default: module.RomanticWatercolor })));
+const TropicalSunset = lazy(() => import('./components/demos/TropicalSunset').then((module) => ({ default: module.TropicalSunset })));
 const VintageGrain = lazy(() => import('./components/demos/VintageGrain').then((module) => ({ default: module.VintageGrain })));
 const GreenElegance = lazy(() => import('./components/demos/GreenElegance').then((module) => ({ default: module.GreenElegance })));
 const CinematicLoveStory = lazy(() => import('./components/demos/CinematicLoveStory').then((module) => ({ default: module.CinematicLoveStory })));
 const CinematicLoveStoryEnhanced = lazy(() => import('./components/demos/CinematicLoveStoryEnhanced').then((module) => ({ default: module.CinematicLoveStoryEnhanced })));
 const MinimalElegant = lazy(() => import('./components/demos/MinimalElegant').then((module) => ({ default: module.MinimalElegant })));
-const MinimalElegantEnhanced = lazy(() => import('./components/demos/MinimalElegantEnhanced').then((module) => ({ default: module.MinimalElegantEnhanced })));
 const VietnameseTraditionalEnhanced = lazy(() => import('./components/demos/VietnameseTraditionalEnhanced').then((module) => ({ default: module.VietnameseTraditionalEnhanced })));
 const DemoThiep219kThiep1 = lazy(() => import('./Demo/Demo219k/Demo1/App'));
 const DemoThiep219kTraditional = lazy(() => import('./Demo/Demo219k/Traditional/App'));
@@ -133,22 +130,29 @@ export function Router() {
     '/demo/blush-floral': <BlushFloral />,
     '/demo/soft-fade-floral': <SoftFadeFloral />,
     '/demo/minimal-slide-clean': <MinimalSlideClean />,
-    '/demo/modern-dark-blue': <BlushFloralEnhanced />,
-    '/demo/luxury-gold-frame': <LuxuryGoldCinematic />,
-    '/demo/luxury-gold-cinematic': <LuxuryGoldCinematicEnhanced />,
+    '/demo/modern-dark-blue': <SignatureDemo id="modern-dark-blue" />,
+    '/demo/luxury-gold-frame': <SignatureDemo id="luxury-gold-frame" />,
+    '/demo/luxury-gold-cinematic': <SignatureDemo id="luxury-gold-cinematic" />,
     '/demo/vintage-film': <CinematicLoveStoryEnhanced />,
-    '/demo/romantic-watercolor': <VietnameseTraditionalEnhanced />,
-    '/demo/bloom-crystal-3d': <BloomCrystal3DEnhanced />,
-    '/demo/tropical-sunset': <DemoThiep219kThiep1 />,
-    '/demo/art-deco-royal': <DemoThiep219kCinema />,
+    '/demo/romantic-watercolor': <RomanticWatercolor />,
+    '/demo/bloom-crystal-3d': <SignatureDemo id="bloom-crystal-3d" />,
+    '/demo/tropical-sunset': <TropicalSunset />,
+    '/demo/art-deco-royal': <SignatureDemo id="art-deco-royal" />,
     '/demo/vintage-grain': <VintageGrain />,
     '/demo/green-elegance': <GreenElegance />,
     '/demo/cinematic-love-story': <CinematicLoveStory />,
-    '/demo/minimal-elegant': <MinimalElegantEnhanced />,
-    '/demo/vietnamese-traditional': <DemoThiep219kTraditional />,
+    '/demo/minimal-elegant': <SignatureDemo id="minimal-elegant" />,
+    '/demo/vietnamese-traditional': <VietnameseTraditionalEnhanced />,
     '/demo/bloom-crystal-3d-basic': <BloomCrystal3D />,
-    '/demo/art-deco-royal-basic': <ArtDecoRoyal />,
+    '/demo/art-deco-royal-basic': <SignatureDemo id="art-deco-royal-basic" />,
     '/demo/minimal-elegant-basic': <MinimalElegant />,
+    '/demo/rose-storybook-219k': <DemoThiep219kThiep1 />,
+    '/demo/vietnamese-traditional-219k': <DemoThiep219kTraditional />,
+    '/demo/burgundy-cinema-219k': <DemoThiep219kCinema />,
+    '/demo/song-hy-contemporary': <SignatureDemo id="song-hy-contemporary" />,
+    '/demo/riviera-blue': <SignatureDemo id="riviera-blue" />,
+    '/demo/hoa-moc-editorial': <SignatureDemo id="hoa-moc-editorial" />,
+    '/demo/summer-postcard': <SignatureDemo id="summer-postcard" />,
   };
 
   const previewToken = currentRoute.startsWith('/preview/')

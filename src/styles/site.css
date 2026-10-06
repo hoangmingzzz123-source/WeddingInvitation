@@ -1015,6 +1015,250 @@ body {
   min-height: 100vh;
 }
 
+.tropical-demo {
+  --tropical-ink: #203630;
+  --tropical-deep: #172a27;
+  --tropical-paper: #f8f4ec;
+  --tropical-sand: #e9dfcb;
+  --tropical-terracotta: #bc7054;
+  --tropical-mist: #dfd8c9;
+  overflow: hidden;
+  color: var(--tropical-ink);
+  background: var(--tropical-paper);
+  font-family: "Poppins", sans-serif;
+}
+
+.pricing-package-summary {
+  max-width: 19rem;
+  min-height: 3rem;
+  margin: .25rem auto 1.25rem;
+  color: #596274;
+  text-align: center;
+  font: 400 .72rem/1.65 "Poppins", sans-serif;
+}
+
+.demo-shell :is(.fixed.top-4.left-4, .fixed.top-6.left-6, .fixed.top-8.left-8):has(svg.lucide-house) {
+  display: none !important;
+}
+
+.demo-shell :is(.fixed.top-6.right-6, .fixed.top-8.right-8) {
+  top: 5.7rem !important;
+}
+
+.tropical-demo :where(h1, h2, h3, p, figure) { margin: 0; }
+.tropical-demo :where(a, button, input, select, textarea) { font: inherit; }
+.tropical-demo :where(a, button) { -webkit-tap-highlight-color: transparent; }
+.tropical-demo :where(h1, h2, h3, .tropical-footer > p) { font-family: "Playfair Display", Georgia, serif; font-weight: 400; }
+.tropical-demo :where(h1 i, h2 i, .tropical-footer i) { color: var(--tropical-terracotta); font-weight: 400; }
+
+.tropical-nav {
+  position: absolute;
+  top: 5.6rem;
+  left: 50%;
+  z-index: 20;
+  display: grid;
+  width: min(calc(100% - 4rem), 83rem);
+  height: 4.4rem;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  transform: translateX(-50%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.23);
+  color: #fff;
+}
+
+.tropical-nav a { color: inherit; text-decoration: none; }
+.tropical-nav__brand { font: 500 1.45rem/1 "Playfair Display", Georgia, serif; letter-spacing: 0.03em; }
+.tropical-nav__brand span { margin-inline: 0.16rem; color: #e1ad7c; font-size: 0.95em; }
+.tropical-nav > div { display: flex; gap: clamp(1rem, 2.5vw, 2.6rem); }
+.tropical-nav > div a { color: rgba(255,255,255,.76); font-size: .68rem; letter-spacing: .08em; transition: color .2s ease; }
+.tropical-nav > div a:hover { color: #fff; }
+.tropical-nav__invite { justify-self: end; display: inline-flex; align-items: center; gap: .4rem; font-size: .65rem; letter-spacing: .04em; }
+.tropical-nav__invite svg { width: .9rem; height: .9rem; }
+
+.tropical-cover {
+  position: relative;
+  display: grid;
+  min-height: max(54rem, 100svh);
+  padding: 11.5rem max(8vw, calc((100vw - 83rem) / 2)) 5.5rem;
+  overflow: hidden;
+  grid-template-columns: 1fr .86fr;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 79% 18%, rgba(230, 160, 105, .23), transparent 31rem),
+    linear-gradient(119deg, #293e38 0%, #243833 45%, #172a27 100%);
+}
+
+.tropical-cover::before { position: absolute; inset: 0; content: ""; opacity: .22; background: repeating-linear-gradient(90deg, transparent 0 11.2rem, rgba(255,255,255,.035) 11.25rem 11.3rem); pointer-events: none; }
+.tropical-cover__copy, .tropical-cover__photo-wrap { position: relative; z-index: 2; }
+.tropical-cover__copy { max-width: 39rem; padding-block: 2.5rem; }
+.tropical-kicker { display: flex; align-items: center; gap: .55rem; color: var(--tropical-terracotta); font-size: .65rem; font-weight: 600; letter-spacing: .18em; line-height: 1.5; text-transform: uppercase; }
+.tropical-kicker svg { width: .95rem; height: .95rem; }
+.tropical-cover .tropical-kicker { color: #e4b587; }
+.tropical-cover__eyebrow { margin-top: 3.3rem !important; color: rgba(255,255,255,.7); font-size: .62rem; letter-spacing: .24em; }
+.tropical-cover h1 { margin-top: 1.1rem; font-size: clamp(5.2rem, 9vw, 9.5rem); line-height: .84; letter-spacing: -.07em; }
+.tropical-cover h1 i { display: inline-block; margin: 0 .18rem; color: #e6b484; font-size: .61em; }
+.tropical-cover__description { max-width: 27rem; margin-top: 1.65rem !important; color: rgba(255,255,255,.72); font-size: .9rem; line-height: 1.9; }
+.tropical-cover__date { display: flex; width: min(100%, 20rem); margin-top: 2rem; padding-block: 1.05rem; border-top: 1px solid rgba(255,255,255,.3); border-bottom: 1px solid rgba(255,255,255,.3); flex-direction: column; gap: .36rem; }
+.tropical-cover__date > span { color: rgba(255,255,255,.64); font-size: .52rem; letter-spacing: .17em; }
+.tropical-cover__date strong { display: flex; align-items: center; gap: .7rem; font: 400 2.2rem/1 "Playfair Display", Georgia, serif; }
+.tropical-cover__date strong small { color: #e6b484; font: 500 .62rem/1 "Poppins", sans-serif; letter-spacing: .16em; }
+.tropical-link { display: inline-flex; margin-top: 1.6rem; align-items: center; gap: .65rem; color: #f5e7d6; font-size: .67rem; letter-spacing: .06em; text-decoration: none; }
+.tropical-link svg { width: 1rem; height: 1rem; }
+.tropical-cover__photo-wrap { width: min(100%, 31rem); justify-self: end; }
+.tropical-cover__photo-frame { height: min(68vh, 40rem); min-height: 29rem; padding: .6rem; border: 1px solid rgba(238, 207, 170, .62); transform: rotate(2deg); }
+.tropical-cover__photo { width: 100%; height: 100%; object-fit: cover; object-position: center 38%; filter: saturate(.82); }
+.tropical-cover__caption { display: block; margin-top: 1.05rem; color: rgba(255,255,255,.62); text-align: right; font-size: .5rem; letter-spacing: .19em; }
+.tropical-cover__seal { position: absolute; right: auto; bottom: 3.1rem; left: -2.7rem; display: grid; width: 5.4rem; height: 5.4rem; border: 1px solid rgba(255,255,255,.72); border-radius: 50%; color: #fff; background: #bd7053; font: 500 1.35rem/1 "Playfair Display", Georgia, serif; place-items: center; }
+.tropical-cover__seal span { padding-inline: .05rem; color: #f2c9a1; font-size: .8em; }
+.tropical-cover__sun { position: absolute; top: 30%; right: 21%; display: grid; width: clamp(9rem, 19vw, 19rem); aspect-ratio: 1; border-radius: 50%; background: linear-gradient(145deg, rgba(234,174,127,.82), rgba(185,103,78,.18)); filter: blur(.2px); place-items: center; }
+.tropical-cover__sun svg { width: 100%; height: 100%; padding: 36%; color: rgba(255,255,255,.32); stroke-width: .7; }
+.tropical-cover__bottom { position: absolute; bottom: 1.7rem; left: max(8vw, calc((100vw - 83rem) / 2)); display: flex; align-items: center; gap: .7rem; color: rgba(255,255,255,.5); font-size: .48rem; letter-spacing: .16em; }
+.tropical-cover__bottom i { display: block; width: 3rem; height: 1px; background: rgba(255,255,255,.5); }
+
+.tropical-story { display: grid; max-width: 83rem; margin-inline: auto; padding: 8.5rem 4rem; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(3rem, 8vw, 9rem); }
+.tropical-story__image { position: relative; height: 38rem; padding: 0 2.1rem 2rem 0; }
+.tropical-story__image::after { position: absolute; right: 0; bottom: 0; width: 62%; height: 55%; border: 1px solid #c28a6d; content: ""; }
+.tropical-story__photo { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.tropical-story__image-tag { position: absolute; bottom: 1.2rem; left: 1.3rem; z-index: 2; color: #fff; font-size: .5rem; letter-spacing: .16em; text-shadow: 0 2px 15px #111; }
+.tropical-story__copy { max-width: 34rem; padding-block: 2rem; }
+.tropical-story__copy h2, .tropical-heading h2, .tropical-rsvp h2, .tropical-gift h2 { margin-top: 1.2rem; color: var(--tropical-ink); font-size: clamp(2.7rem, 4.7vw, 4.8rem); line-height: 1.05; letter-spacing: -.05em; }
+.tropical-story__copy p:not(.tropical-kicker) { max-width: 31rem; margin-top: 1.2rem; color: #65736c; font-size: .84rem; line-height: 2; }
+.tropical-story__signature { display: flex; margin-top: 2rem; align-items: center; gap: .5rem; color: #455e51; font: italic 1.6rem/1 "Playfair Display", Georgia, serif; }
+.tropical-story__signature span { color: var(--tropical-terracotta); font-size: 1.2rem; }
+
+.tropical-gallery { padding: 7.5rem 1.5rem 8.5rem; background: #f0e9dc; }
+.tropical-heading { max-width: 52rem; margin: 0 auto 3.7rem; text-align: center; }
+.tropical-heading .tropical-kicker { justify-content: center; }
+.tropical-heading h2 { margin-top: .8rem; font-size: clamp(2.8rem, 5.6vw, 5rem); }
+.tropical-heading > span { display: block; margin-top: .9rem; color: #77817a; font-size: .82rem; line-height: 1.8; }
+.tropical-gallery__grid { display: grid; width: min(100%, 75rem); margin-inline: auto; grid-template-columns: 1.2fr .8fr 1fr; grid-template-rows: 15rem 15rem; gap: 1.15rem; }
+.tropical-gallery__item { position: relative; min-width: 0; overflow: hidden; background: #d4cbb9; }
+.tropical-gallery__item--1 { grid-row: span 2; }
+.tropical-gallery__item--2 { grid-column: span 2; }
+.tropical-gallery__item--3 { grid-column: 2; }
+.tropical-gallery__item--4 { grid-column: 3; }
+.tropical-gallery__photo { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.tropical-gallery__item:hover .tropical-gallery__photo { transform: scale(1.045); }
+.tropical-gallery__item figcaption { position: absolute; bottom: .85rem; left: 1rem; color: #fff; font-size: .48rem; letter-spacing: .16em; text-shadow: 0 2px 12px rgba(0,0,0,.55); }
+.tropical-gallery__note { display: none; }
+
+.tropical-details { padding: 8rem 1.5rem; color: #fff; background: var(--tropical-deep); }
+.tropical-details__inner { width: min(100%, 76rem); margin-inline: auto; }
+.tropical-heading--light h2 { color: #fff; }
+.tropical-heading--light > span { color: rgba(255,255,255,.62); }
+.tropical-heading--light .tropical-kicker { color: #dfad83; }
+.tropical-event-grid { display: grid; margin-top: 4rem; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.3rem; }
+.tropical-event { position: relative; padding: 2.3rem clamp(1.4rem, 4vw, 3rem); border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.035); }
+.tropical-event__number { position: absolute; top: 1.25rem; right: 1.4rem; color: rgba(255,255,255,.28); font: 400 1.8rem/1 "Playfair Display", Georgia, serif; }
+.tropical-event > p { color: #dfad83; font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; }
+.tropical-event h3 { margin-top: 1rem; font-size: clamp(1.8rem, 3vw, 2.5rem); }
+.tropical-event__date { display: flex; margin-top: .8rem; align-items: center; gap: .5rem; color: rgba(255,255,255,.7); font-size: .7rem; }
+.tropical-event__date svg, .tropical-event__place > svg { width: 1rem; height: 1rem; flex: 0 0 auto; color: #dfad83; }
+.tropical-event__place { display: flex; margin-top: 2rem; padding-top: 1.3rem; border-top: 1px solid rgba(255,255,255,.13); align-items: flex-start; gap: .7rem; }
+.tropical-event__place span { display: grid; gap: .35rem; }
+.tropical-event__place strong { font-size: .85rem; font-weight: 500; }
+.tropical-event__place small { color: rgba(255,255,255,.57); font-size: .68rem; line-height: 1.7; }
+.tropical-event > a { display: inline-flex; margin-top: 1.5rem; align-items: center; gap: .45rem; color: #edc49e; font-size: .67rem; text-decoration: none; }
+.tropical-event > a svg { width: .9rem; height: .9rem; }
+.tropical-details__note { display: flex; margin-top: 1.7rem; justify-content: center; align-items: center; gap: .6rem; color: rgba(255,255,255,.64); font-size: .66rem; text-align: center; }
+.tropical-details__note svg { width: .9rem; height: .9rem; color: #dfad83; }
+
+.tropical-gift { padding: 7.5rem 1.5rem; background: #e8d6c5; }
+.tropical-gift__card { width: min(100%, 50rem); margin-inline: auto; padding: clamp(2rem, 6vw, 4.4rem); border: 1px solid rgba(91,68,51,.2); text-align: center; background: rgba(255,255,255,.35); }
+.tropical-gift__icon { display: grid; width: 3.4rem; height: 3.4rem; margin: 0 auto 1.3rem; border: 1px solid rgba(188,112,84,.45); border-radius: 50%; color: var(--tropical-terracotta); place-items: center; }
+.tropical-gift__icon svg { width: 1.35rem; height: 1.35rem; }
+.tropical-gift__card .tropical-kicker { justify-content: center; }
+.tropical-gift h2 { font-size: clamp(2.5rem, 4.5vw, 4rem); }
+.tropical-gift__card > p:not(.tropical-kicker) { max-width: 36rem; margin: 1rem auto 0; color: #68736c; font-size: .78rem; line-height: 1.9; }
+.tropical-gift__sample { display: flex; width: min(100%, 24rem); margin: 2rem auto 0; padding: 1rem 1.15rem; border: 1px dashed rgba(99,91,76,.38); align-items: center; gap: .8rem; text-align: left; background: rgba(255,255,255,.48); }
+.tropical-gift__sample > svg { width: 1.2rem; height: 1.2rem; color: var(--tropical-terracotta); }
+.tropical-gift__sample span { display: grid; gap: .25rem; }
+.tropical-gift__sample strong { color: #455e51; font-size: .7rem; font-weight: 600; }
+.tropical-gift__sample small { color: #7b8179; font-size: .58rem; line-height: 1.5; }
+
+.tropical-rsvp { display: grid; padding: 8rem max(8vw, calc((100vw - 76rem) / 2)); grid-template-columns: .9fr 1.1fr; align-items: center; gap: clamp(3rem, 8vw, 8rem); }
+.tropical-rsvp__intro { position: relative; padding-block: 1rem; }
+.tropical-rsvp__intro h2 { font-size: clamp(3.3rem, 5.8vw, 5.5rem); }
+.tropical-rsvp__intro > p:not(.tropical-kicker) { max-width: 23rem; margin-top: 1rem; color: #788179; font-size: .79rem; line-height: 1.9; }
+.tropical-rsvp__date { display: flex; width: 5.8rem; height: 5.8rem; margin-top: 2.1rem; border: 1px solid #c9a78f; border-radius: 50%; align-items: center; justify-content: center; gap: .2rem; color: #40574c; font: 400 1.5rem/1 "Playfair Display", Georgia, serif; }
+.tropical-rsvp__date span { color: var(--tropical-terracotta); font: 600 .52rem/1 "Poppins", sans-serif; letter-spacing: .09em; writing-mode: vertical-rl; }
+.tropical-rsvp__form-wrap { padding: clamp(1.5rem, 4vw, 3rem); border: 1px solid rgba(32,54,48,.15); background: rgba(255,255,255,.53); }
+.tropical-form { display: grid; gap: 1.15rem; }
+.tropical-form label { display: grid; gap: .48rem; color: #53645b; font-size: .65rem; font-weight: 500; letter-spacing: .04em; }
+.tropical-form :where(input, select, textarea) { width: 100%; min-height: 3.2rem; padding: .75rem .85rem; border: 1px solid #dedbd2; border-radius: 0; outline: none; color: #293a32; background: #fffdfa; font-size: .74rem; }
+.tropical-form textarea { resize: vertical; }
+.tropical-form :where(input, select, textarea):focus { border-color: #9b7964; box-shadow: 0 0 0 3px rgba(188,112,84,.1); }
+.tropical-form button { display: flex; min-height: 3.2rem; padding-inline: 1rem; border: 0; align-items: center; justify-content: center; gap: .55rem; color: white; background: var(--tropical-ink); cursor: pointer; font-size: .69rem; letter-spacing: .06em; transition: background .2s ease; }
+.tropical-form button:hover { background: #40594c; }
+.tropical-form button svg { width: 1rem; height: 1rem; }
+.tropical-form > small { color: #858b82; font-size: .56rem; text-align: center; }
+.tropical-success { min-height: 18rem; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
+.tropical-success > span { display: grid; width: 3rem; height: 3rem; border-radius: 50%; color: #fff; background: #55705d; place-items: center; }
+.tropical-success > span svg { width: 1.3rem; height: 1.3rem; }
+.tropical-success h3 { margin-top: 1.1rem; color: #314c40; font-size: 2rem; }
+.tropical-success p { max-width: 21rem; margin-top: .6rem; color: #748078; font-size: .75rem; line-height: 1.8; }
+
+.tropical-wishes { padding: 7rem 1.5rem 8rem; background: #f0e9dc; }
+.tropical-wishes .tropical-heading { margin-bottom: 2rem; }
+.tropical-wishes__form { display: flex; width: min(100%, 38rem); margin-inline: auto; border-bottom: 1px solid #acb0a5; }
+.tropical-wishes__form input { width: 100%; min-width: 0; padding: .9rem .3rem; border: 0; outline: 0; color: var(--tropical-ink); background: transparent; font-size: .75rem; }
+.tropical-wishes__form button { display: grid; width: 3rem; border: 0; color: var(--tropical-ink); background: transparent; cursor: pointer; place-items: center; }
+.tropical-wishes__form button:disabled { color: #aeb4ac; cursor: not-allowed; }
+.tropical-wishes__form button svg { width: 1.05rem; height: 1.05rem; }
+.tropical-wishes__hint { margin-top: .65rem !important; color: #7e887f; font-size: .58rem; text-align: center; }
+.tropical-wishes__list { display: grid; width: min(100%, 58rem); margin: 2.8rem auto 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.tropical-wishes__list article { position: relative; min-height: 9rem; padding: 1.5rem 1.6rem 1.2rem; background: rgba(255,255,255,.65); }
+.tropical-wishes__list article > span { position: absolute; top: .3rem; left: 1rem; color: #c58569; font: 400 2.7rem/1 "Playfair Display", Georgia, serif; }
+.tropical-wishes__list article p { margin-top: 1rem; color: #536159; font: italic 1rem/1.7 "Playfair Display", Georgia, serif; }
+.tropical-wishes__list article small { display: block; margin-top: .85rem; color: #9a715f; font-size: .57rem; letter-spacing: .08em; text-transform: uppercase; }
+
+.tropical-footer { position: relative; display: flex; min-height: 20rem; padding: 4rem 1.5rem; align-items: center; justify-content: center; flex-direction: column; color: #fff; background: var(--tropical-deep); text-align: center; }
+.tropical-footer > span { color: rgba(255,255,255,.57); font-size: .55rem; letter-spacing: .19em; }
+.tropical-footer > p { margin: .8rem 0 !important; font-size: clamp(3rem, 6vw, 5rem); letter-spacing: -.04em; }
+.tropical-footer i { color: #e3ad83; }
+.tropical-footer > a { display: grid; width: 2.6rem; height: 2.6rem; margin-top: 1.4rem; border: 1px solid rgba(255,255,255,.42); border-radius: 50%; color: #fff; place-items: center; transform: rotate(180deg); }
+.tropical-footer > a svg { width: 1rem; height: 1rem; }
+
+@media (max-width: 760px) {
+  .tropical-nav { top: 5.1rem; width: calc(100% - 2rem); height: 3.7rem; grid-template-columns: auto 1fr; }
+  .tropical-nav > div { display: none; }
+  .tropical-nav__invite { font-size: .59rem; }
+  .tropical-cover { min-height: auto; padding: 10.2rem 1.5rem 5rem; grid-template-columns: 1fr; gap: 2.6rem; }
+  .tropical-cover__copy { padding-block: 1rem 0; }
+  .tropical-cover__eyebrow { margin-top: 2.2rem !important; }
+  .tropical-cover h1 { font-size: clamp(5rem, 19vw, 7.5rem); }
+  .tropical-cover__photo-wrap { width: min(86%, 26rem); justify-self: center; }
+  .tropical-cover__photo-frame { height: min(105vw, 33rem); min-height: 23rem; }
+  .tropical-cover__seal { bottom: 2.6rem; left: -1.8rem; width: 4.4rem; height: 4.4rem; font-size: 1.15rem; }
+  .tropical-cover__sun { top: 45%; right: -7%; width: 12rem; }
+  .tropical-cover__bottom { left: 1.5rem; }
+  .tropical-story { padding: 5rem 1.5rem; grid-template-columns: 1fr; gap: 2.7rem; }
+  .tropical-story__image { height: min(105vw, 34rem); padding: 0 1.2rem 1.2rem 0; }
+  .tropical-story__copy { padding-block: 0; }
+  .tropical-story__copy h2, .tropical-heading h2, .tropical-rsvp h2, .tropical-gift h2 { font-size: clamp(2.55rem, 11vw, 4.2rem); }
+  .tropical-gallery, .tropical-details, .tropical-gift, .tropical-wishes { padding-block: 5rem; }
+  .tropical-gallery__grid { grid-template-columns: 1fr 1fr; grid-template-rows: 12rem 12rem 12rem; gap: .7rem; }
+  .tropical-gallery__item--1 { grid-row: span 2; }
+  .tropical-gallery__item--2 { grid-column: 2; }
+  .tropical-gallery__item--3 { grid-column: 1; }
+  .tropical-gallery__item--4 { grid-column: 2; }
+  .tropical-gallery__item figcaption { bottom: .55rem; left: .6rem; font-size: .4rem; }
+  .tropical-event-grid { margin-top: 2.5rem; grid-template-columns: 1fr; }
+  .tropical-event { padding: 1.7rem 1.3rem; }
+  .tropical-details__note { align-items: flex-start; line-height: 1.7; }
+  .tropical-details__note svg { flex: 0 0 auto; margin-top: .2rem; }
+  .tropical-rsvp { padding: 5rem 1.5rem; grid-template-columns: 1fr; gap: 2rem; }
+  .tropical-rsvp__date { width: 4.9rem; height: 4.9rem; margin-top: 1.3rem; }
+  .tropical-rsvp__form-wrap { padding: 1.2rem; }
+  .tropical-wishes__list { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tropical-demo *, .tropical-demo *::before, .tropical-demo *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+
 .demo-shell .demo-music-control {
   top: calc(5.75rem + env(safe-area-inset-top, 0px));
   right: 1rem;
@@ -1457,6 +1701,67 @@ body {
   font: 400 0.83rem/1.8 "Poppins", sans-serif;
 }
 
+.demo-overview__package {
+  margin-top: 1.15rem;
+  padding: 1rem 1.1rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--demo-accent) 32%, #dfe2e6);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--demo-accent) 7%, #fff);
+}
+
+.demo-overview__package > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+}
+
+.demo-overview__package > div span {
+  color: #697285;
+  font: 600 .58rem/1.3 "Poppins", sans-serif;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.demo-overview__package > div strong {
+  color: #222d40;
+  font: 600 1rem/1 "Poppins", sans-serif;
+  white-space: nowrap;
+}
+
+.demo-overview__package > p {
+  margin: .85rem 0 .45rem;
+  color: #444e60;
+  font: 600 .65rem/1.4 "Poppins", sans-serif;
+}
+
+.demo-overview__package ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: 1fr 1fr;
+  gap: .4rem .9rem;
+  list-style: none;
+}
+
+.demo-overview__package li {
+  position: relative;
+  padding-left: .85rem;
+  color: #626d7f;
+  font: 400 .59rem/1.55 "Poppins", sans-serif;
+}
+
+.demo-overview__package li::before {
+  position: absolute;
+  top: .37rem;
+  left: 0;
+  width: .3rem;
+  height: .3rem;
+  border-radius: 50%;
+  background: var(--demo-accent);
+  content: "";
+}
+
 .demo-overview__features {
   display: flex;
   gap: 0.5rem;
@@ -1681,6 +1986,11 @@ body {
   display: block;
   color: var(--mp-ink);
   font: 600 1.6rem/1 "Playfair Display", serif;
+}
+
+.creator-progress strong small {
+  color: #8a92a0;
+  font: 500 0.8rem/1 "Poppins", sans-serif;
 }
 
 .creator-progress > span {
@@ -1954,6 +2264,154 @@ body {
   background: var(--mp-gold-dark);
 }
 
+.creator-cover-uploaded {
+  min-width: 0;
+  overflow: hidden;
+  border: 2px solid var(--mp-gold);
+  border-radius: 0.9rem;
+  background: #fff;
+}
+
+.creator-cover-uploaded > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.creator-cover-uploaded > span {
+  display: block;
+  padding: 0.55rem 0.5rem 0.2rem;
+  color: var(--mp-ink);
+  font: 500 0.63rem/1.3 "Poppins", sans-serif;
+}
+
+.creator-cover-uploaded > button {
+  margin: 0.2rem 0.5rem 0.55rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: #8a6935;
+  background: transparent;
+  font: 500 0.58rem/1.4 "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.creator-image-upload {
+  position: relative;
+  display: flex;
+  min-height: 4.6rem;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px dashed rgba(145, 112, 57, 0.42);
+  border-radius: 0.9rem;
+  color: #495366;
+  background: rgba(255, 255, 255, 0.64);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.creator-image-upload:hover,
+.creator-image-upload:focus-within {
+  border-color: #a77d3e;
+  background: #fff;
+}
+
+.creator-image-upload.is-disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.creator-image-upload input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.creator-image-upload__icon {
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  flex: 0 0 auto;
+  border-radius: 0.75rem;
+  color: #91703d;
+  background: #f4efe4;
+  place-items: center;
+}
+
+.creator-image-upload__icon svg,
+.creator-image-upload--compact > svg { width: 1.1rem; height: 1.1rem; }
+
+.creator-image-upload > span:last-child { display: grid; gap: 0.2rem; }
+.creator-image-upload strong { color: #354052; font: 600 0.68rem/1.3 "Poppins", sans-serif; }
+.creator-image-upload small { color: #79818d; font: 400 0.58rem/1.45 "Poppins", sans-serif; }
+
+.creator-album-uploader {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(35, 43, 58, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.creator-album-uploader__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.creator-album-uploader__heading > div { display: grid; gap: 0.25rem; }
+.creator-album-uploader__heading strong { color: #344052; font: 600 0.7rem/1.3 "Poppins", sans-serif; }
+.creator-album-uploader__heading > div > span { color: #818894; font: 400 0.56rem/1.4 "Poppins", sans-serif; }
+
+.creator-image-upload--compact {
+  display: inline-flex;
+  min-height: 2.4rem;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0 0.7rem;
+  border-style: solid;
+  border-color: rgba(145, 112, 57, 0.24);
+  border-radius: 999px;
+  color: #80653d;
+  background: #fff;
+  font: 500 0.58rem/1 "Poppins", sans-serif;
+}
+
+.creator-image-upload--compact.is-disabled { cursor: not-allowed; }
+
+.creator-album-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.creator-album-thumbnails > div {
+  position: relative;
+  width: 4.1rem;
+  height: 4.1rem;
+  overflow: hidden;
+  border-radius: 0.65rem;
+  background: #e8e4dc;
+}
+
+.creator-album-thumbnails img { width: 100%; height: 100%; object-fit: cover; }
+.creator-album-thumbnails button { position: absolute; top: 0.25rem; right: 0.25rem; display: grid; width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; color: #fff; background: rgba(25, 30, 38, 0.72); cursor: pointer; place-items: center; }
+.creator-album-thumbnails button svg { width: 0.75rem; height: 0.75rem; }
+.creator-album-empty,
+.creator-image-upload-status { margin: 0.65rem 0 0; color: #858b94; font: 400 0.56rem/1.5 "Poppins", sans-serif; }
+.creator-image-upload-status { color: #737e8a; }
+
 .creator-generate {
   display: inline-flex;
   align-items: center;
@@ -2049,6 +2507,229 @@ body {
   color: #8a92a0;
   text-align: center;
   font: 400 0.65rem/1.5 "Poppins", sans-serif;
+}
+
+.creator-stepper {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.4rem;
+  border: 1px solid rgba(23, 32, 51, 0.09);
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.creator-stepper button {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 0.45rem;
+  padding: 0.55rem 0.45rem;
+  border-radius: 0.75rem;
+  color: #737b88;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.creator-stepper button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.creator-stepper button.is-current {
+  color: var(--mp-ink);
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(23, 32, 51, 0.09);
+}
+
+.creator-stepper button.is-complete {
+  color: #46745b;
+}
+
+.creator-stepper button > i {
+  display: grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(23, 32, 51, 0.14);
+  border-radius: 50%;
+  font: 600 0.58rem/1 "Poppins", sans-serif;
+  font-style: normal;
+  place-items: center;
+}
+
+.creator-stepper button.is-current > i {
+  border-color: var(--mp-gold-dark);
+  color: #fff;
+  background: var(--mp-gold-dark);
+}
+
+.creator-stepper button.is-complete > i {
+  border-color: rgba(70, 116, 91, 0.25);
+  background: rgba(70, 116, 91, 0.09);
+}
+
+.creator-stepper button > i svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.creator-stepper button > span {
+  overflow: hidden;
+  font: 500 0.61rem/1.2 "Poppins", sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.creator-step-hint {
+  margin: 0.55rem 0 1.25rem;
+  color: var(--mp-muted);
+  font: 400 0.75rem/1.6 "Poppins", sans-serif;
+}
+
+.creator-field-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0;
+  color: #7a8290;
+  font: 400 0.7rem/1.55 "Poppins", sans-serif;
+}
+
+.creator-field-note svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: 0 0 auto;
+  color: var(--mp-gold-dark);
+}
+
+.creator-message-ideas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.creator-message-ideas > span {
+  width: 100%;
+  color: #7a8290;
+  font: 500 0.65rem/1.3 "Poppins", sans-serif;
+}
+
+.creator-message-ideas button {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 999px;
+  color: #596273;
+  background: #fff;
+  font: 500 0.65rem/1 "Poppins", sans-serif;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.creator-message-ideas button:hover {
+  border-color: rgba(184, 138, 50, 0.5);
+  background: #fffaf0;
+}
+
+.creator-review {
+  overflow: hidden;
+  border: 1px solid rgba(23, 32, 51, 0.1);
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.creator-review > img {
+  display: block;
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+}
+
+.creator-review__rows {
+  display: grid;
+  padding: 0.4rem 1rem;
+}
+
+.creator-review__rows > div {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(23, 32, 51, 0.08);
+}
+
+.creator-review__rows span {
+  color: #7a8290;
+  font: 400 0.62rem/1.4 "Poppins", sans-serif;
+}
+
+.creator-review__rows strong {
+  overflow-wrap: anywhere;
+  color: var(--mp-ink);
+  font: 500 0.68rem/1.5 "Poppins", sans-serif;
+}
+
+.creator-review__rows button {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: var(--mp-gold-dark);
+  background: #fbf5e9;
+  cursor: pointer;
+  place-items: center;
+}
+
+.creator-review__rows button svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.creator-review blockquote {
+  margin: 0;
+  padding: 1rem 1.2rem 1.2rem;
+  color: var(--mp-muted);
+  font: 400 0.8rem/1.7 "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+}
+
+.creator-step-actions {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.creator-step-actions .creator-generate {
+  width: 100%;
+  padding-inline: 1.2rem;
+}
+
+.creator-step-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.8rem;
+  padding: 0 1rem;
+  border: 1px solid rgba(23, 32, 51, 0.13);
+  border-radius: 1rem;
+  color: #596273;
+  background: rgba(255, 255, 255, 0.8);
+  font: 500 0.75rem/1 "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.creator-step-back:disabled {
+  visibility: hidden;
+}
+
+.creator-step-back svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .generated-invitation {
@@ -2740,6 +3421,21 @@ body {
     gap: 1rem;
   }
 
+  .creator-preview-panel {
+    grid-row: 2;
+  }
+
+  .creator-stepper {
+    grid-template-columns: repeat(6, minmax(5rem, 1fr));
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .creator-review__rows > div {
+    grid-template-columns: 5.5rem minmax(0, 1fr) auto;
+    gap: 0.45rem;
+  }
+
   .creator-fields--two,
   .creator-theme-grid,
   .creator-cover-grid {
@@ -2756,14 +3452,27 @@ body {
     align-items: center;
   }
 
+  .creator-cover-uploaded {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    align-items: center;
+  }
+
   .creator-cover-grid img {
     height: 5rem;
     aspect-ratio: auto;
   }
 
+  .creator-cover-uploaded > img { grid-row: span 2; height: 5rem; }
+
   .creator-cover-grid span {
     padding: 0.75rem;
   }
+
+  .creator-cover-uploaded > span { padding: 0.6rem 0.75rem 0.15rem; }
+  .creator-cover-uploaded > button { display: inline-flex; width: max-content; grid-template-columns: none; justify-self: start; margin: 0.1rem 0.75rem 0.6rem; }
+
+  .creator-album-uploader__heading { align-items: flex-start; }
 
   .preview-toolbar {
     grid-template-columns: auto 1fr auto;
@@ -2802,6 +3511,501 @@ body {
   .generated-invitation__details {
     grid-template-columns: 1fr;
   }
+}
+
+/* Signature invitation concepts: one visual language per design. */
+.signature-demo {
+  --sig-paper: #f8f6f0;
+  --sig-ink: #29271f;
+  --sig-muted: #767268;
+  --sig-accent: #a58a55;
+  --sig-line: rgba(53, 46, 32, 0.15);
+  min-height: 100vh;
+  overflow: clip;
+  color: var(--sig-ink);
+  background: var(--sig-paper);
+  font-family: "Poppins", sans-serif;
+}
+
+.signature-demo--art-deco-royal-basic {
+  --sig-paper: #f6f5ef;
+  --sig-ink: #263b32;
+  --sig-muted: #778277;
+  --sig-accent: #9b8057;
+  --sig-line: rgba(60, 81, 66, 0.16);
+}
+
+.signature-demo--luxury-gold-cinematic {
+  --sig-paper: #11100f;
+  --sig-ink: #f7f2e8;
+  --sig-muted: #b9b1a4;
+  --sig-accent: #d2b36b;
+  --sig-line: rgba(210, 179, 107, 0.22);
+}
+
+.signature-demo--luxury-gold-frame {
+  --sig-paper: #faf8f3;
+  --sig-ink: #302b22;
+  --sig-muted: #797267;
+  --sig-accent: #a58a55;
+  --sig-line: rgba(104, 82, 43, 0.2);
+}
+
+.signature-demo--bloom-crystal-3d {
+  --sig-paper: #f7f3fa;
+  --sig-ink: #322d3d;
+  --sig-muted: #777181;
+  --sig-accent: #8b76aa;
+  --sig-line: rgba(117, 93, 151, 0.18);
+}
+
+.signature-demo--modern-dark-blue {
+  --sig-paper: #f3f6fa;
+  --sig-ink: #18263c;
+  --sig-muted: #69788e;
+  --sig-accent: #92bce8;
+  --sig-line: rgba(39, 67, 103, 0.16);
+}
+
+.signature-demo--minimal-elegant {
+  --sig-paper: #f8f7f2;
+  --sig-ink: #282b27;
+  --sig-muted: #73786f;
+  --sig-accent: #7c8977;
+  --sig-line: rgba(54, 65, 53, 0.16);
+}
+
+.demo-page-content .signature-demo :where(a, button, input, select) {
+  font: inherit;
+}
+
+.demo-page-content .signature-demo :where(h1, h2, h3, p) {
+  max-width: none;
+  margin: 0;
+  text-shadow: none !important;
+  text-wrap: pretty;
+}
+
+.demo-page-content .signature-demo h1,
+.demo-page-content .signature-demo h2,
+.demo-page-content .signature-demo h3 {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.035em;
+}
+
+.demo-page-content .signature-demo section {
+  min-height: auto !important;
+  padding: clamp(4.5rem, 9vw, 8rem) clamp(1rem, 5vw, 5.5rem) !important;
+  scroll-margin-top: 7rem;
+}
+
+.demo-page-content .signature-demo section.signature-hero {
+  min-height: min(880px, 100svh) !important;
+  padding-top: clamp(3.5rem, 8vh, 6.5rem) !important;
+  padding-bottom: clamp(4rem, 7vh, 6rem) !important;
+}
+
+.demo-page-content .signature-demo .signature-hero h1 {
+  max-width: none;
+  color: var(--sig-ink);
+  font-size: clamp(3.7rem, 7.4vw, 7.7rem) !important;
+  line-height: 0.84 !important;
+  letter-spacing: -0.065em;
+  text-shadow: none !important;
+}
+
+.demo-page-content .signature-demo .signature-hero h1 span {
+  display: block;
+}
+
+.demo-page-content .signature-demo .signature-hero h1 i {
+  display: block;
+  margin: 0.35rem 0;
+  color: var(--sig-accent);
+  font: 400 0.48em/1 "Cormorant Garamond", Georgia, serif;
+}
+
+.demo-page-content .signature-demo .signature-story h2,
+.demo-page-content .signature-demo .signature-section-heading h2,
+.demo-page-content .signature-demo .signature-venue h2,
+.demo-page-content .signature-demo .signature-rsvp h2,
+.demo-page-content .signature-demo .signature-extras h2 {
+  color: var(--sig-ink);
+  font-size: clamp(2.6rem, 5vw, 4.8rem) !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.055em;
+}
+
+.signature-nav {
+  position: sticky;
+  top: 5.25rem;
+  z-index: 40;
+  display: grid;
+  width: min(calc(100% - 2rem), 76rem);
+  min-height: 4.3rem;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  margin: 5.35rem auto 0;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--sig-line);
+  border-radius: 999px;
+  color: var(--sig-ink);
+  background: color-mix(in srgb, var(--sig-paper) 92%, transparent);
+  box-shadow: 0 12px 32px rgba(16, 18, 22, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.signature-nav a { color: inherit; text-decoration: none; }
+.signature-nav__monogram {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+  justify-self: start;
+  color: var(--sig-accent) !important;
+  font: 500 1.3rem/1 "Cormorant Garamond", Georgia, serif !important;
+}
+.signature-nav__monogram i { font-size: 0.75em; }
+.signature-nav__links { display: flex; align-items: center; gap: clamp(1rem, 3vw, 2.6rem); }
+.signature-nav__links a { color: var(--sig-muted); font-size: 0.68rem !important; transition: color 180ms ease; }
+.signature-nav__links a:hover { color: var(--sig-ink); }
+.signature-nav__rsvp {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.35rem;
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  color: #fff !important;
+  background: var(--sig-ink);
+  font-size: 0.67rem !important;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+.signature-nav__rsvp:hover { transform: translateY(-1px); opacity: 0.88; }
+.signature-nav__rsvp svg { width: 0.85rem; height: 0.85rem; }
+
+.signature-hero {
+  position: relative;
+  display: grid;
+  align-items: center;
+  margin-top: -4.3rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+.signature-hero__layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: min(100%, 74rem);
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  align-items: center;
+  gap: clamp(2rem, 7vw, 7rem);
+  margin: 0 auto;
+}
+.signature-hero__image {
+  position: relative;
+  min-height: clamp(23rem, 48vw, 42rem);
+  overflow: hidden;
+  background: #d8d2c4;
+}
+.signature-hero__image img,
+.signature-story__photo img,
+.signature-gallery__grid img,
+.signature-video-card > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.signature-hero__image img { position: absolute; inset: 0; }
+.signature-hero__image-note {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(20, 23, 26, 0.32);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(10px);
+}
+.signature-hero__content { position: relative; z-index: 3; max-width: 36rem; }
+.signature-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--sig-accent);
+  font: 600 0.62rem/1.3 "Poppins", sans-serif !important;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
+}
+.signature-eyebrow::before,
+.signature-eyebrow::after { width: 1.35rem; height: 1px; background: currentColor; content: ''; opacity: 0.65; }
+.signature-hero__content h1 { margin-top: 1.5rem !important; }
+.signature-hero__invitation {
+  margin-top: 1.65rem !important;
+  color: var(--sig-muted);
+  font-size: 0.82rem !important;
+  letter-spacing: 0.025em;
+}
+.signature-hero__date {
+  display: inline-block;
+  margin-top: 1rem !important;
+  color: var(--sig-accent);
+  font-size: 0.75rem !important;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+.signature-hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 2rem; }
+.signature-hero__actions a,
+.signature-venue__actions a {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem;
+  border: 1px solid var(--sig-line);
+  border-radius: 999px;
+  color: var(--sig-ink);
+  text-decoration: none;
+  font-size: 0.66rem !important;
+  transition: transform 180ms ease, background 180ms ease;
+}
+.signature-hero__actions a:first-child,
+.signature-venue__actions a:first-child { color: var(--sig-paper); border-color: var(--sig-ink); background: var(--sig-ink); }
+.signature-hero__actions a:hover,
+.signature-venue__actions a:hover { transform: translateY(-2px); }
+.signature-hero__actions svg,
+.signature-venue__actions svg { width: 0.9rem; height: 0.9rem; }
+.signature-hero__side-note {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 2.2rem;
+  z-index: 3;
+  color: var(--sig-muted);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  writing-mode: vertical-rl;
+}
+.signature-hero__ornament { position: absolute; pointer-events: none; }
+
+.signature-hero--art-deco-royal-basic { color: var(--sig-ink); background: radial-gradient(circle at 12% 15%, rgba(220, 229, 214, .75), transparent 25rem), var(--sig-paper); }
+.signature-hero--art-deco-royal-basic .signature-hero__layout { width: min(100%, 73rem); grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr); text-align: left; }
+.signature-hero--art-deco-royal-basic .signature-hero__image { position: relative; inset: auto; z-index: 0; min-height: clamp(27rem, 48vw, 40rem); border: 1px solid rgba(255,255,255,.75); border-radius: 48% 48% .4rem .4rem; opacity: 1; box-shadow: 0 24px 58px rgba(39, 59, 48, .15); }
+.signature-hero--art-deco-royal-basic .signature-hero__image img { filter: saturate(.78); }
+.signature-hero--art-deco-royal-basic .signature-hero__content { width: min(100%, 40rem); padding: 1rem 0; text-align: left; }
+.signature-hero--art-deco-royal-basic .signature-hero__content h1 { color: var(--sig-ink); font-size: clamp(4.2rem, 8.6vw, 7.2rem) !important; line-height: .82 !important; }
+.signature-hero--art-deco-royal-basic .signature-hero__invitation,
+.signature-hero--art-deco-royal-basic .signature-hero__side-note { color: var(--sig-muted); }
+.signature-hero--art-deco-royal-basic .signature-hero__ornament { top: 13%; right: 5%; z-index: 1; width: 8rem; height: 8rem; border: 1px solid rgba(99, 126, 102, .22); border-radius: 50%; }
+.signature-hero--art-deco-royal-basic .signature-hero__ornament::before { position: absolute; inset: .75rem; border: 1px solid rgba(99, 126, 102, .2); border-radius: 50%; content: ''; }
+.signature-hero--art-deco-royal-basic .signature-hero__ornament::after { position: absolute; top: 50%; left: 50%; width: 3rem; height: 3rem; border: 1px solid rgba(99, 126, 102, .2); border-radius: 50%; content: ''; transform: translate(-50%, -50%); }
+.signature-hero--luxury-gold-cinematic { position: relative; color: #fff; background: #11100f; }
+.signature-hero--luxury-gold-cinematic::after { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(8,8,8,.7), rgba(8,8,8,.16) 58%, rgba(8,8,8,.44)), linear-gradient(0deg, rgba(8,8,8,.68), transparent 65%); content: ''; }
+.signature-hero--luxury-gold-cinematic .signature-hero__layout { z-index: auto; width: 100%; min-height: min(78svh, 48rem); grid-template-columns: 1fr; justify-items: center; text-align: center; }
+.signature-hero--luxury-gold-cinematic .signature-hero__image { position: absolute; inset: 0; z-index: 0; min-height: 100%; }
+.signature-hero--luxury-gold-cinematic .signature-hero__image img { filter: brightness(.58) saturate(.82); }
+.signature-hero--luxury-gold-cinematic .signature-hero__content { width: min(100%, 55rem); padding: 4rem 2rem; }
+.signature-hero--luxury-gold-cinematic .signature-hero__content h1 { color: #fffaf0; font-size: clamp(4.4rem, 10vw, 8.4rem) !important; }
+.signature-hero--luxury-gold-cinematic .signature-hero__invitation,
+.signature-hero--luxury-gold-cinematic .signature-hero__side-note { color: rgba(255,255,255,.76); }
+.signature-hero--luxury-gold-cinematic .signature-hero__image-note { display: none; }
+.signature-hero--luxury-gold-frame .signature-hero__image { border: 1px solid var(--sig-accent); outline: 1px solid color-mix(in srgb, var(--sig-accent) 55%, transparent); outline-offset: 0.55rem; }
+.signature-hero--luxury-gold-frame .signature-hero__image img { filter: saturate(0.78); }
+.signature-hero--luxury-gold-frame .signature-hero__content { padding: 2rem 0; }
+.signature-hero--bloom-crystal-3d { background: radial-gradient(circle at 77% 35%, rgba(203, 183, 232, .42), transparent 24rem), linear-gradient(145deg, #fbf9fd, #f0eaf6); }
+.signature-hero--bloom-crystal-3d .signature-hero__image { border: 8px solid rgba(255,255,255,.56); border-radius: 48% 48% 1.5rem 1.5rem; box-shadow: 0 30px 80px rgba(90, 68, 122, .19); }
+.signature-hero--bloom-crystal-3d .signature-hero__image img { filter: saturate(.78); }
+.signature-hero--bloom-crystal-3d .signature-hero__ornament { top: 17%; right: 9%; width: 8rem; height: 8rem; border: 1px solid rgba(139,118,170,.24); transform: rotate(32deg); }
+.signature-hero--bloom-crystal-3d .signature-hero__ornament::after { position: absolute; inset: 1rem; border: 1px solid rgba(139,118,170,.24); content: ''; transform: rotate(25deg); }
+.signature-hero--modern-dark-blue { color: #fff; background: radial-gradient(circle at 15% 20%, rgba(60, 105, 164, .26), transparent 26rem), #142238; }
+.signature-hero--modern-dark-blue .signature-hero__image { border: 1px solid rgba(177,207,238,.52); box-shadow: 1.1rem 1.1rem 0 rgba(146,188,232,.12); }
+.signature-hero--modern-dark-blue .signature-hero__image img { filter: saturate(.65) contrast(1.05); }
+.signature-hero--modern-dark-blue .signature-hero__content h1 { color: #fff; }
+.signature-hero--modern-dark-blue .signature-hero__invitation,
+.signature-hero--modern-dark-blue .signature-hero__side-note { color: rgba(231,239,248,.7); }
+.signature-hero--modern-dark-blue .signature-hero__actions a { border-color: rgba(255,255,255,.25); color: #fff; }
+.signature-hero--modern-dark-blue .signature-hero__actions a:first-child { color: #142238; border-color: #b9d4f1; background: #b9d4f1; }
+.signature-hero--minimal-elegant .signature-hero__image { min-height: clamp(25rem, 45vw, 37rem); }
+.signature-hero--minimal-elegant .signature-hero__image img { filter: saturate(.55); }
+.signature-hero--minimal-elegant .signature-hero__image-note { color: var(--sig-ink); background: rgba(248,247,242,.82); }
+
+.signature-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, .82fr);
+  align-items: center;
+  gap: clamp(2rem, 8vw, 8rem);
+  width: min(100%, 70rem);
+  margin-inline: auto;
+}
+.signature-story__copy { max-width: 36rem; }
+.signature-story__copy h2 { margin-top: 1.25rem !important; }
+.signature-story__copy h2 em { color: var(--sig-accent); font-weight: 400; }
+.signature-story__copy > p:not(.signature-eyebrow) { margin-top: 1.4rem; color: var(--sig-muted); font-size: 0.86rem; line-height: 1.9; }
+.signature-text-link { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1.5rem; color: var(--sig-ink); text-decoration: none; font-size: .68rem; }
+.signature-text-link svg { width: .9rem; height: .9rem; color: var(--sig-accent); }
+.signature-story__photo { position: relative; height: clamp(23rem, 43vw, 36rem); overflow: hidden; background: #ddd8cc; }
+.signature-story__photo img { position: absolute; inset: 0; }
+.signature-story__photo span { position: absolute; right: 1rem; bottom: 1rem; color: #fff; font: 400 1.25rem/1 "Cormorant Garamond", Georgia, serif; text-shadow: 0 2px 14px rgba(0,0,0,.45); }
+.signature-story__photo i { color: var(--sig-accent); font-style: normal; }
+.signature-demo--bloom-crystal-3d .signature-story__photo { border-radius: 46% 46% 1rem 1rem; }
+.signature-demo--luxury-gold-frame .signature-story__photo { border: 1px solid var(--sig-accent); padding: .5rem; }
+.signature-demo--luxury-gold-frame .signature-story__photo img { inset: .5rem; width: calc(100% - 1rem); height: calc(100% - 1rem); }
+
+.signature-events { background: color-mix(in srgb, var(--sig-paper) 74%, var(--sig-accent) 6%); }
+.signature-section-heading { width: min(100%, 48rem); margin: 0 auto 2.5rem; text-align: center; }
+.signature-section-heading > .signature-eyebrow { justify-content: center; }
+.signature-section-heading h2 { margin-top: 1rem !important; }
+.signature-section-heading > p:not(.signature-eyebrow) { margin-top: .9rem; color: var(--sig-muted); font-size: .8rem; line-height: 1.7; }
+.signature-event-grid { display: grid; width: min(100%, 66rem); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-inline: auto; }
+.signature-event-card { position: relative; display: flex; min-height: 19rem; padding: clamp(1.4rem, 3vw, 2.5rem); border: 1px solid var(--sig-line); flex-direction: column; align-items: flex-start; background: color-mix(in srgb, var(--sig-paper) 95%, white); }
+.signature-event-card--primary { color: var(--sig-paper); border-color: transparent; background: var(--sig-ink); }
+.signature-event-card__number { align-self: flex-end; color: var(--sig-accent); font: 600 .58rem/1 "Poppins", sans-serif; letter-spacing: .14em; }
+.signature-event-card > svg { width: 1.35rem; height: 1.35rem; margin-top: 1.6rem; color: var(--sig-accent); stroke-width: 1.4; }
+.signature-event-card h3 { margin-top: .8rem !important; font-size: 2.1rem !important; line-height: 1 !important; }
+.signature-event-card p { margin-top: .55rem; color: var(--sig-accent); font-size: .71rem; font-weight: 600; letter-spacing: .11em; }
+.signature-event-card > span:not(.signature-event-card__number) { display: flex; align-items: center; gap: .5rem; margin-top: .9rem; color: var(--sig-muted); font-size: .69rem; }
+.signature-event-card--primary > span:not(.signature-event-card__number) { color: rgba(255,255,255,.72); }
+.signature-event-card > span svg { width: .9rem; height: .9rem; color: var(--sig-accent); }
+
+.signature-gallery { width: min(100%, 78rem); margin-inline: auto; }
+.signature-gallery__grid { display: grid; grid-template-columns: 1.15fr .85fr .85fr 1.15fr; gap: .8rem; }
+.signature-gallery__grid button { position: relative; min-width: 0; aspect-ratio: 4 / 5; padding: 0; overflow: hidden; border: 0; background: #ddd8cc; cursor: zoom-in; }
+.signature-gallery__grid button:nth-child(even) { margin-top: 2rem; }
+.signature-gallery__grid img { position: absolute; inset: 0; transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
+.signature-gallery__grid button:hover img { transform: scale(1.045); }
+.signature-gallery__grid button > span { position: absolute; right: .7rem; bottom: .65rem; color: #fff; font: 500 .65rem/1 "Poppins", sans-serif; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+.signature-demo--bloom-crystal-3d .signature-gallery__grid button { border-radius: 10rem 10rem .8rem .8rem; }
+.signature-demo--modern-dark-blue .signature-gallery__grid button { border: 1px solid #d3dfed; }
+.signature-demo--minimal-elegant .signature-gallery__grid button:nth-child(2) { margin-top: 0; }
+
+.signature-extras { display: grid; width: min(calc(100% - 2rem), 72rem); grid-template-columns: 1.2fr .8fr; gap: 1rem; margin: 0 auto; padding-bottom: clamp(4.5rem, 9vw, 8rem); }
+.signature-video-card,
+.signature-gift-card,
+.signature-guestbook { position: relative; min-height: 17rem; padding: clamp(1.3rem, 3vw, 2rem); overflow: hidden; border: 1px solid var(--sig-line); background: color-mix(in srgb, var(--sig-paper) 91%, white); }
+.signature-video-card { display: grid; min-height: 22rem; align-content: end; color: #fff; }
+.signature-video-card > img { position: absolute; inset: 0; }
+.signature-video-card::after { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(13,13,17,.82), transparent 75%); content: ''; }
+.signature-video-card > button { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; width: 3.5rem; height: 3.5rem; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; color: white; background: rgba(255,255,255,.18); cursor: pointer; place-items: center; transform: translate(-50%,-50%); backdrop-filter: blur(12px); }
+.signature-video-card > button svg { width: 1rem; height: 1rem; }
+.signature-video-card > div { position: relative; z-index: 2; }
+.signature-video-card h2 { max-width: 14ch !important; margin-top: .65rem !important; color: white !important; font-size: 2.3rem !important; }
+.signature-gift-card h2 { margin-top: .8rem !important; font-size: 2rem !important; }
+.signature-gift-card > p { max-width: 29rem; margin-top: .65rem; color: var(--sig-muted); font-size: .7rem; line-height: 1.7; }
+.signature-qr { display: grid; width: 7rem; height: 7rem; margin-top: 1rem; padding: .45rem; color: var(--sig-ink); border: 1px solid var(--sig-line); background: #fff; place-items: center; }
+.signature-qr svg { width: 100%; height: 100%; }
+.signature-demo-note { display: block; margin-top: .45rem; color: var(--sig-muted); font: 600 .48rem/1.4 "Poppins", sans-serif; letter-spacing: .08em; }
+.signature-guestbook { grid-column: 1 / -1; min-height: 0; }
+.signature-guestbook__heading { display: flex; align-items: center; gap: .75rem; }
+.signature-guestbook__heading > svg { width: 1.3rem; height: 1.3rem; color: var(--sig-accent); }
+.signature-guestbook h3 { font-size: 1.8rem !important; line-height: 1 !important; }
+.signature-guestbook__heading p { margin-top: .25rem; color: var(--sig-muted); font-size: .65rem; }
+.signature-guestbook form { display: flex; max-width: 38rem; gap: .5rem; margin-top: 1rem; }
+.signature-guestbook input { min-width: 0; min-height: 2.8rem; flex: 1; padding: 0 .8rem; border: 1px solid var(--sig-line); color: var(--sig-ink); background: transparent; font-size: .7rem !important; }
+.signature-guestbook form button { display: grid; width: 2.8rem; border: 0; color: #fff; background: var(--sig-ink); cursor: pointer; place-items: center; }
+.signature-guestbook form button svg { width: 1rem; height: 1rem; }
+.signature-guestbook ul { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.signature-guestbook li { display: flex; align-items: center; gap: .45rem; max-width: 100%; padding: .6rem .75rem; border: 1px solid var(--sig-line); color: var(--sig-muted); background: color-mix(in srgb, var(--sig-paper) 83%, white); font-size: .62rem; }
+
+.signature-venue { display: grid; grid-template-columns: minmax(0, .85fr) minmax(20rem, 1.15fr); align-items: center; gap: clamp(2rem, 6vw, 5rem); background: color-mix(in srgb, var(--sig-paper) 76%, var(--sig-accent) 8%); }
+.signature-venue > div:first-child { max-width: 33rem; }
+.signature-venue h2 { margin-top: 1rem !important; }
+.signature-venue h3 { margin-top: 1.5rem !important; color: var(--sig-accent); font-size: 1.9rem !important; }
+.signature-venue > div:first-child > p:not(.signature-eyebrow) { margin-top: .45rem; color: var(--sig-muted); font-size: .72rem; }
+.signature-venue__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.4rem; }
+.signature-venue__map { position: relative; min-height: 21rem; overflow: hidden; border: 1px solid var(--sig-line); background: #e4e6df; }
+.signature-venue__map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: saturate(.75); }
+.signature-venue__map > span { position: absolute; bottom: .8rem; left: .8rem; display: inline-flex; align-items: center; gap: .4rem; padding: .6rem .8rem; color: var(--sig-ink); background: rgba(255,255,255,.93); font-size: .62rem; box-shadow: 0 6px 18px rgba(0,0,0,.11); }
+.signature-venue__map > span svg { width: .9rem; height: .9rem; color: var(--sig-accent); }
+
+.signature-rsvp { position: relative; display: grid; min-height: 38rem !important; overflow: hidden; color: var(--sig-paper); background: var(--sig-ink); place-items: center; }
+.signature-rsvp__ornament { position: absolute; top: -4rem; right: 7%; color: var(--sig-accent); font: 400 25rem/.8 "Cormorant Garamond", Georgia, serif; opacity: .12; }
+.signature-rsvp form,
+.signature-rsvp__success { position: relative; z-index: 1; width: min(100%, 37rem); }
+.signature-rsvp .signature-eyebrow { color: var(--sig-accent); }
+.signature-rsvp h2 { margin-top: 1.2rem !important; color: var(--sig-paper) !important; }
+.signature-rsvp form > p:not(.signature-eyebrow),
+.signature-rsvp__success > p { margin-top: .8rem; color: color-mix(in srgb, var(--sig-paper) 72%, transparent); font-size: .75rem; line-height: 1.7; }
+.signature-rsvp label { display: flex; min-width: 0; gap: .45rem; margin-top: 1rem; color: color-mix(in srgb, var(--sig-paper) 78%, transparent); flex-direction: column; font-size: .64rem; }
+.signature-rsvp input,
+.signature-rsvp select { width: 100%; min-height: 3rem; padding: 0 .8rem; border: 1px solid color-mix(in srgb, var(--sig-paper) 25%, transparent); border-radius: .2rem !important; color: var(--sig-paper); background: rgba(255,255,255,.06); font-size: .72rem !important; }
+.signature-rsvp select option { color: #202020; }
+.signature-rsvp__fields { display: grid; grid-template-columns: .7fr 1.3fr; gap: .8rem; }
+.signature-rsvp form > button { display: inline-flex; min-height: 3.1rem; align-items: center; gap: .5rem; margin-top: 1.4rem; padding: 0 1.1rem; border: 0; color: var(--sig-ink); background: var(--sig-accent); font-size: .68rem !important; font-weight: 600; cursor: pointer; transition: transform 180ms ease; }
+.signature-rsvp form > button:hover { transform: translateY(-2px); }
+.signature-rsvp form > button svg { width: .9rem; height: .9rem; }
+.signature-rsvp__success { text-align: center; }
+.signature-rsvp__success .signature-eyebrow { justify-content: center; }
+.signature-rsvp__success > span { display: grid; width: 3.5rem; height: 3.5rem; margin: 0 auto 1.2rem; border: 1px solid var(--sig-accent); border-radius: 50%; color: var(--sig-accent); place-items: center; }
+.signature-rsvp__success > span svg { width: 1.4rem; height: 1.4rem; }
+
+.signature-footer { display: grid; min-height: 8rem; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 1rem; padding: 1.5rem clamp(1rem, 5vw, 5rem); color: var(--sig-muted); background: var(--sig-paper); }
+.signature-footer > span { color: var(--sig-ink); font: 500 1.5rem/1 "Cormorant Garamond", Georgia, serif; }
+.signature-footer > span i { color: var(--sig-accent); font-size: .8em; font-style: normal; }
+.signature-footer > p { justify-self: center; font-size: .58rem; letter-spacing: .1em; }
+.signature-footer > a { display: grid; width: 2.4rem; height: 2.4rem; justify-self: end; border: 1px solid var(--sig-line); border-radius: 50%; color: var(--sig-ink); place-items: center; transform: rotate(180deg); }
+.signature-footer > a svg { width: .9rem; height: .9rem; }
+.signature-lightbox { position: fixed; inset: 0; z-index: 120; display: grid; padding: 2rem; background: rgba(10,11,15,.92); place-items: center; backdrop-filter: blur(12px); }
+.signature-lightbox > button { position: absolute; top: 1rem; right: 1rem; display: grid; width: 2.8rem; height: 2.8rem; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; color: #fff; background: rgba(255,255,255,.08); cursor: pointer; place-items: center; }
+.signature-lightbox > button svg { width: 1.2rem; height: 1.2rem; }
+.signature-lightbox > img,
+.signature-lightbox > iframe { width: min(100%, 70rem); max-height: 86vh; aspect-ratio: 16 / 10; border: 0; object-fit: contain; }
+
+.signature-demo--modern-dark-blue .signature-story,
+.signature-demo--minimal-elegant .signature-story { background: var(--sig-paper); }
+.signature-demo--luxury-gold-cinematic .signature-events { background: #1d1c19; }
+.signature-demo--luxury-gold-cinematic .signature-event-card { border-color: rgba(210,179,107,.22); background: #171716; }
+.signature-demo--luxury-gold-cinematic .signature-event-card--primary { color: #171716; border-color: var(--sig-accent); background: var(--sig-accent); }
+.signature-demo--luxury-gold-cinematic .signature-event-card--primary h3 { color: #171716; }
+.signature-demo--luxury-gold-cinematic .signature-event-card:not(.signature-event-card--primary) h3 { color: #f7f2e8; }
+.signature-demo--luxury-gold-cinematic .signature-event-card:not(.signature-event-card--primary) > span:not(.signature-event-card__number) { color: rgba(255,255,255,.65); }
+
+@media (max-width: 760px) {
+  .signature-nav { width: calc(100% - 1rem); min-height: 3.8rem; grid-template-columns: auto 1fr auto; gap: .45rem; margin-top: 5rem; padding-inline: .8rem; }
+  .signature-nav__links { justify-content: center; gap: .8rem; }
+  .signature-nav__links a { font-size: .57rem !important; }
+  .signature-nav__rsvp { max-width: 2.8rem; min-height: 2.8rem; overflow: hidden; padding: .7rem; color: transparent !important; white-space: nowrap; }
+  .signature-nav__rsvp svg { width: 1rem; height: 1rem; flex: 0 0 auto; color: #fff; }
+  .signature-hero { margin-top: -3.8rem; }
+  .demo-page-content .signature-demo section.signature-hero { min-height: 0 !important; padding: 4.2rem 1.2rem 4rem !important; }
+  .signature-hero__layout { grid-template-columns: 1fr; gap: 2rem; }
+  .signature-hero__content { order: 1; text-align: center; }
+  .signature-hero__image { order: 2; min-height: min(78vw, 25rem); }
+  .signature-hero__content .signature-eyebrow,
+  .signature-section-heading > .signature-eyebrow { justify-content: center; }
+  .signature-hero__content h1 { margin-top: 1rem !important; font-size: clamp(3.6rem, 15vw, 5rem) !important; }
+  .signature-hero__invitation { margin-top: 1rem !important; }
+  .signature-hero__actions { justify-content: center; margin-top: 1.25rem; }
+  .signature-hero__side-note { display: none; }
+  .signature-hero--luxury-gold-cinematic .signature-hero__image { position: absolute; inset: 0; min-height: 100%; }
+  .signature-hero--luxury-gold-cinematic .signature-hero__layout { min-height: 33rem; }
+  .signature-hero--luxury-gold-cinematic .signature-hero__content { align-self: center; padding: 1rem; }
+  .signature-hero--luxury-gold-cinematic .signature-hero__content h1 { font-size: clamp(3.7rem, 15vw, 5.5rem) !important; }
+  .signature-story,
+  .signature-venue { grid-template-columns: 1fr; gap: 2rem; }
+  .signature-story__photo { height: 24rem; }
+  .signature-event-grid { grid-template-columns: 1fr; }
+  .signature-event-card { min-height: 16rem; }
+  .signature-gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+  .signature-gallery__grid button:nth-child(even) { margin-top: 1rem; }
+  .signature-extras { grid-template-columns: 1fr; }
+  .signature-guestbook { grid-column: auto; }
+  .signature-venue__map { min-height: 18rem; }
+  .signature-rsvp__fields { grid-template-columns: 1fr; gap: 0; }
+  .signature-footer { grid-template-columns: 1fr auto; }
+  .signature-footer > p { grid-row: 2; justify-self: start; }
+  .signature-footer > a { grid-column: 2; grid-row: 1 / span 2; }
+}
+
+@media (max-width: 420px) {
+  .signature-nav__links { gap: .55rem; }
+  .signature-nav__links a { font-size: .52rem !important; }
+  .signature-hero__actions a { min-height: 2.8rem; padding-inline: .8rem; font-size: .6rem !important; }
+  .signature-footer > span { font-size: 1.25rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4289,4 +5493,1520 @@ body {
   .admin-demo-list__actions {
     display: grid;
   }
+}
+/* Shared art direction for the invitation previews. */
+.demo-page-content {
+  --demo-paper: #fbfaf7;
+  --demo-copy: #242a34;
+  --demo-copy-muted: #69717d;
+  color: var(--demo-copy);
+  font-family: "Poppins", sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) section {
+  min-height: auto !important;
+  padding-block: clamp(4.25rem, 8vw, 7rem) !important;
+  scroll-margin-top: 6rem;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) section[data-demo-hero="true"] {
+  min-height: min(100svh, 60rem) !important;
+  padding-top: clamp(8.5rem, 16vh, 11rem) !important;
+  padding-bottom: clamp(4rem, 8vh, 6rem) !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]) > :first-child[class~="min-h-screen"] {
+  min-height: 100svh !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is(h1, h2, h3) {
+  max-width: 24ch;
+  margin-inline: auto;
+  font-weight: 500 !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.035em;
+  text-shadow: none !important;
+  text-wrap: balance;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) h1 {
+  max-width: 14ch;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: clamp(3.75rem, 8.5vw, 7rem) !important;
+  line-height: 0.98 !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) h2 {
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-size: clamp(2.15rem, 4.8vw, 3.8rem) !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) h3 {
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem) !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is(h1, h2, h3) :is(i, em) {
+  color: var(--demo-accent) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) p {
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is(input, select, textarea) {
+  border-radius: 0.7rem !important;
+  font-family: "Poppins", sans-serif;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) button {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  transition-duration: 180ms;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is(input, select, textarea):focus {
+  border-color: var(--demo-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--demo-accent) 16%, transparent) !important;
+  outline: none;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is(.rounded-xl, .rounded-2xl, .rounded-3xl) {
+  border-radius: 1.15rem !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is([class*="shadow-xl"], [class*="shadow-2xl"]) {
+  box-shadow: 0 18px 48px rgba(22, 28, 38, 0.13) !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is([class*="blur-2xl"], [class*="blur-3xl"]) {
+  opacity: 0.24 !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) [class*="border-4"] {
+  border-width: 1px !important;
+}
+
+.demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) :is(.tracking-widest, .tracking-\[0\.5em\]) {
+  letter-spacing: 0.14em;
+}
+
+.demo-page-content :is(img, iframe) {
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) section {
+    padding-block: 3.75rem !important;
+  }
+
+  .demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) section[data-demo-hero="true"] {
+    min-height: min(100svh, 54rem) !important;
+    padding-top: 8rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  .demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) h1 {
+    font-size: clamp(3.4rem, 15vw, 5rem) !important;
+  }
+
+  .demo-page-content:not([data-template="tropical-sunset"]):not([data-template="vietnamese-traditional-219k"]):not(.demo-page-content--signature) h2 {
+    font-size: clamp(2rem, 9vw, 3rem) !important;
+  }
+}
+
+/* Package-aware invitation studio and the interactive invitation preview. */
+.creator-package-section {
+  width: min(calc(100% - 2rem), 82rem);
+  margin: 0 auto 2.25rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid rgba(35, 43, 58, 0.08);
+  border-radius: 1.65rem;
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: 0 22px 60px rgba(35, 43, 58, 0.06);
+}
+
+.creator-package-section__heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.creator-package-section__heading > div > p {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.5rem;
+  color: #9a7539;
+  font: 600 0.64rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.creator-package-section__heading > div > p svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.creator-package-section__heading h2 {
+  margin: 0;
+  color: #202a38;
+  font: 500 clamp(1.45rem, 3vw, 2rem)/1.15 "Playfair Display", serif;
+  letter-spacing: -0.035em;
+}
+
+.creator-package-section__heading > span {
+  max-width: 18rem;
+  color: #737c89;
+  font: 400 0.69rem/1.6 "Poppins", sans-serif;
+  text-align: right;
+}
+
+.creator-package-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0.85rem;
+}
+
+.creator-package-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  padding: 1.2rem;
+  overflow: hidden;
+  border: 1px solid rgba(35, 43, 58, 0.11);
+  border-radius: 1.2rem;
+  color: #273143;
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 24px rgba(35, 43, 58, 0.035);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.creator-package-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(174, 133, 65, 0.5);
+  box-shadow: 0 16px 32px rgba(35, 43, 58, 0.09);
+}
+
+.creator-package-card:focus-visible {
+  outline: 3px solid rgba(174, 133, 65, 0.45);
+  outline-offset: 3px;
+}
+
+.creator-package-card.is-selected {
+  border-color: #b38b4c;
+  background: linear-gradient(155deg, #fffdf8, #fff9ed);
+  box-shadow: 0 0 0 2px rgba(179, 139, 76, 0.13), 0 16px 36px rgba(64, 51, 32, 0.08);
+}
+
+.creator-package-card.is-popular {
+  border-color: rgba(76, 100, 123, 0.3);
+}
+
+.creator-package-card.is-popular.is-selected {
+  border-color: #657f99;
+  background: linear-gradient(155deg, #fff, #f2f6fa);
+  box-shadow: 0 0 0 2px rgba(81, 111, 143, 0.11), 0 16px 36px rgba(35, 48, 63, 0.08);
+}
+
+.creator-package-card__ribbon {
+  position: absolute;
+  top: 0.85rem;
+  right: -2.4rem;
+  width: 8.2rem;
+  padding: 0.32rem 0;
+  transform: rotate(36deg);
+  color: white;
+  background: #7188a0;
+  font: 600 0.48rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.creator-package-card__topline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  margin-bottom: 0.7rem;
+  color: #8a754e;
+  font: 600 0.56rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.creator-package-card__topline svg {
+  width: 0.83rem;
+  height: 0.83rem;
+}
+
+.creator-package-card > strong {
+  color: #232e3d;
+  font: 600 1.05rem/1.2 "Playfair Display", serif;
+}
+
+.creator-package-card__price {
+  margin-top: 0.25rem;
+  color: #957038;
+  font: 600 1.2rem/1.3 "Poppins", sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.creator-package-card__summary {
+  display: block;
+  min-height: 3.2rem;
+  margin: 0.6rem 0 0.9rem;
+  color: #777f89;
+  font: 400 0.65rem/1.55 "Poppins", sans-serif;
+}
+
+.creator-package-highlights {
+  display: grid;
+  gap: 0.48rem;
+  margin: auto 0 0;
+}
+
+.creator-package-highlights > span {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.42rem;
+  color: #4d5968;
+  font: 500 0.61rem/1.4 "Poppins", sans-serif;
+}
+
+.creator-package-highlights svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-top: 0.05rem;
+  color: #658b70;
+  flex: 0 0 auto;
+}
+
+.creator-preview-panel__top small {
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.generated-invitation__music {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.48rem;
+  min-height: 2.5rem;
+  margin-top: 1.7rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(15, 20, 25, 0.28);
+  backdrop-filter: blur(10px);
+  font: 500 0.62rem/1 "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.generated-invitation__music svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.generated-invitation__music-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.65rem 0 0 0.45rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(15, 20, 25, 0.25);
+  font: 500 0.52rem/1 "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.generated-invitation__music-upload svg {
+  width: 0.78rem;
+  height: 0.78rem;
+}
+
+.generated-invitation__music-note {
+  display: block;
+  margin: 0.45rem auto 0;
+  color: rgba(255, 255, 255, 0.72);
+  font: 400 0.5rem/1.4 "Poppins", sans-serif;
+}
+
+.generated-invitation__music-upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.generated-invitation--font-editorial :is(.generated-invitation__cover h2, .generated-invitation__quote, .generated-invitation__story h3, .generated-invitation__basic-gallery h3, .generated-invitation__rsvp h3) {
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.generated-invitation--font-modern :is(.generated-invitation__cover h2, .generated-invitation__quote, .generated-invitation__story h3, .generated-invitation__basic-gallery h3, .generated-invitation__rsvp h3) {
+  font-family: "Poppins", sans-serif;
+  letter-spacing: -0.045em;
+}
+
+.generated-invitation--font-classic :is(.generated-invitation__cover h2, .generated-invitation__quote, .generated-invitation__story h3, .generated-invitation__basic-gallery h3, .generated-invitation__rsvp h3) {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.generated-invitation__tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.15rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 26%, transparent);
+  border-radius: 999px;
+  color: var(--invitation-accent);
+  background: rgba(255, 255, 255, 0.54);
+  font: 600 0.58rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.generated-invitation__map-link,
+.generated-invitation__share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.48rem;
+  min-height: 2.7rem;
+  margin-top: 1.1rem;
+  padding: 0 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 34%, transparent);
+  border-radius: 999px;
+  color: var(--invitation-dark);
+  background: rgba(255, 255, 255, 0.6);
+  font: 500 0.64rem/1.2 "Poppins", sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.generated-invitation__map-link:hover,
+.generated-invitation__share:hover {
+  transform: translateY(-1px);
+  background: #fff;
+}
+
+.generated-invitation__map-link svg,
+.generated-invitation__share svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--invitation-accent);
+}
+
+.generated-invitation__story,
+.generated-invitation__basic-gallery,
+.generated-invitation__rsvp {
+  padding: clamp(2.5rem, 7vw, 5rem) clamp(1.2rem, 6vw, 4rem);
+  text-align: center;
+}
+
+.generated-invitation__story {
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.generated-invitation__basic-gallery {
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.generated-invitation__section-label {
+  margin: 0 0 0.7rem;
+  color: var(--invitation-accent);
+  font: 600 0.57rem/1.2 "Poppins", sans-serif;
+  letter-spacing: 0.2em;
+}
+
+.generated-invitation__story h3,
+.generated-invitation__basic-gallery h3,
+.generated-invitation__rsvp h3 {
+  margin: 0;
+  color: var(--invitation-dark);
+  font: 500 clamp(1.8rem, 5vw, 2.7rem)/1.05 "Playfair Display", serif;
+  letter-spacing: -0.04em;
+}
+
+.generated-invitation__story-copy {
+  max-width: 31rem;
+  margin: 0.9rem auto 1.5rem;
+  color: color-mix(in srgb, var(--invitation-dark) 70%, transparent);
+  font: 400 0.72rem/1.75 "Poppins", sans-serif;
+}
+
+.generated-invitation__gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  max-width: 48rem;
+  margin: 1.5rem auto 0;
+}
+
+.generated-invitation__basic-gallery .generated-invitation__gallery {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 38rem;
+}
+
+.generated-invitation__gallery button {
+  height: clamp(6rem, 18vw, 12rem);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #e8e2d6;
+  cursor: zoom-in;
+}
+
+.generated-invitation__gallery img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 350ms ease;
+}
+
+.generated-invitation__gallery button:hover img {
+  transform: scale(1.06);
+}
+
+.generated-invitation__gallery-limit {
+  display: block;
+  margin-top: 0.8rem;
+  color: #7d817f;
+  font: 400 0.57rem/1.4 "Poppins", sans-serif;
+}
+
+.generated-invitation__diamond {
+  display: grid;
+  grid-template-columns: 1fr 0.72fr;
+  gap: 0.85rem;
+  padding: 0 clamp(1.2rem, 6vw, 4rem) clamp(2.5rem, 7vw, 5rem);
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.generated-invitation__video-card {
+  position: relative;
+  display: grid;
+  min-height: 15rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background-position: center;
+  background-size: cover;
+  place-items: center;
+}
+
+.generated-invitation__video-card > button {
+  display: grid;
+  width: 3.7rem;
+  height: 3.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  place-items: center;
+}
+
+.generated-invitation__video-card > button svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.generated-invitation__video-card > span {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #fff;
+  font: 600 0.54rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.12em;
+}
+
+.generated-invitation__video-card > span svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.generated-invitation__gift-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 23%, transparent);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.generated-invitation__gift-card > div > svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--invitation-accent);
+}
+
+.generated-invitation__gift-card h3 {
+  margin: 0.55rem 0 0.25rem;
+  color: var(--invitation-dark);
+  font: 500 1.05rem/1.2 "Playfair Display", serif;
+}
+
+.generated-invitation__gift-card p {
+  margin: 0;
+  color: #777e83;
+  font: 400 0.52rem/1.5 "Poppins", sans-serif;
+}
+
+.generated-invitation__gift-card > svg {
+  width: clamp(3.5rem, 8vw, 5.2rem);
+  height: auto;
+  padding: 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 30%, transparent);
+  border-radius: 0.35rem;
+  color: var(--invitation-dark);
+  flex: 0 0 auto;
+}
+
+.generated-invitation__guestbook {
+  grid-column: 1 / -1;
+  padding: 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 18%, transparent);
+  border-radius: 1rem;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.generated-invitation__guestbook > div,
+.generated-invitation__guestbook > div > span {
+  display: flex;
+  align-items: center;
+}
+
+.generated-invitation__guestbook > div {
+  gap: 0.65rem;
+}
+
+.generated-invitation__guestbook > div > svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--invitation-accent);
+}
+
+.generated-invitation__guestbook > div > span {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.generated-invitation__guestbook strong {
+  color: var(--invitation-dark);
+  font: 600 0.72rem/1.3 "Poppins", sans-serif;
+}
+
+.generated-invitation__guestbook small {
+  margin-top: 0.12rem;
+  color: #81858b;
+  font: 400 0.55rem/1.3 "Poppins", sans-serif;
+}
+
+.generated-invitation__guestbook form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+
+.generated-invitation__guestbook input {
+  min-width: 0;
+  min-height: 2.6rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(35, 43, 58, 0.14);
+  border-radius: 0.7rem;
+  color: #263142;
+  background: #fff;
+  font: 400 0.64rem/1 "Poppins", sans-serif;
+}
+
+.generated-invitation__guestbook form button {
+  display: grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 0.7rem;
+  color: white;
+  background: var(--invitation-dark);
+  cursor: pointer;
+  place-items: center;
+}
+
+.generated-invitation__guestbook form button svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.generated-invitation__guestbook > p {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  color: #586170;
+  font: 400 0.61rem/1.5 "Poppins", sans-serif;
+}
+
+.generated-invitation__rsvp {
+  background: var(--invitation-soft);
+}
+
+.generated-invitation__rsvp form {
+  display: grid;
+  gap: 0.8rem;
+  width: min(100%, 27rem);
+  margin: 0 auto;
+  text-align: left;
+}
+
+.generated-invitation__rsvp form > .generated-invitation__section-label,
+.generated-invitation__rsvp form > h3 {
+  text-align: center;
+}
+
+.generated-invitation__rsvp form > h3 {
+  margin-bottom: 0.5rem;
+}
+
+.generated-invitation__rsvp label {
+  display: grid;
+  gap: 0.38rem;
+  color: #626b75;
+  font: 500 0.6rem/1.3 "Poppins", sans-serif;
+}
+
+.generated-invitation__rsvp input,
+.generated-invitation__rsvp select {
+  width: 100%;
+  min-height: 2.8rem;
+  padding: 0 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 23%, transparent);
+  border-radius: 0.72rem;
+  color: var(--invitation-dark);
+  background: rgba(255, 255, 255, 0.84);
+  font: 400 0.67rem/1 "Poppins", sans-serif;
+}
+
+.generated-invitation__rsvp form > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  margin-top: 0.35rem;
+  border-radius: 0.78rem;
+  color: white;
+  background: var(--invitation-dark);
+  font: 600 0.67rem/1 "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.generated-invitation__rsvp form > button svg,
+.generated-invitation__rsvp-success > svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.generated-invitation__rsvp-success > svg {
+  display: block;
+  margin: 0 auto 0.8rem;
+  color: #6c9674;
+}
+
+.generated-invitation__rsvp-success p {
+  margin: 0.6rem 0 0;
+  color: #727b82;
+  font: 400 0.7rem/1.5 "Poppins", sans-serif;
+}
+
+.generated-invitation__feature-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.2rem 2rem;
+  background: var(--invitation-soft);
+}
+
+.generated-invitation__feature-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.48rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 19%, transparent);
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--invitation-dark) 78%, transparent);
+  background: rgba(255, 255, 255, 0.5);
+  font: 500 0.53rem/1 "Poppins", sans-serif;
+}
+
+.generated-invitation__feature-list svg {
+  width: 0.78rem;
+  height: 0.78rem;
+  color: var(--invitation-accent);
+}
+
+.generated-invitation__lightbox {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  padding: 2rem;
+  background: rgba(15, 19, 25, 0.92);
+  backdrop-filter: blur(12px);
+  place-items: center;
+}
+
+.generated-invitation__lightbox > button {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  place-items: center;
+}
+
+.generated-invitation__lightbox > button svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.generated-invitation__lightbox > img,
+.generated-invitation__lightbox > iframe {
+  width: min(100%, 64rem);
+  max-height: calc(100vh - 4rem);
+  aspect-ratio: 16 / 10;
+  border: 0;
+  border-radius: 0.8rem;
+  object-fit: contain;
+}
+
+.preview-publish-card__summary {
+  margin: 0.7rem 0 0;
+  color: #6f7884;
+  font: 400 0.68rem/1.6 "Poppins", sans-serif;
+}
+
+.creator-font-section {
+  margin-top: 1.4rem;
+}
+
+.creator-font-section > p {
+  margin: 0 0 0.6rem;
+  color: #727b88;
+  font: 600 0.65rem/1.3 "Poppins", sans-serif;
+}
+
+.creator-font-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.creator-font-option {
+  display: flex;
+  min-height: 4.6rem;
+  padding: 0.55rem;
+  border: 1px solid rgba(23, 32, 51, 0.13);
+  border-radius: 0.8rem;
+  color: #536071;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+.creator-font-option.is-active {
+  border-color: #b38b4c;
+  color: #283244;
+  background: #fffaf0;
+  box-shadow: 0 0 0 2px rgba(179, 139, 76, 0.12);
+}
+
+.creator-font-option > span {
+  color: #273143;
+  font: 500 1.45rem/1 "Cormorant Garamond", Georgia, serif;
+}
+
+.creator-font-option--modern > span,
+.generated-invitation--font-modern .generated-invitation__cover h2,
+.generated-invitation--font-modern .generated-invitation__quote,
+.generated-invitation--font-modern .generated-invitation__story h3,
+.generated-invitation--font-modern .generated-invitation__basic-gallery h3,
+.generated-invitation--font-modern .generated-invitation__rsvp h3 {
+  font-family: "Poppins", sans-serif;
+}
+
+.creator-font-option--classic > span,
+.generated-invitation--font-classic .generated-invitation__cover h2,
+.generated-invitation--font-classic .generated-invitation__quote,
+.generated-invitation--font-classic .generated-invitation__story h3,
+.generated-invitation--font-classic .generated-invitation__basic-gallery h3,
+.generated-invitation--font-classic .generated-invitation__rsvp h3 {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.creator-font-option > strong {
+  font: 500 0.55rem/1 "Poppins", sans-serif;
+}
+
+.signature-rsvp textarea {
+  width: 100%;
+  min-height: 5rem;
+  padding: 0.7rem 0.8rem;
+  resize: vertical;
+  border: 1px solid color-mix(in srgb, var(--sig-paper) 25%, transparent);
+  border-radius: 0.2rem;
+  color: var(--sig-paper);
+  background: rgba(255, 255, 255, 0.06);
+  font: 400 0.72rem/1.5 "Poppins", sans-serif;
+}
+
+.signature-rsvp__wide {
+  grid-column: 1 / -1;
+}
+
+.signature-rsvp :is(input, select, textarea)::placeholder {
+  color: color-mix(in srgb, var(--sig-paper) 50%, transparent);
+}
+
+@media (max-width: 960px) {
+  .creator-package-section {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .creator-package-section {
+    padding: 1rem;
+  }
+
+  .creator-package-section__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .creator-package-section__heading > span {
+    text-align: left;
+  }
+
+  .creator-package-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-package-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .creator-package-card__topline,
+  .creator-package-card > strong,
+  .creator-package-card__price,
+  .creator-package-card__summary,
+  .creator-package-highlights {
+    grid-column: 1;
+  }
+
+  .creator-package-card__topline {
+    grid-row: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .creator-package-card > strong {
+    grid-row: 2;
+  }
+
+  .creator-package-card__price {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-size: 1.05rem;
+  }
+
+  .creator-package-card__summary {
+    min-height: 0;
+    grid-row: 3;
+    margin: 0.35rem 0 0.65rem;
+  }
+
+  .creator-package-highlights {
+    grid-row: 4;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .creator-package-card__ribbon {
+    top: 0.65rem;
+    right: -2.7rem;
+  }
+
+  .generated-invitation__diamond {
+    grid-template-columns: 1fr;
+  }
+
+  .generated-invitation__gift-card {
+    min-height: 7rem;
+  }
+
+  .generated-invitation__gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .generated-invitation__basic-gallery .generated-invitation__gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .creator-intro {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    padding-top: 3.2rem;
+  }
+
+  .creator-progress {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 0.8rem;
+  }
+
+  .creator-progress > span {
+    margin: 0;
+  }
+
+  .creator-progress > div {
+    grid-column: 1 / -1;
+  }
+
+  .creator-header {
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+  }
+
+  .creator-header > a {
+    justify-self: end;
+    font-size: 0.92rem;
+  }
+
+  .creator-header > span {
+    display: none;
+  }
+
+  .generated-invitation__details {
+    grid-template-columns: 1fr;
+  }
+
+  .generated-invitation__cover {
+    min-height: 34rem;
+  }
+
+  .generated-invitation.is-compact .generated-invitation__cover {
+    min-height: 27rem;
+  }
+
+  .generated-invitation__lightbox {
+    padding: 1rem;
+  }
+
+  .preview-toolbar {
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5rem;
+    padding-inline: 0.65rem;
+  }
+
+  .preview-toolbar button,
+  .preview-toolbar > span {
+    gap: 0.25rem;
+    font-size: 0.57rem;
+  }
+
+  .preview-toolbar button:last-child {
+    min-height: 2.35rem;
+    padding-inline: 0.55rem;
+  }
+
+  .preview-toolbar > span {
+    justify-content: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Final art-direction corrections for the navy and garden concepts. */
+.demo-page-content .signature-demo--modern-dark-blue .signature-hero__content h1 {
+  color: #f8fbff !important;
+  -webkit-text-fill-color: #f8fbff !important;
+  text-shadow: 0 3px 28px rgba(5, 13, 27, 0.48) !important;
+}
+
+.demo-page-content .signature-demo--modern-dark-blue .signature-hero__content h1 i {
+  color: #b9d4f1 !important;
+  -webkit-text-fill-color: #b9d4f1 !important;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero {
+  color: var(--sig-ink) !important;
+  background: radial-gradient(circle at 12% 15%, rgba(220, 229, 214, .75), transparent 25rem), var(--sig-paper) !important;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__layout {
+  width: min(100%, 73rem);
+  grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+  text-align: left;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__image {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 0;
+  min-height: clamp(27rem, 48vw, 40rem) !important;
+  border: 1px solid rgba(255, 255, 255, .75);
+  border-radius: 48% 48% .4rem .4rem;
+  opacity: 1 !important;
+  box-shadow: 0 24px 58px rgba(39, 59, 48, .15);
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__image img {
+  filter: saturate(.78);
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__content {
+  width: min(100%, 40rem);
+  padding: 1rem 0;
+  text-align: left;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__content h1 {
+  color: #263b32 !important;
+  -webkit-text-fill-color: #263b32 !important;
+  font-size: clamp(4rem, 8.2vw, 7rem) !important;
+  line-height: .84 !important;
+  text-shadow: none !important;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__content h1 i {
+  color: #9b8057 !important;
+  -webkit-text-fill-color: #9b8057 !important;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__invitation,
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__side-note {
+  color: #778277;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__ornament {
+  top: 13%;
+  right: 5%;
+  z-index: 1;
+  width: 8rem;
+  height: 8rem;
+  border: 1px solid rgba(99, 126, 102, .22);
+  border-radius: 50%;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__ornament::before {
+  position: absolute;
+  inset: .75rem;
+  border: 1px solid rgba(99, 126, 102, .2);
+  border-radius: 50%;
+  content: '';
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__ornament::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(99, 126, 102, .2);
+  border-radius: 50%;
+  content: '';
+  transform: translate(-50%, -50%);
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-story__photo {
+  border: 1px solid rgba(155, 128, 87, .38);
+  border-radius: 48% 48% .5rem .5rem;
+  padding: .45rem;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-story__photo img {
+  inset: .45rem;
+  width: calc(100% - .9rem);
+  height: calc(100% - .9rem);
+  border-radius: inherit;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-events {
+  background: #edf0e8;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-event-card {
+  border-color: rgba(60, 81, 66, .17);
+  background: rgba(255, 255, 255, .76);
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-event-card--primary {
+  color: #f6f5ef;
+  border-color: #263b32;
+  background: #263b32;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-event-card--primary h3 {
+  color: #f6f5ef;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-event-card:not(.signature-event-card--primary) h3 {
+  color: #263b32;
+}
+
+.demo-page-content .signature-demo--art-deco-royal-basic .signature-event-card:not(.signature-event-card--primary) > span:not(.signature-event-card__number) {
+  color: #778277;
+}
+
+.demo-page-content[data-template="vietnamese-traditional-219k"] {
+  font-family: "Noto Serif", "EB Garamond", Georgia, serif;
+}
+
+@media (max-width: 760px) {
+  .demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__layout {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+    text-align: center;
+  }
+
+  .demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__content {
+    order: 1;
+    width: min(100%, 34rem);
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__actions {
+    justify-content: center;
+  }
+
+  .demo-page-content .signature-demo--art-deco-royal-basic .signature-hero__image {
+    order: 2;
+    width: min(100%, 27rem);
+    min-height: 24rem !important;
+    margin-inline: auto;
+  }
+}
+
+/* Guest list, personalized invite links, and RSVP overview for the invitation studio. */
+.creator-stepper { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.creator-guests-editor { display: grid; gap: 1rem; }
+.creator-guests-editor__intro { display: flex; align-items: flex-start; gap: .8rem; padding: 1rem; border: 1px solid rgba(49, 68, 86, .12); border-radius: 1rem; background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(247,244,236,.76)); }
+.creator-guests-editor__intro > span { display: grid; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; border-radius: .8rem; color: #fff; background: #6f806b; place-items: center; }
+.creator-guests-editor__intro svg { width: 1.1rem; height: 1.1rem; }
+.creator-guests-editor__intro strong { display: block; color: #293548; font: 600 .9rem/1.3 "Poppins", sans-serif; }
+.creator-guests-editor__intro p { margin: .25rem 0 0; color: #76808d; font: 400 .66rem/1.55 "Poppins", sans-serif; }
+.creator-guest-add { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(9rem, .8fr) auto; align-items: end; gap: .65rem; }
+.creator-guest-add label { display: grid; gap: .4rem; color: #5b6572; font: 500 .62rem/1.3 "Poppins", sans-serif; }
+.creator-guest-add input,
+.creator-guest-add select { width: 100%; min-height: 2.8rem; padding: 0 .75rem; border: 1px solid rgba(35, 43, 58, .14); border-radius: .7rem; color: #293548; background: #fff; font: 400 .67rem/1.2 "Poppins", sans-serif; }
+.creator-guest-add > button { display: inline-flex; min-height: 2.8rem; align-items: center; justify-content: center; gap: .4rem; padding: 0 .85rem; border-radius: .7rem; color: white; background: #293b4b; font: 600 .63rem/1 "Poppins", sans-serif; cursor: pointer; }
+.creator-guest-add > button:disabled { cursor: not-allowed; opacity: .48; }
+.creator-guest-add > button svg { width: .9rem; height: .9rem; }
+.creator-rsvp-question-picker { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; padding: .9rem 1rem; border: 1px solid rgba(35, 43, 58, .1); border-radius: .9rem; background: rgba(244, 247, 246, .78); }
+.creator-rsvp-question-picker > div { display: grid; gap: .2rem; margin-right: auto; }
+.creator-rsvp-question-picker strong { color: #354254; font: 600 .68rem/1.3 "Poppins", sans-serif; }
+.creator-rsvp-question-picker span { color: #858d97; font: 400 .57rem/1.4 "Poppins", sans-serif; }
+.creator-rsvp-question-picker > label { display: inline-flex; align-items: center; gap: .4rem; color: #566270; font: 500 .61rem/1.3 "Poppins", sans-serif; cursor: pointer; }
+.creator-rsvp-question-picker input { width: 1rem; height: 1rem; accent-color: #6f806b; }
+.creator-guest-list { display: grid; gap: .45rem; max-height: 18rem; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.creator-guest-list > li { display: flex; min-width: 0; align-items: center; gap: .65rem; padding: .65rem .75rem; border: 1px solid rgba(35, 43, 58, .09); border-radius: .85rem; background: rgba(255, 255, 255, .82); }
+.creator-guest-list__avatar,
+.invitation-guest-dashboard__avatar { display: grid; width: 2.25rem; height: 2.25rem; flex: 0 0 auto; border-radius: 50%; color: #5e705f; background: #edf1e8; font: 600 .74rem/1 "Poppins", sans-serif; place-items: center; }
+.creator-guest-list__name { display: grid; min-width: 0; flex: 1; gap: .18rem; }
+.creator-guest-list__name strong { overflow: hidden; color: #303c4b; font: 600 .67rem/1.3 "Poppins", sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.creator-guest-list__name small { color: #8b929b; font: 400 .55rem/1.3 "Poppins", sans-serif; }
+.creator-guest-list > li > button { display: inline-flex; min-height: 2.2rem; align-items: center; justify-content: center; gap: .35rem; padding: 0 .65rem; border: 1px solid rgba(52, 76, 91, .14); border-radius: 999px; color: #52677a; background: #fff; font: 500 .56rem/1 "Poppins", sans-serif; cursor: pointer; }
+.creator-guest-list > li > button svg { width: .83rem; height: .83rem; }
+.creator-guest-list > li > .creator-guest-list__remove { width: 2.2rem; padding: 0; color: #9b6f6a; }
+.creator-guests-empty { display: grid; gap: .25rem; padding: 1.3rem; border: 1px dashed rgba(35, 43, 58, .2); border-radius: .9rem; color: #65717e; text-align: center; }
+.creator-guests-empty strong { font: 600 .68rem/1.4 "Poppins", sans-serif; }
+.creator-guests-empty span { font: 400 .59rem/1.5 "Poppins", sans-serif; }
+.creator-guest-status { margin: 0; color: #477454; font: 500 .62rem/1.5 "Poppins", sans-serif; }
+.creator-guests-locked { display: grid; justify-items: start; gap: .4rem; padding: 1.1rem; border: 1px solid rgba(179, 139, 76, .25); border-radius: .9rem; background: #fffaf0; }
+.creator-guests-locked strong { color: #5e4d35; font: 600 .7rem/1.35 "Poppins", sans-serif; }
+.creator-guests-locked span { color: #827865; font: 400 .6rem/1.5 "Poppins", sans-serif; }
+.creator-guests-locked button { margin-top: .25rem; padding: .55rem .8rem; border-radius: 999px; color: white; background: #7e6847; font: 600 .58rem/1 "Poppins", sans-serif; cursor: pointer; }
+.creator-local-note { margin: 0; padding: .7rem .8rem; border-radius: .65rem; color: #818995; background: #f3f5f6; font: 400 .56rem/1.55 "Poppins", sans-serif; }
+
+.preview-stage--manage { width: min(calc(100% - 2rem), 56rem); grid-template-columns: minmax(0, 1fr); align-items: start; gap: 1.3rem; }
+.preview-stage--manage .preview-stage__invitation { width: min(100%, 42rem); justify-self: center; }
+.preview-toolbar__recipient { overflow: hidden; color: #64717f !important; text-overflow: ellipsis; white-space: nowrap; }
+.invitation-guest-dashboard { min-width: 0; padding: clamp(1rem, 3vw, 1.6rem); border: 1px solid rgba(41, 54, 70, .1); border-radius: 1.35rem; background: rgba(255, 255, 255, .9); box-shadow: 0 18px 45px rgba(35, 43, 58, .08); }
+.invitation-guest-dashboard__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.invitation-guest-dashboard__header > div:first-child > p { display: flex; align-items: center; gap: .4rem; margin: 0 0 .45rem; color: #8a754e; font: 600 .53rem/1 "Poppins", sans-serif; letter-spacing: .13em; }
+.invitation-guest-dashboard__header > div:first-child > p svg { width: .83rem; height: .83rem; }
+.invitation-guest-dashboard__header h2 { margin: 0; color: #263346; font: 500 clamp(1.3rem, 3vw, 1.8rem)/1.15 "Playfair Display", serif; }
+.invitation-guest-dashboard__header > div:first-child > span { display: block; margin-top: .35rem; color: #818994; font: 400 .59rem/1.5 "Poppins", sans-serif; }
+.invitation-guest-dashboard__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: end; gap: .45rem; }
+.invitation-guest-dashboard__actions button { display: inline-flex; min-height: 2.45rem; align-items: center; gap: .38rem; padding: 0 .72rem; border: 1px solid rgba(38, 51, 70, .13); border-radius: 999px; color: #526273; background: #fff; font: 500 .58rem/1 "Poppins", sans-serif; cursor: pointer; }
+.invitation-guest-dashboard__actions button.is-primary { border-color: #354b3d; color: #fff; background: #354b3d; }
+.invitation-guest-dashboard__actions svg { width: .85rem; height: .85rem; }
+.invitation-guest-dashboard__upgrade { color: #999184; font: 500 .53rem/1.4 "Poppins", sans-serif; }
+.invitation-guest-dashboard__stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem; margin: 1.1rem 0; }
+.invitation-guest-dashboard__stats > div { display: grid; gap: .15rem; padding: .75rem; border: 1px solid rgba(41, 54, 70, .08); border-radius: .85rem; background: #f8f8f5; }
+.invitation-guest-dashboard__stats strong { color: #354b3d; font: 600 1.15rem/1.1 "Poppins", sans-serif; }
+.invitation-guest-dashboard__stats span { color: #7f8790; font: 400 .53rem/1.4 "Poppins", sans-serif; }
+.invitation-guest-dashboard__list { display: grid; gap: .35rem; max-height: 23rem; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.invitation-guest-dashboard__list > li { display: flex; min-width: 0; align-items: center; gap: .55rem; padding: .55rem .6rem; border: 1px solid rgba(41, 54, 70, .08); border-radius: .75rem; background: #fff; }
+.invitation-guest-dashboard__name { display: grid; min-width: 0; flex: 1; gap: .12rem; }
+.invitation-guest-dashboard__name strong { overflow: hidden; color: #303c4b; font: 600 .59rem/1.3 "Poppins", sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.invitation-guest-dashboard__name small { color: #8d949d; font: 400 .5rem/1.3 "Poppins", sans-serif; }
+.invitation-guest-dashboard__status { color: #818994; font: 500 .53rem/1.3 "Poppins", sans-serif; }
+.invitation-guest-dashboard__status.is-yes { color: #4c8059; }
+.invitation-guest-dashboard__status.is-no { color: #a16f6a; }
+.invitation-guest-dashboard__list a,
+.invitation-guest-dashboard__list button { display: inline-flex; min-height: 2rem; align-items: center; justify-content: center; gap: .25rem; padding: 0 .5rem; border: 1px solid rgba(41, 54, 70, .12); border-radius: 999px; color: #637287; background: #fff; font: 500 .5rem/1 "Poppins", sans-serif; text-decoration: none; cursor: pointer; }
+.invitation-guest-dashboard__list button { width: 2rem; padding: 0; }
+.invitation-guest-dashboard__list button svg { width: .78rem; height: .78rem; }
+.invitation-guest-dashboard__empty { display: grid; justify-items: center; gap: .35rem; padding: 1.5rem; color: #828b94; text-align: center; }
+.invitation-guest-dashboard__empty svg { width: 1.5rem; height: 1.5rem; margin-bottom: .2rem; color: #879b80; }
+.invitation-guest-dashboard__empty strong { color: #455363; font: 600 .66rem/1.4 "Poppins", sans-serif; }
+.invitation-guest-dashboard__empty span { max-width: 24rem; font: 400 .55rem/1.55 "Poppins", sans-serif; }
+.invitation-guest-dashboard__notice { margin: 1rem 0 0; padding: .65rem .75rem; border-radius: .65rem; color: #8b8171; background: #faf7f0; font: 400 .52rem/1.55 "Poppins", sans-serif; }
+.generated-invitation__cover-content > .generated-invitation__guest-greeting { margin: -.3rem 0 1rem !important; font: 500 .75rem/1.4 "Poppins", sans-serif !important; letter-spacing: .04em; text-transform: none; }
+
+@media (max-width: 760px) {
+  .creator-stepper { grid-template-columns: repeat(7, minmax(5.1rem, 1fr)); }
+  .creator-guest-add { grid-template-columns: 1fr; }
+  .creator-rsvp-question-picker { align-items: flex-start; flex-direction: column; }
+  .creator-rsvp-question-picker > div { margin-right: 0; }
+  .creator-guest-list > li { gap: .4rem; padding-inline: .5rem; }
+  .creator-guest-list > li > button { min-height: 2rem; padding-inline: .5rem; font-size: .5rem; }
+  .creator-guest-list > li > .creator-guest-list__remove { width: 2rem; }
+  .preview-stage--manage { width: min(calc(100% - 1rem), 40rem); padding-top: 1rem; }
+  .invitation-guest-dashboard__header { align-items: flex-start; flex-direction: column; }
+  .invitation-guest-dashboard__actions { justify-content: flex-start; }
+  .invitation-guest-dashboard__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .invitation-guest-dashboard__list > li { flex-wrap: wrap; }
+  .invitation-guest-dashboard__name { min-width: calc(100% - 3.5rem); }
+  .invitation-guest-dashboard__status { flex: 1; margin-left: 2.8rem; }
+}
+
+/* New wedding invitation directions inspired by contemporary Vietnamese collections. */
+.signature-demo--song-hy-contemporary {
+  --sig-paper: #faf5ed;
+  --sig-ink: #542a2b;
+  --sig-muted: #816b63;
+  --sig-accent: #b45b4f;
+  --sig-line: rgba(113, 54, 47, .19);
+  background-image: radial-gradient(ellipse at 92% 8%, rgba(209, 170, 119, .13), transparent 30rem);
+}
+.signature-demo--riviera-blue {
+  --sig-paper: #f1f8f8;
+  --sig-ink: #183c4b;
+  --sig-muted: #607983;
+  --sig-accent: #3986a4;
+  --sig-line: rgba(41, 107, 132, .19);
+}
+.signature-demo--hoa-moc-editorial {
+  --sig-paper: #fbf6f0;
+  --sig-ink: #34483b;
+  --sig-muted: #788275;
+  --sig-accent: #bd806e;
+  --sig-line: rgba(65, 95, 72, .17);
+  background-image: radial-gradient(ellipse at 8% 12%, rgba(207, 164, 145, .12), transparent 27rem);
+}
+.signature-demo--summer-postcard {
+  --sig-paper: #fbf5e6;
+  --sig-ink: #47362c;
+  --sig-muted: #827363;
+  --sig-accent: #cb7554;
+  --sig-line: rgba(157, 97, 63, .2);
+}
+
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero {
+  color: var(--sig-ink);
+  background: linear-gradient(115deg, #faf5ed 0%, #f6eee4 68%, #efe1d3 100%);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__layout {
+  width: min(100%, 74rem);
+  grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+  text-align: left;
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__image {
+  position: relative;
+  inset: auto;
+  min-height: clamp(27rem, 47vw, 39rem);
+  border: .45rem solid rgba(255, 255, 255, .82);
+  outline: 1px solid rgba(151, 91, 66, .42);
+  outline-offset: .28rem;
+  opacity: 1;
+  box-shadow: 0 24px 60px rgba(84, 42, 43, .14);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__image img { filter: saturate(.77) sepia(.06); }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content { width: min(100%, 40rem); text-align: left; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content h1 {
+  color: #542a2b;
+  font-family: "Noto Serif", Georgia, serif !important;
+  font-size: clamp(4rem, 8vw, 6.8rem) !important;
+  line-height: .88 !important;
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content h1 i { color: #b88a4a; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__invitation,
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__side-note { color: #80685d; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__ornament {
+  top: 8%; right: 7%; z-index: 2; display: grid; width: 5.7rem; height: 5.7rem;
+  border: 1px solid rgba(166, 75, 65, .42); color: #a64b41; place-items: center; transform: rotate(45deg);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__ornament::after {
+  content: '囍'; font: 2rem/1 "Noto Serif", Georgia, serif; transform: rotate(-45deg);
+}
+.demo-page-content .signature-demo--song-hy-contemporary .signature-hero__actions a:first-child { color: #fffaf4; border-color: #8e3e38; background: #8e3e38; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-event-card--primary { color: #fffaf4; background: #653334; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-event-card--primary h3 { color: #fffaf4; }
+.demo-page-content .signature-demo--song-hy-contemporary .signature-rsvp { background: #653334; }
+
+.demo-page-content .signature-demo--riviera-blue .signature-hero {
+  color: var(--sig-ink);
+  background: radial-gradient(ellipse at 83% 17%, rgba(121, 189, 199, .25), transparent 26rem), linear-gradient(145deg, #f4fbfa, #e8f2f1);
+}
+.demo-page-content .signature-demo--riviera-blue .signature-hero__layout {
+  width: min(100%, 75rem);
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  text-align: left;
+}
+.demo-page-content .signature-demo--riviera-blue .signature-hero__image {
+  position: relative; inset: auto; min-height: clamp(25rem, 42vw, 35rem);
+  border: .55rem solid rgba(255, 255, 255, .85); border-radius: 48% 48% .4rem .4rem;
+  opacity: 1; box-shadow: 0 26px 65px rgba(37, 83, 97, .16);
+}
+.demo-page-content .signature-demo--riviera-blue .signature-hero__image img { filter: saturate(.74) hue-rotate(3deg); }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__content { width: min(100%, 38rem); text-align: left; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__content h1 { color: #183c4b; font-size: clamp(4rem, 8vw, 7rem) !important; line-height: .86 !important; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__content h1 i { color: #3986a4; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__invitation,
+.demo-page-content .signature-demo--riviera-blue .signature-hero__side-note { color: #607983; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__ornament { top: 12%; right: 9%; width: 7rem; height: 7rem; border: 1px solid rgba(57, 134, 164, .28); border-radius: 50%; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__ornament::before { position: absolute; inset: .55rem; border: 1px solid rgba(57, 134, 164, .24); border-radius: 50%; content: ''; }
+.demo-page-content .signature-demo--riviera-blue .signature-hero__ornament::after { position: absolute; top: 50%; left: 50%; width: .55rem; height: .55rem; border-radius: 50%; background: #3986a4; content: ''; transform: translate(-50%, -50%); }
+.demo-page-content .signature-demo--riviera-blue .signature-event-card--primary { color: #effafa; background: #1d4e60; }
+.demo-page-content .signature-demo--riviera-blue .signature-event-card--primary h3 { color: #effafa; }
+.demo-page-content .signature-demo--riviera-blue .signature-rsvp { color: #effafa; background: #173b49; }
+
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero {
+  color: var(--sig-ink);
+  background: radial-gradient(circle at 82% 18%, rgba(221, 184, 166, .26), transparent 21rem), #fbf6f0;
+}
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__layout {
+  width: min(100%, 73rem); grid-template-columns: minmax(0, .96fr) minmax(0, 1.04fr); text-align: left;
+}
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__image {
+  position: relative; inset: auto; min-height: clamp(27rem, 47vw, 39rem);
+  border: .65rem solid rgba(255, 255, 255, .82); border-radius: 48% 48% .55rem .55rem;
+  opacity: 1; box-shadow: 0 25px 62px rgba(54, 72, 59, .14);
+}
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__image img { filter: saturate(.68) sepia(.04); }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content { width: min(100%, 39rem); text-align: left; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content h1 { color: #34483b; font-size: clamp(4rem, 8.2vw, 7rem) !important; line-height: .84 !important; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content h1 i { color: #bd806e; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__invitation,
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__side-note { color: #788275; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__ornament { top: 14%; right: 7%; width: 8rem; height: 8rem; border: 1px solid rgba(111, 137, 105, .25); border-radius: 50% 50% 0 50%; transform: rotate(-35deg); }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__ornament::before { position: absolute; top: 50%; left: 50%; width: 3rem; height: 3rem; border: 1px solid rgba(189, 128, 110, .3); border-radius: 50%; content: ''; transform: translate(-50%, -50%); }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-event-card--primary { color: #fffaf4; background: #405747; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-event-card--primary h3 { color: #fffaf4; }
+.demo-page-content .signature-demo--hoa-moc-editorial .signature-rsvp { background: #405747; }
+
+.demo-page-content .signature-demo--summer-postcard .signature-hero {
+  color: var(--sig-ink);
+  background: radial-gradient(ellipse at 13% 8%, rgba(228, 190, 111, .24), transparent 22rem), #fbf5e6;
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__layout {
+  width: min(100%, 74rem); grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); text-align: left;
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__image {
+  position: relative; inset: auto; min-height: clamp(25rem, 43vw, 36rem);
+  border: .7rem solid #fffdf8; outline: 1px solid rgba(174, 111, 72, .35); outline-offset: .2rem;
+  opacity: 1; box-shadow: 0 23px 55px rgba(94, 65, 43, .17); transform: rotate(-1.1deg);
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__image::after {
+  position: absolute; inset: 0; background: linear-gradient(0deg, rgba(42, 41, 32, .25), transparent 45%); content: ''; pointer-events: none;
+}
+.demo-page-content .signature-demo--summer-postcard .signature-hero__image img { filter: saturate(.88) sepia(.06); }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__content { width: min(100%, 39rem); text-align: left; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__content h1 { color: #47362c; font-size: clamp(4rem, 8vw, 6.8rem) !important; line-height: .87 !important; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__content h1 i { color: #cb7554; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__invitation,
+.demo-page-content .signature-demo--summer-postcard .signature-hero__side-note { color: #827363; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__ornament { top: 12%; right: 9%; width: 6rem; height: 6rem; border: 1px dashed rgba(203, 117, 84, .58); border-radius: 50%; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__ornament::after { position: absolute; inset: 1.05rem; border: 1px solid rgba(203, 117, 84, .3); border-radius: 50%; content: ''; }
+.demo-page-content .signature-demo--summer-postcard .signature-hero__actions a:first-child { color: #fffaf4; border-color: #b66346; background: #b66346; }
+.demo-page-content .signature-demo--summer-postcard .signature-event-card--primary { color: #fffaf4; background: #714635; }
+.demo-page-content .signature-demo--summer-postcard .signature-event-card--primary h3 { color: #fffaf4; }
+.demo-page-content .signature-demo--summer-postcard .signature-rsvp { background: #714635; }
+
+@media (max-width: 760px) {
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__layout,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__layout,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__layout,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__layout { grid-template-columns: 1fr; gap: 1.6rem; text-align: center; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__content,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__content { order: 1; width: min(100%, 34rem); margin-inline: auto; text-align: center; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__content .signature-eyebrow,
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__actions,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__actions,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__actions,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__actions { justify-content: center; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__image,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__image,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__image,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__image { order: 2; width: min(100%, 27rem); min-height: min(78vw, 25rem) !important; margin-inline: auto; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__content h1,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__content h1,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__content h1,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__content h1 { font-size: clamp(3.5rem, 14vw, 5.2rem) !important; }
+  .demo-page-content .signature-demo--song-hy-contemporary .signature-hero__ornament,
+  .demo-page-content .signature-demo--riviera-blue .signature-hero__ornament,
+  .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__ornament,
+  .demo-page-content .signature-demo--summer-postcard .signature-hero__ornament { top: 5rem; right: 7%; width: 4.5rem; height: 4.5rem; }
 }

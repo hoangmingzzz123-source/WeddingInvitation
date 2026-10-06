@@ -1,13 +1,7 @@
-import React from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Navigation, ParkingCircle } from 'lucide-react';
+import { Navigation, ParkingCircle } from 'lucide-react';
 
 export function MapSection() {
-  const handleOpenMap = () => {
-    // Replace with actual coordinates
-    window.open('https://maps.google.com/?q=Riverside+Palace+HCMC', '_blank');
-  };
-
   return (
     <section className="min-h-screen bg-gradient-to-b from-[#5A1E2A] to-[#1C1C1C] flex items-center justify-center px-6 py-20">
       <div className="w-full flex justify-center items-center">
@@ -63,36 +57,13 @@ export function MapSection() {
                 }}
               />
               
-              {/* Map embed placeholder */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.9 }}
-                className="aspect-video bg-[#F6F1EB]/10 flex items-center justify-center relative"
-              >
-                {/* Animated pin drop */}
-                <motion.div
-                  initial={{ y: -100, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ 
-                    duration: 0.6, 
-                    delay: 1.2,
-                    type: "spring",
-                    bounce: 0.4
-                  }}
-                  className="text-center"
-                >
-                  <MapPin className="mx-auto mb-4 text-[#C9A24D]" size={64} fill="#C9A24D" />
-                  <p className="text-[#F6F1EB] text-lg" style={{ fontFamily: 'Lora, serif' }}>
-                    Google Maps will be embedded here
-                  </p>
-                  <p className="text-[#F6F1EB]/60 text-sm mt-2" style={{ fontFamily: 'Lora, serif' }}>
-                    123 Wedding Street, HCMC
-                  </p>
-                </motion.div>
-              </motion.div>
+              <iframe
+                className="block aspect-video w-full border-0"
+                src="https://maps.google.com/maps?q=Riverside+Palace,+Ho+Chi+Minh+City&output=embed"
+                title="Bản đồ Riverside Palace, Thành phố Hồ Chí Minh"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </motion.div>
 <br/>
@@ -104,22 +75,27 @@ export function MapSection() {
             transition={{ duration: 0.8, delay: 1.4 }}
             className="grid md:grid-cols-2 gap-6 md:gap-8"
           >
-            <button
-              onClick={handleOpenMap}
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Riverside+Palace%2C+Ho+Chi+Minh+City"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 px-8 py-5 rounded-full bg-gradient-to-r from-[#C9A24D] to-[#C9A24D]/80 text-[#1C1C1C] hover:shadow-lg hover:shadow-[#C9A24D]/40 transition-all duration-300 group"
               style={{ fontFamily: 'Lora, serif' }}
             >
               <Navigation size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="tracking-[0.1em]">Open in Google Maps</span>
-            </button>
+              <span className="tracking-[0.1em]">Mở Google Maps</span>
+            </a>
 
-            <button
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Parking+near+Riverside+Palace%2C+Ho+Chi+Minh+City"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 px-8 py-5 rounded-full border-2 border-[#C9A24D] text-[#F6F1EB] hover:bg-[#C9A24D]/10 transition-all duration-300 group"
               style={{ fontFamily: 'Lora, serif' }}
             >
               <ParkingCircle size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="tracking-[0.1em]">Parking Location</span>
-            </button>
+              <span className="tracking-[0.1em]">Tìm bãi đỗ xe gần đây</span>
+            </a>
           </motion.div>
         </motion.div>
       </div>

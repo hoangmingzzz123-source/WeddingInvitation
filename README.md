@@ -9,7 +9,8 @@ Website giới thiệu dịch vụ và thư viện mẫu thiệp cưới online,
 - Hơn 20 demo thiệp với nhiều phong cách: tối giản, điện ảnh, truyền thống, Art Deco, 3D.
 - Hỗ trợ cả demo nội bộ và sample website bên ngoài.
 - CTA tạo thiệp có hai luồng: gửi yêu cầu vào hệ thống quản trị hoặc tự tạo demo online.
-- Studio demo online hỗ trợ xem trước trực tiếp, 3 theme, ảnh cover tuyển chọn, lưu nháp và link chia sẻ.
+- Studio demo online hỗ trợ xem trước trực tiếp, 3 theme, ảnh cover tuyển chọn, danh sách khách và link mời cá nhân hóa.
+- RSVP demo có câu hỏi xe đưa đón/chế độ ăn, bảng phản hồi và xuất CSV ở gói Diamond.
 - Lazy-load từng demo để giảm bundle tải ban đầu.
 - Tôn trọng thiết lập `prefers-reduced-motion` của người dùng.
 
@@ -51,7 +52,9 @@ src/
 
 - `/tao-thiep`: nhập thông tin, chọn phong cách và xem trước theo thời gian thực.
 - `/tao-thiep/preview?data=...`: bản demo có thể chia sẻ bằng link, không cần backend.
-- Bản nháp được lưu trong `localStorage`; dữ liệu chỉ nằm trong URL khi người dùng chủ động tạo link.
+- Link riêng có `guestId` và tên người nhận; dữ liệu danh sách khách không được nhúng vào link của khách.
+- Bản nháp, danh sách khách và RSVP được lưu trong `localStorage` trên trình duyệt hiện tại. RSVP từ thiết bị khác chưa đồng bộ; cần kết nối API/cơ sở dữ liệu trước khi dùng như dịch vụ thực tế.
+- Gói 159K mở link khách riêng, số người và câu hỏi RSVP thêm. Gói 199K có thêm xuất CSV.
 
 ## Quản trị khách hàng và demo riêng
 

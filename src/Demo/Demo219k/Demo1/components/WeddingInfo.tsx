@@ -5,7 +5,7 @@ import { useInView } from './hooks/useInView';
 const events = [
   {
     title: 'Lễ Vu Quy',
-    date: '15 tháng 6, 2025',
+    date: '17 tháng 4, 2027',
     time: '08:00 Sáng',
     location: 'Tư gia nhà gái',
     address: '123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh',
@@ -16,7 +16,7 @@ const events = [
   },
   {
     title: 'Tiệc Cưới',
-    date: '15 tháng 6, 2025',
+    date: '17 tháng 4, 2027',
     time: '18:00 Chiều',
     location: 'Nhà hàng tiệc cưới White Palace',
     address: '194 Hoàng Văn Thụ, Phường 9, Phú Nhuận, TP. Hồ Chí Minh',
@@ -146,7 +146,8 @@ export function WeddingInfo() {
             className="rounded-2xl overflow-hidden shadow-2xl border border-rose-200/20"
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.0634203876657!2d106.67557!3d10.79797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQ3JzUyLjciTiAxMDbCsDQwJzM5LjMiRQ!5e0!3m2!1svi!2s!4v1234567890"
+              src="https://maps.google.com/maps?q=10.797970,106.677570&z=15&output=embed"
+              title="Bản đồ địa điểm tiệc cưới White Palace"
               width="100%"
               height="400"
               style={{ border: 0 }}

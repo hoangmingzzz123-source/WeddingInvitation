@@ -300,7 +300,7 @@ export function LuxuryGoldCinematicEnhanced() {
                 <div className="relative px-16 py-8 bg-black/40 backdrop-blur-md rounded-2xl border-4 border-[#FFD700]">
                   <p className="text-base text-[#FFD700] mb-2 tracking-widest">SAVE THE DATE</p>
                   <p className="text-4xl md:text-5xl font-bold text-white">
-                    15 • 03 • 2025
+                    13 • 03 • 2027
                   </p>
                 </div>
               </motion.div>
@@ -393,7 +393,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   { year: '2019', title: 'Gặp Gỡ', icon: '✨' },
                   { year: '2021', title: 'Yêu Nhau', icon: '❤️' },
                   { year: '2024', title: 'Đính Hôn', icon: '💍' },
-                  { year: '2025', title: 'Kết Hôn', icon: '💒' },
+                  { year: '2027', title: 'Kết Hôn', icon: '💒' },
                 ].map((item, i) => (
                   <motion.div
                     key={i}
@@ -530,7 +530,7 @@ export function LuxuryGoldCinematicEnhanced() {
                 {[
                   {
                     title: 'Lễ Thành Hôn',
-                    date: 'Thứ Bảy, 15 Tháng 3, 2025',
+                    date: 'Thứ Bảy, 13 Tháng 3, 2027',
                     time: '16:00',
                     location: 'Hội Trường Lớn',
                     address: 'Khách Sạn Sang Trọng, 123 Đại Lộ Vàng, Quận 1',
@@ -539,7 +539,7 @@ export function LuxuryGoldCinematicEnhanced() {
                   },
                   {
                     title: 'Tiệc Chiêu Đãi',
-                    date: 'Thứ Bảy, 15 Tháng 3, 2025',
+                    date: 'Thứ Bảy, 13 Tháng 3, 2027',
                     time: '18:30',
                     location: 'Phòng Pha Lê',
                     address: 'Khách Sạn Sang Trọng, 123 Đại Lộ Vàng, Quận 1',
@@ -692,7 +692,11 @@ export function LuxuryGoldCinematicEnhanced() {
                 transition={{ delay: 0.3 }}
                 className="bg-black/30 backdrop-blur-md rounded-3xl overflow-hidden border-4 border-[#FFD700]/30"
               >
-                <MapSection />
+                <MapSection
+                  showHeading={false}
+                  location="Khách Sạn Sang Trọng"
+                  address="123 Đại Lộ Vàng, Quận 1, TP.HCM"
+                />
               </motion.div>
             </div>
           </motion.div>
@@ -979,7 +983,7 @@ export function LuxuryGoldCinematicEnhanced() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#0A0A0A] text-white overflow-hidden">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Enhanced Bokeh Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">

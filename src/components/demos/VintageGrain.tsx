@@ -17,7 +17,7 @@ export function VintageGrain() {
   return (
     <div className="min-h-screen bg-[#F5EFE6] text-[#3E2723] relative overflow-hidden">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} allowCustomMusic={true} />
 
       {/* Film Grain Overlay */}
       <div 
@@ -125,7 +125,7 @@ function CoverTab() {
             style={{ fontFamily: '"Caveat", cursive' }}
           >
             <p className="text-3xl text-[#3E2723]">Tom & Sarah</p>
-            <p className="text-lg text-[#6D5A44]">Est. 2025</p>
+            <p className="text-lg text-[#6D5A44]">Est. 2027</p>
           </motion.div>
         </motion.div>
 
@@ -140,7 +140,7 @@ function CoverTab() {
             <div className="text-center">
               <Camera className="w-8 h-8 mx-auto mb-1 text-[#8B7355]" />
               <p className="text-xs text-[#6D5A44]" style={{ fontFamily: '"Courier New", monospace' }}>
-                VINTAGE<br/>2025
+                VINTAGE<br/>2027
               </p>
             </div>
           </div>
@@ -155,7 +155,7 @@ function StoryTab() {
     { year: '2019', season: 'Spring', text: 'We met at a coffee shop on a rainy day' },
     { year: '2021', season: 'Summer', text: 'Our first trip together to the mountains' },
     { year: '2023', season: 'Autumn', text: 'The proposal under the falling leaves' },
-    { year: '2025', season: 'Winter', text: 'Forever starts here' },
+    { year: '2027', season: 'Winter', text: 'Forever starts here' },
   ];
 
   return (
@@ -283,7 +283,10 @@ function MapTab() {
         </motion.h2>
 
         <MapSection
-          className="w-full h-[500px] rounded-lg shadow-xl"
+          showHeading={false}
+          className="!px-0 !py-0"
+          location="San Francisco"
+          address="California, Hoa Kỳ"
           center={{ lat: 37.7749, lng: -122.4194 }}
         />
       </div>
@@ -315,7 +318,7 @@ function DetailsTab() {
 
           <div className="space-y-6 text-center">
             {[
-              { icon: Calendar, label: 'Date', value: 'June 15th, 2025' },
+              { icon: Calendar, label: 'Date', value: 'June 19th, 2027' },
               { icon: Clock, label: 'Time', value: '4:00 PM' },
               { icon: MapPin, label: 'Venue', value: 'The Old Mill by the River' },
             ].map((item, i) => (

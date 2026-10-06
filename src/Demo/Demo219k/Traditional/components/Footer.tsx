@@ -29,7 +29,7 @@ export function Footer() {
 
         {/* Date */}
         <div className="mb-8">
-          <p className="text-[#FBF6EE]/80">29.03.2026</p>
+          <p className="text-[#FBF6EE]/80">17.04.2027</p>
         </div>
 
         {/* Divider */}
@@ -52,7 +52,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-[#FBF6EE]/20">
           <p className="text-sm text-[#FBF6EE]/60">
-            © 2026 Wedding Invitation
+            © 2027 Wedding Invitation
           </p>
         </div>
       </motion.div>

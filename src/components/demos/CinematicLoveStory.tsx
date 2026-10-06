@@ -56,7 +56,7 @@ export function CinematicLoveStory() {
       image: PREMIUM_GALLERY_IMAGES.afamilycdn_1
     },
     {
-      year: '2025',
+      year: '2027',
       month: 'Tháng 3',
       title: 'Lễ Cưới',
       story: 'Và cuối cùng, chúng mình sẽ nắm tay nhau bước vào hôn lễ thiêng liêng, khởi đầu cho hành trình mới - cùng nhau đến cuối con đường.',
@@ -68,7 +68,7 @@ export function CinematicLoveStory() {
     {
       icon: Calendar,
       title: 'Lễ Gia Tiên',
-      date: 'Thứ 7, 15/03/2025',
+      date: 'Thứ 7, 13/03/2027',
       time: '07:00 AM',
       location: 'Tư Gia Nhà Gái',
       address: '123 Nguyễn Huệ, Q.1, TP.HCM',
@@ -76,7 +76,7 @@ export function CinematicLoveStory() {
     {
       icon: Heart,
       title: 'Lễ Cưới',
-      date: 'Thứ 7, 15/03/2025',
+      date: 'Thứ 7, 13/03/2027',
       time: '11:00 AM',
       location: 'Nhà Thờ Đức Bà',
       address: '01 Công xã Paris, Q.1, TP.HCM',
@@ -84,7 +84,7 @@ export function CinematicLoveStory() {
     {
       icon: MapPin,
       title: 'Tiệc Cưới',
-      date: 'Thứ 7, 15/03/2025',
+      date: 'Thứ 7, 13/03/2027',
       time: '18:00 PM',
       location: 'Grand Palace',
       address: '789 Lê Lợi, Q.1, TP.HCM',
@@ -119,7 +119,7 @@ export function CinematicLoveStory() {
   return (
     <div ref={containerRef} className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Music Player - 199K Package: Full Features */}
-      <MusicPlayer autoPlay={true} showVolumeControl={true} allowCustomMusic={true} />
+      <MusicPlayer autoPlay={false} showVolumeControl={true} allowCustomMusic={true} />
 
       {/* Film Grain Overlay */}
       <div 
@@ -168,7 +168,7 @@ export function CinematicLoveStory() {
             >
               Minh & Hương
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300">15 • 03 • 2025</p>
+            <p className="text-xl md:text-2xl text-gray-300">13 • 03 • 2027</p>
           </motion.div>
 
           <motion.div
@@ -478,7 +478,12 @@ export function CinematicLoveStory() {
             viewport={{ once: true }}
             className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden"
           >
-            <MapSection />
+            <MapSection
+              showHeading={false}
+              className="!px-0 !py-0"
+              location="Grand Palace"
+              address="789 Lê Lợi, Quận 1, TP.HCM"
+            />
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6 mt-12">
@@ -739,7 +744,7 @@ export function CinematicLoveStory() {
                 </div>
                 <div className="p-3 bg-white/5 rounded-lg border border-white/5">
                   <p className="text-xs text-gray-500 mb-1">Số tài khoản</p>
-                  <p className="text-white font-mono font-semibold">1234567890</p>
+                  <p className="text-white font-mono font-semibold">Dữ liệu minh họa</p>
                 </div>
                 <div className="p-3 bg-white/5 rounded-lg border border-white/5">
                   <p className="text-xs text-gray-500 mb-1">Chủ tài khoản</p>
@@ -774,7 +779,7 @@ export function CinematicLoveStory() {
                 </div>
                 <div className="p-3 bg-white/5 rounded-lg border border-white/5">
                   <p className="text-xs text-gray-500 mb-1">Số tài khoản</p>
-                  <p className="text-white font-mono font-semibold">0987654321</p>
+                  <p className="text-white font-mono font-semibold">Dữ liệu minh họa</p>
                 </div>
                 <div className="p-3 bg-white/5 rounded-lg border border-white/5">
                   <p className="text-xs text-gray-500 mb-1">Chủ tài khoản</p>
@@ -796,12 +801,12 @@ export function CinematicLoveStory() {
               <h3 className="text-2xl text-[#C29B43]" style={{ fontFamily: '"Playfair Display", serif' }}>Chia Sẻ Thiệp Cưới</h3>
               <div className="p-4 bg-white/5 rounded-lg border border-white/5">
                 <code className="text-sm text-gray-400 break-all">
-                  https://thiepcuoi.vn/minh-huong-2025
+                  https://thiepcuoi.vn/minh-huong-2027
                 </code>
               </div>
               <Button
                 onClick={() => {
-                  navigator.clipboard.writeText('https://thiepcuoi.vn/minh-huong-2025');
+                  navigator.clipboard.writeText('https://thiepcuoi.vn/minh-huong-2027');
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
                 }}

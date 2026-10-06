@@ -32,7 +32,7 @@ const timeline = [
     image: PREMIUM_GALLERY_IMAGES.pinimg_14  },
   {
     icon: Church,
-    date: '15.06.2025',
+    date: '17.04.2027',
     title: 'Đám Cưới',
     description: 'Ngày mà chúng tôi chính thức trở thành vợ chồng, bắt đầu hành trình mới với tư cách là một gia đình. Cảm ơn bạn đã đồng hành cùng chúng tôi!',
     image: PREMIUM_GALLERY_IMAGES.pinimg_4  },

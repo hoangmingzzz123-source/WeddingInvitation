@@ -117,7 +117,7 @@ function HomeTab() {
               transition={{ delay: 0.8 }}
               className="text-3xl text-[#3B82F6] font-semibold tracking-wider"
             >
-              25.07.2025
+              24.07.2027
             </motion.p>
           </div>
 
@@ -150,7 +150,7 @@ function HomeTab() {
 
 function InfoTab() {
   const infoCards = [
-    { icon: Calendar, title: 'Ngày', value: 'Thứ 7, 25.07.2025', color: '#3B82F6' },
+    { icon: Calendar, title: 'Ngày', value: 'Thứ 7, 24.07.2027', color: '#3B82F6' },
     { icon: Clock, title: 'Giờ', value: '09:30 AM', color: '#06B6D4' },
     { icon: MapPin, title: 'Địa điểm', value: 'Grand Convention Center', color: '#8B5CF6' },
   ];
@@ -271,7 +271,10 @@ function MapTab() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-2xl mx-auto w-full"
       >
-        <MapSection />
+        <MapSection
+          location="Grand Convention Center"
+          address="Địa chỉ sẽ được cập nhật"
+        />
       </motion.div>
     </section>
   );

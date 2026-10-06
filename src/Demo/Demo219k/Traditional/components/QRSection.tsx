@@ -8,21 +8,21 @@ export function QRSection() {
       title: 'Momo', 
       description: 'Quét mã để chuyển khoản qua Momo',
       color: '#A50064',
-      account: '0987654321'
+      account: 'Thông tin minh họa'
     },
     { 
       icon: CreditCard, 
       title: 'Ngân Hàng', 
-      description: 'Vietcombank - 1234567890',
+      description: 'Thông tin ngân hàng được cá nhân hóa',
       color: '#D4AF37',
-      account: 'NGUYEN VAN MINH'
+      account: 'Thông tin minh họa'
     },
     { 
       icon: Share2, 
       title: 'Zalo/Facebook', 
       description: 'Kết nối và gửi lời chúc',
       color: '#0068FF',
-      account: '@wedding2025'
+      account: '@wedding2027'
     },
   ];
 
@@ -185,6 +185,9 @@ export function QRSection() {
             >
               <p className="text-[#3A2F2F] italic">
                 Sự hiện diện của bạn là món quà ý nghĩa nhất với chúng tôi
+              </p>
+              <p className="text-[#3A2F2F]/65 text-xs mt-2">
+                Mã QR và thông tin tài khoản ở đây là dữ liệu minh họa.
               </p>
             </motion.div>
           </div>

@@ -65,7 +65,7 @@ export function CinematicLoveStoryEnhanced() {
   return (
     <div ref={containerRef} className="min-h-screen bg-black relative overflow-hidden">
       {/* Music Player */}
-      <MusicPlayer autoPlay={true} showVolumeControl={false} />
+      <MusicPlayer autoPlay={false} showVolumeControl={false} />
 
       {/* Film Grain Texture */}
       <div 
@@ -235,7 +235,7 @@ function CoverPage({ onNext, scaleProgress, opacityProgress }: { onNext: () => v
           <div className="flex items-center justify-center gap-6">
             <div className="h-px w-24 bg-gradient-to-r from-transparent to-[#C29B43]" />
             <p className="text-2xl text-[#FFD700]" style={{ fontFamily: '"Crimson Text", serif' }}>
-              15 • 03 • 2025
+              13 • 03 • 2027
             </p>
             <div className="h-px w-24 bg-gradient-to-l from-transparent to-[#C29B43]" />
           </div>
@@ -310,7 +310,7 @@ function StoryPage({ displayedText, onNext, currentChapter, setCurrentChapter }:
       image: PREMIUM_GALLERY_IMAGES.afamilycdn_1,
     },
     {
-      year: '2025',
+      year: '2027',
       title: 'Chương IV: Kết Hôn',
       scene: 'Happily Ever After',
       image: PREMIUM_GALLERY_IMAGES.pinimg_4,
@@ -612,7 +612,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '🏠',
       title: 'Lễ Gia Tiên',
       time: '07:00 AM',
-      date: 'Thứ 7, 15/03/2025',
+      date: 'Thứ 7, 13/03/2027',
       location: 'Tư Gia Nhà Gái',
       address: '123 Nguyễn Huệ, Quận 1, TP.HCM',
       gradient: 'from-[#C29B43]/20 via-[#FFD700]/10 to-transparent',
@@ -622,7 +622,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '💒',
       title: 'Lễ Thành Hôn',
       time: '11:00 AM',
-      date: 'Thứ 7, 15/03/2025',
+      date: 'Thứ 7, 13/03/2027',
       location: 'Nhà Thờ Đức Bà',
       address: '01 Công xã Paris, Quận 1, TP.HCM',
       gradient: 'from-[#FFD700]/20 via-[#C29B43]/10 to-transparent',
@@ -632,7 +632,7 @@ function DetailsPage({ onNext }: { onNext: () => void }) {
       icon: '🎉',
       title: 'Tiệc Cưới',
       time: '18:00 PM',
-      date: 'Thứ 7, 15/03/2025',
+      date: 'Thứ 7, 13/03/2027',
       location: 'Grand Palace Hotel',
       address: '789 Lê Lợi, Quận 1, TP.HCM',
       gradient: 'from-[#C29B43]/20 via-[#FFD700]/10 to-transparent',
