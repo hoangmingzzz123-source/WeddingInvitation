@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /tao-thiep/preview
+Disallow: /admin
+Disallow: /preview/
 
 Sitemap: https://wedding-invitation-five-orpin.vercel.app/sitemap.xml

@@ -36,7 +36,6 @@ import { getWeddingPackage, weddingPackages } from '../data/packages';
 import type { TemplateTier } from '../data/templates';
 import weddingTrack from '../asset/Le_duong.mp3';
 
-const REQUEST_FORM_URL = 'https://forms.gle/2qBNf4tHBiq6vavZ6';
 const STORAGE_KEY = 'mp-wedding-demo-draft-v1';
 const RSVP_STORAGE_PREFIX = 'mp-wedding-demo-rsvps-v1:';
 
@@ -658,7 +657,7 @@ function InvitationGuestDashboard({ draft, rsvps }: { draft: InvitationDraft; rs
         </div>
         <div className="invitation-guest-dashboard__actions">
           <button type="button" onClick={() => void copyGeneralLink()}><Link2 aria-hidden="true" /> Link chung</button>
-          <button type="button" onClick={() => window.open(REQUEST_FORM_URL, '_blank', 'noopener,noreferrer')}><ExternalLink aria-hidden="true" /> Xuất bản</button>
+          <button type="button" onClick={() => navigateTo('/yeu-cau-thiep')}><ExternalLink aria-hidden="true" /> Xuất bản</button>
           {draft.packageTier === '199k'
             ? <button type="button" className="is-primary" onClick={() => exportRsvpsCsv(draft, rsvps)}><Download aria-hidden="true" /> Tải CSV</button>
             : <span className="invitation-guest-dashboard__upgrade">Xuất CSV · Diamond</span>}
@@ -1332,7 +1331,7 @@ export function GeneratedInvitationPage() {
           <h1>Biến thiết kế này thành website cưới hoàn chỉnh</h1>
           <p className="preview-publish-card__summary">Bản demo đang bật các tính năng theo gói {selectedPackage.name} ({selectedPackage.price}):</p>
           <ul>{selectedPackage.features.map((feature) => <li key={feature}><Check aria-hidden="true" /> {feature}</li>)}</ul>
-          <button type="button" onClick={() => window.open(REQUEST_FORM_URL, '_blank', 'noopener,noreferrer')}>
+          <button type="button" onClick={() => navigateTo('/yeu-cau-thiep')}>
             Điền form để xuất bản <ExternalLink aria-hidden="true" />
           </button>
           <small>RSVP, guestbook và QR trong bản này là tương tác minh họa. Đính kèm link demo trong form để đội ngũ giữ đúng phong cách bạn đã chọn.</small>

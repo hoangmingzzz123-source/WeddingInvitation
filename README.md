@@ -8,7 +8,7 @@ Website giới thiệu dịch vụ và thư viện mẫu thiệp cưới online,
 - Thư viện mẫu có tìm kiếm, lọc theo gói và responsive trên mobile/desktop.
 - Hơn 20 demo thiệp với nhiều phong cách: tối giản, điện ảnh, truyền thống, Art Deco, 3D.
 - Hỗ trợ cả demo nội bộ và sample website bên ngoài.
-- CTA tạo thiệp có hai luồng: gửi nội dung qua Google Form hoặc tự tạo demo online.
+- CTA tạo thiệp có hai luồng: gửi yêu cầu vào hệ thống quản trị hoặc tự tạo demo online.
 - Studio demo online hỗ trợ xem trước trực tiếp, 3 theme, ảnh cover tuyển chọn, danh sách khách và link mời cá nhân hóa.
 - RSVP demo có câu hỏi xe đưa đón/chế độ ăn, bảng phản hồi và xuất CSV ở gói Diamond.
 - Lazy-load từng demo để giảm bundle tải ban đầu.
@@ -55,6 +55,17 @@ src/
 - Link riêng có `guestId` và tên người nhận; dữ liệu danh sách khách không được nhúng vào link của khách.
 - Bản nháp, danh sách khách và RSVP được lưu trong `localStorage` trên trình duyệt hiện tại. RSVP từ thiết bị khác chưa đồng bộ; cần kết nối API/cơ sở dữ liệu trước khi dùng như dịch vụ thực tế.
 - Gói 159K mở link khách riêng, số người và câu hỏi RSVP thêm. Gói 199K có thêm xuất CSV.
+
+## Quản trị khách hàng và demo riêng
+
+Hệ thống có khu vực quản trị nội bộ tại `/admin/login`, dùng Supabase Auth + PostgreSQL RLS để:
+
+- Quản lý khách hàng nhận từ form website hoặc nhập thủ công.
+- Chọn mẫu và tạo link preview riêng có token/hạn dùng.
+- Hiển thị popup xác nhận đây là bản demo trước khi khách xem.
+- Xác nhận khách đặt mẫu và xuất source code thiệp thành file ZIP qua Vercel Function.
+
+Xem hướng dẫn cấu hình tại [`ADMIN_SETUP.md`](./ADMIN_SETUP.md). Không commit `.env.local` hoặc Supabase secret key.
 
 ## Thêm một mẫu mới
 
