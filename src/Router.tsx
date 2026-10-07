@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { weddingTemplates } from './data/templates';
 
-const productionUrl = 'https://wedding-invitation-five-orpin.vercel.app';
+const productionUrl = 'https://wedding-invitation-mp.vercel.app';
 
 function updateMeta(selector: string, attribute: string, value: string) {
   document.querySelector<HTMLMetaElement>(selector)?.setAttribute(attribute, value);
@@ -14,6 +14,7 @@ const GeneratedInvitationPage = lazy(() => import('./components/InvitationCreato
 const CustomerRequestPage = lazy(() => import('./components/CustomerRequestPage').then((module) => ({ default: module.CustomerRequestPage })));
 const PublicDemoPage = lazy(() => import('./components/PublicDemoPage').then((module) => ({ default: module.PublicDemoPage })));
 const AdminLoginPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminLoginPage })));
+const AdminSetPasswordPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminSetPasswordPage })));
 const AdminDashboardPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminDashboardPage })));
 const DemoShell = lazy(() => import('./components/DemoShell').then((module) => ({ default: module.DemoShell })));
 const SignatureDemo = lazy(() => import('./components/demos/SignatureDemos').then((module) => ({ default: module.SignatureDemo })));
@@ -125,6 +126,7 @@ export function Router() {
     '/tao-thiep/preview': <GeneratedInvitationPage />,
     '/yeu-cau-thiep': <CustomerRequestPage />,
     '/admin/login': <AdminLoginPage />,
+    '/admin/setup-password': <AdminSetPasswordPage />,
     '/admin': <AdminDashboardPage />,
     '/demo/classic-minimalist': <ClassicMinimalist />,
     '/demo/blush-floral': <BlushFloral />,

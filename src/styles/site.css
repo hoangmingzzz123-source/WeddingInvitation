@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50642)
+Total output lines: 7031
+
 :root {
   --mp-ink: #172033;
   --mp-muted: #657084;
@@ -3823,40 +3826,7 @@ body {
 .signature-hero--bloom-crystal-3d .signature-hero__ornament { top: 17%; right: 9%; width: 8rem; height: 8rem; border: 1px solid rgba(139,118,170,.24); transform: rotate(32deg); }
 .signature-hero--bloom-crystal-3d .signature-hero__ornament::after { position: absolute; inset: 1rem; border: 1px solid rgba(139,118,170,.24); content: ''; transform: rotate(25deg); }
 .signature-hero--modern-dark-blue { color: #fff; background: radial-gradient(circle at 15% 20%, rgba(60, 105, 164, .26), transparent 26rem), #142238; }
-.signature-hero--modern-dark-blue .signature-hero__image { border: 1px solid rgba(177,207,238,.52); box-shadow: 1.1rem 1.1rem 0 rgba(146,188,232,.12); }
-.signature-hero--modern-dark-blue .signature-hero__image img { filter: saturate(.65) contrast(1.05); }
-.signature-hero--modern-dark-blue .signature-hero__content h1 { color: #fff; }
-.signature-hero--modern-dark-blue .signature-hero__invitation,
-.signature-hero--modern-dark-blue .signature-hero__side-note { color: rgba(231,239,248,.7); }
-.signature-hero--modern-dark-blue .signature-hero__actions a { border-color: rgba(255,255,255,.25); color: #fff; }
-.signature-hero--modern-dark-blue .signature-hero__actions a:first-child { color: #142238; border-color: #b9d4f1; background: #b9d4f1; }
-.signature-hero--minimal-elegant .signature-hero__image { min-height: clamp(25rem, 45vw, 37rem); }
-.signature-hero--minimal-elegant .signature-hero__image img { filter: saturate(.55); }
-.signature-hero--minimal-elegant .signature-hero__image-note { color: var(--sig-ink); background: rgba(248,247,242,.82); }
-
-.signature-story {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(18rem, .82fr);
-  align-items: center;
-  gap: clamp(2rem, 8vw, 8rem);
-  width: min(100%, 70rem);
-  margin-inline: auto;
-}
-.signature-story__copy { max-width: 36rem; }
-.signature-story__copy h2 { margin-top: 1.25rem !important; }
-.signature-story__copy h2 em { color: var(--sig-accent); font-weight: 400; }
-.signature-story__copy > p:not(.signature-eyebrow) { margin-top: 1.4rem; color: var(--sig-muted); font-size: 0.86rem; line-height: 1.9; }
-.signature-text-link { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1.5rem; color: var(--sig-ink); text-decoration: none; font-size: .68rem; }
-.signature-text-link svg { width: .9rem; height: .9rem; color: var(--sig-accent); }
-.signature-story__photo { position: relative; height: clamp(23rem, 43vw, 36rem); overflow: hidden; background: #ddd8cc; }
-.signature-story__photo img { position: absolute; inset: 0; }
-.signature-story__photo span { position: absolute; right: 1rem; bottom: 1rem; color: #fff; font: 400 1.25rem/1 "Cormorant Garamond", Georgia, serif; text-shadow: 0 2px 14px rgba(0,0,0,.45); }
-.signature-story__photo i { color: var(--sig-accent); font-style: normal; }
-.signature-demo--bloom-crystal-3d .signature-story__photo { border-radius: 46% 46% 1rem 1rem; }
-.signature-demo--luxury-gold-frame .signature-story__photo { border: 1px solid var(--sig-accent); padding: .5rem; }
-.signature-demo--luxury-gold-frame .signature-story__photo img { inset: .5rem; width: calc(100% - 1rem); height: calc(100% - 1rem); }
-
-.signature-events { background: color-mix(in srgb, var(--sig-paper) 74%, var(--sig-accent) 6%); }
+.signature-hero--modern-dark-blue .signature-hero__image { border: 1px solid rgba(177,207,238,.52); box-shadow: 1.1rem 1.1rem 0 rgba(146,188,232…642 tokens truncated…accent) 6%); }
 .signature-section-heading { width: min(100%, 48rem); margin: 0 auto 2.5rem; text-align: center; }
 .signature-section-heading > .signature-eyebrow { justify-content: center; }
 .signature-section-heading h2 { margin-top: 1rem !important; }
@@ -4740,6 +4710,25 @@ body {
 .admin-login-card form button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.admin-password-hint {
+  margin-top: -0.25rem;
+  color: #82766e;
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+.admin-login-card__fallback {
+  width: 100%;
+  min-height: 3.2rem;
+  margin: 1.5rem 0 1.2rem;
+  color: #7b5729;
+  font-weight: 700;
+  border: 1px solid #d8c1a2;
+  border-radius: 0.9rem;
+  background: #fff9f0;
+  cursor: pointer;
 }
 
 .admin-app {

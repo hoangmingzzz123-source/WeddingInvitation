@@ -21,6 +21,13 @@ interface AuthResponse {
   user: { id: string; email?: string };
 }
 
+export interface AuthCallbackSession {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+  type: string;
+}
+
 export class SupabaseRequestError extends Error {
   status: number;
 
@@ -148,6 +155,55 @@ export function readAdminSession(): AdminSession | null {
 
 function saveAdminSession(session: AdminSession) {
   window.sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(session));
+}
+
+export function readAuthCallbackSession(): AuthCallbackSession {
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const query = new URLSearchParams(window.location.search);
+  const error = hash.get('error_description') ?? query.get('error_description');
+  if (error) throw new SupabaseRequestError(error, 401);
+
+  const accessToken = hash.get('access_token') ?? '';
+  const refreshToken = hash.get('refresh_token') ?? '';
+  const expiresIn = Number(hash.get('expires_in') ?? 3600);
+  const expiresAt = Number(hash.get('expires_at') ?? 0) * 1000
+    || Date.now() + expiresIn * 1000;
+
+  if (!accessToken || !refreshToken) {
+    throw new SupabaseRequestError(
+      'Liên kết đặt mật khẩu không hợp lệ hoặc đã hết hạn. Hãy yêu cầu gửi lại email.',
+      401,
+    );
+  }
+
+  return {
+    accessToken,
+    refreshToken,
+    expiresAt,
+    type: hash.get('type') ?? query.get('type') ?? '',
+  };
+}
+
+export async function setAdminPassword(
+  callbackSession: AuthCallbackSession,
+  password: string,
+) {
+  const user = await request<{ id: string; email?: string }>('/auth/v1/user', {
+    method: 'PUT',
+    token: callbackSession.accessToken,
+    body: JSON.stringify({ password }),
+  });
+  const session: AdminSession = {
+    accessToken: callbackSession.accessToken,
+    refreshToken: callbackSession.refreshToken,
+    expiresAt: callbackSession.expiresAt,
+    userId: user.id,
+    email: user.email ?? '',
+  };
+
+  await getAdminProfile(session);
+  saveAdminSession(session);
+  return session;
 }
 
 export function clearAdminSession() {

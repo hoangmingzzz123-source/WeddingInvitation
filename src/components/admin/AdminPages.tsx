@@ -34,7 +34,9 @@ import {
   listCustomers,
   listDemos,
   readAdminSession,
+  readAuthCallbackSession,
   refreshAdminSession,
+  setAdminPassword,
   signInAdmin,
   updateCustomer,
   updateDemo,
@@ -48,6 +50,7 @@ import {
   type CustomerStatus,
   type InvitationDemoRecord,
 } from '../../types/admin';
+import type { AuthCallbackSession } from '../../lib/supabaseRest';
 import { CustomerInvitationPreview } from '../CustomerInvitationPreview';
 
 const customerStatuses = Object.keys(customerStatusLabels) as CustomerStatus[];
@@ -143,6 +146,101 @@ export function AdminLoginPage() {
           </button>
         </form>
         <small>Route này không xuất hiện trên website công khai. Dữ liệu vẫn được bảo vệ bằng Supabase Auth và RLS.</small>
+      </section>
+    </main>
+  );
+}
+
+export function AdminSetPasswordPage() {
+  const [callbackSession, setCallbackSession] = useState<AuthCallbackSession | null>(null);
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.title = 'Thiết lập mật khẩu quản trị | Wedding Invitation MP';
+    try {
+      const session = readAuthCallbackSession();
+      setCallbackSession(session);
+      window.history.replaceState({}, '', '/admin/setup-password');
+    } catch (callbackError) {
+      setError(callbackError instanceof Error ? callbackError.message : 'Liên kết không hợp lệ.');
+    }
+  }, []);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!callbackSession) return;
+    if (password.length < 10) {
+      setError('Mật khẩu cần có ít nhất 10 ký tự.');
+      return;
+    }
+    if (password !== confirmation) {
+      setError('Hai mật khẩu chưa trùng khớp.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    try {
+      await setAdminPassword(callbackSession, password);
+      navigateTo('/admin');
+    } catch (setupError) {
+      setError(setupError instanceof Error ? setupError.message : 'Không thể thiết lập mật khẩu.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="admin-login-page">
+      <section className="admin-login-card">
+        <button type="button" className="admin-login-card__back" onClick={() => navigateTo('/admin/login')}>
+          <ArrowLeft aria-hidden="true" /> Về trang đăng nhập
+        </button>
+        <div className="admin-login-card__brand"><ShieldCheck aria-hidden="true" /></div>
+        <p>Kích hoạt tài khoản</p>
+        <h1>Tạo mật khẩu quản trị</h1>
+        <span>Mật khẩu được gửi trực tiếp tới Supabase qua kết nối bảo mật và không được lưu trên website.</span>
+        {error && <div className="admin-alert is-error" role="alert">{error}</div>}
+        {callbackSession && (
+          <form onSubmit={submit}>
+            <label>
+              <LockKeyhole aria-hidden="true" /> Mật khẩu mới
+              <input
+                type="password"
+                autoComplete="new-password"
+                minLength={10}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+            </label>
+            <label>
+              <LockKeyhole aria-hidden="true" /> Nhập lại mật khẩu
+              <input
+                type="password"
+                autoComplete="new-password"
+                minLength={10}
+                value={confirmation}
+                onChange={(event) => setConfirmation(event.target.value)}
+                required
+              />
+            </label>
+            <small className="admin-password-hint">Ít nhất 10 ký tự; nên kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt.</small>
+            <button type="submit" disabled={loading}>
+              {loading ? <LoaderCircle className="is-spinning" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}
+              {loading ? 'Đang thiết lập...' : 'Tạo mật khẩu và vào quản trị'}
+            </button>
+          </form>
+        )}
+        {!callbackSession && (
+          <button type="button" className="admin-login-card__fallback" onClick={() => navigateTo('/admin/login')}>
+            Quay lại đăng nhập
+          </button>
+        )}
+        <small>Không chia sẻ liên kết kích hoạt hoặc mật khẩu với bất kỳ ai.</small>
       </section>
     </main>
   );
@@ -546,4 +644,3 @@ export function AdminDashboardPage() {
     </main>
   );
 }
-
