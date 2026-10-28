@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 50642)
-Total output lines: 7031
-
 :root {
   --mp-ink: #172033;
   --mp-muted: #657084;
@@ -6998,4 +6995,44 @@ body {
   .demo-page-content .signature-demo--riviera-blue .signature-hero__ornament,
   .demo-page-content .signature-demo--hoa-moc-editorial .signature-hero__ornament,
   .demo-page-content .signature-demo--summer-postcard .signature-hero__ornament { top: 5rem; right: 7%; width: 4.5rem; height: 4.5rem; }
+}
+
+/* Keep navigation in document flow: a negative hero margin previously put
+   the title beneath the sticky pill on narrow Safari viewports. */
+.demo-page-content .signature-demo { padding-top: 4.75rem; }
+.demo-page-content .signature-demo .signature-nav {
+  top: calc(env(safe-area-inset-top, 0px) + 4.75rem);
+  margin: 0 auto;
+}
+.demo-page-content .signature-demo section.signature-hero {
+  margin-top: 0;
+  padding-top: 2.5rem !important;
+}
+.demo-page-content .signature-demo section[id] { scroll-margin-top: 10rem; }
+.signature-nav__rsvp { align-items: center; justify-content: center; }
+.signature-photo-disclaimer { position: relative; display: block; padding: 1rem; text-align: center; color: var(--sig-muted); font-size: .65rem; }
+.signature-demo--sen-ngoc { --sig-paper: #eff5ed; --sig-ink: #214b42; --sig-accent: #a58756; --sig-muted: #577469; }
+.signature-demo--hy-su-do-son { --sig-paper: #f9eedc; --sig-ink: #8c2228; --sig-accent: #b18c46; --sig-muted: #8a6258; }
+.signature-demo--pho-hoi { --sig-paper: #f4e4bb; --sig-ink: #493c30; --sig-accent: #9b4d32; --sig-muted: #7d6c53; }
+.demo-page-content .signature-demo--sen-ngoc .signature-hero { background: radial-gradient(ellipse at 10% 80%, #cadfcf, transparent 70%), var(--sig-paper) !important; }
+.signature-demo--sen-ngoc .signature-hero__image { border-radius: 50% 50% 2rem 2rem; border: 8px double #a5875680; }
+.demo-page-content .signature-demo--hy-su-do-son .signature-hero { background: #8c2228 !important; }
+.demo-page-content .signature-demo--hy-su-do-son .signature-hero__content { padding: 2rem; background: var(--sig-paper); outline: 1px solid var(--sig-accent); outline-offset: -12px; }
+.signature-demo--hy-su-do-son .signature-hero__image { border-radius: .5rem; border: 8px double #c4a15b; }
+.signature-demo--hy-su-do-son .signature-hero__ornament::after { content: '囍'; color: #c4a15b; font-size: 4rem; }
+.demo-page-content .signature-demo--pho-hoi .signature-hero { background: repeating-linear-gradient(0deg, #a47e2720 0 1px, transparent 1px 6px), var(--sig-paper) !important; }
+.signature-demo--pho-hoi .signature-hero__image { transform: rotate(-3deg); border: 12px solid #fff9e9; border-bottom-width: 3rem; box-shadow: 0 16px 35px #493c3030; }
+.signature-demo--pho-hoi .signature-hero__layout { direction: rtl; }
+.signature-demo--pho-hoi .signature-hero__layout > * { direction: ltr; }
+@media (max-width: 767px) {
+  .demo-page-content .signature-demo .signature-nav { gap: .5rem; padding-inline: .65rem; }
+  .signature-nav__rsvp { width: 2.8rem; height: 2.8rem; font-size: 0 !important; gap: 0; }
+  .signature-nav__rsvp svg { color: #fff; }
+  .demo-page-content .signature-demo:is(.signature-demo--sen-ngoc, .signature-demo--hy-su-do-son, .signature-demo--pho-hoi) .signature-hero__layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .signature-demo--pho-hoi .signature-hero__layout { direction: ltr; }
+  .signature-demo--pho-hoi .signature-hero__image { width: 92%; margin-inline: auto; }
+}
+/* Signature navigation reserves the first row for music controls on all widths. */
+.demo-shell .signature-demo .demo-music-control {
+  top: calc(.75rem + env(safe-area-inset-top, 0px));
 }

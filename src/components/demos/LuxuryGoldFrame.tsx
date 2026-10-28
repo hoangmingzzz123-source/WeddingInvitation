@@ -152,7 +152,7 @@ export function LuxuryGoldFrame() {
               >
                 <div className="aspect-[3/4] rounded-2xl overflow-hidden border-4 border-[#C29B43] shadow-2xl">
                   <ImageWithFallback
-                    src="https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp"
+                    src="/images/vietnam/wedding-19956242.webp"
                     alt="Couple"
                     className="w-full h-full object-cover"
                   />

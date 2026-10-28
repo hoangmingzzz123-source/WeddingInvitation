@@ -7,7 +7,7 @@ export function NamesSection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1719786624838-b5d9a9e3f378?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aW50YWdlJTIwbHV4dXJ5JTIwd2VkZGluZ3xlbnwxfHx8fDE3NjcyNTY3Njl8MA&ixlib=rb-4.1.0&q=80&w=1080"
+          src="/images/vietnam/wedding-30311762.webp"
           alt="Vintage luxury wedding"
           className="w-full h-full object-cover opacity-15"
         />

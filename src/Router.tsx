@@ -154,6 +154,9 @@ export function Router() {
     '/demo/song-hy-contemporary': <SignatureDemo id="song-hy-contemporary" />,
     '/demo/riviera-blue': <SignatureDemo id="riviera-blue" />,
     '/demo/hoa-moc-editorial': <SignatureDemo id="hoa-moc-editorial" />,
+    '/demo/sen-ngoc': <SignatureDemo id="sen-ngoc" />,
+    '/demo/hy-su-do-son': <SignatureDemo id="hy-su-do-son" />,
+    '/demo/pho-hoi': <SignatureDemo id="pho-hoi" />,
     '/demo/summer-postcard': <SignatureDemo id="summer-postcard" />,
   };
 

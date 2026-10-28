@@ -80,17 +80,17 @@ const coverOptions = [
   {
     id: 'reception',
     label: 'Tiệc cưới thanh lịch',
-    url: 'https://images.unsplash.com/photo-1769812343590-485512e27838?auto=format&fit=crop&w=1600&q=85',
+    url: '/images/vietnam/wedding-19956242.webp',
   },
   {
     id: 'rings',
     label: 'Nhẫn cưới tối giản',
-    url: 'https://images.unsplash.com/photo-1741207154948-66f7fa63c35a?auto=format&fit=crop&w=1600&q=85',
+    url: '/images/vietnam/wedding-36647826.webp',
   },
   {
     id: 'flowers',
     label: 'Hoa cưới lãng mạn',
-    url: 'https://images.unsplash.com/photo-1664530140722-7e3bdbf2b870?auto=format&fit=crop&w=1600&q=85',
+    url: '/images/vietnam/wedding-7216412.webp',
   },
 ] as const;
 

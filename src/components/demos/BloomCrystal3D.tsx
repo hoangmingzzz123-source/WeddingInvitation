@@ -305,7 +305,7 @@ export function BloomCrystal3D() {
                   className="aspect-video bg-gradient-to-br from-[#1B2A41] to-[#0F1A2E] rounded-3xl overflow-hidden shadow-2xl relative group cursor-pointer"
                 >
                   <ImageWithFallback
-                    src="https://thanhnien.mediacdn.vn/Uploaded/voba/2022_04_07/anh-4-9373.jpg"
+                    src="/images/vietnam/wedding-19956242.webp"
                     alt="Video thumbnail"
                     className="w-full h-full object-cover"
                   />

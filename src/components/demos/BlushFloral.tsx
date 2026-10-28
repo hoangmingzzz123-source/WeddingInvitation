@@ -157,7 +157,7 @@ function CoverPage({ displayedText, onNext }: { displayedText: string; onNext: (
         className="absolute top-10 left-10 w-64 h-64 opacity-30"
       >
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1761285367066-5875252d7558?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400"
+          src="/images/vietnam/wedding-36647826.webp"
           alt="Rose decoration"
           className="w-full h-full object-contain"
         />
@@ -171,7 +171,7 @@ function CoverPage({ displayedText, onNext }: { displayedText: string; onNext: (
         className="absolute bottom-10 right-10 w-64 h-64 opacity-30"
       >
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400"
+          src="/images/vietnam/wedding-36647742.webp"
           alt="Peony decoration"
           className="w-full h-full object-contain"
         />
@@ -416,9 +416,9 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=82',
+    '/images/vietnam/wedding-36647824.webp',
+    '/images/vietnam/wedding-36647816.webp',
+    '/images/vietnam/wedding-9061879.webp',
     PREMIUM_GALLERY_IMAGES.pinimg_11,
     PREMIUM_GALLERY_IMAGES.pinimg_2,
     PREMIUM_GALLERY_IMAGES.pinimg_4,

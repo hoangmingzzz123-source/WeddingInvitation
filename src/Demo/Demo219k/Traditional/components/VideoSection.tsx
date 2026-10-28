@@ -84,7 +84,7 @@ export function VideoSection() {
               <>
                 {/* Thumbnail with blur-in effect */}
                 <motion.img
-                  src="https://images.unsplash.com/photo-1765868113625-3ef2ee2d5295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtZXNlJTIwd2VkZGluZyUyMHRyYWRpdGlvbmFsfGVufDF8fHx8MTc2NzI1OTY5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                  src="/images/vietnam/wedding-10568535.webp"
                   alt="Video thumbnail"
                   className="w-full h-full object-cover"
                   initial={{ filter: 'blur(8px)' }}

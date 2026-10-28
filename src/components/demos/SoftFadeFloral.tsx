@@ -24,25 +24,25 @@ export function SoftFadeFloral() {
 
   const slides = [
     {
-      image: "https://images.unsplash.com/photo-1560113406-36a33855c51e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920",
+      image: "/images/vietnam/wedding-36647826.webp",
       title: "Minh & Hương",
       subtitle: "Chúng mình sắp kết hôn",
       caption: "Sau những năm tháng bên nhau, chúng mình quyết định bắt đầu hành trình mới",
     },
     {
-      image: "https://images.unsplash.com/photo-1761285367066-5875252d7558?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920",
+      image: "/images/vietnam/wedding-36647742.webp",
       title: "Lần Đầu Gặp Gỡ",
       subtitle: "Xuân 2020",
       caption: "Một buổi chiều tình cờ tại quán cà phê nhỏ, chúng mình đã gặp được định mệnh của đời mình",
     },
     {
-      image: "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920",
+      image: "/images/vietnam/wedding-36647824.webp",
       title: "Kỷ Niệm Bên Nhau",
       subtitle: "4 năm yêu thương",
       caption: "Cùng nhau trải qua bao nhiêu kỷ niệm đẹp, từ những chuyến đi xa đến những buổi tối bên nhau",
     },
     {
-      image: "https://images.unsplash.com/photo-1738800076744-c37b80b37d31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920",
+      image: "/images/vietnam/wedding-36647816.webp",
       title: "Lễ Cưới",
       subtitle: "13 • 03 • 2027",
       caption: "Hãy đến chung vui cùng chúng mình trong ngày trọng đại nhất đời",
@@ -75,7 +75,7 @@ export function SoftFadeFloral() {
       {/* Floral Border Decoration - Left */}
       <div className="fixed left-0 top-0 bottom-0 w-32 opacity-20 pointer-events-none">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1761285367066-5875252d7558?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+          src="/images/vietnam/wedding-9061879.webp"
           alt="Floral decoration"
           className="w-full h-full object-cover"
         />
@@ -84,7 +84,7 @@ export function SoftFadeFloral() {
       {/* Floral Border Decoration - Right */}
       <div className="fixed right-0 top-0 bottom-0 w-32 opacity-20 pointer-events-none">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+          src="/images/vietnam/wedding-36647826.webp"
           alt="Floral decoration"
           className="w-full h-full object-cover"
         />

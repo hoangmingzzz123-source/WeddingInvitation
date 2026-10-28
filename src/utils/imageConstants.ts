@@ -3,17 +3,29 @@
  * Centralized image URLs for the wedding invitation website
  */
 import videoCover from '../asset/videoCover.png';
+import { VIETNAM_WEDDING_THEMES } from '../data/vietnamWeddingPhotos';
+
+const {
+  coastal,
+  garden,
+  giaTien,
+  hanoiStudio,
+  heritage,
+  hoiAn,
+  modernCeremony,
+  songHy,
+} = VIETNAM_WEDDING_THEMES;
 
 // Gallery Images - Wedding Photos
 export const GALLERY_IMAGES = {
   // Standard gallery photos (used in multiple templates)
-  studio_couple: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
-  tuarts_couple_1: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=80',
-  tuarts_couple_2: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=80',
-  encrypted_couple: 'https://images.unsplash.com/photo-1506014299253-3725319c0f69?auto=format&fit=crop&w=1200&q=80',
-  demxanh_studio: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg',
-  tuarts_bride: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1200&q=80',
-  tuarts_couple_3: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=1200&q=80',
+  studio_couple: hanoiStudio[0],
+  tuarts_couple_1: hanoiStudio[1],
+  tuarts_couple_2: modernCeremony[0],
+  encrypted_couple: hoiAn[0],
+  demxanh_studio: garden[0],
+  tuarts_bride: heritage[0],
+  tuarts_couple_3: giaTien[0],
 };
 
 // Home/Hero Images
@@ -23,90 +35,90 @@ export const HERO_IMAGES = {
 
 // Template Gallery Images - Featured Templates
 export const TEMPLATE_GALLERY_IMAGES = {
-  classicMinimalist: 'https://tuarts.net/wp-content/uploads/2018/08/39900495_2187804601294710_8118125377903132672_o-801x1200.jpg',
-  blushFloral: 'https://demxanh.com/media/news/2810_studio-thai-binh-1.jpg',
-  bloomCrystal: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-13.jpg',
-  minimalElegant: 'https://noahwedding.com/wp-content/uploads/2022/07/concept-chup-anh-cuoi-noah-wedding-19.jpeg',
-  luxuryGold: 'https://renbridal.vn/wp-content/uploads/2023/01/4-Concept-chup-anh-cuoi-day-y-nghia-ma-dau-re-khong-nen-bo-qua-3-768x1075.jpg',
+  classicMinimalist: giaTien[0],
+  blushFloral: garden[1],
+  bloomCrystal: hanoiStudio[2],
+  minimalElegant: hanoiStudio[3],
+  luxuryGold: modernCeremony[1],
   
   // 159k Package
-  studio_elegant: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-  tuarts_elegant: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
-  vintage_style: 'https://mimosawedding.vn/wp-content/uploads/2022/07/phong-cach-chup-anh-cuoi-vintage-81.jpg',
-  vietnamese_dress: 'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
+  studio_elegant: hanoiStudio[4],
+  tuarts_elegant: heritage[1],
+  vintage_style: hoiAn[1],
+  vietnamese_dress: giaTien[1],
   
   // 199k Package
-  korean_studio: 'https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?auto=format&fit=crop&w=1200&q=80',
-  luxe_venue: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
-  photo_session: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0250.jpg',
+  korean_studio: hanoiStudio[1],
+  luxe_venue: modernCeremony[2],
+  photo_session: garden[2],
 };
 
 // Testimonials/Avatar Images
 export const TESTIMONIAL_AVATARS = {
-  bride_1: 'https://2hstudio.vn/wp-content/uploads/2024/12/JIN_0516.jpg',
-  groom_1: 'https://watermark.lovepik.com/photo/20211209/large/lovepik-groom-image-picture_501759121.jpg',
-  couple_1: 'https://images.pexels.com/photos/34952489/pexels-photo-34952489.jpeg?cs=srgb&dl=pexels-le-hao-quang-249157828-34952489.jpg&fm=jpg',
+  bride_1: heritage[2],
+  groom_1: hanoiStudio[0],
+  couple_1: garden[3],
 };
 
 // Unsplash Images - Love Story & Timeline
 export const UNSPLASH_IMAGES = {
   // Cinematic Love Story - Timeline
-  storyChapter1: 'https://images.unsplash.com/photo-1755838279349-f5471c4ffdd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwY291cGxlJTIwbG92ZSUyMHN0b3J5fGVufDF8fHx8MTc2NTczMDE2MXww&ixlib=rb-4.1.0&q=80&w=1080',
-  storyChapter2: 'https://images.unsplash.com/photo-1519027156611-f83273d3333a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMHdlZGRpbmclMjB0aW1lbGluZXxlbnwxfHx8fDE3NjU3MzAxNjF8MA&ixlib=rb-4.1.0&q=80&w=1080',
-  storyChapter3: 'https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWV0bmFtJTIwYnJpZGUlMjBncm9vbSUyMGNpbmVtYXRpY3xlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080',
-  storyChapter4: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhc2lhbiUyMHdlZGRpbmclMjBtaW5pbWFsaXN0JTIwZWxlZ2FudHxlbnwxfHx8fDE3NjU3MzAxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080',
+  storyChapter1: modernCeremony[0],
+  storyChapter2: modernCeremony[1],
+  storyChapter3: modernCeremony[2],
+  storyChapter4: modernCeremony[3],
   
   // Cinematic Love Story - Gallery
-  couplerBeachSunset: 'https://images.unsplash.com/photo-1726251903562-4af66fc61634?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VwbGUlMjBiZWFjaCUyMHN1bnNldHxlbnwxfHx8fDE3NjQ3ODg3MzF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  weddingCeremony: 'https://images.unsplash.com/photo-1731515672817-0491d19c9f19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY2VyZW1vbnklMjBvdXRkb29yfGVufDF8fHx8MTc2NDc1MDEwN3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  weddingDecoration: 'https://images.unsplash.com/photo-1664530140722-7e3bdbf2b870?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwZGVjb3JhdGlvbiUyMGZsb3dlcnN8ZW58MXx8fHwxNzY0Nzc5NDk4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  weddingCoupleDancing: 'https://images.unsplash.com/photo-1714972383570-44ddc9738355?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwZGFuY2luZ3xlbnwxfHx8fDE3NjQ3ODg4MzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  weddingVenue: 'https://images.unsplash.com/photo-1675048524538-9d0c531eaed2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwdmVudWUlMjBlbGVnYW50fGVufDF8fHx8MTc2NDc4MzY4OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+  couplerBeachSunset: coastal[0],
+  weddingCeremony: modernCeremony[1],
+  weddingDecoration: songHy[2],
+  weddingCoupleDancing: garden[0],
+  weddingVenue: modernCeremony[4],
   
   // Vietnamese Traditional - Gallery
-  vietnameseGallery1: 'https://images.unsplash.com/photo-1765248227263-cfd048f2c5c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
-  vietnameseGallery2: 'https://images.unsplash.com/photo-1688789675055-a39c53d4abd6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
-  vietnameseGallery3: 'https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
-  vietnameseGallery4: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
-  vietnameseGallery5: 'https://images.unsplash.com/photo-1755838279349-f5471c4ffdd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
-  vietnameseGallery6: 'https://images.unsplash.com/photo-1519027156611-f83273d3333a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
+  vietnameseGallery1: giaTien[0],
+  vietnameseGallery2: giaTien[1],
+  vietnameseGallery3: giaTien[2],
+  vietnameseGallery4: songHy[0],
+  vietnameseGallery5: songHy[1],
+  vietnameseGallery6: songHy[2],
   
   // Art Deco Royal & Minimal Slide Clean
-  coupleInPark: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-  brideBouquet: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
-  weddingRings: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800',
-  brideAndGroom: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
-  weddingTable: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-  couplesPortrait: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80',
+  coupleInPark: garden[0],
+  brideBouquet: garden[1],
+  weddingRings: modernCeremony[0],
+  brideAndGroom: hanoiStudio[0],
+  weddingTable: modernCeremony[2],
+  couplesPortrait: hanoiStudio[2],
 };
 
 // Demo1/Figma Gallery Images
 export const DEMO1_GALLERY_IMAGES = {
-  coupleBeachSunset: 'https://images.unsplash.com/photo-1726251903562-4af66fc61634?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VwbGUlMjBiZWFjaCUyMHN1bnNldHxlbnwxfHx8fDE3NjQ3ODg3MzF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  coupleHolding: 'https://images.unsplash.com/photo-1506014299253-3725319c0f69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VwbGUlMjBob2xkaW5nJTIwaGFuZHN8ZW58MXx8fHwxNzY0NzQwOTUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  decorationFlowers: 'https://images.unsplash.com/photo-1664530140722-7e3bdbf2b870?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwZGVjb3JhdGlvbiUyMGZsb3dlcnN8ZW58MXx8fHwxNzY0Nzc5NDk4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  weddingVenue: 'https://images.unsplash.com/photo-1675048524538-9d0c531eaed2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwdmVudWUlMjBlbGVnYW50fGVufDF8fHx8MTc2NDc4MzY4OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  weddingCeremony: 'https://images.unsplash.com/photo-1731515672817-0491d19c9f19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY2VyZW1vbnklMjBvdXRkb29yfGVufDF8fHx8MTc2NDc1MDEwN3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-  coupleDancing: 'https://images.unsplash.com/photo-1714972383570-44ddc9738355?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwZGFuY2luZ3xlbnwxfHx8fDE3NjQ3ODg4MzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+  coupleBeachSunset: coastal[0],
+  coupleHolding: garden[0],
+  decorationFlowers: garden[1],
+  weddingVenue: garden[2],
+  weddingCeremony: garden[3],
+  coupleDancing: garden[4],
 };
 
 // Classic Minimalist Special Images
 export const CLASSIC_MINIMALIST_IMAGES = {
-  weddingParty: 'https://trongdongpalace.com/wp-content/uploads/2024/04/to-chuc-dam-cuoi-4-1.jpg',
-  flowerCeremony: 'https://tiff.vn/wp-content/uploads/2025/06/nghi-thuc-rai-hoa-trong-dam-cuoi-da-co-lich-su-tu-lau-doi.jpg',
-  weddingVenue: 'https://tphcm.cdnchinhphu.vn/334895287454388224/2023/1/20/tiec-cuoi-1-1674150641907468449774.jpg',
-  couplesPhoto: 'https://static-images.vnncdn.net/vps_images_publish/000001/000003/2024/9/10/dam-cuoi-xuc-dong-cua-dien-vien-anh-duc-va-vo-kem-12-tuoi-4891.jpg?width=0&s=dd3S-SiZ9fG9l2zACWLx6g',
-  vietnameseDress: 'https://www.tierra.vn/wp-content/uploads/2025/08/ao-tac-co-phuc-viet-nam-768x1024.jpg',
-  studioPhoto: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+  weddingParty: giaTien[0],
+  flowerCeremony: giaTien[1],
+  weddingVenue: giaTien[2],
+  couplesPhoto: giaTien[3],
+  vietnameseDress: giaTien[4],
+  studioPhoto: hanoiStudio[0],
 };
 
 // Special Images for Different Templates
 export const SPECIAL_TEMPLATE_IMAGES = {
-  minimalSlideClean: 'https://tphcm.cdnchinhphu.vn/334895287454388224/2023/1/20/img20230120004105-16741501441981810620786.jpg',
-  modernDarkBlue: 'https://tphcm.cdnchinhphu.vn/334895287454388224/2023/1/20/img20230120004105-16741501441981810620786.jpg',
-  romanticWatercolor: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-  tropicalSunset: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-  vintageGrain: 'https://linhnga.vn/wp-content/uploads/2021/08/Bi%CC%80a-3-1400x933.jpeg',
+  minimalSlideClean: hoiAn[0],
+  modernDarkBlue: modernCeremony[0],
+  romanticWatercolor: heritage[0],
+  tropicalSunset: coastal[1],
+  vintageGrain: hoiAn[1],
 };
 
 /**
@@ -139,31 +151,31 @@ export const getLoveStoryImages = (): string[] => [
 
 // Additional Premium Gallery Images - Wedding Photos
 export const PREMIUM_GALLERY_IMAGES = {
-  pinimg_1: 'https://i.pinimg.com/736x/00/60/2d/00602df2c2f744c08d58970d7b0715d2.jpg',
-  pinimg_2: 'https://i.pinimg.com/736x/1a/12/e8/1a12e8bc953320bc8e7e9325c1557f01.jpg',
-  xanhwedding_studio: 'https://xanhwedding.com/wp-content/uploads/2021/03/chup-anh-cuoi-tai-studio-29.jpg',
-  pinimg_3: 'https://i.pinimg.com/736x/1b/c6/f3/1bc6f3ed6d129724d1c086ee584c5ce0.jpg',
-  afamilycdn_1: 'https://afamilycdn.com/2018/6/26/photo-1-153001045695050999925.jpg',
-  pinimg_4: 'https://i.pinimg.com/474x/8b/18/48/8b1848fa7f71d814564d3b74d70ee966.jpg',
-  pinimg_5: 'https://i.pinimg.com/236x/6a/d6/ae/6ad6aefe9e49c4b032896ca05894a980.jpg',
-  toplist_beewedding: 'https://toplist.vn/images/800px/beewedding-1265748.jpg',
-  tuart_studio: 'https://images.unsplash.com/photo-1738800076744-c37b80b37d31?auto=format&fit=crop&w=1200&q=80',
-  pinimg_6: 'https://i.pinimg.com/236x/01/d8/29/01d82903330afb23f85d4ab7e57aaae0.jpg',
-  noah_wedding_concept: 'https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?auto=format&fit=crop&w=1200&q=80',
-  mimosa_wedding: 'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=1200&q=80',
-  pinimg_7: 'https://i.pinimg.com/736x/5f/e9/30/5fe930a3278998245aad5b8e9ae3e407.jpg',
-  pinimg_8: 'https://i.pinimg.com/236x/82/5b/6c/825b6c487f4e06c856aa2aec213dacbc.jpg',
-  calibridal_wedding: 'https://calibridal.com.vn/wp-content/uploads/2021/07/tao-dang-chup-anh-cuoi-1.jpg',
-  googleusercontent_concept: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
-  hstudio_aodai: 'https://images.unsplash.com/photo-1765868113625-3ef2ee2d5295?auto=format&fit=crop&w=1200&q=80',
-  anhvien_mimosa_korea: 'https://anhvienmimosa.com.vn/wp-content/uploads/2022/03/chup-anh-cuoi-han-quoc-14-2.jpg',
-  pinimg_9: 'https://i.pinimg.com/236x/a4/db/87/a4db87cb2ccbfe529582ffffdc8602d6.jpg',
-  pinimg_10: 'https://i.pinimg.com/236x/9b/cb/76/9bcb766177b0e694af03f11a3dbeb209.jpg',
-  pinimg_11: 'https://i.pinimg.com/736x/67/2c/d9/672cd9b839480fe84f16b032bfe06971.jpg',
-  pinimg_12: 'https://i.pinimg.com/236x/46/e2/b9/46e2b92a8f7c67a5c2945bedaa32d8d2.jpg',
-  pinimg_13: 'https://i.pinimg.com/736x/31/79/f7/3179f76106289c0b09cba5f42e77e754.jpg',
-  pinimg_14: 'https://i.pinimg.com/736x/b2/88/2a/b2882a4218fdaa6f24a1c856f0f58ab1.jpg',
-  pinimg_15: 'https://i.pinimg.com/originals/2a/d6/8c/2ad68cdec42ed6b33cac242c0a0929c8.jpg',
-  pinimg_16: 'https://images.unsplash.com/photo-1761285367066-5875252d7558?auto=format&fit=crop&w=1200&q=80',
-  pinimg_17: 'https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2021/04/tips-chup-anh-couple-khi-di-du-lich-4.jpg',
+  pinimg_1: giaTien[0],
+  pinimg_2: giaTien[1],
+  xanhwedding_studio: hanoiStudio[0],
+  pinimg_3: hoiAn[0],
+  afamilycdn_1: songHy[0],
+  pinimg_4: garden[0],
+  pinimg_5: coastal[0],
+  toplist_beewedding: modernCeremony[0],
+  tuart_studio: hanoiStudio[1],
+  pinimg_6: hanoiStudio[2],
+  noah_wedding_concept: garden[1],
+  mimosa_wedding: heritage[0],
+  pinimg_7: hoiAn[1],
+  pinimg_8: coastal[1],
+  calibridal_wedding: modernCeremony[1],
+  googleusercontent_concept: hanoiStudio[3],
+  hstudio_aodai: heritage[1],
+  anhvien_mimosa_korea: hanoiStudio[4],
+  pinimg_9: giaTien[2],
+  pinimg_10: songHy[1],
+  pinimg_11: garden[2],
+  pinimg_12: coastal[2],
+  pinimg_13: hoiAn[2],
+  pinimg_14: modernCeremony[2],
+  pinimg_15: heritage[2],
+  pinimg_16: songHy[2],
+  pinimg_17: garden[3],
 };

@@ -1,421 +1,590 @@
 [
   {
     "id": "ha-phuong-hoang-minh-2026",
-    "source": "https://images.unsplash.com/photo-1769812343590-485512e27838?auto=format&fit=crop&w=800&q=80",
-    "originalWidth": 800,
-    "originalHeight": 534,
+    "photoId": 23369886,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "ha-phuong-hoang-minh-2026-480.webp",
         "width": 480,
-        "height": 320,
-        "bytes": 26124
+        "height": 600,
+        "bytes": 27994
       },
       {
         "file": "ha-phuong-hoang-minh-2026-800.webp",
         "width": 800,
-        "height": 534,
-        "bytes": 54132
+        "height": 1000,
+        "bytes": 54180
       }
     ]
   },
   {
     "id": "luxury-gold-cinematic",
-    "source": "https://i.pinimg.com/736x/00/60/2d/00602df2c2f744c08d58970d7b0715d2.jpg",
-    "originalWidth": 683,
-    "originalHeight": 1366,
+    "photoId": 23369886,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "luxury-gold-cinematic-480.webp",
         "width": 480,
-        "height": 960,
-        "bytes": 33164
+        "height": 600,
+        "bytes": 27994
       },
       {
         "file": "luxury-gold-cinematic-800.webp",
         "width": 800,
-        "height": 1600,
-        "bytes": 70038
+        "height": 1000,
+        "bytes": 54180
       }
     ]
   },
   {
     "id": "luxury-gold-frame",
-    "source": "https://i.pinimg.com/736x/1a/12/e8/1a12e8bc953320bc8e7e9325c1557f01.jpg",
-    "originalWidth": 660,
-    "originalHeight": 986,
+    "photoId": 19956242,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "luxury-gold-frame-480.webp",
         "width": 480,
-        "height": 717,
-        "bytes": 52954
+        "height": 600,
+        "bytes": 14412
       },
       {
         "file": "luxury-gold-frame-800.webp",
         "width": 800,
-        "height": 1195,
-        "bytes": 106850
+        "height": 1000,
+        "bytes": 28118
       }
     ]
   },
   {
     "id": "vintage-film",
-    "source": "https://xanhwedding.com/wp-content/uploads/2021/03/chup-anh-cuoi-tai-studio-29.jpg",
-    "originalWidth": 800,
-    "originalHeight": 1198,
+    "photoId": 35343290,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "vintage-film-480.webp",
         "width": 480,
-        "height": 719,
-        "bytes": 34510
+        "height": 600,
+        "bytes": 46510
       },
       {
         "file": "vintage-film-800.webp",
         "width": 800,
-        "height": 1198,
-        "bytes": 75194
+        "height": 1000,
+        "bytes": 102512
       }
     ]
   },
   {
     "id": "art-deco-royal",
-    "source": "https://i.pinimg.com/736x/1b/c6/f3/1bc6f3ed6d129724d1c086ee584c5ce0.jpg",
-    "originalWidth": 736,
-    "originalHeight": 1077,
+    "photoId": 36647826,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "art-deco-royal-480.webp",
         "width": 480,
-        "height": 702,
-        "bytes": 25198
+        "height": 600,
+        "bytes": 30260
       },
       {
         "file": "art-deco-royal-800.webp",
         "width": 800,
-        "height": 1171,
-        "bytes": 57866
+        "height": 1000,
+        "bytes": 55542
       }
     ]
   },
   {
     "id": "romantic-watercolor",
-    "source": "https://i.pinimg.com/736x/8b/18/48/8b1848fa7f71d814564d3b74d70ee966.jpg",
-    "originalWidth": 736,
-    "originalHeight": 1104,
+    "photoId": 34668070,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "romantic-watercolor-480.webp",
         "width": 480,
-        "height": 720,
-        "bytes": 73650
+        "height": 600,
+        "bytes": 23832
       },
       {
         "file": "romantic-watercolor-800.webp",
         "width": 800,
-        "height": 1200,
-        "bytes": 141744
+        "height": 1000,
+        "bytes": 45810
       }
     ]
   },
   {
     "id": "cinematic-love-story",
-    "source": "https://afamilycdn.com/2018/6/26/photo-1-153001045695050999925.jpg",
-    "originalWidth": 708,
-    "originalHeight": 960,
+    "photoId": 33986841,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "cinematic-love-story-480.webp",
         "width": 480,
-        "height": 651,
-        "bytes": 35620
+        "height": 600,
+        "bytes": 64764
       },
       {
         "file": "cinematic-love-story-800.webp",
         "width": 800,
-        "height": 1085,
-        "bytes": 85244
+        "height": 1000,
+        "bytes": 123000
+      }
+    ]
+  },
+  {
+    "id": "song-hy-contemporary",
+    "photoId": 34481882,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "song-hy-contemporary-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 61082
+      },
+      {
+        "file": "song-hy-contemporary-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 122978
+      }
+    ]
+  },
+  {
+    "id": "riviera-blue",
+    "photoId": 7216412,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "riviera-blue-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 48686
+      },
+      {
+        "file": "riviera-blue-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 114466
+      }
+    ]
+  },
+  {
+    "id": "hoa-moc-editorial",
+    "photoId": 36647816,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "hoa-moc-editorial-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 66242
+      },
+      {
+        "file": "hoa-moc-editorial-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 138738
+      }
+    ]
+  },
+  {
+    "id": "summer-postcard",
+    "photoId": 14350265,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "summer-postcard-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 33156
+      },
+      {
+        "file": "summer-postcard-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 69502
       }
     ]
   },
   {
     "id": "bloom-crystal-3d",
-    "source": "https://i.pinimg.com/736x/6a/d6/ae/6ad6aefe9e49c4b032896ca05894a980.jpg",
-    "originalWidth": 736,
-    "originalHeight": 1104,
+    "photoId": 19956232,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "bloom-crystal-3d-480.webp",
         "width": 480,
-        "height": 720,
-        "bytes": 43426
+        "height": 600,
+        "bytes": 27200
       },
       {
         "file": "bloom-crystal-3d-800.webp",
         "width": 800,
-        "height": 1200,
-        "bytes": 79130
+        "height": 1000,
+        "bytes": 48246
       }
     ]
   },
   {
     "id": "bloom-crystal-3d-basic",
-    "source": "https://images.unsplash.com/photo-1738800076744-c37b80b37d31?auto=format&fit=crop&w=800&q=80",
-    "originalWidth": 800,
-    "originalHeight": 533,
+    "photoId": 33884990,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "bloom-crystal-3d-basic-480.webp",
         "width": 480,
-        "height": 320,
-        "bytes": 3036
+        "height": 600,
+        "bytes": 35572
       },
       {
         "file": "bloom-crystal-3d-basic-800.webp",
         "width": 800,
-        "height": 533,
-        "bytes": 6384
+        "height": 1000,
+        "bytes": 67048
       }
     ]
   },
   {
     "id": "modern-dark-blue",
-    "source": "https://images.unsplash.com/photo-1708746179240-41b44d5bdf55?auto=format&fit=crop&w=800&q=80",
-    "originalWidth": 800,
-    "originalHeight": 1200,
+    "photoId": 38776688,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "modern-dark-blue-480.webp",
         "width": 480,
-        "height": 720,
-        "bytes": 22858
+        "height": 600,
+        "bytes": 55050
       },
       {
         "file": "modern-dark-blue-800.webp",
         "width": 800,
-        "height": 1200,
-        "bytes": 42528
+        "height": 1000,
+        "bytes": 107606
       }
     ]
   },
   {
     "id": "minimal-elegant",
-    "source": "https://i.pinimg.com/736x/01/d8/29/01d82903330afb23f85d4ab7e57aaae0.jpg",
-    "originalWidth": 736,
-    "originalHeight": 1104,
+    "photoId": 33884990,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "minimal-elegant-480.webp",
         "width": 480,
-        "height": 720,
-        "bytes": 24164
+        "height": 600,
+        "bytes": 35572
       },
       {
         "file": "minimal-elegant-800.webp",
         "width": 800,
-        "height": 1200,
-        "bytes": 43232
+        "height": 1000,
+        "bytes": 67048
       }
     ]
   },
   {
     "id": "minimal-elegant-basic",
-    "source": "https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=800&q=80",
-    "originalWidth": 800,
-    "originalHeight": 1202,
+    "photoId": 33884967,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "minimal-elegant-basic-480.webp",
         "width": 480,
-        "height": 721,
-        "bytes": 29220
+        "height": 600,
+        "bytes": 29474
       },
       {
         "file": "minimal-elegant-basic-800.webp",
         "width": 800,
-        "height": 1202,
-        "bytes": 56600
+        "height": 1000,
+        "bytes": 55008
       }
     ]
   },
   {
     "id": "minimal-slide-clean",
-    "source": "https://i.pinimg.com/736x/5f/e9/30/5fe930a3278998245aad5b8e9ae3e407.jpg",
-    "originalWidth": 683,
-    "originalHeight": 1366,
+    "photoId": 35841823,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "minimal-slide-clean-480.webp",
         "width": 480,
-        "height": 960,
-        "bytes": 37412
+        "height": 600,
+        "bytes": 93864
       },
       {
         "file": "minimal-slide-clean-800.webp",
         "width": 800,
-        "height": 1600,
-        "bytes": 75758
+        "height": 1000,
+        "bytes": 203702
       }
     ]
   },
   {
     "id": "tropical-sunset",
-    "source": "https://calibridal.com.vn/wp-content/uploads/2021/07/tao-dang-chup-anh-cuoi-1.jpg",
-    "originalWidth": 683,
-    "originalHeight": 1026,
+    "photoId": 12409630,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "tropical-sunset-480.webp",
         "width": 480,
-        "height": 721,
-        "bytes": 60918
+        "height": 600,
+        "bytes": 40936
       },
       {
         "file": "tropical-sunset-800.webp",
         "width": 800,
-        "height": 1202,
-        "bytes": 116962
+        "height": 1000,
+        "bytes": 81738
       }
     ]
   },
   {
     "id": "classic-minimalist",
-    "source": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80",
-    "originalWidth": 800,
-    "originalHeight": 533,
+    "photoId": 10568535,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "classic-minimalist-480.webp",
         "width": 480,
-        "height": 320,
-        "bytes": 8274
+        "height": 600,
+        "bytes": 60264
       },
       {
         "file": "classic-minimalist-800.webp",
         "width": 800,
-        "height": 533,
-        "bytes": 16046
+        "height": 1000,
+        "bytes": 123024
       }
     ]
   },
   {
     "id": "blush-floral",
-    "source": "https://images.unsplash.com/photo-1765868113625-3ef2ee2d5295?auto=format&fit=crop&w=800&q=80",
-    "originalWidth": 800,
-    "originalHeight": 1200,
+    "photoId": 36647742,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "blush-floral-480.webp",
         "width": 480,
-        "height": 720,
-        "bytes": 46964
+        "height": 600,
+        "bytes": 30504
       },
       {
         "file": "blush-floral-800.webp",
         "width": 800,
-        "height": 1200,
-        "bytes": 111074
+        "height": 1000,
+        "bytes": 61158
       }
     ]
   },
   {
     "id": "soft-fade-floral",
-    "source": "https://anhvienmimosa.com.vn/wp-content/uploads/2022/03/chup-anh-cuoi-han-quoc-14-2.jpg",
-    "originalWidth": 683,
-    "originalHeight": 1024,
+    "photoId": 36647824,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "soft-fade-floral-480.webp",
         "width": 480,
-        "height": 720,
-        "bytes": 14466
+        "height": 600,
+        "bytes": 23474
       },
       {
         "file": "soft-fade-floral-800.webp",
         "width": 800,
-        "height": 1199,
-        "bytes": 25810
+        "height": 1000,
+        "bytes": 44854
       }
     ]
   },
   {
     "id": "vietnamese-traditional",
-    "source": "https://i.pinimg.com/736x/82/5b/6c/825b6c487f4e06c856aa2aec213dacbc.jpg",
-    "originalWidth": 736,
-    "originalHeight": 1117,
+    "photoId": 10568538,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "vietnamese-traditional-480.webp",
         "width": 480,
-        "height": 728,
-        "bytes": 21120
+        "height": 600,
+        "bytes": 56726
       },
       {
         "file": "vietnamese-traditional-800.webp",
         "width": 800,
-        "height": 1214,
-        "bytes": 42896
+        "height": 1000,
+        "bytes": 116048
       }
     ]
   },
   {
     "id": "vintage-grain",
-    "source": "https://i.pinimg.com/736x/a4/db/87/a4db87cb2ccbfe529582ffffdc8602d6.jpg",
-    "originalWidth": 736,
-    "originalHeight": 981,
+    "photoId": 36630693,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "vintage-grain-480.webp",
         "width": 480,
-        "height": 640,
-        "bytes": 26196
+        "height": 600,
+        "bytes": 66168
       },
       {
         "file": "vintage-grain-800.webp",
         "width": 800,
-        "height": 1066,
-        "bytes": 45756
+        "height": 1000,
+        "bytes": 136164
       }
     ]
   },
   {
     "id": "green-elegance",
-    "source": "https://i.pinimg.com/736x/9b/cb/76/9bcb766177b0e694af03f11a3dbeb209.jpg",
-    "originalWidth": 736,
-    "originalHeight": 981,
+    "photoId": 9061879,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "green-elegance-480.webp",
         "width": 480,
-        "height": 640,
-        "bytes": 22768
+        "height": 600,
+        "bytes": 43612
       },
       {
         "file": "green-elegance-800.webp",
         "width": 800,
-        "height": 1066,
-        "bytes": 43006
+        "height": 1000,
+        "bytes": 81916
       }
     ]
   },
   {
     "id": "art-deco-royal-basic",
-    "source": "https://i.pinimg.com/736x/67/2c/d9/672cd9b839480fe84f16b032bfe06971.jpg",
-    "originalWidth": 735,
-    "originalHeight": 490,
+    "photoId": 36647824,
+    "sourceCollection": "../vietnam/sources.json",
     "variants": [
       {
         "file": "art-deco-royal-basic-480.webp",
         "width": 480,
-        "height": 320,
-        "bytes": 7264
+        "height": 600,
+        "bytes": 23474
       },
       {
         "file": "art-deco-royal-basic-800.webp",
         "width": 800,
-        "height": 533,
-        "bytes": 14374
+        "height": 1000,
+        "bytes": 44854
+      }
+    ]
+  },
+  {
+    "id": "rose-storybook-219k",
+    "photoId": 36647742,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "rose-storybook-219k-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 30504
+      },
+      {
+        "file": "rose-storybook-219k-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 61158
+      }
+    ]
+  },
+  {
+    "id": "vietnamese-traditional-219k",
+    "photoId": 34481898,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "vietnamese-traditional-219k-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 61046
+      },
+      {
+        "file": "vietnamese-traditional-219k-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 135948
+      }
+    ]
+  },
+  {
+    "id": "burgundy-cinema-219k",
+    "photoId": 30311762,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "burgundy-cinema-219k-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 37260
+      },
+      {
+        "file": "burgundy-cinema-219k-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 71316
+      }
+    ]
+  },
+  {
+    "id": "sen-ngoc",
+    "photoId": 34668057,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "sen-ngoc-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 60210
+      },
+      {
+        "file": "sen-ngoc-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 131280
+      }
+    ]
+  },
+  {
+    "id": "hy-su-do-son",
+    "photoId": 38743756,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "hy-su-do-son-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 47554
+      },
+      {
+        "file": "hy-su-do-son-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 87836
+      }
+    ]
+  },
+  {
+    "id": "pho-hoi",
+    "photoId": 35841823,
+    "sourceCollection": "../vietnam/sources.json",
+    "variants": [
+      {
+        "file": "pho-hoi-480.webp",
+        "width": 480,
+        "height": 600,
+        "bytes": 93864
+      },
+      {
+        "file": "pho-hoi-800.webp",
+        "width": 800,
+        "height": 1000,
+        "bytes": 203702
       }
     ]
   }

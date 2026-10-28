@@ -7,7 +7,7 @@ export function LoveStorySection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1519657502999-ab785d28a1f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY291cGxlJTIwaG9sZGluZyUyMGhhbmRzfGVufDF8fHx8MTc2NzI1Njc2OHww&ixlib=rb-4.1.0&q=80&w=1080"
+          src="/images/vietnam/wedding-38776688.webp"
           alt="Couple holding hands"
           className="w-full h-full object-cover opacity-12"
         />

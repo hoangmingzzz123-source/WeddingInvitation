@@ -39,7 +39,7 @@ export function VideoSection() {
             {/* Thumbnail with Play Button */}
             <div className="absolute inset-0">
               <img
-                src="https://images.unsplash.com/photo-1762941744800-385b067dff21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80"
+                src="/images/vietnam/wedding-36647824.webp"
                 alt="Wedding Video Thumbnail"
                 className="w-full h-full object-cover"
               />

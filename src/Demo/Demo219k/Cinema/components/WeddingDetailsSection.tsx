@@ -8,7 +8,7 @@ export function WeddingDetailsSection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1707374661682-d804856cee22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXJndW5keSUyMGdvbGQlMjB3ZWRkaW5nJTIwZGVjb3J8ZW58MXx8fHwxNjcyNTY3NzB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+          src="/images/vietnam/wedding-33986841.webp"
           alt="Wedding decor"
           className="w-full h-full object-cover opacity-8"
         />
