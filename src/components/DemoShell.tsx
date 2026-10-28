@@ -70,6 +70,7 @@ const demoAccents: Record<string, string> = {
 };
 
 const signatureDemoIds = new Set([
+  'sen-ngoc', 'hy-su-do-son', 'pho-hoi',
   'art-deco-royal',
   'art-deco-royal-basic',
   'luxury-gold-cinematic',

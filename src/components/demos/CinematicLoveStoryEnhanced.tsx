@@ -183,7 +183,7 @@ function CoverPage({ onNext, scaleProgress, opacityProgress }: { onNext: () => v
         style={{ scale: scaleProgress }}
       >
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1920"
+          src="/images/vietnam/wedding-23369886.webp"
           alt="Cinematic Background"
           className="w-full h-full object-cover"
         />
@@ -295,13 +295,13 @@ function StoryPage({ displayedText, onNext, currentChapter, setCurrentChapter }:
       year: '2019',
       title: 'Chương I: Gặp Gỡ',
       scene: 'Quán Cà Phê Nhỏ',
-      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
+      image: '/images/vietnam/wedding-33986841.webp',
     },
     {
       year: '2021',
       title: 'Chương II: Yêu Nhau',
       scene: 'Dưới Ánh Trăng',
-      image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
+      image: '/images/vietnam/wedding-38776688.webp',
     },
     {
       year: '2023',
@@ -452,9 +452,9 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-       'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
-    'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg'  ,
-    'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+       '/images/vietnam/wedding-30311762.webp',
+    '/images/vietnam/wedding-23369888.webp'  ,
+    '/images/vietnam/wedding-23369886.webp',
     PREMIUM_GALLERY_IMAGES.googleusercontent_concept,
     PREMIUM_GALLERY_IMAGES.anhvien_mimosa_korea,
     PREMIUM_GALLERY_IMAGES.hstudio_aodai,

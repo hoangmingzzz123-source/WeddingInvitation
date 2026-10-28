@@ -83,7 +83,7 @@ function HomeTab() {
         >
           <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
             <ImageWithFallback
-              src="https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp"
+              src="/images/vietnam/wedding-35841823.webp"
               alt="Couple"
               className="w-full h-full object-cover"
             />

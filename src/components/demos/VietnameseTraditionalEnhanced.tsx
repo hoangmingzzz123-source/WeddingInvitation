@@ -22,7 +22,7 @@ export function VietnameseTraditionalEnhanced() {
 
   // Gallery images
   const gallery = [
-    'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+    '/images/vietnam/wedding-34481882.webp',
     PREMIUM_GALLERY_IMAGES.pinimg_11,
     PREMIUM_GALLERY_IMAGES.pinimg_2,
     PREMIUM_GALLERY_IMAGES.pinimg_4,

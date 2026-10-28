@@ -830,7 +830,7 @@ export function CinematicLoveStory() {
         {/* Background */}
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1755838279349-f5471c4ffdd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920"
+            src="/images/vietnam/wedding-23369886.webp"
             alt="Closing"
             className="w-full h-full object-cover"
           />

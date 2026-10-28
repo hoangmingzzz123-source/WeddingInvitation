@@ -14,6 +14,10 @@ import {
 } from 'lucide-react';
 import { MusicPlayer } from '../MusicPlayer';
 import type { TemplateTier } from '../../data/templates';
+import {
+  VIETNAM_WEDDING_THEMES,
+  type VietnamWeddingTheme,
+} from '../../data/vietnamWeddingPhotos';
 
 export type SignatureDemoId =
   | 'art-deco-royal'
@@ -26,7 +30,10 @@ export type SignatureDemoId =
   | 'song-hy-contemporary'
   | 'riviera-blue'
   | 'hoa-moc-editorial'
-  | 'summer-postcard';
+  | 'summer-postcard'
+  | 'sen-ngoc'
+  | 'hy-su-do-son'
+  | 'pho-hoi';
 
 interface SignatureDemoContent {
   id: SignatureDemoId;
@@ -46,97 +53,112 @@ interface SignatureDemoContent {
   gallery: string[];
 }
 
-const photo = (id: string, width = 1600) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=88`;
+const photoStory = (theme: VietnamWeddingTheme, offset = 0) => {
+  const collection = VIETNAM_WEDDING_THEMES[theme];
+  const photos = collection.map((_, index) => collection[(index + offset) % collection.length]);
+  const [hero, ...gallery] = photos;
+  return { hero, gallery };
+};
 
 const demos: Record<SignatureDemoId, SignatureDemoContent> = {
+  'sen-ngoc': {
+    id: 'sen-ngoc', tier: '159k', label: 'SEN NGỌC · THANH ÂM HẠNH PHÚC',
+    bride: 'An Nhiên', groom: 'Minh Khôi', date: '2027-11-20', dateLabel: '20 · 11 · 2027', time: '17:30',
+    venue: 'Nhà vườn An Hiên', address: 'Địa điểm minh họa · vui lòng thay khi tạo thiệp', city: 'Huế',
+    story: 'Từ một lời chào thân quen, chúng mình đã cùng đi qua những mùa thương nhớ. Nay xin gửi thiệp hồng, kính mời gia đình và bạn bè cùng nâng chén trà, chia sẻ niềm vui trong ngày hai nhà sum họp.',
+    ...photoStory('heritage'),
+  },
+  'hy-su-do-son': {
+    id: 'hy-su-do-son', tier: '159k', label: 'HỶ SỰ · TRĂM NĂM GIAI LÃO',
+    bride: 'Thanh Trúc', groom: 'Đức Anh', date: '2027-11-20', dateLabel: '20 · 11 · 2027', time: '17:30',
+    venue: 'Không gian tiệc Hỷ Viên', address: 'Địa điểm minh họa · vui lòng thay khi tạo thiệp', city: 'Hà Nội',
+    story: 'Từ một lời chào thân quen, chúng mình đã cùng đi qua những mùa thương nhớ. Nay xin gửi thiệp hồng, kính mời gia đình và bạn bè cùng nâng chén trà, chia sẻ niềm vui trong ngày hai nhà sum họp.',
+    ...photoStory('songHy'),
+  },
+  'pho-hoi': {
+    id: 'pho-hoi', tier: '159k', label: 'PHỐ HỘI · MÌNH VỀ CHUNG NHÀ',
+    bride: 'Hoài An', groom: 'Tuấn Kiệt', date: '2027-11-20', dateLabel: '20 · 11 · 2027', time: '17:30',
+    venue: 'Vườn Nhà Hội', address: 'Địa điểm minh họa · vui lòng thay khi tạo thiệp', city: 'Hội An',
+    story: 'Từ một lời chào thân quen, chúng mình đã cùng đi qua những mùa thương nhớ. Nay xin gửi thiệp hồng, kính mời gia đình và bạn bè cùng nâng chén trà, chia sẻ niềm vui trong ngày hai nhà sum họp.',
+    ...photoStory('hoiAn'),
+  },
+
   'art-deco-royal-basic': {
     id: 'art-deco-royal-basic', tier: '159k', label: 'THE GARDEN EDIT',
     bride: 'Ngọc Hà', groom: 'Bảo Long', date: '2027-03-13', dateLabel: '13 · 03 · 2027', time: '18:00',
     venue: 'The Garden Pavilion', address: '24 Quảng An, Tây Hồ', city: 'Hà Nội',
     story: 'Chúng mình gặp nhau trong một buổi chiều đầy nắng, rồi cùng vun đắp những ngày bình dị thành điều đẹp đẽ. Mong bạn có mặt để mở đầu chương mới ấy cùng chúng mình.',
-    hero: photo('photo-1537633552985-df8429e8048b'),
-    gallery: [photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1606800052052-a08af7148866', 900), photo('photo-1583939003579-730e3918a45a', 900), photo('photo-1465495976277-4387d4b0b4c6', 900)],
+    ...photoStory('garden'),
   },
   'art-deco-royal': {
     id: 'art-deco-royal', visualStyle: 'art-deco-royal-basic', tier: '199k', label: 'THE OLIVE GARDEN',
     bride: 'Ngọc Hà', groom: 'Bảo Long', date: '2027-03-13', dateLabel: '13 · 03 · 2027', time: '18:00',
     venue: 'The Garden Pavilion', address: '24 Quảng An, Tây Hồ', city: 'Hà Nội',
     story: 'Chúng mình gặp nhau trong một buổi chiều đầy nắng, rồi cùng vun đắp những ngày bình dị thành điều đẹp đẽ. Mong bạn có mặt để mở đầu chương mới ấy cùng chúng mình.',
-    hero: photo('photo-1537633552985-df8429e8048b'),
-    gallery: [photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1606800052052-a08af7148866', 900), photo('photo-1583939003579-730e3918a45a', 900), photo('photo-1465495976277-4387d4b0b4c6', 900)],
+    ...photoStory('garden', 2),
   },
   'luxury-gold-cinematic': {
     id: 'luxury-gold-cinematic', tier: '159k', label: 'A NIGHT TO REMEMBER',
     bride: 'Minh Anh', groom: 'Quang Huy', date: '2027-11-12', dateLabel: '12 · 11 · 2027', time: '18:30',
     venue: 'The Imperial Palace', address: '12 Nguyễn Huệ, Quận 1', city: 'TP. Hồ Chí Minh',
     story: 'Có những cuộc gặp khiến mọi khung hình sau đó đều trở nên đáng nhớ. Câu chuyện của chúng mình bắt đầu bằng một buổi chiều nhiều nắng và sẽ tiếp tục vào ngày hạnh phúc này.',
-    hero: photo('photo-1511285560929-80b456fea0bc'),
-    gallery: [photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1591604466107-ec97de577aff', 900), photo('photo-1606800052052-a08af7148866', 900), photo('photo-1519741497674-611481863552', 900)],
+    ...photoStory('modernCeremony'),
   },
   'luxury-gold-frame': {
     id: 'luxury-gold-frame', tier: '159k', label: 'A CELEBRATION OF LOVE',
     bride: 'Khánh Linh', groom: 'Tuấn Anh', date: '2027-10-18', dateLabel: '18 · 10 · 2027', time: '17:30',
     venue: 'Riverside Palace', address: '360D Bến Vân Đồn, Quận 4', city: 'TP. Hồ Chí Minh',
     story: 'Một tình yêu bình yên, bền bỉ và luôn có chỗ cho tiếng cười. Sau những chuyến đi cùng nhau, chúng mình muốn bắt đầu chặng đường tiếp theo bên những người thân yêu nhất.',
-    hero: photo('photo-1532712938310-34cb3982ef74'),
-    gallery: [photo('photo-1519741497674-611481863552', 900), photo('photo-1583939003579-730e3918a45a', 900), photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1519225421980-715cb0215aed', 900)],
+    ...photoStory('hanoiStudio'),
   },
   'bloom-crystal-3d': {
     id: 'bloom-crystal-3d', tier: '199k', label: 'A LITTLE MORE MAGIC',
     bride: 'Mai Chi', groom: 'Đức Anh', date: '2027-12-18', dateLabel: '18 · 12 · 2027', time: '16:00',
     venue: 'The Glass Garden', address: '88 Nguyễn Du, Hai Bà Trưng', city: 'Hà Nội',
     story: 'Chúng mình tin những điều đẹp nhất thường lớn lên từ sự dịu dàng. Cảm ơn bạn đã là một phần trong câu chuyện; hãy cùng chúng mình viết chương mới dưới ánh đèn và những đóa hoa.',
-    hero: photo('photo-1523438885200-e635ba2c371e'),
-    gallery: [photo('photo-1591604466107-ec97de577aff', 900), photo('photo-1519741497674-611481863552', 900), photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1606800052052-a08af7148866', 900)],
+    ...photoStory('hanoiStudio', 2),
   },
   'modern-dark-blue': {
     id: 'modern-dark-blue', tier: '109k', label: 'SAVE OUR DATE',
     bride: 'Lan Anh', groom: 'Minh Quân', date: '2027-09-06', dateLabel: '06 · 09 · 2027', time: '17:00',
     venue: 'Grand Convention Center', address: '15 Lê Duẩn, Quận 1', city: 'TP. Hồ Chí Minh',
     story: 'Một ngày thật đẹp đang đến gần. Chúng mình đã sẵn sàng cho lời hứa mới và sẽ vui hơn thật nhiều nếu có bạn cùng chung vui.',
-    hero: photo('photo-1529636798458-92182e662485'),
-    gallery: [photo('photo-1519741497674-611481863552', 900), photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1583939003579-730e3918a45a', 900)],
+    ...photoStory('modernCeremony', 2),
   },
   'minimal-elegant': {
     id: 'minimal-elegant', tier: '199k', label: 'TOGETHER, IN EVERY SEASON',
     bride: 'Thảo Vy', groom: 'Gia Bảo', date: '2027-05-22', dateLabel: '22 · 05 · 2027', time: '17:30',
     venue: 'The Atelier Garden', address: '27 Xuân Diệu, Tây Hồ', city: 'Hà Nội',
     story: 'Không cần điều gì quá lớn lao. Chỉ cần một mái nhà, những bữa cơm dài và người mình muốn kể nghe mọi chuyện. Chúng mình rất mong được gặp bạn trong ngày vui.',
-    hero: photo('photo-1537633552985-df8429e8048b'),
-    gallery: [photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1591604466107-ec97de577aff', 900), photo('photo-1519741497674-611481863552', 900), photo('photo-1606800052052-a08af7148866', 900)],
+    ...photoStory('hanoiStudio', 3),
   },
   'song-hy-contemporary': {
     id: 'song-hy-contemporary', tier: '159k', label: 'THIỆP HỒNG · SONG HỶ',
     bride: 'Minh Châu', groom: 'Đình Phúc', date: '2027-10-24', dateLabel: '24 · 10 · 2027', time: '17:30',
     venue: 'Gốm Sứ Palace', address: '45 Hàng Bông, Hoàn Kiếm', city: 'Hà Nội',
     story: 'Từ những lần trò chuyện bên tách trà đến một lời hẹn trăm năm, chúng mình đã cùng nhau đi qua nhiều mùa đáng nhớ. Ngày vui sẽ đẹp hơn khi có gia đình và bạn bè cùng chứng kiến.',
-    hero: photo('photo-1591604466107-ec97de577aff'),
-    gallery: [photo('photo-1519741497674-611481863552', 900), photo('photo-1537633552985-df8429e8048b', 900), photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1583939003579-730e3918a45a', 900)],
+    ...photoStory('songHy', 2),
   },
   'riviera-blue': {
     id: 'riviera-blue', tier: '109k', label: 'A LITTLE LOVE BY THE SEA',
     bride: 'Hải Yến', groom: 'Trọng Nhân', date: '2027-06-19', dateLabel: '19 · 06 · 2027', time: '16:30',
     venue: 'La Mer Garden', address: '12 Võ Nguyên Giáp, Sơn Trà', city: 'Đà Nẵng',
     story: 'Chúng mình gặp nhau trong một chuyến đi và từ đó đã cùng nhau góp nhặt những ngày nhiều nắng. Hẹn gặp bạn bên biển để cùng nâng ly chúc mừng khởi đầu mới.',
-    hero: photo('photo-1537633552985-df8429e8048b'),
-    gallery: [photo('photo-1523438885200-e635ba2c371e', 900), photo('photo-1519225421980-715cb0215aed', 900), photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1519741497674-611481863552', 900)],
+    ...photoStory('coastal'),
   },
   'hoa-moc-editorial': {
     id: 'hoa-moc-editorial', tier: '159k', label: 'A GARDEN GATHERING',
     bride: 'Thùy Dương', groom: 'Hoàng Nam', date: '2027-04-10', dateLabel: '10 · 04 · 2027', time: '17:00',
     venue: 'Mộc Garden House', address: '18 Ngõ 36 Đào Tấn, Ba Đình', city: 'Hà Nội',
     story: 'Chúng mình yêu những điều mộc mạc: một khu vườn sau mưa, bữa tối kéo dài và câu chuyện chẳng cần vội kết thúc. Thật vui nếu bạn dành buổi chiều này để ở bên chúng mình.',
-    hero: photo('photo-1519225421980-715cb0215aed'),
-    gallery: [photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1606800052052-a08af7148866', 900), photo('photo-1583939003579-730e3918a45a', 900), photo('photo-1591604466107-ec97de577aff', 900)],
+    ...photoStory('garden', 3),
   },
   'summer-postcard': {
     id: 'summer-postcard', tier: '199k', label: 'GREETINGS FROM OUR WEDDING',
     bride: 'Ngọc Mai', groom: 'Anh Khoa', date: '2027-08-08', dateLabel: '08 · 08 · 2027', time: '17:00',
     venue: 'The Coast Retreat', address: '24 Trần Phú, Nha Trang', city: 'Khánh Hòa',
     story: 'Chúng mình muốn ngày cưới giống như một chuyến đi mùa hè: đầy nắng, nhiều tiếng cười và có những người mình thương ở bên. Tấm thiệp này là lời nhắn nhỏ, mong bạn nhận lời ghé chơi.',
-    hero: photo('photo-1529636798458-92182e662485'),
-    gallery: [photo('photo-1519741497674-611481863552', 900), photo('photo-1465495976277-4387d4b0b4c6', 900), photo('photo-1523438885200-e635ba2c371e', 900), photo('photo-1519225421980-715cb0215aed', 900)],
+    ...photoStory('coastal', 2),
   },
 };
 
@@ -214,7 +236,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
         <div className="signature-hero__ornament" aria-hidden="true" />
         <div className="signature-hero__layout">
           <div className="signature-hero__image">
-            <img src={demo.hero} alt={`Ảnh cưới của ${couple}`} fetchPriority="high" />
+            <img src={demo.hero} alt={`Ảnh cưới Việt Nam minh họa cho ${couple}`} fetchPriority="high" />
             <span className="signature-hero__image-note">{demo.city} · Việt Nam</span>
           </div>
           <motion.div
@@ -233,6 +255,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
             </div>
           </motion.div>
         </div>
+        <span className="signature-photo-disclaimer">Ảnh minh họa · Tên và thông tin trong demo là hư cấu</span>
         <span className="signature-hero__side-note" aria-hidden="true">A day made for us · {demo.dateLabel}</span>
       </section>
 

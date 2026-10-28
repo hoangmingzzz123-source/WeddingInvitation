@@ -434,15 +434,15 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
-    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800',
-    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
-    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    'https://images.unsplash.com/photo-1506014299253-3725319c0f69?auto=format&fit=crop&w=800&q=82',
-    'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?w=800',
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800',
-    'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800',
+    '/images/vietnam/wedding-19956242.webp',
+    '/images/vietnam/wedding-19956238.webp',
+    '/images/vietnam/wedding-19956232.webp',
+    '/images/vietnam/wedding-33884990.webp',
+    '/images/vietnam/wedding-33884967.webp',
+    '/images/vietnam/wedding-19956242.webp',
+    '/images/vietnam/wedding-19956238.webp',
+    '/images/vietnam/wedding-19956232.webp',
+    '/images/vietnam/wedding-33884990.webp',
   ];
 
   return (

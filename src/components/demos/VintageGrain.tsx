@@ -108,7 +108,7 @@ function CoverTab() {
               transition={{ duration: 2, ease: "easeOut" }}
             >
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1719786624838-b5d9a9e3f378?auto=format&fit=crop&w=1600&q=84"
+                src="/images/vietnam/wedding-35841823.webp"
                 alt="Couple"
                 className="w-full h-full object-cover"
                 style={{ filter: 'sepia(0.3) contrast(1.1)' }}
@@ -206,13 +206,13 @@ function StoryTab() {
 
 function GalleryTab() {
   const images = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1200&q=82',
+    '/images/vietnam/wedding-35343290.webp',
+    '/images/vietnam/wedding-36630693.webp',
+    '/images/vietnam/wedding-13114531.webp',
+    '/images/vietnam/wedding-35083788.webp',
+    '/images/vietnam/wedding-35841823.webp',
+    '/images/vietnam/wedding-35343290.webp',
+    '/images/vietnam/wedding-36630693.webp',
   ];
 
   return (

@@ -352,12 +352,12 @@ function GalleryPage({ onNext, selectedImage, setSelectedImage }: {
   setSelectedImage: (index: number | null) => void;
 }) {
   const images = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
-    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800',
-    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
-    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    'https://images.unsplash.com/photo-1506014299253-3725319c0f69?auto=format&fit=crop&w=800&q=82',
+    '/images/vietnam/wedding-36647826.webp',
+    '/images/vietnam/wedding-36647742.webp',
+    '/images/vietnam/wedding-36647824.webp',
+    '/images/vietnam/wedding-36647816.webp',
+    '/images/vietnam/wedding-9061879.webp',
+    '/images/vietnam/wedding-36647826.webp',
   ];
 
   return (

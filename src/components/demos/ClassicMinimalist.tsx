@@ -27,12 +27,12 @@ export function ClassicMinimalist() {
   };
 
   const images = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=82',
-    'https://images.unsplash.com/photo-1626531805607-c3cd1ddce3f0?auto=format&fit=crop&w=1200&q=82',
+    '/images/vietnam/wedding-10568535.webp',
+    '/images/vietnam/wedding-10568538.webp',
+    '/images/vietnam/wedding-10568551.webp',
+    '/images/vietnam/wedding-19476299.webp',
+    '/images/vietnam/wedding-19476296.webp',
+    '/images/vietnam/wedding-10568535.webp',
   ];
 
   return (

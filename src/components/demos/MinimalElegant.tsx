@@ -251,7 +251,7 @@ export function MinimalElegant() {
             >
               <div className="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-[#C29B43]">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1755838280152-1ff8ec65dd02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400"
+                  src="/images/vietnam/wedding-19956242.webp"
                   alt="Chú rể"
                   className="w-full h-full object-cover"
                 />
@@ -296,7 +296,7 @@ export function MinimalElegant() {
             >
               <div className="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-[#C29B43]">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1765248227263-cfd048f2c5c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400"
+                  src="/images/vietnam/wedding-19956238.webp"
                   alt="Cô dâu"
                   className="w-full h-full object-cover"
                 />

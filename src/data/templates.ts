@@ -20,6 +20,10 @@ type TemplateDetails = Omit<WeddingTemplate, 'thumbnail' | 'thumbnailSrcSet'> & 
 };
 
 const templateDetails: TemplateDetails[] = [
+  { id: 'sen-ngoc', name: 'Sen Ngọc', style: 'Vietnamese Lotus', description: 'Sắc ngọc bích, nét sen thanh nhã và ảnh cưới áo dài trên nền giấy ngà.', route: '/demo/sen-ngoc', thumbnailId: 'sen-ngoc', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
+  { id: 'hy-su-do-son', name: 'Hỷ Sự Đỏ Son', style: 'Vietnamese Ceremony', description: 'Thiệp hồng đỏ son, khung thiếp truyền thống và lời mời hai nhà sum họp.', route: '/demo/hy-su-do-son', thumbnailId: 'hy-su-do-son', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
+  { id: 'pho-hoi', name: 'Thương Nhau Phố Hội', style: 'Hoi An Nostalgia', description: 'Sắc vàng phố cổ, ảnh cưới hoài niệm và bố cục bưu thiếp thân tình.', route: '/demo/pho-hoi', thumbnailId: 'pho-hoi', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
+
   {
     id: 'ha-phuong-hoang-minh-2026',
     name: 'Hà Phương & Hoàng Minh 2026',
@@ -66,7 +70,6 @@ const templateDetails: TemplateDetails[] = [
     name: 'Olive Garden Editorial',
     style: 'Botanical Editorial',
     route: '/demo/art-deco-royal',
-    thumbnailId: 'green-elegance',
     tier: '199k',
     features: ['Ảnh cưới làm trọng tâm', 'Câu chuyện', 'Video & lưu bút', 'RSVP'],
     description: 'Chủ đề vườn olive với ảnh vòm, bảng màu ivory–sage và tiện ích Diamond.',
@@ -97,7 +100,6 @@ const templateDetails: TemplateDetails[] = [
     name: 'Song Hỷ Đương Đại',
     style: 'Vietnamese Contemporary',
     route: '/demo/song-hy-contemporary',
-    thumbnailId: 'vietnamese-traditional',
     tier: '159k',
     features: ['Dấu ấn Song Hỷ', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
     description: 'Giấy ngà, sắc đỏ son và biểu tượng Song Hỷ được tiết chế theo phong cách hiện đại.',
@@ -108,7 +110,6 @@ const templateDetails: TemplateDetails[] = [
     name: 'Riviera Blue',
     style: 'Mediterranean Editorial',
     route: '/demo/riviera-blue',
-    thumbnailId: 'romantic-watercolor',
     tier: '109k',
     features: ['Xanh Riviera', 'Thông tin lễ cưới', 'Album cơ bản', 'RSVP'],
     description: 'Thiệp xanh biển thanh thoát, gợi không khí tiệc cưới bên bờ Địa Trung Hải.',
@@ -119,7 +120,6 @@ const templateDetails: TemplateDetails[] = [
     name: 'Hoa Mộc Editorial',
     style: 'Soft Botanical',
     route: '/demo/hoa-moc-editorial',
-    thumbnailId: 'green-elegance',
     tier: '159k',
     features: ['Hoa lá tối giản', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
     description: 'Sắc đào phấn và xanh lá dịu, kết hợp bố cục tạp chí dành cho tiệc cưới sân vườn.',
@@ -130,7 +130,6 @@ const templateDetails: TemplateDetails[] = [
     name: 'Summer Postcard',
     style: 'Destination Postcard',
     route: '/demo/summer-postcard',
-    thumbnailId: 'tropical-sunset',
     tier: '199k',
     features: ['Thiệp phong cách postcard', 'Album & video', 'Mừng cưới demo', 'Sổ lưu bút'],
     description: 'Một tấm bưu thiếp mùa hè kể chuyện ngày cưới bằng ảnh, video và lời chúc.',
@@ -258,7 +257,6 @@ const templateDetails: TemplateDetails[] = [
     name: 'Olive Garden Editorial · Essential',
     style: 'Botanical Editorial',
     route: '/demo/art-deco-royal-basic',
-    thumbnailId: 'green-elegance',
     tier: '159k',
     features: ['Ảnh cưới làm trọng tâm', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
     description: 'Phiên bản tinh gọn theo phong cách vườn olive, có chuyện tình yêu và album.',

@@ -35,7 +35,7 @@ export function OpeningScene({ onComplete }: OpeningSceneProps) {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1631702825172-a9a848c473ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaW5lbWElMjB0aGVhdGVyJTIwcmVkJTIwY3VydGFpbnxlbnwxfHx8fDE3NjcyNDkxMzB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+          src="/images/vietnam/wedding-23369888.webp"
           alt="Cinema curtain"
           className="w-full h-full object-cover opacity-30"
         />

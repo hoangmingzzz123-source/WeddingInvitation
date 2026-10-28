@@ -317,21 +317,21 @@ function TimelinePage() {
       year: '2019',
       title: 'Lần Đầu Gặp Gỡ',
       desc: 'Một cuộc gặp gỡ tình cờ đã thay đổi mọi thứ 💫',
-      image: 'https://2hstudio.vn/wp-content/uploads/2024/11/TL_03683-scaled.webp',
+      image: '/images/vietnam/wedding-23369886.webp',
       objectPosition: 'center', // center | top | bottom | left | right | '20% 30%'
     },
     {
       year: '2021',
       title: 'Yêu Thương Đơm Hoa',
       desc: 'Chúng tôi bắt đầu hành trình bên nhau 💖',
-      image: 'https://tuarts.net/wp-content/uploads/2020/05/60770796_2734489913292840_6737769278910496768_o-1.jpg',
+      image: '/images/vietnam/wedding-33986841.webp',
       objectPosition: '30% 18%', // Lấy phần đầu ảnh
     },
     {
       year: '2027',
       title: 'Mãi Mãi Bên Nhau',
       desc: 'Chúng tôi nói lời "I Do" 💍',
-      image: 'https://tuarts.net/wp-content/uploads/2015/12/117937145_4255715104503639_2707126124250519806_o.jpg',
+      image: '/images/vietnam/wedding-38776688.webp',
       objectPosition: 'center',
     },
   ];

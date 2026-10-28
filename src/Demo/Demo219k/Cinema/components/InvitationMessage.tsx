@@ -8,7 +8,7 @@ export function InvitationMessage() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1761499101631-92cde2434bc4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY2VyZW1vbnklMjBlbGVnYW50JTIwdmVudWV8ZW58MXx8fHwxNzY3MjU2NzY5fDA&ixlib=rb-4.1.0&q=80&w=1080"
+          src="/images/vietnam/wedding-33986841.webp"
           alt="Elegant wedding venue"
           className="w-full h-full object-cover opacity-10"
         />

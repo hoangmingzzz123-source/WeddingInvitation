@@ -10,7 +10,7 @@ export function VideoSection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1658851866325-49fb8b7fbcb2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGNvdXBsZSUyMG91dGRvb3IlMjBzdW5zZXR8ZW58MXx8fHwxNzY3MjU2NzY4fDA&ixlib=rb-4.1.0&q=80&w=1080"
+          src="/images/vietnam/wedding-23369886.webp"
           alt="Romantic couple"
           className="w-full h-full object-cover opacity-15"
         />

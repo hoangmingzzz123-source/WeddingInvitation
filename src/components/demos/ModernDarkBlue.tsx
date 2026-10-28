@@ -112,7 +112,7 @@ export function ModernDarkBlue() {
             <div className="relative">
               <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-4 border-[#3B82F6]">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=84"
+                  src="/images/vietnam/wedding-23369886.webp"
                   alt="Couple"
                   className="w-full h-full object-cover"
                 />
