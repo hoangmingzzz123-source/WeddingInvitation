@@ -37,16 +37,19 @@ import { weddingTemplates, type TemplateTier } from '../data/templates';
 import weddingTrack from '../asset/Le_duong.mp3';
 import {
   SignatureDemo,
+  type SignatureFont,
   type SignatureDemoCustomization,
   type SignatureRsvpPayload,
+  type SignatureRsvpQuestion,
+  type SignatureTheme,
 } from './demos/SignatureDemos';
 
 const STORAGE_KEY = 'mp-wedding-demo-draft-v1';
 const RSVP_STORAGE_PREFIX = 'mp-wedding-demo-rsvps-v1:';
 
-type InvitationTheme = 'champagne' | 'blush' | 'emerald';
-type InvitationFont = 'editorial' | 'modern' | 'classic';
-type InvitationQuestion = 'transport' | 'meal';
+type InvitationTheme = SignatureTheme;
+type InvitationFont = SignatureFont;
+type InvitationQuestion = SignatureRsvpQuestion;
 
 interface InvitationGuest {
   id: string;
@@ -73,6 +76,9 @@ interface InvitationDraft {
   weddingTime: string;
   venue: string;
   address: string;
+  city: string;
+  ceremonyTitle: string;
+  receptionTitle: string;
   message: string;
   theme: InvitationTheme;
   fontStyle: InvitationFont;
@@ -135,6 +141,7 @@ const MAX_SINGLE_IMAGE_CHARS = 180_000;
 const MAX_IMAGE_FILE_BYTES = 15 * 1024 * 1024;
 
 const themeOptions: Array<{ id: InvitationTheme; name: string; description: string }> = [
+  { id: 'template', name: 'Nguyên bản', description: 'Giữ đúng màu của mẫu' },
   { id: 'champagne', name: 'Champagne', description: 'Ấm áp · Sang trọng' },
   { id: 'blush', name: 'Blush Rose', description: 'Nhẹ nhàng · Lãng mạn' },
   { id: 'emerald', name: 'Emerald', description: 'Hiện đại · Tinh tế' },
@@ -150,8 +157,11 @@ const defaultDraft: InvitationDraft = {
   weddingTime: '18:00',
   venue: '',
   address: '',
+  city: 'Việt Nam',
+  ceremonyTitle: 'Lễ thành hôn',
+  receptionTitle: 'Tiệc mừng thân mật',
   message: 'Trân trọng mời bạn đến chung vui trong ngày hạnh phúc của chúng mình.',
-  theme: 'champagne',
+  theme: 'template',
   fontStyle: 'editorial',
   cover: coverOptions[0].url,
   albumPhotos: [],
@@ -176,7 +186,7 @@ const invitationMessageIdeas = [
 ];
 
 function isInvitationTheme(value: unknown): value is InvitationTheme {
-  return value === 'champagne' || value === 'blush' || value === 'emerald';
+  return value === 'template' || value === 'champagne' || value === 'blush' || value === 'emerald';
 }
 
 function isTemplateTier(value: unknown): value is TemplateTier {
@@ -276,6 +286,13 @@ function normalizeDraft(value: Partial<InvitationDraft> | null | undefined): Inv
     packageTier: isTemplateTier(value?.packageTier) ? value.packageTier : defaultDraft.packageTier,
     theme: isInvitationTheme(value?.theme) ? value.theme : defaultDraft.theme,
     fontStyle: isInvitationFont(value?.fontStyle) ? value.fontStyle : defaultDraft.fontStyle,
+    city: typeof value?.city === 'string' && value.city.trim() ? value.city.trim().slice(0, 100) : defaultDraft.city,
+    ceremonyTitle: typeof value?.ceremonyTitle === 'string' && value.ceremonyTitle.trim()
+      ? value.ceremonyTitle.trim().slice(0, 80)
+      : defaultDraft.ceremonyTitle,
+    receptionTitle: typeof value?.receptionTitle === 'string' && value.receptionTitle.trim()
+      ? value.receptionTitle.trim().slice(0, 80)
+      : defaultDraft.receptionTitle,
     cover,
     albumPhotos: normalizeAlbumPhotos(value?.albumPhotos, MAX_EMBEDDED_IMAGE_CHARS - coverChars),
     guests: Array.isArray(value?.guests)
@@ -419,7 +436,6 @@ function formatSignatureDate(value: string) {
 
 function signatureCustomizationForDraft(draft: InvitationDraft): SignatureDemoCustomization {
   const fallbackGallery = galleryForTemplate(draft.templateId);
-  const addressParts = draft.address.split(',').map((part) => part.trim()).filter(Boolean);
   const selectedGallery = draft.albumPhotos.length
     ? [draft.cover, ...draft.albumPhotos]
     : fallbackGallery;
@@ -437,8 +453,12 @@ function signatureCustomizationForDraft(draft: InvitationDraft): SignatureDemoCu
     time: draft.weddingTime || undefined,
     venue: draft.venue || undefined,
     address: draft.address || undefined,
-    city: addressParts.length > 1 ? addressParts.at(-1) : 'Việt Nam',
+    city: draft.city || 'Việt Nam',
     story: draft.message || undefined,
+    ceremonyTitle: draft.ceremonyTitle || undefined,
+    receptionTitle: draft.receptionTitle || undefined,
+    theme: draft.theme,
+    fontStyle: draft.fontStyle,
     hero: draft.cover || undefined,
     gallery,
   };
@@ -777,11 +797,15 @@ export function InvitationCreatorPage() {
     const requestedId = new URLSearchParams(window.location.search).get('template');
     const requestedTemplate = editableTemplates.find((template) => template.id === requestedId);
     if (!requestedTemplate) return saved;
+    const sameTemplate = saved.templateId === requestedTemplate.id;
     return normalizeDraft({
       ...saved,
       templateId: requestedTemplate.id,
-      packageTier: requestedTemplate.tier,
-      cover: saved.cover.startsWith('data:image/') ? saved.cover : coverForTemplate(requestedTemplate.id),
+      packageTier: sameTemplate ? saved.packageTier : requestedTemplate.tier,
+      theme: sameTemplate ? saved.theme : 'template',
+      cover: sameTemplate || saved.cover.startsWith('data:image/')
+        ? saved.cover
+        : coverForTemplate(requestedTemplate.id),
     });
   });
   const [errors, setErrors] = useState<string[]>([]);
@@ -1122,10 +1146,26 @@ export function InvitationCreatorPage() {
                   Tên địa điểm <b>*</b>
                   <input autoFocus value={draft.venue} onChange={(event) => updateDraft('venue', event.target.value)} placeholder="Ví dụ: Riverside Palace" />
                 </label>
-                <label>
-                  Địa chỉ chi tiết
-                  <input value={draft.address} onChange={(event) => updateDraft('address', event.target.value)} placeholder="Số nhà, đường, quận/huyện, tỉnh/thành" />
-                </label>
+                <div className="creator-fields creator-fields--two">
+                  <label>
+                    Địa chỉ chi tiết
+                    <input value={draft.address} onChange={(event) => updateDraft('address', event.target.value)} placeholder="Số nhà, đường, quận/huyện" />
+                  </label>
+                  <label>
+                    Tỉnh / thành phố
+                    <input value={draft.city} onChange={(event) => updateDraft('city', event.target.value)} placeholder="Ví dụ: TP. Hồ Chí Minh" />
+                  </label>
+                </div>
+                <div className="creator-fields creator-fields--two">
+                  <label>
+                    Tên nghi lễ
+                    <input value={draft.ceremonyTitle} onChange={(event) => updateDraft('ceremonyTitle', event.target.value)} placeholder="Ví dụ: Lễ thành hôn" />
+                  </label>
+                  <label>
+                    Tên tiệc mừng
+                    <input value={draft.receptionTitle} onChange={(event) => updateDraft('receptionTitle', event.target.value)} placeholder="Ví dụ: Tiệc mừng thân mật" />
+                  </label>
+                </div>
                 <p className="creator-field-note"><MapPin aria-hidden="true" /> Địa chỉ sẽ giúp khách mời tìm đường thuận tiện hơn.</p>
               </div>
             )}
@@ -1369,7 +1409,7 @@ export function InvitationCreatorPage() {
                 <div className="creator-review__rows">
                   <div><span>Cô dâu &amp; chú rể</span><strong>{draft.brideName || 'Cô dâu'} &amp; {draft.groomName || 'Chú rể'}</strong><button type="button" onClick={() => setCurrentStep(0)} aria-label="Sửa tên đôi bạn"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Ngày &amp; giờ</span><strong>{formatWeddingDate(draft.weddingDate)} · {draft.weddingTime || '18:00'}</strong><button type="button" onClick={() => setCurrentStep(1)} aria-label="Sửa ngày và giờ"><Pencil aria-hidden="true" /></button></div>
-                  <div><span>Địa điểm</span><strong>{draft.venue || 'Chưa thêm địa điểm'}{draft.address ? ` · ${draft.address}` : ''}</strong><button type="button" onClick={() => setCurrentStep(2)} aria-label="Sửa địa điểm"><Pencil aria-hidden="true" /></button></div>
+                  <div><span>Địa điểm</span><strong>{draft.venue || 'Chưa thêm địa điểm'}{draft.city ? ` · ${draft.city}` : ''}</strong><button type="button" onClick={() => setCurrentStep(2)} aria-label="Sửa địa điểm"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Mẫu &amp; phong cách</span><strong>{selectedTemplate.name} · {themeOptions.find((theme) => theme.id === draft.theme)?.name}</strong><button type="button" onClick={() => setCurrentStep(4)} aria-label="Sửa mẫu và phong cách"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Ảnh thiệp</span><strong>{draft.cover.startsWith('data:image/') ? 'Ảnh bìa riêng' : 'Ảnh bìa gợi ý'} · {draft.albumPhotos.length ? `${draft.albumPhotos.length} ảnh album` : 'album gợi ý'}</strong><button type="button" onClick={() => setCurrentStep(4)} aria-label="Sửa ảnh bìa và album"><Pencil aria-hidden="true" /></button></div>
                   <div><span>Gói thiệp</span><strong>{getWeddingPackage(draft.packageTier).name} · {getWeddingPackage(draft.packageTier).price}</strong><button type="button" onClick={() => document.querySelector('.creator-package-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} aria-label="Sửa gói thiệp"><Pencil aria-hidden="true" /></button></div>
@@ -1438,6 +1478,7 @@ export function LiveInvitationPreviewPage() {
         <SignatureDemo
           id={draft.templateId}
           customization={signatureCustomizationForDraft(draft)}
+          rsvpQuestions={draft.rsvpQuestions}
           embedded
         />
       </div>
@@ -1505,7 +1546,7 @@ export function GeneratedInvitationPage() {
       name: guest?.name ?? payload.name,
       attending: payload.attending,
       guestCount: payload.guestCount,
-      answers: {},
+      answers: payload.answers,
       submittedAt: new Date().toISOString(),
     };
     setRsvps(saveInvitationRsvp(draft.id, response));
@@ -1534,6 +1575,8 @@ export function GeneratedInvitationPage() {
             id={draft.templateId}
             customization={signatureCustomizationForDraft(draft)}
             guestName={guest?.name}
+            guestGreeting={guest?.greeting}
+            rsvpQuestions={draft.rsvpQuestions}
             existingSubmitted={Boolean(existingRsvp)}
             onRsvpSubmit={saveSignatureRsvp}
           />
