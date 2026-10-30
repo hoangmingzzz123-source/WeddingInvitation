@@ -24,6 +24,49 @@
 
 .creator-mobile-tabs { display: none; }
 
+.creator-phone iframe {
+  display: block;
+  width: 100%;
+  height: 43rem;
+  border: 0;
+  background: #f7f5ef;
+}
+
+.invitation-live-page,
+.invitation-live-canvas,
+.invitation-live-canvas .signature-demo {
+  min-height: 100dvh;
+}
+
+.invitation-live-page { background: #f7f5ef; }
+.invitation-live-canvas .signature-demo { padding-top: 0; }
+.invitation-live-canvas .signature-demo .signature-nav {
+  top: calc(.5rem + env(safe-area-inset-top, 0px));
+  margin: .5rem auto 0;
+}
+
+.preview-stage--signature {
+  width: min(calc(100% - 2rem), 96rem);
+  grid-template-columns: minmax(0, 68rem) minmax(18rem, 24rem);
+  align-items: start;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.preview-stage--signature.preview-stage--manage {
+  width: min(calc(100% - 2rem), 76rem);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.preview-stage--signature.preview-stage--manage .preview-stage__invitation {
+  width: 100%;
+}
+
+.invitation-generated-canvas {
+  width: 100%;
+  max-width: none;
+  overflow: clip;
+}
+
 .creator-template-choice {
   display: grid;
   grid-template-columns: 5.2rem minmax(0, 1fr) auto;
@@ -221,16 +264,28 @@
 
   .demo-shell { --demo-controls-height: calc(5rem + var(--demo-safe-bottom)); }
   .demo-action-dock { display: none; }
-  .demo-page-content .signature-demo { padding-top: 0 !important; }
-  .demo-page-content .signature-demo .signature-nav {
+  .demo-shell .demo-page-content .signature-demo { padding-top: 0 !important; }
+  .demo-shell .demo-page-content .signature-demo .signature-nav {
     top: calc(.5rem + env(safe-area-inset-top, 0px)) !important;
     width: calc(100% - 1rem);
     min-height: 3.6rem;
     margin: .5rem auto 0 !important;
   }
-  .demo-page-content .signature-demo section.signature-hero { padding-top: 1.5rem !important; }
-  .demo-page-content .signature-demo section[id] { scroll-margin-top: 4.8rem; }
-  .demo-page-content .signature-demo .demo-music-control { display: none; }
+  .demo-shell .demo-page-content .signature-demo section.signature-hero { padding-top: 1.5rem !important; }
+  .demo-shell .demo-page-content .signature-demo section[id] { scroll-margin-top: 4.8rem; }
+  .demo-shell .demo-page-content .signature-demo .demo-music-control { display: none; }
+
+  .invitation-live-canvas .signature-demo { padding-top: 0 !important; }
+  .invitation-live-canvas .signature-demo .signature-nav {
+    top: calc(.5rem + env(safe-area-inset-top, 0px)) !important;
+    margin: .5rem auto 0 !important;
+  }
+  .invitation-live-canvas .signature-demo section.signature-hero { padding-top: 1.5rem !important; }
+
+  .preview-stage--signature {
+    width: min(calc(100% - 1rem), 44rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
 
   .preview-toolbar { position: sticky; z-index: 90; top: 0; }
   .preview-toolbar button:last-child { overflow: hidden; white-space: nowrap; }

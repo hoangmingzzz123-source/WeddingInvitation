@@ -35,6 +35,11 @@ import { navigateTo } from '../Router';
 import { getWeddingPackage, weddingPackages } from '../data/packages';
 import { weddingTemplates, type TemplateTier } from '../data/templates';
 import weddingTrack from '../asset/Le_duong.mp3';
+import {
+  SignatureDemo,
+  type SignatureDemoCustomization,
+  type SignatureRsvpPayload,
+} from './demos/SignatureDemos';
 
 const STORAGE_KEY = 'mp-wedding-demo-draft-v1';
 const RSVP_STORAGE_PREFIX = 'mp-wedding-demo-rsvps-v1:';
@@ -406,6 +411,39 @@ function formatWeddingDate(value: string) {
   }).format(date);
 }
 
+function formatSignatureDate(value: string) {
+  if (!value) return undefined;
+  const [year, month, day] = value.split('-');
+  return year && month && day ? `${day} · ${month} · ${year}` : undefined;
+}
+
+function signatureCustomizationForDraft(draft: InvitationDraft): SignatureDemoCustomization {
+  const fallbackGallery = galleryForTemplate(draft.templateId);
+  const addressParts = draft.address.split(',').map((part) => part.trim()).filter(Boolean);
+  const selectedGallery = draft.albumPhotos.length
+    ? [draft.cover, ...draft.albumPhotos]
+    : fallbackGallery;
+  const gallery = Array.from(
+    { length: Math.max(4, selectedGallery.length) },
+    (_, index) => selectedGallery[index] ?? fallbackGallery[index % fallbackGallery.length],
+  );
+
+  return {
+    tier: draft.packageTier,
+    bride: draft.brideName || undefined,
+    groom: draft.groomName || undefined,
+    date: draft.weddingDate || undefined,
+    dateLabel: formatSignatureDate(draft.weddingDate),
+    time: draft.weddingTime || undefined,
+    venue: draft.venue || undefined,
+    address: draft.address || undefined,
+    city: addressParts.length > 1 ? addressParts.at(-1) : 'Việt Nam',
+    story: draft.message || undefined,
+    hero: draft.cover || undefined,
+    gallery,
+  };
+}
+
 function InvitationPreview({
   draft,
   compact = false,
@@ -756,6 +794,7 @@ export function InvitationCreatorPage() {
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [mobileView, setMobileView] = useState<'edit' | 'preview'>('edit');
+  const livePreviewRef = useRef<HTMLIFrameElement>(null);
 
   const selectedTemplate = useMemo(
     () => editableTemplates.find((template) => template.id === draft.templateId) ?? editableTemplates[0],
@@ -773,6 +812,26 @@ export function InvitationCreatorPage() {
     }, 350);
     setSaveStatus('Đang lưu...');
     return () => window.clearTimeout(timeout);
+  }, [draft]);
+
+  useEffect(() => {
+    const publishDraft = () => {
+      livePreviewRef.current?.contentWindow?.postMessage(
+        { type: 'mp-wedding-preview-draft', draft },
+        window.location.origin,
+      );
+    };
+    const receiveReady = (event: MessageEvent) => {
+      if (
+        event.origin === window.location.origin
+        && event.source === livePreviewRef.current?.contentWindow
+        && event.data?.type === 'mp-wedding-preview-ready'
+      ) publishDraft();
+    };
+
+    publishDraft();
+    window.addEventListener('message', receiveReady);
+    return () => window.removeEventListener('message', receiveReady);
   }, [draft]);
 
   const updateDraft = <Key extends keyof InvitationDraft>(key: Key, value: InvitationDraft[Key]) => {
@@ -1338,10 +1397,49 @@ export function InvitationCreatorPage() {
             <small>{getWeddingPackage(draft.packageTier).name}</small>
           </div>
           <motion.div layout className="creator-phone">
-            <InvitationPreview draft={draft} compact />
+            <iframe
+              ref={livePreviewRef}
+              src="/tao-thiep/live"
+              title={`Xem trước trực tiếp mẫu ${selectedTemplate.name}`}
+              onLoad={() => livePreviewRef.current?.contentWindow?.postMessage(
+                { type: 'mp-wedding-preview-draft', draft },
+                window.location.origin,
+              )}
+            />
           </motion.div>
           <p>Mọi thay đổi được hiển thị ngay trên bản xem trước.</p>
         </aside>
+      </div>
+    </main>
+  );
+}
+
+export function LiveInvitationPreviewPage() {
+  const [draft, setDraft] = useState<InvitationDraft>(() => normalizeDraft(defaultDraft));
+
+  useEffect(() => {
+    const receiveDraft = (event: MessageEvent) => {
+      if (
+        event.origin !== window.location.origin
+        || event.source !== window.parent
+        || event.data?.type !== 'mp-wedding-preview-draft'
+      ) return;
+      setDraft(normalizeDraft(event.data.draft as Partial<InvitationDraft>));
+    };
+
+    window.addEventListener('message', receiveDraft);
+    window.parent.postMessage({ type: 'mp-wedding-preview-ready' }, window.location.origin);
+    return () => window.removeEventListener('message', receiveDraft);
+  }, []);
+
+  return (
+    <main className="invitation-live-page">
+      <div className="demo-page-content demo-page-content--signature invitation-live-canvas">
+        <SignatureDemo
+          id={draft.templateId}
+          customization={signatureCustomizationForDraft(draft)}
+          embedded
+        />
       </div>
     </main>
   );
@@ -1371,6 +1469,9 @@ export function GeneratedInvitationPage() {
     };
   }, [query]);
   const selectedPackage = getWeddingPackage(draft.packageTier);
+  const existingRsvp = guest
+    ? rsvps.find((response) => response.guestId === guest.id)
+    : undefined;
 
   useEffect(() => {
     setRsvps(readInvitationRsvps(draft.id));
@@ -1398,6 +1499,18 @@ export function GeneratedInvitationPage() {
     }
   };
 
+  const saveSignatureRsvp = (payload: SignatureRsvpPayload) => {
+    const response: InvitationRsvp = {
+      guestId: guest?.id ?? createId('public-guest'),
+      name: guest?.name ?? payload.name,
+      attending: payload.attending,
+      guestCount: payload.guestCount,
+      answers: {},
+      submittedAt: new Date().toISOString(),
+    };
+    setRsvps(saveInvitationRsvp(draft.id, response));
+  };
+
   return (
     <main className={`invitation-preview-page invitation-preview-page--${draft.theme}`}>
       <header className="preview-toolbar">
@@ -1410,18 +1523,19 @@ export function GeneratedInvitationPage() {
         </button>
       </header>
 
-      <section className={`preview-stage${isManager ? ' preview-stage--manage' : ''}`}>
+      <section className={`preview-stage preview-stage--signature${isManager ? ' preview-stage--manage' : ''}`}>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="preview-stage__invitation"
+          className="preview-stage__invitation demo-page-content demo-page-content--signature invitation-generated-canvas"
         >
-          <InvitationPreview
-            draft={draft}
-            guest={guest}
-            existingRsvp={guest ? rsvps.find((response) => response.guestId === guest.id) : undefined}
-            onRsvpSaved={() => setRsvps(readInvitationRsvps(draft.id))}
+          <SignatureDemo
+            id={draft.templateId}
+            customization={signatureCustomizationForDraft(draft)}
+            guestName={guest?.name}
+            existingSubmitted={Boolean(existingRsvp)}
+            onRsvpSubmit={saveSignatureRsvp}
           />
         </motion.div>
 

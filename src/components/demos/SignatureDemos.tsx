@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowDown,
@@ -20,6 +20,36 @@ import {
 } from '../../data/vietnamWeddingPhotos';
 
 export type SignatureDemoId = string;
+
+export interface SignatureDemoCustomization {
+  tier?: TemplateTier;
+  bride?: string;
+  groom?: string;
+  date?: string;
+  dateLabel?: string;
+  time?: string;
+  venue?: string;
+  address?: string;
+  city?: string;
+  story?: string;
+  hero?: string;
+  gallery?: string[];
+}
+
+export interface SignatureRsvpPayload {
+  name: string;
+  attending: 'yes' | 'no';
+  guestCount: number;
+}
+
+interface SignatureDemoProps {
+  id: SignatureDemoId;
+  customization?: SignatureDemoCustomization;
+  embedded?: boolean;
+  guestName?: string;
+  existingSubmitted?: boolean;
+  onRsvpSubmit?: (payload: SignatureRsvpPayload) => void;
+}
 
 interface SignatureDemoContent {
   id: SignatureDemoId;
@@ -228,9 +258,31 @@ function replyDeadline(dateValue: string) {
   return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(deadline);
 }
 
-export function SignatureDemo({ id }: { id: SignatureDemoId }) {
-  const demo = demos[id] ?? fallbackDemo(id);
-  const [submitted, setSubmitted] = useState(false);
+export function SignatureDemo({
+  id,
+  customization,
+  embedded = false,
+  guestName,
+  existingSubmitted = false,
+  onRsvpSubmit,
+}: SignatureDemoProps) {
+  const baseDemo = demos[id] ?? fallbackDemo(id);
+  const demo: SignatureDemoContent = {
+    ...baseDemo,
+    tier: customization?.tier ?? baseDemo.tier,
+    bride: customization?.bride || baseDemo.bride,
+    groom: customization?.groom || baseDemo.groom,
+    date: customization?.date || baseDemo.date,
+    dateLabel: customization?.dateLabel || baseDemo.dateLabel,
+    time: customization?.time || baseDemo.time,
+    venue: customization?.venue || baseDemo.venue,
+    address: customization?.address || baseDemo.address,
+    city: customization?.city || baseDemo.city,
+    story: customization?.story || baseDemo.story,
+    hero: customization?.hero || baseDemo.hero,
+    gallery: customization?.gallery?.length ? customization.gallery : baseDemo.gallery,
+  };
+  const [submitted, setSubmitted] = useState(existingSubmitted);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const mapQuery = encodeURIComponent(`${demo.venue}, ${demo.address}, ${demo.city}`);
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
@@ -239,14 +291,25 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
   const premium = demo.tier !== '109k';
   const diamond = demo.tier === '199k';
 
+  useEffect(() => {
+    setSubmitted(existingSubmitted);
+  }, [existingSubmitted]);
+
   const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const attending = formData.get('attending') === 'no' ? 'no' : 'yes';
+    onRsvpSubmit?.({
+      name: guestName || String(formData.get('name') || '').trim(),
+      attending,
+      guestCount: attending === 'yes' ? Number(formData.get('guests') || 1) : 0,
+    });
     setSubmitted(true);
   };
 
   return (
-    <main className={`signature-demo signature-demo--${demo.id}${demo.visualStyle ? ` signature-demo--${demo.visualStyle}` : ''}`}>
-      <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} />
+    <main className={`signature-demo signature-demo--${demo.id}${demo.visualStyle ? ` signature-demo--${demo.visualStyle}` : ''}${embedded ? ' signature-demo--embedded' : ''}`}>
+      {!embedded && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} />}
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
         <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${couple}`}>
@@ -275,7 +338,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
           >
             <SmallLabel>{demo.label}</SmallLabel>
             <h1><span>{demo.bride}</span><i>&amp;</i><span>{demo.groom}</span></h1>
-            <p className="signature-hero__invitation">Trân trọng kính mời bạn đến chung vui</p>
+            <p className="signature-hero__invitation">{guestName ? `Trân trọng kính mời ${guestName} đến chung vui` : 'Trân trọng kính mời bạn đến chung vui'}</p>
             <p className="signature-hero__date">{demo.dateLabel}</p>
             <div className="signature-hero__actions">
               <a href="#su-kien">Khám phá thiệp <ArrowDown aria-hidden="true" /></a>
@@ -283,7 +346,11 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
             </div>
           </motion.div>
         </div>
-        <span className="signature-photo-disclaimer">Ảnh minh họa · Tên và thông tin trong demo là hư cấu</span>
+        <span className="signature-photo-disclaimer">
+          {customization
+            ? 'Bản thiệp cá nhân hóa · Hình ảnh có thể thay đổi trước khi xuất bản'
+            : 'Ảnh minh họa · Tên và thông tin trong demo là hư cấu'}
+        </span>
         <span className="signature-hero__side-note" aria-hidden="true">A day made for us · {demo.dateLabel}</span>
       </section>
 
@@ -392,7 +459,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
             <SmallLabel>PLEASE REPLY</SmallLabel>
             <h2 id="signature-rsvp-title">Bạn sẽ đến chứ?</h2>
             <p>Vui lòng hồi đáp trước ngày {replyDeadline(demo.date)} để chúng mình chuẩn bị chu đáo.</p>
-            <label>Họ và tên<input name="name" required placeholder="Tên của bạn" autoComplete="name" /></label>
+            <label>Họ và tên<input name="name" required placeholder="Tên của bạn" autoComplete="name" defaultValue={guestName} readOnly={Boolean(guestName)} /></label>
             <label>Bạn sẽ tham dự chứ?<select name="attending" defaultValue="yes"><option value="yes">Có, mình sẽ đến</option><option value="no">Rất tiếc, mình bận</option></select></label>
             {premium ? (
               <div className="signature-rsvp__fields">
