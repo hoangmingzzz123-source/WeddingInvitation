@@ -293,8 +293,27 @@ const templateDetails: TemplateDetails[] = [
   },
 ];
 
+function modernPreviewFor(template: TemplateDetails) {
+  const normalized = template.id.toLocaleLowerCase('vi');
+  const story = /(traditional|song-hy|hy-su|sen-ngoc|pho-hoi)/.test(normalized)
+    ? 'ao-dai'
+    : /(riviera|summer|tropical)/.test(normalized)
+      ? 'coast'
+      : /(cinema|cinematic|dark|gold|vintage)/.test(normalized)
+        ? 'city'
+        : 'atelier';
+  const index = [...template.id].reduce((total, character) => total + character.charCodeAt(0), 0) % 4;
+  return `/images/vietnam-modern/${story}-${String(index).padStart(2, '0')}.webp`;
+}
+
 export const weddingTemplates: WeddingTemplate[] = templateDetails.map((template) => {
   const { thumbnailId = template.id, ...details } = template;
+  if (template.route) {
+    return {
+      ...details,
+      thumbnail: modernPreviewFor(template),
+    };
+  }
   return {
     ...details,
     thumbnail: `/images/templates/${thumbnailId}-800.webp`,

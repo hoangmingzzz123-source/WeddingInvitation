@@ -11,12 +11,14 @@ import {
 import { navigateTo } from '../Router';
 
 interface InvitationCreationLauncherProps {
+  templateId?: string;
   children: (
     openOptions: (event?: MouseEvent<HTMLElement>) => void,
   ) => ReactNode;
 }
 
 export function InvitationCreationLauncher({
+  templateId,
   children,
 }: InvitationCreationLauncherProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,12 +32,12 @@ export function InvitationCreationLauncher({
 
   const openOnlineCreator = () => {
     setIsOpen(false);
-    navigateTo('/tao-thiep');
+    navigateTo(templateId ? `/tao-thiep?template=${encodeURIComponent(templateId)}` : '/tao-thiep');
   };
 
   const openRequestForm = () => {
     setIsOpen(false);
-    navigateTo('/yeu-cau-thiep');
+    navigateTo(templateId ? `/yeu-cau-thiep?template=${encodeURIComponent(templateId)}` : '/yeu-cau-thiep');
   };
 
   return (

@@ -394,7 +394,7 @@ export function DemoShell({
             </button>
           </Dialog.Trigger>
 
-          <InvitationCreationLauncher>
+          <InvitationCreationLauncher templateId={template?.id}>
             {(openOptions) => (
               <button
                 type="button"
@@ -574,7 +574,7 @@ export function DemoShell({
                 ))}
               </div>
 
-              <InvitationCreationLauncher>
+              <InvitationCreationLauncher templateId={template?.id}>
                 {(openOptions) => (
                   <button
                     type="button"
