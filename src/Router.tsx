@@ -10,6 +10,7 @@ function updateMeta(selector: string, attribute: string, value: string) {
 const HomePage = lazy(() => import('./components/HomePage').then((module) => ({ default: module.HomePage })));
 const TemplatesPage = lazy(() => import('./components/TemplatesPage').then((module) => ({ default: module.TemplatesPage })));
 const InvitationCreatorPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.InvitationCreatorPage })));
+const LiveInvitationPreviewPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.LiveInvitationPreviewPage })));
 const GeneratedInvitationPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.GeneratedInvitationPage })));
 const CustomerRequestPage = lazy(() => import('./components/CustomerRequestPage').then((module) => ({ default: module.CustomerRequestPage })));
 const PublicDemoPage = lazy(() => import('./components/PublicDemoPage').then((module) => ({ default: module.PublicDemoPage })));
@@ -113,6 +114,7 @@ export function Router() {
     '/': <HomePage />,
     '/templates': <TemplatesPage />,
     '/tao-thiep': <InvitationCreatorPage />,
+    '/tao-thiep/live': <LiveInvitationPreviewPage />,
     '/tao-thiep/preview': <GeneratedInvitationPage />,
     '/yeu-cau-thiep': <CustomerRequestPage />,
     '/admin/login': <AdminLoginPage />,

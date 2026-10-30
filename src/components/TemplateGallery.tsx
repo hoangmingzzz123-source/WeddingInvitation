@@ -30,7 +30,7 @@ export function TemplateGallery() {
 
   const visibleTemplates = useMemo(() => {
     if (activeFilter === 'all') {
-      return weddingTemplates.filter((template) => template.featured).slice(0, 6);
+      return weddingTemplates.filter((template) => template.homepageFeatured).slice(0, 6);
     }
 
     return weddingTemplates.filter((template) => template.tier === activeFilter).slice(0, 6);
@@ -51,11 +51,11 @@ export function TemplateGallery() {
           transition={{ duration: 0.6 }}
           className="home-section-heading"
         >
-          <p><Sparkles aria-hidden="true" /> Thư viện mẫu</p>
-          <h2 id="home-gallery-title">Thiết kế đẹp ở mọi khoảnh khắc</h2>
+          <p><Sparkles aria-hidden="true" /> Tuyển chọn đặc sắc</p>
+          <h2 id="home-gallery-title">Mỗi mẫu là một thế giới riêng</h2>
           <span>
-            Từ phong cách tối giản đến điện ảnh, mỗi mẫu đều được tối ưu cho điện thoại và
-            có thể cá nhân hóa theo câu chuyện của hai bạn.
+            Những thiết kế nổi bật nhất được chọn từ thư viện: điện ảnh, truyền thống Việt,
+            màu nước và cả nét vẽ tay. Tất cả đều tạo thiệp trực tiếp từ đúng mẫu đang xem.
           </span>
         </motion.div>
 

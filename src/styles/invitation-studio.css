@@ -24,6 +24,49 @@
 
 .creator-mobile-tabs { display: none; }
 
+.creator-phone iframe {
+  display: block;
+  width: 100%;
+  height: 43rem;
+  border: 0;
+  background: #f7f5ef;
+}
+
+.invitation-live-page,
+.invitation-live-canvas,
+.invitation-live-canvas .signature-demo {
+  min-height: 100dvh;
+}
+
+.invitation-live-page { background: #f7f5ef; }
+.invitation-live-canvas .signature-demo { padding-top: 0; }
+.invitation-live-canvas .signature-demo .signature-nav {
+  top: calc(.5rem + env(safe-area-inset-top, 0px));
+  margin: .5rem auto 0;
+}
+
+.preview-stage--signature {
+  width: min(calc(100% - 2rem), 96rem);
+  grid-template-columns: minmax(0, 68rem) minmax(18rem, 24rem);
+  align-items: start;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.preview-stage--signature.preview-stage--manage {
+  width: min(calc(100% - 2rem), 76rem);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.preview-stage--signature.preview-stage--manage .preview-stage__invitation {
+  width: 100%;
+}
+
+.invitation-generated-canvas {
+  width: 100%;
+  max-width: none;
+  overflow: clip;
+}
+
 .creator-template-choice {
   display: grid;
   grid-template-columns: 5.2rem minmax(0, 1fr) auto;
@@ -221,16 +264,28 @@
 
   .demo-shell { --demo-controls-height: calc(5rem + var(--demo-safe-bottom)); }
   .demo-action-dock { display: none; }
-  .demo-page-content .signature-demo { padding-top: 0 !important; }
-  .demo-page-content .signature-demo .signature-nav {
+  .demo-shell .demo-page-content .signature-demo { padding-top: 0 !important; }
+  .demo-shell .demo-page-content .signature-demo .signature-nav {
     top: calc(.5rem + env(safe-area-inset-top, 0px)) !important;
     width: calc(100% - 1rem);
     min-height: 3.6rem;
     margin: .5rem auto 0 !important;
   }
-  .demo-page-content .signature-demo section.signature-hero { padding-top: 1.5rem !important; }
-  .demo-page-content .signature-demo section[id] { scroll-margin-top: 4.8rem; }
-  .demo-page-content .signature-demo .demo-music-control { display: none; }
+  .demo-shell .demo-page-content .signature-demo section.signature-hero { padding-top: 1.5rem !important; }
+  .demo-shell .demo-page-content .signature-demo section[id] { scroll-margin-top: 4.8rem; }
+  .demo-shell .demo-page-content .signature-demo .demo-music-control { display: none; }
+
+  .invitation-live-canvas .signature-demo { padding-top: 0 !important; }
+  .invitation-live-canvas .signature-demo .signature-nav {
+    top: calc(.5rem + env(safe-area-inset-top, 0px)) !important;
+    margin: .5rem auto 0 !important;
+  }
+  .invitation-live-canvas .signature-demo section.signature-hero { padding-top: 1.5rem !important; }
+
+  .preview-stage--signature {
+    width: min(calc(100% - 1rem), 44rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
 
   .preview-toolbar { position: sticky; z-index: 90; top: 0; }
   .preview-toolbar button:last-child { overflow: hidden; white-space: nowrap; }
@@ -240,4 +295,269 @@
   .creator-template-picker__grid { grid-template-columns: 1fr; }
   .creator-step-actions { grid-template-columns: 2.8rem minmax(0, 1fr); }
   .creator-step-back { width: 2.8rem; padding: 0; font-size: 0; }
+}
+
+/* Creator choices now drive the real signature renderer. */
+.creator-theme-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.creator-theme--template { color: #394a5b; background: linear-gradient(145deg, #f7f4ec, #e9eef0); }
+
+.signature-demo.signature-demo--theme-champagne {
+  --sig-paper: #fff8e8;
+  --sig-ink: #5b4323;
+  --sig-muted: #806f57;
+  --sig-accent: #bc8e43;
+  --sig-line: rgba(112, 82, 31, .2);
+}
+.signature-demo.signature-demo--theme-blush {
+  --sig-paper: #fff2f4;
+  --sig-ink: #70404c;
+  --sig-muted: #8f6a72;
+  --sig-accent: #c4778a;
+  --sig-line: rgba(128, 65, 82, .18);
+}
+.signature-demo.signature-demo--theme-emerald {
+  --sig-paper: #edf7f1;
+  --sig-ink: #234d3e;
+  --sig-muted: #607b70;
+  --sig-accent: #b08b4d;
+  --sig-line: rgba(38, 91, 70, .18);
+}
+.demo-page-content .signature-demo:is(.signature-demo--theme-champagne, .signature-demo--theme-blush, .signature-demo--theme-emerald) .signature-hero {
+  color: var(--sig-ink);
+  background: radial-gradient(circle at 85% 14%, color-mix(in srgb, var(--sig-accent) 18%, transparent), transparent 24rem), var(--sig-paper) !important;
+}
+.demo-page-content .signature-demo:is(.signature-demo--theme-champagne, .signature-demo--theme-blush, .signature-demo--theme-emerald) .signature-hero__content h1 { color: var(--sig-ink) !important; }
+.demo-page-content .signature-demo:is(.signature-demo--theme-champagne, .signature-demo--theme-blush, .signature-demo--theme-emerald) .signature-hero__actions a:first-child,
+.demo-page-content .signature-demo:is(.signature-demo--theme-champagne, .signature-demo--theme-blush, .signature-demo--theme-emerald) .signature-event-card--primary,
+.demo-page-content .signature-demo:is(.signature-demo--theme-champagne, .signature-demo--theme-blush, .signature-demo--theme-emerald) .signature-rsvp {
+  color: var(--sig-paper);
+  background: var(--sig-ink);
+}
+.demo-page-content .signature-demo:is(.signature-demo--theme-champagne, .signature-demo--theme-blush, .signature-demo--theme-emerald) .signature-event-card--primary h3 { color: var(--sig-paper); }
+
+#root .demo-page-content .signature-demo.signature-demo--font-editorial :is(h1, h2, h3) { font-family: "Cormorant Garamond", Georgia, serif !important; }
+#root .demo-page-content .signature-demo.signature-demo--font-modern :is(h1, h2, h3) { font-family: "Poppins", sans-serif !important; font-weight: 500 !important; letter-spacing: -.045em; }
+#root .demo-page-content .signature-demo.signature-demo--font-classic :is(h1, h2, h3) { font-family: "Playfair Display", Georgia, serif !important; }
+
+/* Additional art directions prevent secondary catalogue items from feeling cloned. */
+.signature-demo--romantic-watercolor {
+  --sig-paper: #fff8f7;
+  --sig-ink: #5b3b49;
+  --sig-muted: #8c727b;
+  --sig-accent: #c68b9b;
+  --sig-line: rgba(120, 70, 91, .16);
+}
+.demo-page-content .signature-demo--romantic-watercolor .signature-hero {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(238, 179, 190, .34), transparent 18rem),
+    radial-gradient(circle at 88% 72%, rgba(199, 218, 189, .38), transparent 22rem),
+    #fff9f7;
+}
+.demo-page-content .signature-demo--romantic-watercolor .signature-hero__image {
+  border: .7rem solid rgba(255, 255, 255, .82);
+  border-radius: 48% 48% 1.5rem 1.5rem;
+  box-shadow: 0 28px 70px rgba(111, 68, 83, .16);
+  transform: rotate(-1.4deg);
+}
+.demo-page-content .signature-demo--romantic-watercolor .signature-hero__image img { filter: saturate(.76) brightness(1.04); }
+.demo-page-content .signature-demo--romantic-watercolor .signature-hero__ornament {
+  top: 9%; right: 8%; width: 9rem; height: 9rem; border: 1px solid rgba(198, 139, 155, .35); border-radius: 62% 38% 60% 40%; transform: rotate(28deg);
+}
+.demo-page-content .signature-demo--romantic-watercolor .signature-event-card--primary,
+.demo-page-content .signature-demo--romantic-watercolor .signature-rsvp { color: #fff8f7; background: #754958; }
+.demo-page-content .signature-demo--romantic-watercolor .signature-event-card--primary h3 { color: #fff8f7; }
+
+.signature-demo--vintage-film {
+  --sig-paper: #eee7da;
+  --sig-ink: #332e27;
+  --sig-muted: #756b5e;
+  --sig-accent: #a56f43;
+  --sig-line: rgba(48, 41, 33, .2);
+  background-image: repeating-linear-gradient(90deg, rgba(68, 54, 37, .025) 0 1px, transparent 1px 5px);
+}
+.demo-page-content .signature-demo--vintage-film .signature-hero { background: linear-gradient(135deg, #e7ddcc, #f6f0e6); }
+.demo-page-content .signature-demo--vintage-film .signature-hero__image {
+  min-height: clamp(25rem, 45vw, 38rem);
+  border: 1.1rem solid #25231f;
+  border-radius: .25rem;
+  box-shadow: 0 28px 65px rgba(39, 33, 25, .22);
+}
+.demo-page-content .signature-demo--vintage-film .signature-hero__image::before,
+.demo-page-content .signature-demo--vintage-film .signature-hero__image::after {
+  position: absolute; z-index: 2; left: -1.1rem; width: 1.1rem; height: 100%; content: ''; pointer-events: none;
+  background: repeating-linear-gradient(180deg, transparent 0 .7rem, #eee7da .7rem 1.05rem, transparent 1.05rem 1.75rem);
+}
+.demo-page-content .signature-demo--vintage-film .signature-hero__image::after { right: -1.1rem; left: auto; }
+.demo-page-content .signature-demo--vintage-film .signature-hero__image img { filter: sepia(.28) saturate(.7) contrast(1.06); }
+.demo-page-content .signature-demo--vintage-film .signature-gallery__grid img { filter: sepia(.2) saturate(.76); }
+.demo-page-content .signature-demo--vintage-film .signature-event-card--primary,
+.demo-page-content .signature-demo--vintage-film .signature-rsvp { color: #eee7da; background: #332e27; }
+.demo-page-content .signature-demo--vintage-film .signature-event-card--primary h3 { color: #eee7da; }
+
+.signature-demo--bloom-crystal-3d {
+  --sig-paper: #f7f3fa;
+  --sig-ink: #392f4a;
+  --sig-muted: #7a7188;
+  --sig-accent: #a48ac8;
+  --sig-line: rgba(113, 87, 147, .18);
+}
+.demo-page-content .signature-demo--bloom-crystal-3d .signature-hero {
+  background: radial-gradient(circle at 85% 20%, rgba(180, 147, 218, .28), transparent 23rem), linear-gradient(145deg, #fcf9ff, #eee8f5);
+}
+.demo-page-content .signature-demo--bloom-crystal-3d .signature-hero__image {
+  border: .7rem solid rgba(255, 255, 255, .66);
+  border-radius: 12rem 12rem 1rem 1rem;
+  outline: 1px solid rgba(144, 111, 184, .3);
+  outline-offset: .35rem;
+  box-shadow: 0 30px 80px rgba(80, 55, 109, .2);
+}
+.demo-page-content .signature-demo--bloom-crystal-3d .signature-hero__ornament {
+  top: 10%; right: 8%; width: 7rem; height: 7rem; border: 1px solid rgba(145, 112, 184, .34); transform: rotate(45deg);
+  background: linear-gradient(135deg, rgba(255,255,255,.7), rgba(164,138,200,.12)); box-shadow: inset 0 0 2rem rgba(255,255,255,.7);
+}
+.demo-page-content .signature-demo--bloom-crystal-3d .signature-event-card--primary,
+.demo-page-content .signature-demo--bloom-crystal-3d .signature-rsvp { color: #faf7ff; background: #4a3a61; }
+.demo-page-content .signature-demo--bloom-crystal-3d .signature-event-card--primary h3 { color: #faf7ff; }
+
+.signature-demo--minimal-slide-clean,
+.signature-demo--minimal-elegant {
+  --sig-paper: #f8f8f4;
+  --sig-ink: #252b29;
+  --sig-muted: #747b77;
+  --sig-accent: #77887f;
+  --sig-line: rgba(45, 58, 52, .14);
+}
+.demo-page-content .signature-demo--minimal-slide-clean .signature-hero,
+.demo-page-content .signature-demo--minimal-elegant .signature-hero { background: #f8f8f4; }
+.demo-page-content .signature-demo--minimal-slide-clean .signature-hero__layout,
+.demo-page-content .signature-demo--minimal-elegant .signature-hero__layout { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+.demo-page-content .signature-demo--minimal-slide-clean .signature-hero__image,
+.demo-page-content .signature-demo--minimal-elegant .signature-hero__image { min-height: clamp(28rem, 52vw, 44rem); border-radius: 0; }
+.demo-page-content .signature-demo--minimal-slide-clean .signature-hero__content,
+.demo-page-content .signature-demo--minimal-elegant .signature-hero__content { padding: clamp(1rem, 4vw, 3rem); }
+.demo-page-content .signature-demo--minimal-slide-clean .signature-hero__content h1,
+.demo-page-content .signature-demo--minimal-elegant .signature-hero__content h1 { font-size: clamp(4rem, 7.5vw, 7rem) !important; }
+
+.signature-demo--tropical-sunset {
+  --sig-paper: #fff4e8;
+  --sig-ink: #4e3550;
+  --sig-muted: #856d70;
+  --sig-accent: #e1765c;
+  --sig-line: rgba(133, 73, 69, .18);
+}
+.demo-page-content .signature-demo--tropical-sunset .signature-hero {
+  background: radial-gradient(circle at 78% 16%, rgba(255, 191, 102, .5), transparent 22rem), linear-gradient(145deg, #fff0dc, #f9d5d8 55%, #d8e7df);
+}
+.demo-page-content .signature-demo--tropical-sunset .signature-hero__image {
+  border: .65rem solid rgba(255,255,255,.78); border-radius: 52% 48% 46% 54% / 39% 46% 54% 61%; box-shadow: 0 28px 70px rgba(115, 66, 63, .2); transform: rotate(1.2deg);
+}
+.demo-page-content .signature-demo--tropical-sunset .signature-hero__image img { filter: saturate(.92) contrast(1.02); }
+.demo-page-content .signature-demo--tropical-sunset .signature-event-card--primary,
+.demo-page-content .signature-demo--tropical-sunset .signature-rsvp { color: #fff8ee; background: #714257; }
+.demo-page-content .signature-demo--tropical-sunset .signature-event-card--primary h3 { color: #fff8ee; }
+
+.demo-page-content .signature-demo--luxury-gold-frame .signature-hero__image {
+  border: .7rem double #a58a55;
+  outline: 1px solid rgba(165, 138, 85, .32);
+  outline-offset: .45rem;
+  box-shadow: 0 28px 65px rgba(61, 49, 28, .17);
+}
+.demo-page-content .signature-demo--luxury-gold-frame .signature-hero__content { padding: clamp(1rem, 4vw, 3rem); border-block: 1px solid rgba(165, 138, 85, .4); }
+
+/* Verdant Veil: a cinematic garden editorial, now fully editable in Studio. */
+.signature-demo--verdant-veil {
+  --sig-paper: #f5f5ed;
+  --sig-ink: #17231d;
+  --sig-muted: #687168;
+  --sig-accent: #a9a17b;
+  --sig-line: rgba(35, 54, 43, .16);
+  background: #f5f5ed;
+}
+.demo-page-content .signature-demo--verdant-veil .signature-hero {
+  min-height: min(92svh, 58rem);
+  color: #f7f5e9;
+  background: #111812;
+}
+.demo-page-content .signature-demo--verdant-veil .signature-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(9, 16, 11, .79), rgba(13, 24, 17, .26) 56%, rgba(8, 15, 10, .52)), linear-gradient(0deg, rgba(8, 14, 10, .5), transparent 62%);
+  content: '';
+}
+.demo-page-content .signature-demo--verdant-veil .signature-hero__layout { z-index: auto; width: min(100%, 74rem); grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__image { position: absolute; inset: 0; z-index: 0; min-height: 100%; border-radius: 0; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__image img { filter: brightness(.55) saturate(.66) hue-rotate(9deg); }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__image-note { display: none; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__content { grid-column: 2; align-self: center; padding: 4rem 1rem; text-align: center; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__content h1 { color: #faf8ef !important; font-size: clamp(4.3rem, 8.8vw, 8rem) !important; line-height: .82 !important; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__invitation,
+.demo-page-content .signature-demo--verdant-veil .signature-hero__side-note { color: rgba(248, 247, 237, .76); }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__ornament { inset: 8% 6%; z-index: 2; border: 1px solid rgba(235, 230, 201, .28); }
+.demo-page-content .signature-demo--verdant-veil .signature-story { color: #eef0e7; background: #18241d; }
+.demo-page-content .signature-demo--verdant-veil .signature-story h2 { color: #f6f4e9; }
+.demo-page-content .signature-demo--verdant-veil .signature-story p { color: rgba(239, 241, 232, .7); }
+.demo-page-content .signature-demo--verdant-veil .signature-event-card--primary,
+.demo-page-content .signature-demo--verdant-veil .signature-rsvp { color: #f5f5ed; background: #1b2a21; }
+.demo-page-content .signature-demo--verdant-veil .signature-event-card--primary h3 { color: #f5f5ed; }
+.demo-page-content .signature-demo--verdant-veil .signature-gallery__grid img { filter: saturate(.72) contrast(1.03); }
+
+/* Playful hand-drawn: inspired by the supplied mobile reference without copying its artwork. */
+.signature-demo--playful-handdrawn {
+  --sig-paper: #f9e9e5;
+  --sig-ink: #20231e;
+  --sig-muted: #65675d;
+  --sig-accent: #79815d;
+  --sig-line: rgba(32, 35, 30, .2);
+  background-color: #f9e9e5;
+  background-image: radial-gradient(rgba(34, 38, 30, .07) .7px, transparent .7px);
+  background-size: 9px 9px;
+}
+.demo-page-content .signature-demo--playful-handdrawn :is(h1, h2, h3) { font-family: "Poppins", sans-serif !important; letter-spacing: -.055em; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero { background: transparent; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__layout { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__image { border: 3px solid #252820; border-radius: 46% 54% 44% 56% / 55% 42% 58% 45%; box-shadow: .7rem .7rem 0 #8c956a; transform: rotate(-2deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__image img { filter: saturate(.65) contrast(1.04); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__content { padding: clamp(1rem, 4vw, 3rem); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__content h1 { color: #24271f !important; font-size: clamp(3.8rem, 8vw, 7rem) !important; text-transform: uppercase; transform: rotate(-1deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__ornament { top: 10%; right: 8%; width: 6rem; height: 6rem; border: 3px solid #252820; border-radius: 47% 53% 50% 50%; transform: rotate(12deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__ornament::after { position: absolute; inset: 1.2rem; color: #77805b; font: 700 2.2rem/1 sans-serif; content: '♡'; transform: rotate(-12deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-events { background: #f3ded8; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card { border: 2px solid #262920; border-radius: 1.4rem .7rem 1.5rem .8rem; box-shadow: .45rem .45rem 0 rgba(119, 128, 91, .6); transform: rotate(-.45deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card:nth-child(2) { transform: rotate(.55deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card--primary { color: #f9eee9; background: #33382b; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card--primary h3 { color: #f9eee9; }
+.signature-playful-guide { color: #22251f; background: #f9e9e5; }
+.signature-playful-guide__timeline { display: grid; width: min(100%, 62rem); margin: 2.5rem auto 0; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.signature-playful-guide__timeline > div { position: relative; display: grid; gap: .4rem; min-height: 7rem; padding: 1.4rem 1rem; border-top: 2px solid #292c24; text-align: center; }
+.signature-playful-guide__timeline > div::before { position: absolute; top: -.55rem; left: 50%; width: .9rem; height: .9rem; border: 2px solid #292c24; border-radius: 50%; background: #89916b; content: ''; transform: translateX(-50%); }
+.signature-playful-guide__timeline strong { color: #67704f; font: 700 .8rem/1 "Poppins", sans-serif; }
+.signature-playful-guide__timeline span { font: 600 .72rem/1.5 "Poppins", sans-serif; }
+.signature-playful-guide__cards { display: grid; width: min(100%, 65rem); margin: 1.5rem auto 0; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.signature-playful-guide__cards article { padding: clamp(1.2rem, 3vw, 2rem); border: 2px solid #292c24; border-radius: 1rem 1.8rem .8rem 1.4rem; background: rgba(255,255,255,.24); box-shadow: .35rem .35rem 0 rgba(119, 128, 91, .45); }
+.signature-playful-guide__cards article:nth-child(2) { transform: rotate(-.6deg); }
+.signature-playful-guide__cards article:nth-child(3) { transform: rotate(.6deg); }
+.signature-playful-guide__cards article > span { display: block; min-height: 2rem; color: #6f7855; font: 700 1.2rem/1 "Poppins", sans-serif; }
+.signature-playful-guide__cards h3 { margin: .75rem 0 .55rem !important; font-size: clamp(1.35rem, 2.5vw, 2rem) !important; text-transform: uppercase; }
+.signature-playful-guide__cards p { color: #64675e; font-size: .75rem !important; line-height: 1.7 !important; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-gallery__grid button { border: 2px solid #292c24; border-radius: .8rem 1.8rem .7rem 1.4rem; box-shadow: .35rem .35rem 0 rgba(119, 128, 91, .45); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-rsvp { color: #f8ede7; background: #34382e; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-rsvp form { padding: clamp(1rem, 4vw, 2.5rem); border: 2px dashed rgba(248, 237, 231, .5); border-radius: 1.25rem; }
+
+@media (max-width: 900px) {
+  .creator-theme-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .demo-page-content .signature-demo:is(.signature-demo--minimal-slide-clean, .signature-demo--minimal-elegant) .signature-hero__layout { grid-template-columns: 1fr; }
+  .demo-page-content .signature-demo:is(.signature-demo--minimal-slide-clean, .signature-demo--minimal-elegant) .signature-hero__content { order: 1; text-align: center; }
+  .demo-page-content .signature-demo:is(.signature-demo--minimal-slide-clean, .signature-demo--minimal-elegant) .signature-hero__image { order: 2; min-height: min(92vw, 28rem); }
+  .signature-rsvp__fields--preferences { margin-top: .2rem; }
+  .demo-page-content .signature-demo--verdant-veil .signature-hero__layout,
+  .demo-page-content .signature-demo--playful-handdrawn .signature-hero__layout { grid-template-columns: 1fr; }
+  .demo-page-content .signature-demo--verdant-veil .signature-hero__content { grid-column: 1; padding: 5rem 1rem 3rem; }
+  .demo-page-content .signature-demo--verdant-veil .signature-hero__layout { min-height: 35rem; }
+  .demo-page-content .signature-demo--playful-handdrawn .signature-hero__image { min-height: min(92vw, 28rem); }
+  .signature-playful-guide__timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; }
+  .signature-playful-guide__cards { grid-template-columns: 1fr; }
 }

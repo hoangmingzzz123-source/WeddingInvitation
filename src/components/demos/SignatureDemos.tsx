@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowDown,
@@ -20,6 +20,46 @@ import {
 } from '../../data/vietnamWeddingPhotos';
 
 export type SignatureDemoId = string;
+export type SignatureTheme = 'template' | 'champagne' | 'blush' | 'emerald';
+export type SignatureFont = 'editorial' | 'modern' | 'classic';
+export type SignatureRsvpQuestion = 'transport' | 'meal';
+
+export interface SignatureDemoCustomization {
+  tier?: TemplateTier;
+  bride?: string;
+  groom?: string;
+  date?: string;
+  dateLabel?: string;
+  time?: string;
+  venue?: string;
+  address?: string;
+  city?: string;
+  story?: string;
+  ceremonyTitle?: string;
+  receptionTitle?: string;
+  theme?: SignatureTheme;
+  fontStyle?: SignatureFont;
+  hero?: string;
+  gallery?: string[];
+}
+
+export interface SignatureRsvpPayload {
+  name: string;
+  attending: 'yes' | 'no';
+  guestCount: number;
+  answers: Partial<Record<SignatureRsvpQuestion, string>>;
+}
+
+interface SignatureDemoProps {
+  id: SignatureDemoId;
+  customization?: SignatureDemoCustomization;
+  embedded?: boolean;
+  guestName?: string;
+  guestGreeting?: 'formal' | 'friendly';
+  rsvpQuestions?: SignatureRsvpQuestion[];
+  existingSubmitted?: boolean;
+  onRsvpSubmit?: (payload: SignatureRsvpPayload) => void;
+}
 
 interface SignatureDemoContent {
   id: SignatureDemoId;
@@ -67,6 +107,20 @@ const demos: Record<string, SignatureDemoContent> = {
     venue: 'Vườn Nhà Hội', address: 'Địa điểm minh họa · vui lòng thay khi tạo thiệp', city: 'Hội An',
     story: 'Từ một lời chào thân quen, chúng mình đã cùng đi qua những mùa thương nhớ. Nay xin gửi thiệp hồng, kính mời gia đình và bạn bè cùng nâng chén trà, chia sẻ niềm vui trong ngày hai nhà sum họp.',
     ...photoStory('hoiAn'),
+  },
+  'ha-phuong-hoang-minh-2026': {
+    id: 'ha-phuong-hoang-minh-2026', visualStyle: 'verdant-veil', tier: '199k', label: 'VERDANT VEIL · OUR MEMORIES',
+    bride: 'Hà Phương', groom: 'Hoàng Minh', date: '2026-12-20', dateLabel: '20 · 12 · 2026', time: '17:30',
+    venue: 'Verdant Garden', address: '12 Đặng Thai Mai, Tây Hồ', city: 'Hà Nội',
+    story: 'Từ một lời chào rất khẽ, chúng mình đã đi cùng nhau qua nhiều mùa. Giữa khu vườn xanh và những người thân yêu, chúng mình muốn bắt đầu một chương mới thật bình yên.',
+    ...photoStory('garden', 1),
+  },
+  'tui-minh-cuoi-roi': {
+    id: 'tui-minh-cuoi-roi', visualStyle: 'playful-handdrawn', tier: '199k', label: 'TIN VUI NÈ · TỤI MÌNH CƯỚI RỒI!',
+    bride: 'Ngọc Diệp', groom: 'Gia Huy', date: '2027-12-11', dateLabel: '11 · 12 · 2027', time: '18:00',
+    venue: 'JW Marriott Hanoi', address: '8 Đỗ Đức Dục, Nam Từ Liêm', city: 'Hà Nội',
+    story: 'Tụi mình đã cùng ăn thật nhiều món ngon, đi thật nhiều nơi và cười qua vô số chuyện nhỏ. Giờ thì tụi mình cưới nhau rồi — rất mong bạn đến quẩy và nâng ly cùng tụi mình!',
+    ...photoStory('hanoiStudio', 1),
   },
 
   'art-deco-royal-basic': {
@@ -156,10 +210,18 @@ function fallbackTheme(id: string): VietnamWeddingTheme {
 }
 
 function fallbackStyle(id: string) {
+  if (/ha-phuong-hoang-minh|verdant/.test(id)) return 'verdant-veil';
+  if (/tui-minh|handdrawn|playful/.test(id)) return 'playful-handdrawn';
   if (/(traditional|song-hy|hy-su|sen-ngoc)/.test(id)) return 'song-hy-contemporary';
-  if (/(riviera|tropical)/.test(id)) return 'riviera-blue';
-  if (/(blush|floral|green)/.test(id)) return 'hoa-moc-editorial';
-  if (/(postcard|vintage|classic)/.test(id)) return 'summer-postcard';
+  if (/tropical/.test(id)) return 'tropical-sunset';
+  if (/riviera/.test(id)) return 'riviera-blue';
+  if (/bloom|crystal/.test(id)) return 'bloom-crystal-3d';
+  if (/minimal-slide/.test(id)) return 'minimal-slide-clean';
+  if (/minimal|classic/.test(id)) return 'minimal-elegant';
+  if (/(watercolor|soft-fade|rose-storybook|blush)/.test(id)) return 'romantic-watercolor';
+  if (/vintage/.test(id)) return 'vintage-film';
+  if (/(floral|green)/.test(id)) return 'hoa-moc-editorial';
+  if (/postcard/.test(id)) return 'summer-postcard';
   if (/(cinema|cinematic|dark|gold)/.test(id)) return 'luxury-gold-cinematic';
   return 'art-deco-royal-basic';
 }
@@ -172,7 +234,8 @@ function fallbackDemo(id: string): SignatureDemoContent {
     ['Thảo Nhi', 'Hoàng Nam'],
     ['Hải Yến', 'Gia Huy'],
   ];
-  const namePair = names[Math.abs([...id].reduce((total, character) => total + character.charCodeAt(0), 0)) % names.length];
+  const identitySeed = Math.abs([...id].reduce((total, character) => total + character.charCodeAt(0), 0));
+  const namePair = names[identitySeed % names.length];
   return {
     id,
     visualStyle: fallbackStyle(id),
@@ -187,7 +250,7 @@ function fallbackDemo(id: string): SignatureDemoContent {
     address: 'Địa điểm minh họa · thay đổi trong Studio',
     city: fallbackTheme(id) === 'coastal' ? 'Đà Nẵng' : 'Việt Nam',
     story: 'Từ những ngày bình dị, chúng mình đã cùng vun đắp một hành trình nhiều yêu thương. Thật hạnh phúc khi được chia sẻ ngày khởi đầu mới với gia đình và những người bạn thân quý.',
-    ...photoStory(fallbackTheme(id)),
+    ...photoStory(fallbackTheme(id), identitySeed % 4),
   };
 }
 
@@ -228,25 +291,80 @@ function replyDeadline(dateValue: string) {
   return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(deadline);
 }
 
-export function SignatureDemo({ id }: { id: SignatureDemoId }) {
-  const demo = demos[id] ?? fallbackDemo(id);
-  const [submitted, setSubmitted] = useState(false);
+function timeAfter(timeValue: string, minutes: number) {
+  const [hour = 0, minute = 0] = timeValue.split(':').map(Number);
+  const total = (hour * 60 + minute + minutes) % (24 * 60);
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+
+export function SignatureDemo({
+  id,
+  customization,
+  embedded = false,
+  guestName,
+  guestGreeting = 'formal',
+  rsvpQuestions = [],
+  existingSubmitted = false,
+  onRsvpSubmit,
+}: SignatureDemoProps) {
+  const baseDemo = demos[id] ?? fallbackDemo(id);
+  const demo: SignatureDemoContent = {
+    ...baseDemo,
+    tier: customization?.tier ?? baseDemo.tier,
+    bride: customization?.bride || baseDemo.bride,
+    groom: customization?.groom || baseDemo.groom,
+    date: customization?.date || baseDemo.date,
+    dateLabel: customization?.dateLabel || baseDemo.dateLabel,
+    time: customization?.time || baseDemo.time,
+    venue: customization?.venue || baseDemo.venue,
+    address: customization?.address || baseDemo.address,
+    city: customization?.city || baseDemo.city,
+    story: customization?.story || baseDemo.story,
+    hero: customization?.hero || baseDemo.hero,
+    gallery: customization?.gallery?.length ? customization.gallery : baseDemo.gallery,
+  };
+  const [submitted, setSubmitted] = useState(existingSubmitted);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const mapQuery = encodeURIComponent(`${demo.venue}, ${demo.address}, ${demo.city}`);
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
   const couple = `${demo.bride} & ${demo.groom}`;
+  const locationLabel = demo.city.toLocaleLowerCase('vi') === 'việt nam' ? 'Việt Nam' : `${demo.city} · Việt Nam`;
   const premium = demo.tier !== '109k';
   const diamond = demo.tier === '199k';
+  const ceremonyTitle = customization?.ceremonyTitle || 'Lễ thành hôn';
+  const receptionTitle = customization?.receptionTitle || 'Tiệc mừng thân mật';
+  const appearanceClasses = [
+    `signature-demo signature-demo--${demo.id}`,
+    demo.visualStyle ? `signature-demo--${demo.visualStyle}` : '',
+    customization?.theme && customization.theme !== 'template' ? `signature-demo--theme-${customization.theme}` : '',
+    customization?.fontStyle ? `signature-demo--font-${customization.fontStyle}` : '',
+    embedded ? 'signature-demo--embedded' : '',
+  ].filter(Boolean).join(' ');
+
+  useEffect(() => {
+    setSubmitted(existingSubmitted);
+  }, [existingSubmitted]);
 
   const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const attending = formData.get('attending') === 'no' ? 'no' : 'yes';
+    onRsvpSubmit?.({
+      name: guestName || String(formData.get('name') || '').trim(),
+      attending,
+      guestCount: attending === 'yes' ? Number(formData.get('guests') || 1) : 0,
+      answers: {
+        ...(rsvpQuestions.includes('transport') ? { transport: String(formData.get('transport') || '') } : {}),
+        ...(rsvpQuestions.includes('meal') ? { meal: String(formData.get('meal') || '') } : {}),
+      },
+    });
     setSubmitted(true);
   };
 
   return (
-    <main className={`signature-demo signature-demo--${demo.id}${demo.visualStyle ? ` signature-demo--${demo.visualStyle}` : ''}`}>
-      <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} />
+    <main className={appearanceClasses}>
+      {!embedded && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} />}
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
         <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${couple}`}>
@@ -265,7 +383,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
         <div className="signature-hero__layout">
           <div className="signature-hero__image">
             <img src={demo.hero} alt={`Ảnh cưới Việt Nam minh họa cho ${couple}`} fetchPriority="high" />
-            <span className="signature-hero__image-note">{demo.city} · Việt Nam</span>
+            <span className="signature-hero__image-note">{locationLabel}</span>
           </div>
           <motion.div
             className="signature-hero__content"
@@ -275,7 +393,11 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
           >
             <SmallLabel>{demo.label}</SmallLabel>
             <h1><span>{demo.bride}</span><i>&amp;</i><span>{demo.groom}</span></h1>
-            <p className="signature-hero__invitation">Trân trọng kính mời bạn đến chung vui</p>
+            <p className="signature-hero__invitation">
+              {guestName
+                ? `${guestGreeting === 'friendly' ? 'Thân mời' : 'Trân trọng kính mời'} ${guestName} đến chung vui`
+                : 'Trân trọng kính mời bạn đến chung vui'}
+            </p>
             <p className="signature-hero__date">{demo.dateLabel}</p>
             <div className="signature-hero__actions">
               <a href="#su-kien">Khám phá thiệp <ArrowDown aria-hidden="true" /></a>
@@ -283,7 +405,11 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
             </div>
           </motion.div>
         </div>
-        <span className="signature-photo-disclaimer">Ảnh minh họa · Tên và thông tin trong demo là hư cấu</span>
+        <span className="signature-photo-disclaimer">
+          {customization
+            ? 'Bản thiệp cá nhân hóa · Hình ảnh có thể thay đổi trước khi xuất bản'
+            : 'Ảnh minh họa · Tên và thông tin trong demo là hư cấu'}
+        </span>
         <span className="signature-hero__side-note" aria-hidden="true">A day made for us · {demo.dateLabel}</span>
       </section>
 
@@ -312,7 +438,7 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
           <article className="signature-event-card signature-event-card--primary">
             <span className="signature-event-card__number">01 / CEREMONY</span>
             <CalendarDays aria-hidden="true" />
-            <h3>Lễ thành hôn</h3>
+            <h3>{ceremonyTitle}</h3>
             <p>{demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {demo.time}</span>
             <span><MapPin aria-hidden="true" /> {demo.venue}</span>
@@ -320,13 +446,50 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
           <article className="signature-event-card">
             <span className="signature-event-card__number">02 / RECEPTION</span>
             <Heart aria-hidden="true" />
-            <h3>Tiệc mừng thân mật</h3>
+            <h3>{receptionTitle}</h3>
             <p>{demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {demo.time} · Đón khách</span>
             <span><MapPin aria-hidden="true" /> {demo.city}</span>
           </article>
         </div>
       </section>
+
+      {demo.visualStyle === 'playful-handdrawn' && (
+        <section className="signature-playful-guide" aria-labelledby="signature-playful-guide-title">
+          <header className="signature-section-heading">
+            <SmallLabel>NHỚ NHA!</SmallLabel>
+            <h2 id="signature-playful-guide-title">Tối hôm ấy</h2>
+            <p>Một chiếc lịch trình nhỏ để bạn không bỏ lỡ phần vui nhất.</p>
+          </header>
+          <div className="signature-playful-guide__timeline">
+            {[
+              [demo.time, 'Đón khách & đồ uống chào'],
+              [timeAfter(demo.time, 30), 'Làm lễ'],
+              [timeAfter(demo.time, 60), 'Khai tiệc & lời chúc'],
+              [timeAfter(demo.time, 150), 'Điệu nhảy đầu tiên'],
+            ].map(([time, label]) => (
+              <div key={label}><strong>{time}</strong><span>{label}</span></div>
+            ))}
+          </div>
+          <div className="signature-playful-guide__cards">
+            <article>
+              <span aria-hidden="true">◯ ◯ ●</span>
+              <h3>Mặc gì?</h3>
+              <p>Thoải mái là chính. Kem, hồng phấn và xanh olive sẽ lên hình rất xinh.</p>
+            </article>
+            <article>
+              <span aria-hidden="true">🥂</span>
+              <h3>Quầy đồ uống</h3>
+              <p>Mojito, espresso martini, vang và những lựa chọn không cồn.</p>
+            </article>
+            <article>
+              <span aria-hidden="true">🍽</span>
+              <h3>Thực đơn</h3>
+              <p>Khai vị theo mùa, món chính ấm áp và một chiếc bánh cưới thật ngon.</p>
+            </article>
+          </div>
+        </section>
+      )}
 
       <section className="signature-gallery" id="album" aria-labelledby="signature-gallery-title">
         <header className="signature-section-heading">
@@ -392,12 +555,22 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
             <SmallLabel>PLEASE REPLY</SmallLabel>
             <h2 id="signature-rsvp-title">Bạn sẽ đến chứ?</h2>
             <p>Vui lòng hồi đáp trước ngày {replyDeadline(demo.date)} để chúng mình chuẩn bị chu đáo.</p>
-            <label>Họ và tên<input name="name" required placeholder="Tên của bạn" autoComplete="name" /></label>
+            <label>Họ và tên<input name="name" required placeholder="Tên của bạn" autoComplete="name" defaultValue={guestName} readOnly={Boolean(guestName)} /></label>
             <label>Bạn sẽ tham dự chứ?<select name="attending" defaultValue="yes"><option value="yes">Có, mình sẽ đến</option><option value="no">Rất tiếc, mình bận</option></select></label>
             {premium ? (
               <div className="signature-rsvp__fields">
                 <label>Email<input type="email" name="email" placeholder="email@example.com" autoComplete="email" /></label>
                 <label>Số khách<select name="guests" defaultValue="1"><option value="1">1 khách</option><option value="2">2 khách</option><option value="3">3 khách</option><option value="4">4 khách</option></select></label>
+              </div>
+            ) : null}
+            {premium && rsvpQuestions.length > 0 ? (
+              <div className="signature-rsvp__fields signature-rsvp__fields--preferences">
+                {rsvpQuestions.includes('transport') && (
+                  <label>Xe đưa đón<select name="transport" defaultValue="none"><option value="none">Không cần xe</option><option value="outbound">Cần xe lượt đi</option><option value="roundtrip">Cần xe hai chiều</option></select></label>
+                )}
+                {rsvpQuestions.includes('meal') && (
+                  <label>Chế độ ăn<select name="meal" defaultValue="regular"><option value="regular">Thực đơn thông thường</option><option value="vegetarian">Ăn chay</option><option value="allergy">Có dị ứng thực phẩm</option></select></label>
+                )}
               </div>
             ) : null}
             {diamond && (
