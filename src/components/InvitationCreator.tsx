@@ -1247,9 +1247,9 @@ export function InvitationCreatorPage() {
                     <p>Kiểu chữ trong thiệp</p>
                     <div className="creator-font-grid" role="group" aria-label="Chọn kiểu chữ">
                       {[
-                        { id: 'editorial', name: 'Editorial', sample: 'Aa' },
-                        { id: 'modern', name: 'Modern', sample: 'Aa' },
-                        { id: 'classic', name: 'Classic', sample: 'Aa' },
+                        { id: 'editorial', name: 'Thanh lịch', sample: 'Hỷ' },
+                        { id: 'modern', name: 'Hiện đại', sample: 'Hỷ' },
+                        { id: 'classic', name: 'Cổ điển', sample: 'Hỷ' },
                       ].map((font) => (
                         <button
                           type="button"

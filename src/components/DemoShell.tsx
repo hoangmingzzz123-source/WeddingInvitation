@@ -69,21 +69,6 @@ const demoAccents: Record<string, string> = {
   'summer-postcard': '#cf7952',
 };
 
-const signatureDemoIds = new Set([
-  'sen-ngoc', 'hy-su-do-son', 'pho-hoi',
-  'art-deco-royal',
-  'art-deco-royal-basic',
-  'luxury-gold-cinematic',
-  'luxury-gold-frame',
-  'bloom-crystal-3d',
-  'modern-dark-blue',
-  'minimal-elegant',
-  'song-hy-contemporary',
-  'riviera-blue',
-  'hoa-moc-editorial',
-  'summer-postcard',
-]);
-
 function getSectionLabel(section: HTMLElement, index: number) {
   const explicitLabel =
     section.dataset.sectionTitle || section.getAttribute('aria-label');
@@ -518,7 +503,7 @@ export function DemoShell({
         </div>
 
         <div
-          className={`demo-page-content${template && signatureDemoIds.has(template.id) ? ' demo-page-content--signature' : ''}`}
+          className="demo-page-content demo-page-content--signature"
           data-template={template?.id}
           ref={contentRef}
         >

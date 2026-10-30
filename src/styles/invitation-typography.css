@@ -1,0 +1,99 @@
+/* Full Vietnamese glyph sets served locally, including real serif italics. */
+@font-face {
+  font-family: "Wedding Sans";
+  src: url("/fonts/wedding-sans-regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Wedding Sans";
+  src: url("/fonts/wedding-sans-semibold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Wedding Serif";
+  src: url("/fonts/wedding-serif-regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Wedding Serif";
+  src: url("/fonts/wedding-serif-italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+.signature-demo :is(p, label, input, textarea, select, button),
+.signature-demo .signature-nav__links a,
+.signature-demo .signature-nav__rsvp,
+.signature-demo .signature-hero__actions a,
+.signature-demo .signature-venue__actions a,
+.signature-demo .signature-footer > a {
+  font-family: "Wedding Sans", system-ui, sans-serif !important;
+}
+.signature-demo :is(.signature-eyebrow, .signature-event-card__number, .signature-gallery__grid button > span) {
+  font-family: "Wedding Sans", system-ui, sans-serif !important;
+}
+.signature-demo :is(.signature-nav__monogram, .signature-footer > span) {
+  font-family: var(--sig-heading-font) !important;
+}
+.demo-page-content .signature-demo .signature-hero h1 {
+  line-height: 1.12 !important;
+  letter-spacing: -.035em;
+}
+.demo-page-content .signature-demo .signature-hero h1 i {
+  font-family: var(--sig-heading-font);
+  font-style: italic;
+}
+.demo-page-content .signature-demo :is(.signature-story h2, .signature-section-heading h2, .signature-venue h2, .signature-rsvp h2, .signature-extras h2) {
+  font-size: clamp(2.25rem, 4.4vw, 4rem) !important;
+  line-height: 1.25 !important;
+  letter-spacing: -.025em;
+}
+.demo-page-content .signature-demo .signature-story h2 em { font-weight: 400; }
+.demo-page-content .signature-demo .signature-event-card h3 { line-height: 1.3 !important; }
+.demo-page-content .signature-demo .signature-story__photo img { width: 100%; height: auto; aspect-ratio: 4 / 5; }
+.signature-demo .signature-guestbook form button { width: auto; min-width: 3rem; padding-inline: .8rem; }
+.signature-demo--playful-handdrawn:not([class*="signature-demo--font-"]) { --sig-heading-font: "Wedding Sans", system-ui, sans-serif; }
+.demo-page-content .signature-demo--playful-handdrawn :is(h1, h2, h3) { font-family: var(--sig-heading-font) !important; }
+.creator-font-option--editorial > span { font-family: "Wedding Serif", Georgia, serif; }
+.creator-font-option--modern > span { font-family: "Wedding Sans", system-ui, sans-serif; }
+.creator-font-option--classic > span { font-family: Georgia, "Times New Roman", serif; }
+.templates-page :is(.templates-search input, .templates-filters button) { font-family: "Wedding Sans", system-ui, sans-serif; }
+
+@media (max-width: 760px) {
+  .demo-page-content .signature-demo .signature-nav {
+    position: relative;
+    top: auto !important;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: .5rem;
+    min-height: 3.5rem;
+  }
+  .signature-nav__links { gap: clamp(.55rem, 2.4vw, 1rem); }
+  .signature-nav__links a { font-size: .7rem !important; white-space: nowrap; }
+  .signature-nav__monogram { font-size: 1.1rem !important; }
+  .signature-demo .signature-nav__rsvp {
+    width: auto;
+    max-width: none;
+    height: auto;
+    min-height: 2.75rem;
+    padding: .55rem .75rem;
+    overflow: visible;
+    color: #fff !important;
+    font-size: .7rem !important;
+  }
+  .demo-page-content .signature-demo section[id] { scroll-margin-top: 1.25rem !important; }
+  .demo-page-content .signature-demo .signature-hero h1 { font-size: clamp(2.9rem, 12vw, 4.8rem) !important; }
+  .demo-page-content .signature-demo .signature-story__copy > p:not(.signature-eyebrow) { font-size: .95rem; line-height: 1.85; }
+  .demo-page-content .signature-demo .signature-story h2 br { display: none; }
+  .demo-page-content .signature-demo .signature-story h2 em::before { content: ' '; }
+  .signature-story__photo figcaption { font-size: 1rem; }
+  .signature-demo .signature-footer { grid-template-columns: 1fr; gap: .75rem; }
+  .signature-demo .signature-footer > a { grid-column: auto; grid-row: auto; justify-self: start; }
+  .signature-demo .signature-rsvp :is(input, select, textarea) { font-size: 16px !important; }
+}
