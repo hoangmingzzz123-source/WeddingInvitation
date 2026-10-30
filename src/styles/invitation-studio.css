@@ -335,9 +335,11 @@
 }
 .demo-page-content .signature-demo:is(.signature-demo--theme-champagne, .signature-demo--theme-blush, .signature-demo--theme-emerald) .signature-event-card--primary h3 { color: var(--sig-paper); }
 
-#root .demo-page-content .signature-demo.signature-demo--font-editorial :is(h1, h2, h3) { font-family: "Cormorant Garamond", Georgia, serif !important; }
-#root .demo-page-content .signature-demo.signature-demo--font-modern :is(h1, h2, h3) { font-family: "Poppins", sans-serif !important; font-weight: 500 !important; letter-spacing: -.045em; }
-#root .demo-page-content .signature-demo.signature-demo--font-classic :is(h1, h2, h3) { font-family: "Playfair Display", Georgia, serif !important; }
+.signature-demo--font-editorial { --sig-heading-font: "Wedding Serif", Georgia, serif; }
+.signature-demo--font-modern { --sig-heading-font: "Wedding Sans", system-ui, sans-serif; }
+.signature-demo--font-classic { --sig-heading-font: Georgia, "Times New Roman", serif; }
+#root .demo-page-content .signature-demo:is(.signature-demo--font-editorial, .signature-demo--font-modern, .signature-demo--font-classic) :is(h1, h2, h3) { font-family: var(--sig-heading-font) !important; }
+#root .demo-page-content .signature-demo.signature-demo--font-modern :is(h1, h2, h3) { font-weight: 500 !important; letter-spacing: -.025em; }
 
 /* Additional art directions prevent secondary catalogue items from feeling cloned. */
 .signature-demo--romantic-watercolor {

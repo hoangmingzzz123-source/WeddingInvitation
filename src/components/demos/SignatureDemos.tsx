@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { motion } from 'motion/react';
 import {
-  ArrowDown,
   ArrowUpRight,
   CalendarDays,
   Check,
@@ -278,7 +277,7 @@ function GuestBook({ couple }: { couple: string }) {
       <form onSubmit={addNote}>
         <label className="visually-hidden" htmlFor="signature-guestbook-note">Lời chúc</label>
         <input id="signature-guestbook-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="Viết lời chúc của bạn..." maxLength={100} />
-        <button type="submit" aria-label="Gửi lời chúc"><ArrowUpRight aria-hidden="true" /></button>
+        <button type="submit">Gửi</button>
       </form>
       <ul>{notes.map((item, index) => <li key={`${item}-${index}`}><span aria-hidden="true">{['🤍', '✨', '🌿'][index]}</span>{item}</li>)}</ul>
     </div>
@@ -375,7 +374,7 @@ export function SignatureDemo({
           <a href="#su-kien">Ngày vui</a>
           <a href="#album">Album</a>
         </div>
-        <a className="signature-nav__rsvp" href="#xac-nhan">Xác nhận tham dự <ArrowUpRight aria-hidden="true" /></a>
+        <a className="signature-nav__rsvp" href="#xac-nhan" aria-label="Hồi âm tham dự">Hồi âm</a>
       </nav>
 
       <section className={`signature-hero signature-hero--${demo.visualStyle ?? demo.id}`} id="trang-chu" aria-label="Thiệp mời cưới">
@@ -400,7 +399,7 @@ export function SignatureDemo({
             </p>
             <p className="signature-hero__date">{demo.dateLabel}</p>
             <div className="signature-hero__actions">
-              <a href="#su-kien">Khám phá thiệp <ArrowDown aria-hidden="true" /></a>
+              <a href="#su-kien">Khám phá thiệp</a>
               <a href="#xac-nhan">Gửi lời hồi đáp</a>
             </div>
           </motion.div>
@@ -419,12 +418,11 @@ export function SignatureDemo({
             <SmallLabel>OUR STORY</SmallLabel>
             <h2 id="signature-story-title">Hai trái tim,<br /><em>một hành trình.</em></h2>
             <p>{demo.story}</p>
-            <a className="signature-text-link" href="#su-kien">Cùng đón ngày vui <ArrowUpRight aria-hidden="true" /></a>
           </div>
-          <div className="signature-story__photo">
+          <figure className="signature-story__photo">
             <img src={demo.gallery[1]} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" />
-            <span>{demo.bride} <i>×</i> {demo.groom}</span>
-          </div>
+            <figcaption>{demo.bride} <i>&amp;</i> {demo.groom}</figcaption>
+          </figure>
         </section>
       )}
 
@@ -578,7 +576,7 @@ export function SignatureDemo({
                 <label className="signature-rsvp__wide">Lời nhắn<textarea name="message" rows={3} placeholder="Gửi đôi bạn một lời chúc..." /></label>
               </div>
             )}
-            <button type="submit">Xác nhận tham dự <ArrowUpRight aria-hidden="true" /></button>
+            <button type="submit">Gửi lời hồi đáp</button>
           </form>
         ) : (
           <div className="signature-rsvp__success" role="status">
@@ -593,7 +591,7 @@ export function SignatureDemo({
       <footer className="signature-footer">
         <span>{demo.bride} <i>&amp;</i> {demo.groom}</span>
         <p>Made with love · {demo.dateLabel}</p>
-        <a href="#trang-chu" aria-label="Về đầu thiệp"><ArrowDown aria-hidden="true" /></a>
+        <a href="#trang-chu">Về đầu thiệp</a>
       </footer>
 
       {lightbox !== null && (
