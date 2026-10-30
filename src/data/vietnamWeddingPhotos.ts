@@ -1,22 +1,37 @@
-const vietnamPhoto = (id: number) => `/images/vietnam/wedding-${id}.webp`;
+const modernPhoto = (story: 'atelier' | 'ao-dai' | 'city' | 'coast', index: number) =>
+  `/images/vietnam-modern/${story}-${String(index).padStart(2, '0')}.webp`;
+
+const story = (name: 'atelier' | 'ao-dai' | 'city' | 'coast') =>
+  [0, 1, 2, 3].map((index) => modernPhoto(name, index));
+
+const mix = (
+  primary: 'atelier' | 'ao-dai' | 'city' | 'coast',
+  secondary: 'atelier' | 'ao-dai' | 'city' | 'coast',
+) => [
+  modernPhoto(primary, 0),
+  modernPhoto(primary, 1),
+  modernPhoto(primary, 2),
+  modernPhoto(secondary, 3),
+];
 
 /**
  * Curated photo stories for the demo invitations.
  *
  * Keeping the collections named by context prevents a Hoi An portrait from
  * appearing in a beach invitation, or a tea ceremony from appearing in a
- * modern studio set. Source and license details live next to the image files
- * in public/images/vietnam/sources.json.
+ * modern studio set. These are AI-generated fictional adults; the prompt and
+ * generation notes live next to the image files in
+ * public/images/vietnam-modern/sources.json.
  */
 export const VIETNAM_WEDDING_THEMES = {
-  giaTien: [10568535, 10568538, 10568551, 19476299, 19476296].map(vietnamPhoto),
-  songHy: [34481882, 34481898, 38743756, 38776686, 38766155].map(vietnamPhoto),
-  hoiAn: [35841823, 35343290, 36630693, 13114531, 35083788].map(vietnamPhoto),
-  hanoiStudio: [19956242, 19956238, 19956232, 33884990, 33884967].map(vietnamPhoto),
-  garden: [36647826, 36647742, 36647824, 36647816, 9061879].map(vietnamPhoto),
-  coastal: [7216412, 12409630, 14350265, 33324146, 3702868].map(vietnamPhoto),
-  modernCeremony: [23369886, 33986841, 38776688, 30311762, 23369888].map(vietnamPhoto),
-  heritage: [34668070, 34668057, 35343297, 34949949, 19791963].map(vietnamPhoto),
+  giaTien: story('ao-dai'),
+  songHy: mix('ao-dai', 'city'),
+  hoiAn: mix('ao-dai', 'coast'),
+  hanoiStudio: story('atelier'),
+  garden: mix('atelier', 'coast'),
+  coastal: story('coast'),
+  modernCeremony: story('city'),
+  heritage: mix('ao-dai', 'atelier'),
 } as const;
 
 export type VietnamWeddingTheme = keyof typeof VIETNAM_WEDDING_THEMES;

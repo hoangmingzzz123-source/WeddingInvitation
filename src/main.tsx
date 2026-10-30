@@ -3,5 +3,6 @@
   import App from "./App.tsx";
   import "./index.css";
   import "./styles/site.css";
+  import "./styles/invitation-studio.css";
 
   createRoot(document.getElementById("root")!).render(<App />);

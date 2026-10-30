@@ -18,22 +18,6 @@ const AdminSetPasswordPage = lazy(() => import('./components/admin/AdminPages').
 const AdminDashboardPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminDashboardPage })));
 const DemoShell = lazy(() => import('./components/DemoShell').then((module) => ({ default: module.DemoShell })));
 const SignatureDemo = lazy(() => import('./components/demos/SignatureDemos').then((module) => ({ default: module.SignatureDemo })));
-const ClassicMinimalist = lazy(() => import('./components/demos/ClassicMinimalist').then((module) => ({ default: module.ClassicMinimalist })));
-const BlushFloral = lazy(() => import('./components/demos/BlushFloral').then((module) => ({ default: module.BlushFloral })));
-const BloomCrystal3D = lazy(() => import('./components/demos/BloomCrystal3D').then((module) => ({ default: module.BloomCrystal3D })));
-const SoftFadeFloral = lazy(() => import('./components/demos/SoftFadeFloral').then((module) => ({ default: module.SoftFadeFloral })));
-const MinimalSlideClean = lazy(() => import('./components/demos/MinimalSlideClean').then((module) => ({ default: module.MinimalSlideClean })));
-const RomanticWatercolor = lazy(() => import('./components/demos/RomanticWatercolor').then((module) => ({ default: module.RomanticWatercolor })));
-const TropicalSunset = lazy(() => import('./components/demos/TropicalSunset').then((module) => ({ default: module.TropicalSunset })));
-const VintageGrain = lazy(() => import('./components/demos/VintageGrain').then((module) => ({ default: module.VintageGrain })));
-const GreenElegance = lazy(() => import('./components/demos/GreenElegance').then((module) => ({ default: module.GreenElegance })));
-const CinematicLoveStory = lazy(() => import('./components/demos/CinematicLoveStory').then((module) => ({ default: module.CinematicLoveStory })));
-const CinematicLoveStoryEnhanced = lazy(() => import('./components/demos/CinematicLoveStoryEnhanced').then((module) => ({ default: module.CinematicLoveStoryEnhanced })));
-const MinimalElegant = lazy(() => import('./components/demos/MinimalElegant').then((module) => ({ default: module.MinimalElegant })));
-const VietnameseTraditionalEnhanced = lazy(() => import('./components/demos/VietnameseTraditionalEnhanced').then((module) => ({ default: module.VietnameseTraditionalEnhanced })));
-const DemoThiep219kThiep1 = lazy(() => import('./Demo/Demo219k/Demo1/App'));
-const DemoThiep219kTraditional = lazy(() => import('./Demo/Demo219k/Traditional/App'));
-const DemoThiep219kCinema = lazy(() => import('./Demo/Demo219k/Cinema/App'));
 
 function RouteLoader() {
   return (
@@ -119,6 +103,12 @@ export function Router() {
     );
   }, [currentRoute]);
 
+  const demoRoutes = Object.fromEntries(
+    weddingTemplates
+      .filter((template) => Boolean(template.route))
+      .map((template) => [template.route!, <SignatureDemo key={template.id} id={template.id} />]),
+  ) as Record<string, ReactNode>;
+
   const routes: Record<string, ReactNode> = {
     '/': <HomePage />,
     '/templates': <TemplatesPage />,
@@ -128,36 +118,7 @@ export function Router() {
     '/admin/login': <AdminLoginPage />,
     '/admin/setup-password': <AdminSetPasswordPage />,
     '/admin': <AdminDashboardPage />,
-    '/demo/classic-minimalist': <ClassicMinimalist />,
-    '/demo/blush-floral': <BlushFloral />,
-    '/demo/soft-fade-floral': <SoftFadeFloral />,
-    '/demo/minimal-slide-clean': <MinimalSlideClean />,
-    '/demo/modern-dark-blue': <SignatureDemo id="modern-dark-blue" />,
-    '/demo/luxury-gold-frame': <SignatureDemo id="luxury-gold-frame" />,
-    '/demo/luxury-gold-cinematic': <SignatureDemo id="luxury-gold-cinematic" />,
-    '/demo/vintage-film': <CinematicLoveStoryEnhanced />,
-    '/demo/romantic-watercolor': <RomanticWatercolor />,
-    '/demo/bloom-crystal-3d': <SignatureDemo id="bloom-crystal-3d" />,
-    '/demo/tropical-sunset': <TropicalSunset />,
-    '/demo/art-deco-royal': <SignatureDemo id="art-deco-royal" />,
-    '/demo/vintage-grain': <VintageGrain />,
-    '/demo/green-elegance': <GreenElegance />,
-    '/demo/cinematic-love-story': <CinematicLoveStory />,
-    '/demo/minimal-elegant': <SignatureDemo id="minimal-elegant" />,
-    '/demo/vietnamese-traditional': <VietnameseTraditionalEnhanced />,
-    '/demo/bloom-crystal-3d-basic': <BloomCrystal3D />,
-    '/demo/art-deco-royal-basic': <SignatureDemo id="art-deco-royal-basic" />,
-    '/demo/minimal-elegant-basic': <MinimalElegant />,
-    '/demo/rose-storybook-219k': <DemoThiep219kThiep1 />,
-    '/demo/vietnamese-traditional-219k': <DemoThiep219kTraditional />,
-    '/demo/burgundy-cinema-219k': <DemoThiep219kCinema />,
-    '/demo/song-hy-contemporary': <SignatureDemo id="song-hy-contemporary" />,
-    '/demo/riviera-blue': <SignatureDemo id="riviera-blue" />,
-    '/demo/hoa-moc-editorial': <SignatureDemo id="hoa-moc-editorial" />,
-    '/demo/sen-ngoc': <SignatureDemo id="sen-ngoc" />,
-    '/demo/hy-su-do-son': <SignatureDemo id="hy-su-do-son" />,
-    '/demo/pho-hoi': <SignatureDemo id="pho-hoi" />,
-    '/demo/summer-postcard': <SignatureDemo id="summer-postcard" />,
+    ...demoRoutes,
   };
 
   const previewToken = currentRoute.startsWith('/preview/')

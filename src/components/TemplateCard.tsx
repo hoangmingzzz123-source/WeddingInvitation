@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ExternalLink, Eye, Heart, Sparkles } from 'lucide-react';
+import { ExternalLink, Eye, Heart, Sparkles, WandSparkles } from 'lucide-react';
 import { navigateTo } from '../Router';
 import { templateTierLabels, type WeddingTemplate } from '../data/templates';
 import { trackEvent } from '../utils/analytics';
@@ -78,7 +78,7 @@ export function TemplateCard({ template, priority = false }: TemplateCardProps) 
             width={800}
             height={1000}
             decoding="async"
-            fallbackSrc="/images/templates/ha-phuong-hoang-minh-2026-800.webp"
+            fallbackSrc="/images/vietnam-modern/atelier-00.webp"
             alt={`Ảnh xem trước mẫu thiệp ${template.name}`}
             className="template-card__image"
             loading={priority ? 'eager' : 'lazy'}
@@ -115,6 +115,15 @@ export function TemplateCard({ template, priority = false }: TemplateCardProps) 
           </div>
         </div>
       </a>
+      {!isExternal && (
+        <button
+          type="button"
+          className="template-card__customize"
+          onClick={() => navigateTo(`/tao-thiep?template=${encodeURIComponent(template.id)}`)}
+        >
+          <WandSparkles aria-hidden="true" /> Cá nhân hóa mẫu này
+        </button>
+      )}
     </article>
   );
 }

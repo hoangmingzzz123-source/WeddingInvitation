@@ -13,31 +13,17 @@ import {
   X,
 } from 'lucide-react';
 import { MusicPlayer } from '../MusicPlayer';
-import type { TemplateTier } from '../../data/templates';
+import { weddingTemplates, type TemplateTier } from '../../data/templates';
 import {
   VIETNAM_WEDDING_THEMES,
   type VietnamWeddingTheme,
 } from '../../data/vietnamWeddingPhotos';
 
-export type SignatureDemoId =
-  | 'art-deco-royal'
-  | 'art-deco-royal-basic'
-  | 'luxury-gold-cinematic'
-  | 'luxury-gold-frame'
-  | 'bloom-crystal-3d'
-  | 'modern-dark-blue'
-  | 'minimal-elegant'
-  | 'song-hy-contemporary'
-  | 'riviera-blue'
-  | 'hoa-moc-editorial'
-  | 'summer-postcard'
-  | 'sen-ngoc'
-  | 'hy-su-do-son'
-  | 'pho-hoi';
+export type SignatureDemoId = string;
 
 interface SignatureDemoContent {
   id: SignatureDemoId;
-  visualStyle?: 'art-deco-royal-basic';
+  visualStyle?: string;
   tier: TemplateTier;
   label: string;
   bride: string;
@@ -60,7 +46,7 @@ const photoStory = (theme: VietnamWeddingTheme, offset = 0) => {
   return { hero, gallery };
 };
 
-const demos: Record<SignatureDemoId, SignatureDemoContent> = {
+const demos: Record<string, SignatureDemoContent> = {
   'sen-ngoc': {
     id: 'sen-ngoc', tier: '159k', label: 'SEN NGỌC · THANH ÂM HẠNH PHÚC',
     bride: 'An Nhiên', groom: 'Minh Khôi', date: '2027-11-20', dateLabel: '20 · 11 · 2027', time: '17:30',
@@ -162,6 +148,49 @@ const demos: Record<SignatureDemoId, SignatureDemoContent> = {
   },
 };
 
+function fallbackTheme(id: string): VietnamWeddingTheme {
+  if (/(traditional|song-hy|hy-su|sen-ngoc|pho-hoi)/.test(id)) return 'songHy';
+  if (/(riviera|summer|tropical)/.test(id)) return 'coastal';
+  if (/(cinema|cinematic|dark|gold|vintage)/.test(id)) return 'modernCeremony';
+  return 'hanoiStudio';
+}
+
+function fallbackStyle(id: string) {
+  if (/(traditional|song-hy|hy-su|sen-ngoc)/.test(id)) return 'song-hy-contemporary';
+  if (/(riviera|tropical)/.test(id)) return 'riviera-blue';
+  if (/(blush|floral|green)/.test(id)) return 'hoa-moc-editorial';
+  if (/(postcard|vintage|classic)/.test(id)) return 'summer-postcard';
+  if (/(cinema|cinematic|dark|gold)/.test(id)) return 'luxury-gold-cinematic';
+  return 'art-deco-royal-basic';
+}
+
+function fallbackDemo(id: string): SignatureDemoContent {
+  const template = weddingTemplates.find((item) => item.id === id);
+  const names = [
+    ['Khánh An', 'Minh Quân'],
+    ['Ngọc Mai', 'Đức Anh'],
+    ['Thảo Nhi', 'Hoàng Nam'],
+    ['Hải Yến', 'Gia Huy'],
+  ];
+  const namePair = names[Math.abs([...id].reduce((total, character) => total + character.charCodeAt(0), 0)) % names.length];
+  return {
+    id,
+    visualStyle: fallbackStyle(id),
+    tier: template?.tier ?? '159k',
+    label: template?.style.toLocaleUpperCase('vi') ?? 'A VIETNAMESE LOVE STORY',
+    bride: namePair[0],
+    groom: namePair[1],
+    date: '2027-11-20',
+    dateLabel: '20 · 11 · 2027',
+    time: '17:30',
+    venue: 'The Atelier Wedding Hall',
+    address: 'Địa điểm minh họa · thay đổi trong Studio',
+    city: fallbackTheme(id) === 'coastal' ? 'Đà Nẵng' : 'Việt Nam',
+    story: 'Từ những ngày bình dị, chúng mình đã cùng vun đắp một hành trình nhiều yêu thương. Thật hạnh phúc khi được chia sẻ ngày khởi đầu mới với gia đình và những người bạn thân quý.',
+    ...photoStory(fallbackTheme(id)),
+  };
+}
+
 function SmallLabel({ children }: { children: string }) {
   return <p className="signature-eyebrow">{children}</p>;
 }
@@ -200,10 +229,9 @@ function replyDeadline(dateValue: string) {
 }
 
 export function SignatureDemo({ id }: { id: SignatureDemoId }) {
-  const demo = demos[id];
+  const demo = demos[id] ?? fallbackDemo(id);
   const [submitted, setSubmitted] = useState(false);
   const [lightbox, setLightbox] = useState<number | null>(null);
-  const [showVideo, setShowVideo] = useState(false);
   const mapQuery = encodeURIComponent(`${demo.venue}, ${demo.address}, ${demo.city}`);
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
@@ -320,8 +348,8 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
         <section className="signature-extras" aria-label="Tính năng cao cấp">
           <div className="signature-video-card">
             <img src={demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" />
-            <button type="button" onClick={() => setShowVideo(true)} aria-label="Xem video cưới mẫu"><Play fill="currentColor" aria-hidden="true" /></button>
-            <div><SmallLabel>OUR FILM</SmallLabel><h2>Một thước phim của riêng đôi mình</h2></div>
+            <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>
+            <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
           </div>
           <div className="signature-gift-card">
             <SmallLabel>A LITTLE WISH</SmallLabel>
@@ -365,14 +393,13 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
             <h2 id="signature-rsvp-title">Bạn sẽ đến chứ?</h2>
             <p>Vui lòng hồi đáp trước ngày {replyDeadline(demo.date)} để chúng mình chuẩn bị chu đáo.</p>
             <label>Họ và tên<input name="name" required placeholder="Tên của bạn" autoComplete="name" /></label>
+            <label>Bạn sẽ tham dự chứ?<select name="attending" defaultValue="yes"><option value="yes">Có, mình sẽ đến</option><option value="no">Rất tiếc, mình bận</option></select></label>
             {premium ? (
               <div className="signature-rsvp__fields">
                 <label>Email<input type="email" name="email" placeholder="email@example.com" autoComplete="email" /></label>
                 <label>Số khách<select name="guests" defaultValue="1"><option value="1">1 khách</option><option value="2">2 khách</option><option value="3">3 khách</option><option value="4">4 khách</option></select></label>
               </div>
-            ) : (
-              <label>Bạn sẽ tham dự chứ?<select name="attending" defaultValue="yes"><option value="yes">Có, mình sẽ đến</option><option value="no">Rất tiếc, mình bận</option></select></label>
-            )}
+            ) : null}
             {diamond && (
               <div className="signature-rsvp__fields">
                 <label className="signature-rsvp__wide">Lời nhắn<textarea name="message" rows={3} placeholder="Gửi đôi bạn một lời chúc..." /></label>
@@ -403,12 +430,6 @@ export function SignatureDemo({ id }: { id: SignatureDemoId }) {
         </div>
       )}
 
-      {showVideo && (
-        <div className="signature-lightbox" role="dialog" aria-modal="true" aria-label="Video cưới mẫu" onClick={() => setShowVideo(false)}>
-          <button type="button" onClick={() => setShowVideo(false)} aria-label="Đóng video"><X aria-hidden="true" /></button>
-          <iframe src="https://www.youtube-nocookie.com/embed/VvkYROIh5qc?autoplay=1" title="Video cưới mẫu" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen onClick={(event) => event.stopPropagation()} />
-        </div>
-      )}
     </main>
   );
 }

@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-10-30",
+  "generator": "OpenAI built-in image generation",
+  "usage": "Fictional Vietnamese adult couples created for wedding invitation demos",
+  "themes": {
+    "atelier": "Modern Hanoi studio, ivory editorial styling",
+    "ao-dai": "Contemporary Vietnamese ao dai and heritage ceremony",
+    "city": "Ho Chi Minh City blue-hour editorial wedding",
+    "coast": "Central Vietnam coast destination wedding"
+  },
+  "notes": [
+    "All people are fictional adults.",
+    "Each source atlas was generated as a 2x2 composition and cropped to individual WebP assets.",
+    "No logos, trademarks or third-party photographs are embedded."
+  ]
+}
