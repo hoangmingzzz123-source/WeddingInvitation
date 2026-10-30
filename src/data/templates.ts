@@ -12,6 +12,7 @@ export interface WeddingTemplate {
   route?: string;
   externalUrl?: string;
   featured?: boolean;
+  homepageFeatured?: boolean;
   realWedding?: boolean;
 }
 
@@ -27,13 +28,25 @@ const templateDetails: TemplateDetails[] = [
   {
     id: 'ha-phuong-hoang-minh-2026',
     name: 'Hà Phương & Hoàng Minh 2026',
-    style: 'Cinematic Vietnamese',
-    description: 'Mẫu thiệp thực tế với trải nghiệm mở thiệp, album, RSVP và âm nhạc.',
-    externalUrl: 'https://mp-wedding-2026.vercel.app/',
+    style: 'Verdant Veil Editorial',
+    description: 'Màn xanh điện ảnh, typography thanh lịch và trải nghiệm thiệp thực tế có thể cá nhân hóa.',
+    route: '/demo/ha-phuong-hoang-minh-2026',
     tier: '199k',
-    features: ['Mở thiệp tương tác', 'Album', 'RSVP', 'Âm nhạc'],
+    features: ['Mở thiệp điện ảnh', 'Album', 'RSVP nâng cao', 'Âm nhạc'],
     featured: true,
+    homepageFeatured: true,
     realWedding: true,
+  },
+  {
+    id: 'tui-minh-cuoi-roi',
+    name: 'Tụi Mình Cưới Rồi!',
+    style: 'Playful Hand-drawn',
+    description: 'Thiệp vẽ tay trẻ trung với timeline buổi tiệc, dress code, thực đơn và hồi âm vui nhộn.',
+    route: '/demo/tui-minh-cuoi-roi',
+    tier: '199k',
+    features: ['Minh họa vẽ tay', 'Timeline', 'Dress code', 'RSVP nâng cao'],
+    featured: true,
+    homepageFeatured: true,
   },
   {
     id: 'luxury-gold-cinematic',
@@ -64,6 +77,7 @@ const templateDetails: TemplateDetails[] = [
     features: ['Film grain', 'Typewriter', 'Album', 'Âm nhạc'],
     description: 'Không khí phim hoài niệm dành cho một câu chuyện tình yêu có chiều sâu.',
     featured: true,
+    homepageFeatured: true,
   },
   {
     id: 'art-deco-royal',
@@ -74,6 +88,7 @@ const templateDetails: TemplateDetails[] = [
     features: ['Ảnh cưới làm trọng tâm', 'Câu chuyện', 'Video & lưu bút', 'RSVP'],
     description: 'Chủ đề vườn olive với ảnh vòm, bảng màu ivory–sage và tiện ích Diamond.',
     featured: true,
+    homepageFeatured: true,
   },
   {
     id: 'romantic-watercolor',
@@ -84,6 +99,7 @@ const templateDetails: TemplateDetails[] = [
     features: ['Màu nước', 'Truyền thống', 'Album'],
     description: 'Chất liệu màu nước dịu dàng hòa cùng tinh thần cưới Việt.',
     featured: true,
+    homepageFeatured: true,
   },
   {
     id: 'cinematic-love-story',
@@ -104,6 +120,7 @@ const templateDetails: TemplateDetails[] = [
     features: ['Dấu ấn Song Hỷ', 'Câu chuyện', 'Album', 'RSVP nâng cao'],
     description: 'Giấy ngà, sắc đỏ son và biểu tượng Song Hỷ được tiết chế theo phong cách hiện đại.',
     featured: true,
+    homepageFeatured: true,
   },
   {
     id: 'riviera-blue',

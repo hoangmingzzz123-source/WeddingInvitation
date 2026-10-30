@@ -464,6 +464,86 @@
 }
 .demo-page-content .signature-demo--luxury-gold-frame .signature-hero__content { padding: clamp(1rem, 4vw, 3rem); border-block: 1px solid rgba(165, 138, 85, .4); }
 
+/* Verdant Veil: a cinematic garden editorial, now fully editable in Studio. */
+.signature-demo--verdant-veil {
+  --sig-paper: #f5f5ed;
+  --sig-ink: #17231d;
+  --sig-muted: #687168;
+  --sig-accent: #a9a17b;
+  --sig-line: rgba(35, 54, 43, .16);
+  background: #f5f5ed;
+}
+.demo-page-content .signature-demo--verdant-veil .signature-hero {
+  min-height: min(92svh, 58rem);
+  color: #f7f5e9;
+  background: #111812;
+}
+.demo-page-content .signature-demo--verdant-veil .signature-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(9, 16, 11, .79), rgba(13, 24, 17, .26) 56%, rgba(8, 15, 10, .52)), linear-gradient(0deg, rgba(8, 14, 10, .5), transparent 62%);
+  content: '';
+}
+.demo-page-content .signature-demo--verdant-veil .signature-hero__layout { z-index: auto; width: min(100%, 74rem); grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__image { position: absolute; inset: 0; z-index: 0; min-height: 100%; border-radius: 0; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__image img { filter: brightness(.55) saturate(.66) hue-rotate(9deg); }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__image-note { display: none; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__content { grid-column: 2; align-self: center; padding: 4rem 1rem; text-align: center; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__content h1 { color: #faf8ef !important; font-size: clamp(4.3rem, 8.8vw, 8rem) !important; line-height: .82 !important; }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__invitation,
+.demo-page-content .signature-demo--verdant-veil .signature-hero__side-note { color: rgba(248, 247, 237, .76); }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__ornament { inset: 8% 6%; z-index: 2; border: 1px solid rgba(235, 230, 201, .28); }
+.demo-page-content .signature-demo--verdant-veil .signature-story { color: #eef0e7; background: #18241d; }
+.demo-page-content .signature-demo--verdant-veil .signature-story h2 { color: #f6f4e9; }
+.demo-page-content .signature-demo--verdant-veil .signature-story p { color: rgba(239, 241, 232, .7); }
+.demo-page-content .signature-demo--verdant-veil .signature-event-card--primary,
+.demo-page-content .signature-demo--verdant-veil .signature-rsvp { color: #f5f5ed; background: #1b2a21; }
+.demo-page-content .signature-demo--verdant-veil .signature-event-card--primary h3 { color: #f5f5ed; }
+.demo-page-content .signature-demo--verdant-veil .signature-gallery__grid img { filter: saturate(.72) contrast(1.03); }
+
+/* Playful hand-drawn: inspired by the supplied mobile reference without copying its artwork. */
+.signature-demo--playful-handdrawn {
+  --sig-paper: #f9e9e5;
+  --sig-ink: #20231e;
+  --sig-muted: #65675d;
+  --sig-accent: #79815d;
+  --sig-line: rgba(32, 35, 30, .2);
+  background-color: #f9e9e5;
+  background-image: radial-gradient(rgba(34, 38, 30, .07) .7px, transparent .7px);
+  background-size: 9px 9px;
+}
+.demo-page-content .signature-demo--playful-handdrawn :is(h1, h2, h3) { font-family: "Poppins", sans-serif !important; letter-spacing: -.055em; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero { background: transparent; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__layout { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__image { border: 3px solid #252820; border-radius: 46% 54% 44% 56% / 55% 42% 58% 45%; box-shadow: .7rem .7rem 0 #8c956a; transform: rotate(-2deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__image img { filter: saturate(.65) contrast(1.04); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__content { padding: clamp(1rem, 4vw, 3rem); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__content h1 { color: #24271f !important; font-size: clamp(3.8rem, 8vw, 7rem) !important; text-transform: uppercase; transform: rotate(-1deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__ornament { top: 10%; right: 8%; width: 6rem; height: 6rem; border: 3px solid #252820; border-radius: 47% 53% 50% 50%; transform: rotate(12deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-hero__ornament::after { position: absolute; inset: 1.2rem; color: #77805b; font: 700 2.2rem/1 sans-serif; content: '♡'; transform: rotate(-12deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-events { background: #f3ded8; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card { border: 2px solid #262920; border-radius: 1.4rem .7rem 1.5rem .8rem; box-shadow: .45rem .45rem 0 rgba(119, 128, 91, .6); transform: rotate(-.45deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card:nth-child(2) { transform: rotate(.55deg); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card--primary { color: #f9eee9; background: #33382b; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-event-card--primary h3 { color: #f9eee9; }
+.signature-playful-guide { color: #22251f; background: #f9e9e5; }
+.signature-playful-guide__timeline { display: grid; width: min(100%, 62rem); margin: 2.5rem auto 0; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.signature-playful-guide__timeline > div { position: relative; display: grid; gap: .4rem; min-height: 7rem; padding: 1.4rem 1rem; border-top: 2px solid #292c24; text-align: center; }
+.signature-playful-guide__timeline > div::before { position: absolute; top: -.55rem; left: 50%; width: .9rem; height: .9rem; border: 2px solid #292c24; border-radius: 50%; background: #89916b; content: ''; transform: translateX(-50%); }
+.signature-playful-guide__timeline strong { color: #67704f; font: 700 .8rem/1 "Poppins", sans-serif; }
+.signature-playful-guide__timeline span { font: 600 .72rem/1.5 "Poppins", sans-serif; }
+.signature-playful-guide__cards { display: grid; width: min(100%, 65rem); margin: 1.5rem auto 0; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.signature-playful-guide__cards article { padding: clamp(1.2rem, 3vw, 2rem); border: 2px solid #292c24; border-radius: 1rem 1.8rem .8rem 1.4rem; background: rgba(255,255,255,.24); box-shadow: .35rem .35rem 0 rgba(119, 128, 91, .45); }
+.signature-playful-guide__cards article:nth-child(2) { transform: rotate(-.6deg); }
+.signature-playful-guide__cards article:nth-child(3) { transform: rotate(.6deg); }
+.signature-playful-guide__cards article > span { display: block; min-height: 2rem; color: #6f7855; font: 700 1.2rem/1 "Poppins", sans-serif; }
+.signature-playful-guide__cards h3 { margin: .75rem 0 .55rem !important; font-size: clamp(1.35rem, 2.5vw, 2rem) !important; text-transform: uppercase; }
+.signature-playful-guide__cards p { color: #64675e; font-size: .75rem !important; line-height: 1.7 !important; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-gallery__grid button { border: 2px solid #292c24; border-radius: .8rem 1.8rem .7rem 1.4rem; box-shadow: .35rem .35rem 0 rgba(119, 128, 91, .45); }
+.demo-page-content .signature-demo--playful-handdrawn .signature-rsvp { color: #f8ede7; background: #34382e; }
+.demo-page-content .signature-demo--playful-handdrawn .signature-rsvp form { padding: clamp(1rem, 4vw, 2.5rem); border: 2px dashed rgba(248, 237, 231, .5); border-radius: 1.25rem; }
+
 @media (max-width: 900px) {
   .creator-theme-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -473,4 +553,11 @@
   .demo-page-content .signature-demo:is(.signature-demo--minimal-slide-clean, .signature-demo--minimal-elegant) .signature-hero__content { order: 1; text-align: center; }
   .demo-page-content .signature-demo:is(.signature-demo--minimal-slide-clean, .signature-demo--minimal-elegant) .signature-hero__image { order: 2; min-height: min(92vw, 28rem); }
   .signature-rsvp__fields--preferences { margin-top: .2rem; }
+  .demo-page-content .signature-demo--verdant-veil .signature-hero__layout,
+  .demo-page-content .signature-demo--playful-handdrawn .signature-hero__layout { grid-template-columns: 1fr; }
+  .demo-page-content .signature-demo--verdant-veil .signature-hero__content { grid-column: 1; padding: 5rem 1rem 3rem; }
+  .demo-page-content .signature-demo--verdant-veil .signature-hero__layout { min-height: 35rem; }
+  .demo-page-content .signature-demo--playful-handdrawn .signature-hero__image { min-height: min(92vw, 28rem); }
+  .signature-playful-guide__timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; }
+  .signature-playful-guide__cards { grid-template-columns: 1fr; }
 }

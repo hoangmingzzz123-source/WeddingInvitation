@@ -108,6 +108,20 @@ const demos: Record<string, SignatureDemoContent> = {
     story: 'Từ một lời chào thân quen, chúng mình đã cùng đi qua những mùa thương nhớ. Nay xin gửi thiệp hồng, kính mời gia đình và bạn bè cùng nâng chén trà, chia sẻ niềm vui trong ngày hai nhà sum họp.',
     ...photoStory('hoiAn'),
   },
+  'ha-phuong-hoang-minh-2026': {
+    id: 'ha-phuong-hoang-minh-2026', visualStyle: 'verdant-veil', tier: '199k', label: 'VERDANT VEIL · OUR MEMORIES',
+    bride: 'Hà Phương', groom: 'Hoàng Minh', date: '2026-12-20', dateLabel: '20 · 12 · 2026', time: '17:30',
+    venue: 'Verdant Garden', address: '12 Đặng Thai Mai, Tây Hồ', city: 'Hà Nội',
+    story: 'Từ một lời chào rất khẽ, chúng mình đã đi cùng nhau qua nhiều mùa. Giữa khu vườn xanh và những người thân yêu, chúng mình muốn bắt đầu một chương mới thật bình yên.',
+    ...photoStory('garden', 1),
+  },
+  'tui-minh-cuoi-roi': {
+    id: 'tui-minh-cuoi-roi', visualStyle: 'playful-handdrawn', tier: '199k', label: 'TIN VUI NÈ · TỤI MÌNH CƯỚI RỒI!',
+    bride: 'Ngọc Diệp', groom: 'Gia Huy', date: '2027-12-11', dateLabel: '11 · 12 · 2027', time: '18:00',
+    venue: 'JW Marriott Hanoi', address: '8 Đỗ Đức Dục, Nam Từ Liêm', city: 'Hà Nội',
+    story: 'Tụi mình đã cùng ăn thật nhiều món ngon, đi thật nhiều nơi và cười qua vô số chuyện nhỏ. Giờ thì tụi mình cưới nhau rồi — rất mong bạn đến quẩy và nâng ly cùng tụi mình!',
+    ...photoStory('hanoiStudio', 1),
+  },
 
   'art-deco-royal-basic': {
     id: 'art-deco-royal-basic', tier: '159k', label: 'THE GARDEN EDIT',
@@ -196,6 +210,8 @@ function fallbackTheme(id: string): VietnamWeddingTheme {
 }
 
 function fallbackStyle(id: string) {
+  if (/ha-phuong-hoang-minh|verdant/.test(id)) return 'verdant-veil';
+  if (/tui-minh|handdrawn|playful/.test(id)) return 'playful-handdrawn';
   if (/(traditional|song-hy|hy-su|sen-ngoc)/.test(id)) return 'song-hy-contemporary';
   if (/tropical/.test(id)) return 'tropical-sunset';
   if (/riviera/.test(id)) return 'riviera-blue';
@@ -273,6 +289,12 @@ function replyDeadline(dateValue: string) {
   const deadline = new Date(`${dateValue}T00:00:00`);
   deadline.setDate(deadline.getDate() - 14);
   return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(deadline);
+}
+
+function timeAfter(timeValue: string, minutes: number) {
+  const [hour = 0, minute = 0] = timeValue.split(':').map(Number);
+  const total = (hour * 60 + minute + minutes) % (24 * 60);
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
 }
 
 export function SignatureDemo({
@@ -431,6 +453,43 @@ export function SignatureDemo({
           </article>
         </div>
       </section>
+
+      {demo.visualStyle === 'playful-handdrawn' && (
+        <section className="signature-playful-guide" aria-labelledby="signature-playful-guide-title">
+          <header className="signature-section-heading">
+            <SmallLabel>NHỚ NHA!</SmallLabel>
+            <h2 id="signature-playful-guide-title">Tối hôm ấy</h2>
+            <p>Một chiếc lịch trình nhỏ để bạn không bỏ lỡ phần vui nhất.</p>
+          </header>
+          <div className="signature-playful-guide__timeline">
+            {[
+              [demo.time, 'Đón khách & đồ uống chào'],
+              [timeAfter(demo.time, 30), 'Làm lễ'],
+              [timeAfter(demo.time, 60), 'Khai tiệc & lời chúc'],
+              [timeAfter(demo.time, 150), 'Điệu nhảy đầu tiên'],
+            ].map(([time, label]) => (
+              <div key={label}><strong>{time}</strong><span>{label}</span></div>
+            ))}
+          </div>
+          <div className="signature-playful-guide__cards">
+            <article>
+              <span aria-hidden="true">◯ ◯ ●</span>
+              <h3>Mặc gì?</h3>
+              <p>Thoải mái là chính. Kem, hồng phấn và xanh olive sẽ lên hình rất xinh.</p>
+            </article>
+            <article>
+              <span aria-hidden="true">🥂</span>
+              <h3>Quầy đồ uống</h3>
+              <p>Mojito, espresso martini, vang và những lựa chọn không cồn.</p>
+            </article>
+            <article>
+              <span aria-hidden="true">🍽</span>
+              <h3>Thực đơn</h3>
+              <p>Khai vị theo mùa, món chính ấm áp và một chiếc bánh cưới thật ngon.</p>
+            </article>
+          </div>
+        </section>
+      )}
 
       <section className="signature-gallery" id="album" aria-labelledby="signature-gallery-title">
         <header className="signature-section-heading">
