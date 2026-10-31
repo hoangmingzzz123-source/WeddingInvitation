@@ -98,6 +98,17 @@ Sample đã deploy ở nơi khác dùng `externalUrl`:
 
 Liên kết ngoài tự mở trong tab mới với `noopener noreferrer`.
 
+## Mẫu thực tế Hà Phương & Hoàng Minh 2026
+
+- Card ở trang chủ và thư viện mở https://mp-wedding-2026.vercel.app/.
+- Đường dẫn cũ `/demo/ha-phuong-hoang-minh-2026` và link tạo mẫu cũ chuyển về website thật.
+- Thiết kế vườn xanh đã dựng trong Studio có tên riêng **Verdant Veil**, tại `/demo/verdant-veil`. Các bản nháp cũ của thiết kế này được chuyển sang ID `verdant-veil` để giữ nội dung.
+- Mã nguồn tham chiếu do chủ dự án cung cấp: https://github.com/weddinginvitationmp-art/mp, nhánh `master`, commit đã kiểm tra `8d2689b0466698531138c4d9725aee10163eec2a`.
+
+Mã nguồn thật dùng Vite/React, cấu hình nội dung tại `src/config/wedding.ts`, màn mở thiệp tại `src/components/opening/opening-overlay.tsx` và các section trong `src/sections/`. RSVP, lời chúc và sơ đồ bàn sử dụng Supabase. Story chỉ bật khi `story=show`; game hiện bị tắt trong `src/App.tsx`.
+
+Renderer từ repository này **chưa được tích hợp vào Studio**. Khi tích hợp, cần ánh xạ dữ liệu Studio vào cấu hình nguồn và dùng dữ liệu demo riêng cho RSVP/lời chúc/sơ đồ bàn; không kết nối bản demo với dữ liệu khách mời hoặc thông tin mừng cưới của thiệp thật.
+
 ## Deploy
 
 Repository đã có `vercel.json` để mọi route SPA được rewrite về `index.html`. Kết nối repository với Vercel và sử dụng:

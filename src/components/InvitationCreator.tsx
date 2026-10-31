@@ -271,6 +271,9 @@ function compressInvitationImage(file: File, maxDimension: number) {
 }
 
 function normalizeDraft(value: Partial<InvitationDraft> | null | undefined): InvitationDraft {
+  // Older drafts used the real wedding's ID for the independent Verdant concept.
+  // Preserve those saved previews under the concept's own identity.
+  const templateId = value?.templateId === 'ha-phuong-hoang-minh-2026' ? 'verdant-veil' : value?.templateId;
   const allowedQuestions: InvitationQuestion[] = ['transport', 'meal'];
   const cover = coverOptions.some((option) => option.url === value?.cover)
     ? value!.cover!
@@ -280,8 +283,8 @@ function normalizeDraft(value: Partial<InvitationDraft> | null | undefined): Inv
     ...defaultDraft,
     ...value,
     id: typeof value?.id === 'string' && value.id ? value.id : createId('wedding'),
-    templateId: editableTemplates.some((template) => template.id === value?.templateId)
-      ? value!.templateId!
+    templateId: editableTemplates.some((template) => template.id === templateId)
+      ? templateId!
       : defaultDraft.templateId,
     packageTier: isTemplateTier(value?.packageTier) ? value.packageTier : defaultDraft.packageTier,
     theme: isInvitationTheme(value?.theme) ? value.theme : defaultDraft.theme,
