@@ -97,12 +97,13 @@ export function Router() {
     }
 
     document.title = title;
+    const publicUrl = currentRoute.startsWith('/preview/') ? productionUrl : productionUrl + currentRoute;
     document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
-      ?.setAttribute('href', `${productionUrl}${currentRoute === '/' ? '/' : currentRoute}`);
+      ?.setAttribute('href', publicUrl);
     updateMeta('meta[name="description"]', 'content', description);
     updateMeta('meta[property="og:title"]', 'content', title);
     updateMeta('meta[property="og:description"]', 'content', description);
-    updateMeta('meta[property="og:url"]', 'content', `${productionUrl}${currentRoute === '/' ? '/' : currentRoute}`);
+    updateMeta('meta[property="og:url"]', 'content', publicUrl);
     updateMeta('meta[name="twitter:title"]', 'content', title);
     updateMeta('meta[name="twitter:description"]', 'content', description);
     const isIndexableRoute = currentRoute === '/'
@@ -139,10 +140,10 @@ export function Router() {
     ...demoRoutes,
   };
 
-  const previewToken = currentRoute.startsWith('/preview/')
-    ? decodeURIComponent(currentRoute.slice('/preview/'.length))
-    : '';
-  const page = previewToken ? <PublicDemoPage token={previewToken} /> : routes[currentRoute] ?? <NotFoundPage />;
+  const previewToken = /^\/preview\/([a-f0-9]{48})$/i.exec(currentRoute)?.[1];
+  const page = previewToken
+    ? <PublicDemoPage key={previewToken} token={previewToken} />
+    : Object.hasOwn(routes, currentRoute) ? routes[currentRoute] : <NotFoundPage />;
 
   return (
     <Suspense fallback={<RouteLoader />}>

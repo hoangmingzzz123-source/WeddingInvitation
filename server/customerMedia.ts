@@ -24,6 +24,7 @@ export async function supabase(path: string, init: RequestInit = {}) {
   if (!response.ok) {
     const status = response.status;
     if (status === 429) throw new MediaError(429, 'Có quá nhiều yêu cầu. Vui lòng thử lại sau.');
+    if (status === 403) throw new MediaError(403, 'Không có quyền thực hiện thao tác này.');
     if (status === 404) throw new MediaError(404, 'Không tìm thấy dữ liệu trong kho ảnh.');
     if (status === 409 || status === 410) throw new MediaError(status, 'Phiên tải ảnh đã thay đổi hoặc hết hạn.');
     throw new MediaError(502, 'Không thể xử lý dữ liệu trong kho ảnh.');
@@ -78,12 +79,19 @@ export function photosFor(customerId: string) {
 }
 
 export async function selectedPhotos(customerId: string, refs: PhotoRef[]) {
+  if (!Array.isArray(refs) || refs.length > 7 || refs.some((ref) => !ref || typeof ref.photoId !== 'string'
+    || !['cover', 'gallery'].includes(ref.role) || !Number.isInteger(ref.order))
+    || new Set(refs.map(({ photoId }) => photoId)).size !== refs.length
+    || refs.filter(({ role }) => role === 'cover').length > 1) {
+    throw new MediaError(422, 'Danh sách ảnh của demo không hợp lệ.');
+  }
   if (!refs.length) return [];
   const rows = await photosFor(customerId);
   return refs.map((ref) => {
     const row = rows.find((photo) => photo.id === ref.photoId && photo.web_storage_path);
     if (!row) throw new MediaError(422, 'Ảnh đã chọn không thuộc hồ sơ hoặc chưa sẵn sàng.');
-    return { ref, path: row.web_storage_path! };
+    const { photoId, role, order, focalX, focalY, alt } = ref;
+    return { ref: { photoId, role, order, focalX, focalY, alt: typeof alt === 'string' ? alt.slice(0, 180) : undefined }, path: row.web_storage_path! };
   }).sort((a, b) => a.ref.order - b.ref.order);
 }
 

@@ -165,9 +165,10 @@ export function AdminSetPasswordPage() {
     try {
       const session = readAuthCallbackSession();
       setCallbackSession(session);
-      window.history.replaceState({}, '', '/admin/setup-password');
     } catch (callbackError) {
       setError(callbackError instanceof Error ? callbackError.message : 'Liên kết không hợp lệ.');
+    } finally {
+      window.history.replaceState({}, '', '/admin/setup-password');
     }
   }, []);
 
@@ -358,9 +359,10 @@ export function AdminDashboardPage() {
     setSaving(true);
     setError('');
     try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
       const saved = isNewCustomer || !selectedCustomer
-        ? await createCustomer(session, editor)
-        : await updateCustomer(session, selectedCustomer.id, editor);
+        ? await createCustomer(activeSession, editor)
+        : await updateCustomer(activeSession, selectedCustomer.id, editor);
       setIsNewCustomer(false);
       await loadData(saved.id);
       showMessage('Đã lưu thông tin khách hàng.');
@@ -381,14 +383,20 @@ export function AdminDashboardPage() {
       setError('Hãy chọn một ảnh bìa cho demo.');
       return;
     }
+    const expiry = demoExpiry ? new Date(`${demoExpiry}T23:59:59`) : null;
+    if (expiry && !(expiry.getTime() > Date.now())) {
+      setError('Ngày hết hạn của demo phải ở trong tương lai.');
+      return;
+    }
     publishing.current = true;
     setActionLoading('demo');
     setError('');
     try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
       if (JSON.stringify(customerToEditor(selectedCustomer)) !== JSON.stringify(editor)) {
-        await updateCustomer(session, selectedCustomer.id, editor);
+        await updateCustomer(activeSession, selectedCustomer.id, editor);
       }
-      const expiresAt = demoExpiry ? new Date(`${demoExpiry}T23:59:59`).toISOString() : null;
+      const expiresAt = expiry?.toISOString() ?? null;
       const input = {
         customerId: selectedCustomer.id,
         templateId: editor.selectedTemplateId,
@@ -410,9 +418,9 @@ export function AdminDashboardPage() {
       if (publishAttempt.current?.fingerprint !== fingerprint) {
         publishAttempt.current = { fingerprint, id: crypto.randomUUID() };
       }
-      const demo = await createDemo(session, { ...input, id: publishAttempt.current.id });
+      const demo = await createDemo(activeSession, { ...input, id: publishAttempt.current.id });
       if (!['confirmed', 'completed'].includes(editor.status)) {
-        await updateCustomer(session, selectedCustomer.id, { status: 'demo_ready', selectedTemplateId: editor.selectedTemplateId });
+        await updateCustomer(activeSession, selectedCustomer.id, { status: 'demo_ready', selectedTemplateId: editor.selectedTemplateId });
       }
       await loadData(selectedCustomer.id);
       await copyPreviewLink(demo.publicToken);
@@ -435,7 +443,8 @@ export function AdminDashboardPage() {
     if (!session || !selectedCustomer) return;
     setActionLoading('confirm');
     try {
-      await updateCustomer(session, selectedCustomer.id, { status: 'confirmed' });
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateCustomer(activeSession, selectedCustomer.id, { status: 'confirmed' });
       await loadData(selectedCustomer.id);
       showMessage('Đã xác nhận khách đặt mẫu. Nút xuất ZIP đã được mở.');
     } catch (confirmError) {
@@ -445,9 +454,22 @@ export function AdminDashboardPage() {
 
   const expireDemo = async (demo: InvitationDemoRecord) => {
     if (!session) return;
+    const reopening = demo.status === 'expired';
+    const now = Date.now();
+    const needsNewExpiry = reopening && demo.expiresAt && Date.parse(demo.expiresAt) <= now;
+    const newExpiry = demoExpiry ? new Date(`${demoExpiry}T23:59:59`) : null;
+    if (needsNewExpiry && (!newExpiry || !(newExpiry.getTime() > now))) {
+      setError('Link đã quá hạn. Hãy chọn ngày hết hạn mới trong phần tạo demo rồi mở lại link.');
+      return;
+    }
+    setError('');
     setActionLoading(`expire:${demo.id}`);
     try {
-      await updateDemo(session, demo.id, { status: demo.status === 'expired' ? 'published' : 'expired' });
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateDemo(activeSession, demo.id, {
+        status: reopening ? 'published' : 'expired',
+        ...(needsNewExpiry && newExpiry ? { expiresAt: newExpiry.toISOString() } : {}),
+      });
       await loadData(selectedCustomerId ?? undefined);
       showMessage(demo.status === 'expired' ? 'Đã mở lại link demo.' : 'Đã khóa link demo.');
     } catch (demoError) {
@@ -460,7 +482,7 @@ export function AdminDashboardPage() {
     setActionLoading(`export:${demo.id}`);
     setError('');
     try {
-      const activeSession = await refreshAdminSession(session);
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
       const response = await fetch('/api/export-invitation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${activeSession.accessToken}` },

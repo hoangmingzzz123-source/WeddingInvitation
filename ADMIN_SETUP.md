@@ -51,21 +51,16 @@ Thêm các biến môi trường cho Production và Preview:
 
 - `/admin` không được liên kết từ website công khai, nhưng bảo mật thật nằm ở Auth + RLS.
 - Bảng khách hàng và demo không cấp quyền trực tiếp cho `anon`.
-- Preview công khai chỉ đọc qua RPC bằng token và chỉ khi còn hiệu lực.
+- Preview công khai chỉ đọc qua API bằng token và chỉ khi còn hiệu lực.
 - Secret key chỉ tồn tại ở Vercel.
 
 ## 6. Triển khai upload ảnh bằng Supabase
 
-1. Áp dụng `202611030001_customer_photos_drive.sql` và `202611030002_customer_photo_abuse_limits.sql` sau migration CRM. Kiểm tra giới hạn Storage toàn dự án đủ cho ảnh gốc 15 MiB và ZIP tối đa 32 MiB.
+1. Áp dụng `202611030001_customer_photos_drive.sql` , `202611030002_customer_photo_abuse_limits.sql` và `202611030003_secure_customer_workflows.sql` sau migration CRM. Kiểm tra giới hạn Storage toàn dự án đủ cho ảnh gốc 15 MiB và ZIP tối đa 32 MiB.
 2. Cấu hình các biến Supabase theo `.env.example` trên Vercel. Bật `PUBLIC_UPLOAD_ENABLED=true` và `VITE_PUBLIC_UPLOAD_ENABLED=true`, rồi deploy lại để Vite đọc biến mới. Giữ `GOOGLE_DRIVE_ENABLED=false` nếu chỉ lưu trên Supabase.
 3. Server cấp mã xác minh có chữ ký, dùng trong 5 phút và có thể gửi sau 1,5 giây. Server kiểm tra nguồn gửi từ trình duyệt và trường bẫy bot. PostgreSQL giới hạn 8 phiên mới mỗi IP và 4 phiên mới mỗi số điện thoại chuẩn hóa trong một giờ. Giới hạn toàn site mặc định 60 phiên mỗi giờ, chỉnh bằng `UPLOAD_LIMIT_PER_HOUR` (1–500). Thử lại phiên đã tạo dùng cùng mã phiên. Tùy chọn đặt `UPLOAD_ABUSE_SECRET` ổn định ở server để giữ các bộ đếm qua lần đổi khóa Supabase.
 4. Chạy thử 5 ảnh, có một ảnh trên 6 MiB. Kiểm tra mã yêu cầu, chọn cover/album, link đã hết hạn và ZIP mở offline.
-5. Khi bật upload bắt buộc ở production, thu hồi quyền gọi trực tiếp RPC form cũ từ khách bằng lệnh dưới đây. Khi rollback, tắt hai cờ upload, deploy lại frontend, rồi cấp lại `EXECUTE` cho hai role này.
-
-```sql
-revoke execute on function public.submit_customer_request(text,text,text,text,text,date,time,text,text,text,text,text)
-  from anon, authenticated;
-```
+5. Migration bảo mật thu hồi quyền gọi trực tiếp RPC gửi yêu cầu và xem demo cũ. Triển khai frontend/API mới cùng đợt với migration. Nếu tắt upload, khách vẫn gửi được yêu cầu không ảnh qua API và dùng chung giới hạn chống spam. Điền đầy đủ biến Supabase phía server cho cả hai chế độ.
 
 ### Tùy chọn đồng bộ Drive hoặc thu gom phiên bỏ dở
 

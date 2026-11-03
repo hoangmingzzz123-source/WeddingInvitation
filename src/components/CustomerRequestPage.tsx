@@ -2,14 +2,20 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, CheckCircle2, LoaderCircle, Send, ShieldCheck } from 'lucide-react';
 import { navigateTo } from '../Router';
 import { weddingTemplates } from '../data/templates';
-import { isSupabaseConfigured, submitCustomerRequest, SupabaseRequestError } from '../lib/supabaseRest';
+import { isSupabaseConfigured, SupabaseRequestError } from '../lib/supabaseRest';
 import { CustomerPhotoUploader } from './CustomerPhotoUploader';
-import { clearUploadDraft, mediaRequest, newUploadIdentity, photoUploadEnabled, readUploadDraft, saveUploadDraft, uploadPhoto, type SavedPhotoUpload, type SelectedPhoto, type UploadReceipt, type UploadResult } from '../lib/customerPhotoUpload';
+import { clearUploadDraft, mediaRequest, newUploadIdentity, photoUploadEnabled, readUploadDraft, saveUploadDraft, uploadPhoto, type SavedPhotoUpload, type SelectedPhoto, type UploadIdentity, type UploadReceipt, type UploadResult } from '../lib/customerPhotoUpload';
 
 const initialForm = {
   fullName: '', email: '', phone: '', brideName: '', groomName: '', weddingDate: '', weddingTime: '18:00',
   venue: '', address: '', message: '', selectedTemplateId: '', coverUrl: '', company: '',
 };
+
+async function getRequestChallenge(identity: UploadIdentity) {
+  const { challenge, waitMs } = await mediaRequest<{ challenge: string; waitMs: number }>('challenge', identity);
+  await new Promise((resolve) => window.setTimeout(resolve, waitMs));
+  return challenge;
+}
 
 export function CustomerRequestPage() {
   const defaultTemplate = useMemo(() => new URLSearchParams(window.location.search).get('template') ?? '', []);
@@ -27,6 +33,7 @@ export function CustomerRequestPage() {
   const [receipt, setReceipt] = useState<UploadReceipt>();
   const [processing, setProcessing] = useState(false);
   const busy = useRef(false);
+  const contactIdentity = useRef<UploadIdentity>();
   useEffect(() => {
     if (!photoUploadEnabled) return;
     let active = true;
@@ -44,7 +51,10 @@ export function CustomerRequestPage() {
 
   useEffect(() => { document.title = 'Gửi yêu cầu làm thiệp | Wedding Invitation MP'; }, []);
 
-  const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
+  const update = (key: keyof typeof form, value: string) => {
+    contactIdentity.current = undefined;
+    setForm((current) => ({ ...current, [key]: value }));
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -68,8 +78,7 @@ export function CustomerRequestPage() {
         };
         setDraft(current);
         await saveUploadDraft(current).catch(() => {});
-        const { challenge, waitMs } = await mediaRequest<{ challenge: string; waitMs: number }>('challenge', current.identity);
-        await new Promise((resolve) => window.setTimeout(resolve, waitMs));
+        const challenge = await getRequestChallenge(current.identity);
         const result = await mediaRequest<UploadResult>('init', {
           ...current.identity, customer: current.form, consent: true, challenge,
           photos: current.photos.map(({ file }, index) => ({
@@ -108,7 +117,10 @@ export function CustomerRequestPage() {
         setReceipt(completed);
         await clearUploadDraft().catch(() => {});
       } else {
-        await submitCustomerRequest(form);
+        const identity = contactIdentity.current ??= newUploadIdentity();
+        const challenge = await getRequestChallenge(identity);
+        const completed = await mediaRequest<UploadReceipt>('contact', { ...identity, customer: form, challenge });
+        setReceipt(completed);
       }
       setSubmitted(true);
     } catch (submitError) {
@@ -133,7 +145,7 @@ export function CustomerRequestPage() {
         <p>Đã gửi yêu cầu</p>
         <h1>Cảm ơn bạn, đội ngũ sẽ liên hệ sớm</h1>
         <span>Thông tin đã được chuyển vào hệ thống quản trị để tạo bản demo phù hợp.</span>
-        {receipt && <span>Đã nhận {receipt.received} ảnh · Mã yêu cầu <strong>{receipt.requestCode}</strong>.</span>}
+        {receipt && <span>{receipt.received > 0 && `Đã nhận ${receipt.received} ảnh · `}Mã yêu cầu <strong>{receipt.requestCode}</strong>.</span>}
         <button type="button" onClick={() => navigateTo('/templates')}>Tiếp tục xem mẫu</button>
       </main>
     );

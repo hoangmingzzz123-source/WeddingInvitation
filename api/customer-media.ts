@@ -39,7 +39,6 @@ function uploadIp(request: Request) {
 }
 
 function checkUploadRequest(request: Request) {
-  if (!flag('PUBLIC_UPLOAD_ENABLED')) throw new MediaError(503, 'Tính năng tải ảnh chưa được bật.');
   const origin = request.headers.get('origin');
   const site = request.headers.get('sec-fetch-site');
   if ((origin && origin !== new URL(request.url).origin) || (site && site !== 'same-origin' && site !== 'none')) {
@@ -86,10 +85,11 @@ async function customer(id: string) {
   return row;
 }
 
-async function init(request: Request, body: Record<string, unknown>) {
+async function init(request: Request, body: Record<string, unknown>, withPhotos: boolean) {
   const { id, token } = uploadIdentity(body);
   const raw = body.customer as Record<string, unknown> | undefined;
-  if (!raw || raw.company || body.consent !== true) throw new MediaError(400, 'Vui lòng xác nhận đồng ý sử dụng ảnh.');
+  if (!raw || typeof raw !== 'object' || raw.company) throw new MediaError(400, 'Thông tin yêu cầu không hợp lệ.');
+  if (withPhotos && body.consent !== true) throw new MediaError(400, 'Vui lòng xác nhận đồng ý sử dụng ảnh.');
   const limits = { fullName: 120, email: 180, phone: 30, brideName: 80, groomName: 80, weddingDate: 10,
     weddingTime: 5, venue: 180, address: 300, message: 1000, selectedTemplateId: 100 };
   const fields = Object.fromEntries(Object.entries(limits).map(([key, limit]) => [key, clean(raw[key], limit)]));
@@ -103,11 +103,12 @@ async function init(request: Request, body: Record<string, unknown>) {
     || (fields.weddingTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(fields.weddingTime))) {
     throw new MediaError(400, 'Thông tin liên hệ hoặc ngày giờ cưới chưa hợp lệ.');
   }
-  if (!Array.isArray(body.photos) || body.photos.length < 5 || body.photos.length > 7) {
+  const inputPhotos = withPhotos ? body.photos : [];
+  if (!Array.isArray(inputPhotos) || (withPhotos && (inputPhotos.length < 5 || inputPhotos.length > 7))) {
     throw new MediaError(400, 'Vui lòng chọn từ 5 đến 7 ảnh.');
   }
-  const cover = body.photos.findIndex((photo) => photo?.preferredCover === true);
-  const photos = body.photos.map((photo, order) => {
+  const cover = inputPhotos.findIndex((photo) => photo?.preferredCover === true);
+  const photos = inputPhotos.map((photo, order) => {
     const mime = clean(photo?.mime, 30);
     if (!Object.hasOwn(formats, mime) || !Number.isInteger(photo?.size) || photo.size < 1 || photo.size > 15 * MiB) {
       throw new MediaError(400, 'Chỉ nhận JPEG, PNG, WebP tối đa 15 MiB mỗi ảnh.');
@@ -117,18 +118,22 @@ async function init(request: Request, body: Record<string, unknown>) {
   if (photos.reduce((sum, photo) => sum + photo.size, 0) > 80 * MiB) throw new MediaError(413, 'Tổng dung lượng vượt 80 MiB.');
   verifyChallenge(body, id, token);
   const fingerprint = hash(JSON.stringify([fields, photos]));
+  const args = {
+    p_id: id, p_hash: hash(token), p_fingerprint: fingerprint,
+    p_ip: uploadDigest('ip', uploadIp(request)), p_phone: uploadDigest('phone', fields.phone),
+    p_hourly_limit: hourlyUploadLimit(), p_customer: fields,
+  };
+  if (!withPhotos) {
+    const requestCode = await db<string>('rpc/submit_contact_request', args);
+    return json({ requestCode, received: 0 }, 201);
+  }
   const existing = await session(id, token);
   if (existing && existing.fingerprint !== fingerprint) throw new MediaError(409, 'Thông tin yêu cầu đã thay đổi.');
   if (existing?.completed_at) return json({ requestCode: (await customer(existing.customer_id)).request_code, received: photos.length });
   if (existing && new Date(existing.expires_at) <= new Date()) throw new MediaError(410, 'Phiên tải ảnh đã hết hạn.');
   let customerId = existing?.customer_id;
   if (!customerId) {
-    customerId = await db<string>('rpc/init_photo_request_limited', {
-      p_id: id, p_hash: hash(token), p_fingerprint: fingerprint,
-      p_ip: uploadDigest('ip', uploadIp(request)), p_phone: uploadDigest('phone', fields.phone),
-      p_hourly_limit: hourlyUploadLimit(),
-      p_customer: fields, p_photos: photos,
-    });
+    customerId = await db<string>('rpc/init_photo_request_limited', { ...args, p_photos: photos });
   }
   const uploads = await Promise.all((await photosFor(customerId)).map(async (photo) => {
     const response = await supabase(`/storage/v1/object/upload/sign/${ORIGINALS}/${photo.original_storage_path}`, {
@@ -206,13 +211,16 @@ async function publicDemo(token: string) {
   if (!demo || (demo.expires_at && new Date(demo.expires_at) <= new Date())) {
     throw new MediaError(404, 'Link demo không tồn tại hoặc đã hết hạn.');
   }
-  const { customer_id, payload, ...details } = demo;
+  const { customer_id, payload: storedPayload, ...details } = demo;
+  const payload = storedPayload ?? {};
   const selected = await selectedPhotos(customer_id, payload.photos ?? []);
   const ttl = demo.expires_at ? Math.max(1, Math.min(900, Math.floor((Date.parse(demo.expires_at) - Date.now()) / 1000))) : 900;
   const photos = await Promise.all(selected.map(async ({ ref, path }) => ({
     ...ref, url: await signAsset(ASSETS, path, ttl),
   })));
-  return json({ ...details, payload: { ...payload, photos } });
+  const publicFields = ['brideName', 'groomName', 'weddingDate', 'weddingTime', 'venue', 'address', 'message', 'coverUrl'];
+  const invitation = Object.fromEntries(publicFields.map((key) => [key, String(payload[key] ?? (key === 'weddingTime' ? '18:00' : ''))]));
+  return json({ ...details, payload: { ...invitation, photos } });
 }
 
 export default {
@@ -230,8 +238,11 @@ export default {
         return json({ ok: true });
       }
       if (request.method !== 'POST') throw new MediaError(405, 'Phương thức không hợp lệ.');
-      if (action === 'challenge' || action === 'init' || action === 'complete' || action === 'status') {
+      if (['challenge', 'init', 'complete', 'status', 'contact'].includes(action ?? '')) {
         checkUploadRequest(request);
+        const uploads = flag('PUBLIC_UPLOAD_ENABLED');
+        if (action === 'init' && !uploads) throw new MediaError(503, 'Tính năng tải ảnh chưa được bật.');
+        if (action === 'contact' && uploads) throw new MediaError(403, 'Vui lòng gửi yêu cầu kèm ảnh.');
       }
       const raw = await request.text();
       if (raw.length > 32_768) throw new MediaError(413, 'Dữ liệu yêu cầu quá lớn.');
@@ -243,7 +254,7 @@ export default {
         const timestamp = Date.now();
         return json({ challenge: timestamp + '.' + uploadChallenge(id, token, timestamp), waitMs: challengeDelay });
       }
-      if (action === 'init') return await init(request, body);
+      if (action === 'init' || action === 'contact') return await init(request, body, action === 'init');
       if (action === 'complete' || action === 'status') {
         const { id, token } = uploadIdentity(body);
         if (action === 'complete') return await complete(id, token);

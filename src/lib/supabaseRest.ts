@@ -169,7 +169,8 @@ export function readAuthCallbackSession(): AuthCallbackSession {
   const expiresAt = Number(hash.get('expires_at') ?? 0) * 1000
     || Date.now() + expiresIn * 1000;
 
-  if (!accessToken || !refreshToken) {
+  const type = hash.get('type') ?? query.get('type') ?? '';
+  if (!accessToken || !refreshToken || !['invite', 'recovery'].includes(type) || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
     throw new SupabaseRequestError(
       'Liên kết đặt mật khẩu không hợp lệ hoặc đã hết hạn. Hãy yêu cầu gửi lại email.',
       401,
@@ -180,7 +181,7 @@ export function readAuthCallbackSession(): AuthCallbackSession {
     accessToken,
     refreshToken,
     expiresAt,
-    type: hash.get('type') ?? query.get('type') ?? '',
+    type,
   };
 }
 
@@ -386,70 +387,15 @@ export async function updateDemo(
 }
 
 export async function getPublicDemo(token: string): Promise<PublicInvitationDemo> {
-  const result = await request<JsonRecord | null>('/rest/v1/rpc/get_public_demo', {
-    method: 'POST',
-    body: JSON.stringify({ p_token: token }),
+  const response = await fetch('/api/customer-media?action=demo', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }),
   });
-  if (!result) throw new SupabaseRequestError('Link demo không tồn tại hoặc đã hết hạn.', 404);
-  const payload = (result.payload ?? {}) as Partial<InvitationPayload>;
-  if (Array.isArray(payload.photos) && payload.photos.length) {
-    const response = await fetch('/api/customer-media?action=demo', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }),
-    });
-    const resolved = await response.json().catch(() => null);
-    if (!response.ok || !resolved?.payload) throw new SupabaseRequestError(resolved?.message ?? 'Không thể tải ảnh demo.', response.status);
-    return {
-      id: String(resolved.id), templateId: String(resolved.template_id), note: String(resolved.note ?? ''),
-      expiresAt: resolved.expires_at ?? null, payload: resolved.payload,
-    };
+  const demo = await response.json().catch(() => null);
+  if (!response.ok || !demo?.payload) {
+    throw new SupabaseRequestError(demo?.message ?? 'Không thể mở bản demo.', response.status);
   }
   return {
-    id: String(result.id),
-    templateId: String(result.template_id),
-    note: String(result.note ?? ''),
-    expiresAt: result.expires_at ? String(result.expires_at) : null,
-    payload: {
-      brideName: String(payload.brideName ?? ''),
-      groomName: String(payload.groomName ?? ''),
-      weddingDate: String(payload.weddingDate ?? ''),
-      weddingTime: String(payload.weddingTime ?? '18:00'),
-      venue: String(payload.venue ?? ''),
-      address: String(payload.address ?? ''),
-      message: String(payload.message ?? ''),
-      coverUrl: String(payload.coverUrl ?? ''),
-    },
+    id: String(demo.id), templateId: String(demo.template_id), note: String(demo.note ?? ''),
+    expiresAt: demo.expires_at ?? null, payload: demo.payload,
   };
-}
-
-export async function submitCustomerRequest(data: {
-  fullName: string;
-  email: string;
-  phone: string;
-  brideName: string;
-  groomName: string;
-  weddingDate: string;
-  weddingTime: string;
-  venue: string;
-  address: string;
-  message: string;
-  selectedTemplateId: string;
-  coverUrl: string;
-}) {
-  return request<{ id: string }>('/rest/v1/rpc/submit_customer_request', {
-    method: 'POST',
-    body: JSON.stringify({
-      p_full_name: data.fullName,
-      p_email: data.email || null,
-      p_phone: data.phone,
-      p_bride_name: data.brideName,
-      p_groom_name: data.groomName,
-      p_wedding_date: data.weddingDate || null,
-      p_wedding_time: data.weddingTime || null,
-      p_venue: data.venue,
-      p_address: data.address,
-      p_message: data.message,
-      p_selected_template_id: data.selectedTemplateId || null,
-      p_cover_url: data.coverUrl || null,
-    }),
-  });
 }

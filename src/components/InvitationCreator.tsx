@@ -279,9 +279,19 @@ function normalizeDraft(value: Partial<InvitationDraft> | null | undefined): Inv
     ? value!.cover!
     : isUploadedImage(value?.cover) ? value!.cover! : defaultDraft.cover;
   const coverChars = cover.startsWith('data:image/') ? cover.length : 0;
+  const text = (key: 'brideName' | 'groomName' | 'weddingDate' | 'weddingTime' | 'venue' | 'address' | 'message', max: number) => {
+    const field = value?.[key];
+    return typeof field === 'string' ? field.slice(0, max) : defaultDraft[key];
+  };
   return {
     ...defaultDraft,
-    ...value,
+    brideName: text('brideName', 120),
+    groomName: text('groomName', 120),
+    weddingDate: text('weddingDate', 10),
+    weddingTime: text('weddingTime', 5),
+    venue: text('venue', 180),
+    address: text('address', 300),
+    message: text('message', 1000),
     id: typeof value?.id === 'string' && value.id ? value.id : createId('wedding'),
     templateId: editableTemplates.some((template) => template.id === templateId)
       ? templateId!
