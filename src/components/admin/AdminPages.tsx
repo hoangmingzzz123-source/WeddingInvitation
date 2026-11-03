@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Archive,
   ArrowLeft,
@@ -48,10 +48,12 @@ import {
   type AdminSession,
   type CustomerRecord,
   type CustomerStatus,
+  type DemoPhoto,
   type InvitationDemoRecord,
 } from '../../types/admin';
 import type { AuthCallbackSession } from '../../lib/supabaseRest';
 import { CustomerInvitationPreview } from '../CustomerInvitationPreview';
+import { CustomerPhotoLibrary } from './CustomerPhotoLibrary';
 
 const customerStatuses = Object.keys(customerStatusLabels) as CustomerStatus[];
 
@@ -266,8 +268,12 @@ export function AdminDashboardPage() {
     const nextWeek = new Date(Date.now() + 7 * 86_400_000);
     return nextWeek.toISOString().slice(0, 10);
   });
+  const [mediaSelection, setMediaSelection] = useState<{ customerId: string; photos: DemoPhoto[] }>();
+  const publishAttempt = useRef<{ fingerprint: string; id: string }>();
+  const publishing = useRef(false);
 
   const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? null;
+  const demoPhotos = mediaSelection?.customerId === selectedCustomerId ? mediaSelection.photos : [];
   const customerDemos = demos.filter((demo) => demo.customerId === selectedCustomerId);
 
   const loadData = useCallback(async (preferredCustomerId?: string) => {
@@ -366,11 +372,16 @@ export function AdminDashboardPage() {
   };
 
   const publishDemo = async () => {
-    if (!session || !selectedCustomer) return;
+    if (!session || !selectedCustomer || publishing.current) return;
     if (!editor.selectedTemplateId) {
       setError('Hãy chọn mẫu thiệp trước khi tạo demo.');
       return;
     }
+    if (demoPhotos.length && !demoPhotos.some((photo) => photo.role === 'cover')) {
+      setError('Hãy chọn một ảnh bìa cho demo.');
+      return;
+    }
+    publishing.current = true;
     setActionLoading('demo');
     setError('');
     try {
@@ -378,7 +389,7 @@ export function AdminDashboardPage() {
         await updateCustomer(session, selectedCustomer.id, editor);
       }
       const expiresAt = demoExpiry ? new Date(`${demoExpiry}T23:59:59`).toISOString() : null;
-      const demo = await createDemo(session, {
+      const input = {
         customerId: selectedCustomer.id,
         templateId: editor.selectedTemplateId,
         note: demoNote,
@@ -392,15 +403,25 @@ export function AdminDashboardPage() {
           address: editor.address,
           message: editor.message,
           coverUrl: editor.coverUrl,
+          ...(demoPhotos.length ? { photos: demoPhotos.map(({ url: _url, ...photo }) => photo) } : {}),
         },
-      });
-      await updateCustomer(session, selectedCustomer.id, { status: 'demo_ready', selectedTemplateId: editor.selectedTemplateId });
+      };
+      const fingerprint = JSON.stringify(input);
+      if (publishAttempt.current?.fingerprint !== fingerprint) {
+        publishAttempt.current = { fingerprint, id: crypto.randomUUID() };
+      }
+      const demo = await createDemo(session, { ...input, id: publishAttempt.current.id });
+      if (!['confirmed', 'completed'].includes(editor.status)) {
+        await updateCustomer(session, selectedCustomer.id, { status: 'demo_ready', selectedTemplateId: editor.selectedTemplateId });
+      }
       await loadData(selectedCustomer.id);
       await copyPreviewLink(demo.publicToken);
       showMessage('Đã tạo demo và sao chép link preview.');
+      publishAttempt.current = undefined;
     } catch (demoError) {
       setError(demoError instanceof Error ? demoError.message : 'Không thể tạo demo.');
     } finally {
+      publishing.current = false;
       setActionLoading('');
     }
   };
@@ -449,14 +470,14 @@ export function AdminDashboardPage() {
         const payload = await response.json().catch(() => ({ message: 'Không thể xuất file ZIP.' }));
         throw new Error(payload.message || 'Không thể xuất file ZIP.');
       }
-      const blob = await response.blob();
-      const href = URL.createObjectURL(blob);
+      const fromStorage = response.headers.get('content-type')?.includes('application/json');
+      const href = fromStorage ? (await response.json() as { downloadUrl: string }).downloadUrl : URL.createObjectURL(await response.blob());
       const link = document.createElement('a');
       link.href = href;
       link.download = `thiep-cuoi-${selectedCustomer.brideName}-${selectedCustomer.groomName}.zip`
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9.-]+/g, '-').toLowerCase();
       link.click();
-      URL.revokeObjectURL(href);
+      if (!fromStorage) window.setTimeout(() => URL.revokeObjectURL(href), 30_000);
       await loadData(selectedCustomer.id);
       showMessage('Đã xuất source code thiệp cưới thành file ZIP.');
     } catch (exportError) {
@@ -594,6 +615,9 @@ export function AdminDashboardPage() {
         {selectedCustomer && !isNewCustomer && (
           <section className="admin-demo-panel">
             <div className="admin-panel-heading"><div><p>Demo Studio</p><h2>Tạo và quản lý link preview</h2></div><span>{customerDemos.length} demo</span></div>
+            {session && <CustomerPhotoLibrary key={selectedCustomer.id} customerId={selectedCustomer.id}
+              accessToken={session.accessToken} selection={demoPhotos} disabled={actionLoading === 'demo'}
+              onSelect={(photos) => setMediaSelection({ customerId: selectedCustomer.id, photos })} />}
             <div className="admin-demo-builder">
               <div className="admin-demo-preview">
                 <CustomerInvitationPreview
@@ -602,7 +626,7 @@ export function AdminDashboardPage() {
                   payload={{
                     brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
                     weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
-                    message: editor.message, coverUrl: editor.coverUrl,
+                    message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos,
                   }}
                 />
               </div>

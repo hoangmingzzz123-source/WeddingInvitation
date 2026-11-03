@@ -1,7 +1,17 @@
 import { CalendarDays, Heart, MapPin, Sparkles } from 'lucide-react';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { weddingTemplates } from '../data/templates';
 import type { InvitationPayload } from '../types/admin';
+import { PhotoLightbox } from './admin/CustomerPhotoLibrary';
+
+const safeCoverUrl = (value: string) => {
+  if (value.startsWith('/') && !value.startsWith('//')) return value;
+  try {
+    const url = new URL(value);
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+  } catch { return ''; }
+};
+const focal = (value?: number) => (Number.isFinite(value) ? Math.max(0, Math.min(1, value!)) : 0.5) * 100 + '%';
 
 interface TemplateVisual {
   accent: string;
@@ -68,7 +78,10 @@ export function CustomerInvitationPreview({
 }) {
   const template = weddingTemplates.find((item) => item.id === templateId);
   const visual = getTemplateVisual(templateId);
-  const coverUrl = payload.coverUrl || template?.thumbnail || '';
+  const [openPhoto, setOpenPhoto] = useState<{ url: string; alt: string }>();
+  const cover = payload.photos?.find((photo) => photo.role === 'cover' && photo.url);
+  const gallery = (payload.photos ?? []).filter((photo) => photo.role === 'gallery' && photo.url).sort((a, b) => a.order - b.order);
+  const coverUrl = safeCoverUrl(cover?.url || payload.coverUrl || '') || template?.thumbnail || '';
   const style = {
     '--customer-accent': visual.accent,
     '--customer-accent-soft': visual.accentSoft,
@@ -79,7 +92,10 @@ export function CustomerInvitationPreview({
 
   return (
     <article className={`customer-invitation${compact ? ' is-compact' : ''}`} style={style}>
-      <section className="customer-invitation__hero" style={{ backgroundImage: `url("${coverUrl}")` }}>
+      <section className="customer-invitation__hero" style={{
+        backgroundImage: `url("${coverUrl.replace(/["\\\n\r]/g, encodeURIComponent)}")`,
+        ...(cover ? { backgroundPosition: `${focal(cover.focalX)} ${focal(cover.focalY)}` } : {}),
+      }}>
         <div className="customer-invitation__shade" />
         <div className="customer-invitation__hero-content">
           <span className="customer-invitation__kicker"><Sparkles aria-hidden="true" /> Wedding invitation</span>
@@ -91,6 +107,20 @@ export function CustomerInvitationPreview({
           <time>{formatWeddingDate(payload.weddingDate)}</time>
         </div>
       </section>
+      {!!gallery.length && <section className="customer-invitation__album" aria-label="Album kỷ niệm">
+        <h2>Album kỷ niệm</h2>
+        <div className="customer-media__grid">
+          {gallery.map((photo, index) => {
+            const alt = photo.alt || `Ảnh cưới ${index + 1}`;
+            return <button type="button" className="customer-media__image-button" key={photo.photoId}
+              onClick={() => setOpenPhoto({ url: photo.url!, alt })} aria-label={`Mở ${alt}`}>
+              <img src={photo.url} alt={alt} loading="lazy" referrerPolicy="no-referrer"
+                style={{ objectPosition: `${focal(photo.focalX)} ${focal(photo.focalY)}` }} />
+            </button>;
+          })}
+        </div>
+        {openPhoto && <PhotoLightbox {...openPhoto} onClose={() => setOpenPhoto(undefined)} />}
+      </section>}
 
       <section className="customer-invitation__details">
         <p className="customer-invitation__mood">{visual.mood}</p>

@@ -1,0 +1,61 @@
+.customer-media {
+  min-width: 0;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #cfc4b5;
+  border-radius: 1rem;
+}
+.customer-media p, .customer-media__privacy { margin-block: .75rem; }
+.customer-media__drop {
+  display: grid;
+  gap: .5rem;
+  padding: 1rem;
+  border: 1px dashed #a89275;
+  border-radius: .75rem;
+}
+.customer-media__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .75rem;
+}
+.customer-media__card { display: grid; min-width: 0; align-content: start; gap: .35rem; }
+.customer-media__card strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.customer-media__card img, .customer-media__image-button img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: .5rem;
+}
+.customer-media__image-button { padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+.customer-media__actions { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; margin-block: .25rem; }
+.customer-media__actions button, .request-form .customer-media__actions button {
+  min-height: 44px;
+  width: auto;
+  padding: .35rem .65rem;
+  border: 1px solid #b4a390;
+  border-radius: .5rem;
+  background: #faf7f1;
+  color: #342e27;
+}
+.customer-media__actions button[aria-pressed="true"] { background: #29493e; color: white; }
+.customer-media__actions button:disabled { opacity: .5; }
+.request-form .customer-media__consent { display: flex; gap: .65rem; align-items: flex-start; margin-block: .75rem; }
+.request-form .customer-media__consent input, .request-form .customer-media input[type="radio"] { width: 1.15rem; min-height: 1.15rem; flex: 0 0 auto; }
+.customer-media__consent a, .customer-media__actions a { text-decoration: underline; }
+.customer-media__lightbox {
+  max-width: min(90vw, 960px);
+  max-height: 90dvh;
+  margin: auto;
+  padding: .75rem;
+  border: 0;
+  border-radius: .75rem;
+}
+.customer-media__lightbox::backdrop { background: rgb(0 0 0 / .7); }
+.customer-media__lightbox img { display: block; max-height: 76dvh; max-width: 100%; object-fit: contain; }
+.customer-invitation__album { padding: clamp(1rem, 4vw, 3rem); }
+.customer-invitation__album h2 { margin-bottom: 1rem; font-family: var(--customer-heading); }
+.customer-media :focus-visible, .customer-invitation__album :focus-visible { outline: 2px solid #a67631; outline-offset: 3px; }
+@media (max-width: 700px) {
+  .customer-media__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

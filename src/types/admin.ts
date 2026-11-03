@@ -2,6 +2,16 @@ export type CustomerStatus = 'new' | 'contacted' | 'demo_ready' | 'confirmed' | 
 
 export type DemoStatus = 'draft' | 'published' | 'expired';
 
+export interface DemoPhoto {
+  photoId: string;
+  role: 'cover' | 'gallery';
+  order: number;
+  focalX?: number;
+  focalY?: number;
+  alt?: string;
+  url?: string;
+}
+
 export interface InvitationPayload {
   brideName: string;
   groomName: string;
@@ -11,6 +21,7 @@ export interface InvitationPayload {
   address: string;
   message: string;
   coverUrl: string;
+  photos?: DemoPhoto[];
 }
 
 export interface CustomerRecord extends InvitationPayload {
