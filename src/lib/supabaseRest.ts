@@ -268,7 +268,7 @@ export async function listCustomers(session: AdminSession) {
     '/rest/v1/customers?select=*&order=created_at.desc',
     { token: session.accessToken },
   );
-  return rows.map(toCamelCustomer);
+  return rows.filter((row) => !['uploading', 'abandoned'].includes(String(row.photo_sync_status))).map(toCamelCustomer);
 }
 
 export async function createCustomer(
@@ -341,13 +341,14 @@ export async function listDemos(session: AdminSession, customerId?: string) {
 
 export async function createDemo(
   session: AdminSession,
-  data: { customerId: string; templateId: string; note: string; expiresAt: string | null; payload: InvitationPayload },
+  data: { id?: string; customerId: string; templateId: string; note: string; expiresAt: string | null; payload: InvitationPayload },
 ) {
   const rows = await request<JsonRecord[]>('/rest/v1/invitation_demos', {
     method: 'POST',
     token: session.accessToken,
-    prefer: 'return=representation',
+    prefer: 'resolution=ignore-duplicates,return=representation',
     body: JSON.stringify({
+      ...(data.id ? { id: data.id } : {}),
       customer_id: data.customerId,
       template_id: data.templateId,
       status: 'published',
@@ -356,7 +357,12 @@ export async function createDemo(
       payload: data.payload,
     }),
   });
-  return toCamelDemo(rows[0]);
+  if (rows[0]) return toCamelDemo(rows[0]);
+  const existing = await request<JsonRecord[]>(`/rest/v1/invitation_demos?id=eq.${encodeURIComponent(data.id ?? '')}&customer_id=eq.${encodeURIComponent(data.customerId)}`, {
+    token: session.accessToken,
+  });
+  if (!existing[0]) throw new Error('Không tìm thấy demo đã tạo.');
+  return toCamelDemo(existing[0]);
 }
 
 export async function updateDemo(
@@ -386,6 +392,17 @@ export async function getPublicDemo(token: string): Promise<PublicInvitationDemo
   });
   if (!result) throw new SupabaseRequestError('Link demo không tồn tại hoặc đã hết hạn.', 404);
   const payload = (result.payload ?? {}) as Partial<InvitationPayload>;
+  if (Array.isArray(payload.photos) && payload.photos.length) {
+    const response = await fetch('/api/customer-media?action=demo', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }),
+    });
+    const resolved = await response.json().catch(() => null);
+    if (!response.ok || !resolved?.payload) throw new SupabaseRequestError(resolved?.message ?? 'Không thể tải ảnh demo.', response.status);
+    return {
+      id: String(resolved.id), templateId: String(resolved.template_id), note: String(resolved.note ?? ''),
+      expiresAt: resolved.expires_at ?? null, payload: resolved.payload,
+    };
+  }
   return {
     id: String(result.id),
     templateId: String(result.template_id),

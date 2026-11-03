@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "outputDirectory": "build",
+  "functions": {
+    "api/customer-media.ts": { "maxDuration": 300 },
+    "api/export-invitation.ts": { "maxDuration": 120 }
+  },
   "headers": [
     {
       "source": "/(.*)",
