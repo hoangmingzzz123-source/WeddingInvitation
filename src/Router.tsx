@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
-import { weddingTemplates } from './data/templates';
+import { REAL_WEDDING_TEMPLATE_ID, REAL_WEDDING_URL, weddingTemplates } from './data/templates';
 
 const productionUrl = 'https://wedding-invitation-mp.vercel.app';
 
@@ -26,6 +26,19 @@ function RouteLoader() {
       <span />
       <p>Đang mở mẫu thiệp...</p>
     </div>
+  );
+}
+
+function RealWeddingRedirect() {
+  useEffect(() => {
+    window.location.replace(REAL_WEDDING_URL);
+  }, []);
+
+  return (
+    <main className="route-loader">
+      <p>Đang mở thiệp Hà Phương &amp; Hoàng Minh...</p>
+      <a href={REAL_WEDDING_URL}>Mở website thiệp cưới</a>
+    </main>
   );
 }
 
@@ -113,7 +126,10 @@ export function Router() {
   const routes: Record<string, ReactNode> = {
     '/': <HomePage />,
     '/templates': <TemplatesPage />,
-    '/tao-thiep': <InvitationCreatorPage />,
+    '/tao-thiep': new URLSearchParams(window.location.search).get('template') === REAL_WEDDING_TEMPLATE_ID
+      ? <RealWeddingRedirect />
+      : <InvitationCreatorPage />,
+    '/demo/ha-phuong-hoang-minh-2026': <RealWeddingRedirect />,
     '/tao-thiep/live': <LiveInvitationPreviewPage />,
     '/tao-thiep/preview': <GeneratedInvitationPage />,
     '/yeu-cau-thiep': <CustomerRequestPage />,

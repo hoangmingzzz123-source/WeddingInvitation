@@ -55,7 +55,7 @@ export function TemplateGallery() {
           <h2 id="home-gallery-title">Mỗi mẫu là một thế giới riêng</h2>
           <span>
             Những thiết kế nổi bật nhất được chọn từ thư viện: điện ảnh, truyền thống Việt,
-            màu nước và cả nét vẽ tay. Tất cả đều tạo thiệp trực tiếp từ đúng mẫu đang xem.
+            màu nước và cả nét vẽ tay. Xem thiệp thực tế hoặc cá nhân hóa các mẫu demo ngay trong Studio.
           </span>
         </motion.div>
 

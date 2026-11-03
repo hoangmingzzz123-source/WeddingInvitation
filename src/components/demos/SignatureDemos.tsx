@@ -107,9 +107,9 @@ const demos: Record<string, SignatureDemoContent> = {
     story: 'Từ một lời chào thân quen, chúng mình đã cùng đi qua những mùa thương nhớ. Nay xin gửi thiệp hồng, kính mời gia đình và bạn bè cùng nâng chén trà, chia sẻ niềm vui trong ngày hai nhà sum họp.',
     ...photoStory('hoiAn'),
   },
-  'ha-phuong-hoang-minh-2026': {
-    id: 'ha-phuong-hoang-minh-2026', visualStyle: 'verdant-veil', tier: '199k', label: 'VERDANT VEIL · OUR MEMORIES',
-    bride: 'Hà Phương', groom: 'Hoàng Minh', date: '2026-12-20', dateLabel: '20 · 12 · 2026', time: '17:30',
+  'verdant-veil': {
+    id: 'verdant-veil', visualStyle: 'verdant-veil', tier: '199k', label: 'VERDANT VEIL · OUR MEMORIES',
+    bride: 'Minh Thư', groom: 'Quang Anh', date: '2027-12-20', dateLabel: '20 · 12 · 2027', time: '17:30',
     venue: 'Verdant Garden', address: '12 Đặng Thai Mai, Tây Hồ', city: 'Hà Nội',
     story: 'Từ một lời chào rất khẽ, chúng mình đã đi cùng nhau qua nhiều mùa. Giữa khu vườn xanh và những người thân yêu, chúng mình muốn bắt đầu một chương mới thật bình yên.',
     ...photoStory('garden', 1),
@@ -209,7 +209,7 @@ function fallbackTheme(id: string): VietnamWeddingTheme {
 }
 
 function fallbackStyle(id: string) {
-  if (/ha-phuong-hoang-minh|verdant/.test(id)) return 'verdant-veil';
+  if (/verdant/.test(id)) return 'verdant-veil';
   if (/tui-minh|handdrawn|playful/.test(id)) return 'playful-handdrawn';
   if (/(traditional|song-hy|hy-su|sen-ngoc)/.test(id)) return 'song-hy-contemporary';
   if (/tropical/.test(id)) return 'tropical-sunset';

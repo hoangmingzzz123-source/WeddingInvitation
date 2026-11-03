@@ -1,5 +1,8 @@
 export type TemplateTier = '109k' | '159k' | '199k';
 
+export const REAL_WEDDING_TEMPLATE_ID = 'ha-phuong-hoang-minh-2026';
+export const REAL_WEDDING_URL = 'https://mp-wedding-2026.vercel.app/';
+
 export interface WeddingTemplate {
   id: string;
   name: string;
@@ -26,16 +29,26 @@ const templateDetails: TemplateDetails[] = [
   { id: 'pho-hoi', name: 'Thương Nhau Phố Hội', style: 'Hoi An Nostalgia', description: 'Sắc vàng phố cổ, ảnh cưới hoài niệm và bố cục bưu thiếp thân tình.', route: '/demo/pho-hoi', thumbnailId: 'pho-hoi', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
 
   {
-    id: 'ha-phuong-hoang-minh-2026',
+    id: REAL_WEDDING_TEMPLATE_ID,
     name: 'Hà Phương & Hoàng Minh 2026',
-    style: 'Verdant Veil Editorial',
-    description: 'Màn xanh điện ảnh, typography thanh lịch và trải nghiệm thiệp thực tế có thể cá nhân hóa.',
-    route: '/demo/ha-phuong-hoang-minh-2026',
+    style: 'Cinematic Vietnamese',
+    description: 'Website cưới thực tế của Hà Phương & Hoàng Minh, với trải nghiệm mở thiệp, album, RSVP và âm nhạc.',
+    externalUrl: REAL_WEDDING_URL,
     tier: '199k',
-    features: ['Mở thiệp điện ảnh', 'Album', 'RSVP nâng cao', 'Âm nhạc'],
+    features: ['Mở thiệp tương tác', 'Album', 'RSVP', 'Âm nhạc'],
     featured: true,
     homepageFeatured: true,
     realWedding: true,
+  },
+  {
+    id: 'verdant-veil',
+    name: 'Verdant Veil',
+    style: 'Verdant Veil Editorial',
+    description: 'Màn xanh điện ảnh và typography thanh lịch cho một buổi hẹn giữa khu vườn. Mẫu demo riêng có thể cá nhân hóa trong Studio.',
+    route: '/demo/verdant-veil',
+    tier: '199k',
+    features: ['Mở thiệp điện ảnh', 'Album', 'RSVP nâng cao', 'Âm nhạc'],
+    featured: true,
   },
   {
     id: 'tui-minh-cuoi-roi',
