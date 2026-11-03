@@ -4,7 +4,7 @@ import { navigateTo } from '../Router';
 import { weddingTemplates } from '../data/templates';
 import { isSupabaseConfigured, SupabaseRequestError } from '../lib/supabaseRest';
 import { CustomerPhotoUploader } from './CustomerPhotoUploader';
-import { clearUploadDraft, mediaRequest, newUploadIdentity, photoUploadEnabled, readUploadDraft, saveUploadDraft, uploadPhoto, type SavedPhotoUpload, type SelectedPhoto, type UploadIdentity, type UploadReceipt, type UploadResult } from '../lib/customerPhotoUpload';
+import { clearUploadDraft, mediaRequest, newUploadIdentity, readUploadDraft, saveUploadDraft, uploadPhoto, type SavedPhotoUpload, type SelectedPhoto, type UploadIdentity, type UploadReceipt, type UploadResult } from '../lib/customerPhotoUpload';
 
 const initialForm = {
   fullName: '', email: '', phone: '', brideName: '', groomName: '', weddingDate: '', weddingTime: '18:00',
@@ -28,14 +28,12 @@ export function CustomerRequestPage() {
   const [progress, setProgress] = useState<Record<number, number>>({});
   const [consent, setConsent] = useState(false);
   const [inspecting, setInspecting] = useState(false);
-  const [restoring, setRestoring] = useState(photoUploadEnabled);
+  const [restoring, setRestoring] = useState(true);
   const [draft, setDraft] = useState<SavedPhotoUpload>();
   const [receipt, setReceipt] = useState<UploadReceipt>();
   const [processing, setProcessing] = useState(false);
   const busy = useRef(false);
-  const contactIdentity = useRef<UploadIdentity>();
   useEffect(() => {
-    if (!photoUploadEnabled) return;
     let active = true;
     readUploadDraft().then((saved) => {
       if (!saved || !active) return;
@@ -52,7 +50,6 @@ export function CustomerRequestPage() {
   useEffect(() => { document.title = 'Gửi yêu cầu làm thiệp | Wedding Invitation MP'; }, []);
 
   const update = (key: keyof typeof form, value: string) => {
-    contactIdentity.current = undefined;
     setForm((current) => ({ ...current, [key]: value }));
   };
 
@@ -63,65 +60,58 @@ export function CustomerRequestPage() {
       setError('Vui lòng nhập người liên hệ, số điện thoại và tên cô dâu/chú rể.');
       return;
     }
-    if (photoUploadEnabled && (!consent || photos.length < 5 || photos.length > 7)) {
+    if (!consent || photos.length < 5 || photos.length > 7) {
       setError('Vui lòng chọn 5–7 ảnh và xác nhận đồng ý sử dụng ảnh.');
       return;
     }
     busy.current = true;
     setSubmitting(true);
     setError('');
-    let initializingPhotos = photoUploadEnabled;
+    let initializingPhotos = true;
     try {
-      if (photoUploadEnabled) {
-        let current = draft ?? {
-          identity: newUploadIdentity(), form, photos, cover, completed: [], expiresAt: Date.now() + 24 * 3600_000,
-        };
-        setDraft(current);
-        await saveUploadDraft(current).catch(() => {});
-        const challenge = await getRequestChallenge(current.identity);
-        const result = await mediaRequest<UploadResult>('init', {
-          ...current.identity, customer: current.form, consent: true, challenge,
-          photos: current.photos.map(({ file }, index) => ({
-            filename: file.name, size: file.size, mime: file.type, preferredCover: current.cover === index,
-          })),
-        });
-        initializingPhotos = false;
-        let completed: UploadReceipt;
-        if (result.requestCode) {
-          completed = { requestCode: result.requestCode, received: result.received ?? photos.length };
-        } else {
-          if (!result.uploads || !result.tusEndpoint || result.uploads.length !== photos.length) throw new Error('Phiên tải ảnh chưa đầy đủ.');
-          const slots = result.uploads.filter((slot) => !current.completed.includes(slot.order));
-          let failed = false;
-          for (let start = 0; start < slots.length; start += 2) {
-            const uploaded = await Promise.all(slots.slice(start, start + 2).map(async (slot) => {
-              try {
-                await uploadPhoto(current.photos[slot.order].file, slot, result.tusEndpoint!, (value) => {
-                  setProgress((previous) => ({ ...previous, [slot.order]: value }));
-                });
-                return slot.order;
-              } catch {
-                failed = true;
-                setProgress((previous) => ({ ...previous, [slot.order]: -1 }));
-                return null;
-              }
-            }));
-            current = { ...current, completed: [...current.completed, ...uploaded.filter((index): index is number => index !== null)] };
-            setDraft(current);
-            await saveUploadDraft(current).catch(() => {});
-          }
-          if (failed) throw new Error('Một số ảnh chưa tải xong. Bấm gửi lại để tiếp tục các ảnh còn thiếu.');
-          setProcessing(true);
-          completed = await mediaRequest<UploadReceipt>('complete', current.identity);
-        }
-        setReceipt(completed);
-        await clearUploadDraft().catch(() => {});
+      let current = draft ?? {
+        identity: newUploadIdentity(), form, photos, cover, completed: [], expiresAt: Date.now() + 24 * 3600_000,
+      };
+      setDraft(current);
+      await saveUploadDraft(current).catch(() => {});
+      const challenge = await getRequestChallenge(current.identity);
+      const result = await mediaRequest<UploadResult>('init', {
+        ...current.identity, customer: current.form, consent: true, challenge,
+        photos: current.photos.map(({ file }, index) => ({
+          filename: file.name, size: file.size, mime: file.type, preferredCover: current.cover === index,
+        })),
+      });
+      initializingPhotos = false;
+      let completed: UploadReceipt;
+      if (result.requestCode) {
+        completed = { requestCode: result.requestCode, received: result.received ?? photos.length };
       } else {
-        const identity = contactIdentity.current ??= newUploadIdentity();
-        const challenge = await getRequestChallenge(identity);
-        const completed = await mediaRequest<UploadReceipt>('contact', { ...identity, customer: form, challenge });
-        setReceipt(completed);
+        if (!result.uploads || !result.tusEndpoint || result.uploads.length !== photos.length) throw new Error('Phiên tải ảnh chưa đầy đủ.');
+        const slots = result.uploads.filter((slot) => !current.completed.includes(slot.order));
+        let failed = false;
+        for (let start = 0; start < slots.length; start += 2) {
+          const uploaded = await Promise.all(slots.slice(start, start + 2).map(async (slot) => {
+            try {
+              await uploadPhoto(current.photos[slot.order].file, slot, result.tusEndpoint!, (value) => {
+                setProgress((previous) => ({ ...previous, [slot.order]: value }));
+              });
+              return slot.order;
+            } catch {
+              failed = true;
+              setProgress((previous) => ({ ...previous, [slot.order]: -1 }));
+              return null;
+            }
+          }));
+          current = { ...current, completed: [...current.completed, ...uploaded.filter((index): index is number => index !== null)] };
+          setDraft(current);
+          await saveUploadDraft(current).catch(() => {});
+        }
+        if (failed) throw new Error('Một số ảnh chưa tải xong. Bấm gửi lại để tiếp tục các ảnh còn thiếu.');
+        setProcessing(true);
+        completed = await mediaRequest<UploadReceipt>('complete', current.identity);
       }
+      setReceipt(completed);
+      await clearUploadDraft().catch(() => {});
       setSubmitted(true);
     } catch (submitError) {
       if (submitError instanceof SupabaseRequestError &&
@@ -201,23 +191,21 @@ export function CustomerRequestPage() {
           </div>
         </fieldset>
 
-        {photoUploadEnabled && <>
-          <CustomerPhotoUploader photos={photos} setPhotos={setPhotos} cover={cover} setCover={setCover}
-            progress={progress} frozen={Boolean(draft)} disabled={submitting || restoring} onInspect={setInspecting} />
-          <label className="customer-media__consent">
-            <input type="checkbox" checked={consent} disabled={submitting || Boolean(draft)} onChange={(event) => setConsent(event.target.checked)} />
-            <span>Tôi đồng ý sử dụng ảnh cho yêu cầu thiết kế và bản xem trước. <a href="#photo-privacy">Chính sách bảo mật ảnh</a></span>
-          </label>
-          <details id="photo-privacy" className="customer-media__privacy">
-            <summary>Chính sách bảo mật ảnh</summary>
-            <p>Ảnh, tên và số điện thoại được dùng để xử lý yêu cầu. Ảnh gốc được lưu riêng tư trên Supabase. Khi bật đồng bộ, bản sao được lưu trong Google Drive riêng của Wedding Invitation MP.
-              Quản trị viên xem ảnh trong hồ sơ. Người có link demo chỉ xem được ảnh đã chọn trong thời hạn link.
-              Phiên tải chưa hoàn tất hết hạn sau 24 giờ. Với hồ sơ đã gửi, ảnh được giữ để phục vụ thiết kế và bàn giao.
-              Bạn có thể liên hệ đội ngũ qua thông tin liên hệ của website, kèm mã yêu cầu, để yêu cầu xóa ảnh hoặc thu hồi quyền sử dụng.</p>
-          </details>
-          {processing && <p role="status">Đã tải đủ ảnh. Đang xác thực và chuẩn bị bản xem trước…</p>}
-        </>}
-        <button type="submit" disabled={submitting || inspecting || restoring || !isSupabaseConfigured() || (photoUploadEnabled && (photos.length < 5 || !consent))}>
+        <CustomerPhotoUploader photos={photos} setPhotos={setPhotos} cover={cover} setCover={setCover}
+          progress={progress} frozen={Boolean(draft)} disabled={submitting || restoring} onInspect={setInspecting} />
+        <label className="customer-media__consent">
+          <input type="checkbox" checked={consent} disabled={submitting || Boolean(draft)} onChange={(event) => setConsent(event.target.checked)} />
+          <span>Tôi đồng ý sử dụng ảnh cho yêu cầu thiết kế và bản xem trước. <a href="#photo-privacy">Chính sách bảo mật ảnh</a></span>
+        </label>
+        <details id="photo-privacy" className="customer-media__privacy">
+          <summary>Chính sách bảo mật ảnh</summary>
+          <p>Ảnh, tên và số điện thoại được dùng để xử lý yêu cầu. Ảnh gốc được lưu riêng tư trên Supabase. Khi bật đồng bộ, bản sao được lưu trong Google Drive riêng của Wedding Invitation MP.
+            Quản trị viên xem ảnh trong hồ sơ. Người có link demo chỉ xem được ảnh đã chọn trong thời hạn link.
+            Phiên tải chưa hoàn tất hết hạn sau 24 giờ. Với hồ sơ đã gửi, ảnh được giữ để phục vụ thiết kế và bàn giao.
+            Bạn có thể liên hệ đội ngũ qua thông tin liên hệ của website, kèm mã yêu cầu, để yêu cầu xóa ảnh hoặc thu hồi quyền sử dụng.</p>
+        </details>
+        {processing && <p role="status">Đã tải đủ ảnh. Đang xác thực và chuẩn bị bản xem trước…</p>}
+        <button type="submit" disabled={submitting || inspecting || restoring || !isSupabaseConfigured() || photos.length < 5 || !consent}>
           {submitting ? <LoaderCircle className="is-spinning" aria-hidden="true" /> : <Send aria-hidden="true" />}
           {submitting ? 'Đang gửi...' : draft ? 'Tiếp tục gửi ảnh' : 'Gửi yêu cầu tạo demo'}
         </button>

@@ -289,7 +289,7 @@ export default {
       for (const { ref, path } of selected) {
         const name = ref.role === 'cover' ? 'cover' : `gallery-${String(++galleryIndex).padStart(2, '0')}`;
         const src = `assets/${name}.webp`;
-        const response = await supabase(`/storage/v1/object/${ASSETS}/${path}`);
+        const response = await supabase(`/storage/v1/object/authenticated/${ASSETS}/${path}`);
         binaryFiles.push({ name: src, content: new Uint8Array(await response.arrayBuffer()) });
         assets.push({ ...ref, src });
       }

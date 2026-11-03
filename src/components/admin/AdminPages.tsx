@@ -277,6 +277,16 @@ export function AdminDashboardPage() {
   const demoPhotos = mediaSelection?.customerId === selectedCustomerId ? mediaSelection.photos : [];
   const customerDemos = demos.filter((demo) => demo.customerId === selectedCustomerId);
 
+  const loadCustomerPhotos = useCallback((customerId: string, photos: DemoPhoto[]) => {
+    setMediaSelection((current) => {
+      if (current?.customerId !== customerId) return { customerId, photos };
+      const freshUrls = new Map(photos.map((photo) => [photo.photoId, photo.url]));
+      return { customerId, photos: current.photos.map((photo) => ({
+        ...photo, url: freshUrls.get(photo.photoId) ?? photo.url,
+      })) };
+    });
+  }, []);
+
   const loadData = useCallback(async (preferredCustomerId?: string) => {
     const existingSession = readAdminSession();
     if (!existingSession) {
@@ -374,7 +384,7 @@ export function AdminDashboardPage() {
   };
 
   const publishDemo = async () => {
-    if (!session || !selectedCustomer || publishing.current) return;
+    if (!session || !selectedCustomer || mediaSelection?.customerId !== selectedCustomer.id || publishing.current) return;
     if (!editor.selectedTemplateId) {
       setError('Hãy chọn mẫu thiệp trước khi tạo demo.');
       return;
@@ -475,6 +485,28 @@ export function AdminDashboardPage() {
     } catch (demoError) {
       setError(demoError instanceof Error ? demoError.message : 'Không thể cập nhật link demo.');
     } finally { setActionLoading(''); }
+  };
+
+  const applyPhotosToDemo = async (demo: InvitationDemoRecord) => {
+    if (!session || !selectedCustomer || demo.customerId !== selectedCustomer.id || !demoPhotos.length || actionLoading) return;
+    if (!demoPhotos.some((photo) => photo.role === 'cover')) {
+      setError('Hãy chọn một ảnh bìa trước khi áp dụng ảnh.');
+      return;
+    }
+    setActionLoading(`photos:${demo.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateDemo(activeSession, demo.id, {
+        payload: { ...demo.payload, photos: demoPhotos.map(({ url: _url, ...photo }) => photo) },
+      });
+      await loadData(selectedCustomer.id);
+      showMessage('Đã cập nhật ảnh cho link preview và các lần xuất ZIP tiếp theo.');
+    } catch (photoError) {
+      setError(photoError instanceof Error ? photoError.message : 'Không thể cập nhật ảnh demo.');
+    } finally {
+      setActionLoading('');
+    }
   };
 
   const exportZip = async (demo: InvitationDemoRecord) => {
@@ -638,7 +670,7 @@ export function AdminDashboardPage() {
           <section className="admin-demo-panel">
             <div className="admin-panel-heading"><div><p>Demo Studio</p><h2>Tạo và quản lý link preview</h2></div><span>{customerDemos.length} demo</span></div>
             {session && <CustomerPhotoLibrary key={selectedCustomer.id} customerId={selectedCustomer.id}
-              accessToken={session.accessToken} selection={demoPhotos} disabled={actionLoading === 'demo'}
+              accessToken={session.accessToken} selection={demoPhotos} onLoad={loadCustomerPhotos} disabled={Boolean(actionLoading)}
               onSelect={(photos) => setMediaSelection({ customerId: selectedCustomer.id, photos })} />}
             <div className="admin-demo-builder">
               <div className="admin-demo-preview">
@@ -655,7 +687,7 @@ export function AdminDashboardPage() {
               <div className="admin-demo-controls">
                 <label>Ghi chú hiển thị trên popup<textarea rows={4} value={demoNote} onChange={(e) => setDemoNote(e.target.value)} /></label>
                 <label>Ngày hết hạn<input type="date" value={demoExpiry} onChange={(e) => setDemoExpiry(e.target.value)} /></label>
-                <button type="button" className="is-primary" onClick={publishDemo} disabled={actionLoading === 'demo'}>
+                <button type="button" className="is-primary" onClick={publishDemo} disabled={Boolean(actionLoading) || mediaSelection?.customerId !== selectedCustomer.id}>
                   {actionLoading === 'demo' ? <LoaderCircle className="is-spinning" /> : <Link2 />} Tạo link preview
                 </button>
                 <button type="button" onClick={confirmOrder} disabled={selectedCustomer.status === 'confirmed' || selectedCustomer.status === 'completed' || actionLoading === 'confirm'}>
@@ -675,7 +707,10 @@ export function AdminDashboardPage() {
                     <label><input readOnly value={previewUrl} /><button type="button" onClick={() => void copyPreviewLink(demo.publicToken)} aria-label="Sao chép link"><Clipboard /></button><a href={previewUrl} target="_blank" rel="noreferrer" aria-label="Mở preview"><ExternalLink /></a></label>
                     <div className="admin-demo-list__actions">
                       <button type="button" onClick={() => void expireDemo(demo)}><Archive /> {demo.status === 'expired' ? 'Mở lại' : 'Khóa link'}</button>
-                      <button type="button" className="is-primary" disabled={!canExport || actionLoading === `export:${demo.id}`} title={canExport ? 'Xuất source code ZIP' : 'Cần xác nhận khách đặt mẫu trước'} onClick={() => void exportZip(demo)}>
+                      {!!demoPhotos.length && <button type="button" disabled={Boolean(actionLoading)} onClick={() => void applyPhotosToDemo(demo)}>
+                        {actionLoading === `photos:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Check />} Áp dụng ảnh đã chọn
+                      </button>}
+                      <button type="button" className="is-primary" disabled={!canExport || Boolean(actionLoading)} title={canExport ? 'Xuất source code ZIP' : 'Cần xác nhận khách đặt mẫu trước'} onClick={() => void exportZip(demo)}>
                         {actionLoading === `export:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Download />} Xuất code ZIP
                       </button>
                     </div>

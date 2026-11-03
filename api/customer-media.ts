@@ -85,11 +85,11 @@ async function customer(id: string) {
   return row;
 }
 
-async function init(request: Request, body: Record<string, unknown>, withPhotos: boolean) {
+async function init(request: Request, body: Record<string, unknown>) {
   const { id, token } = uploadIdentity(body);
   const raw = body.customer as Record<string, unknown> | undefined;
   if (!raw || typeof raw !== 'object' || raw.company) throw new MediaError(400, 'Thông tin yêu cầu không hợp lệ.');
-  if (withPhotos && body.consent !== true) throw new MediaError(400, 'Vui lòng xác nhận đồng ý sử dụng ảnh.');
+  if (body.consent !== true) throw new MediaError(400, 'Vui lòng xác nhận đồng ý sử dụng ảnh.');
   const limits = { fullName: 120, email: 180, phone: 30, brideName: 80, groomName: 80, weddingDate: 10,
     weddingTime: 5, venue: 180, address: 300, message: 1000, selectedTemplateId: 100 };
   const fields = Object.fromEntries(Object.entries(limits).map(([key, limit]) => [key, clean(raw[key], limit)]));
@@ -103,8 +103,8 @@ async function init(request: Request, body: Record<string, unknown>, withPhotos:
     || (fields.weddingTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(fields.weddingTime))) {
     throw new MediaError(400, 'Thông tin liên hệ hoặc ngày giờ cưới chưa hợp lệ.');
   }
-  const inputPhotos = withPhotos ? body.photos : [];
-  if (!Array.isArray(inputPhotos) || (withPhotos && (inputPhotos.length < 5 || inputPhotos.length > 7))) {
+  const inputPhotos = body.photos;
+  if (!Array.isArray(inputPhotos) || inputPhotos.length < 5 || inputPhotos.length > 7) {
     throw new MediaError(400, 'Vui lòng chọn từ 5 đến 7 ảnh.');
   }
   const cover = inputPhotos.findIndex((photo) => photo?.preferredCover === true);
@@ -123,10 +123,6 @@ async function init(request: Request, body: Record<string, unknown>, withPhotos:
     p_ip: uploadDigest('ip', uploadIp(request)), p_phone: uploadDigest('phone', fields.phone),
     p_hourly_limit: hourlyUploadLimit(), p_customer: fields,
   };
-  if (!withPhotos) {
-    const requestCode = await db<string>('rpc/submit_contact_request', args);
-    return json({ requestCode, received: 0 }, 201);
-  }
   const existing = await session(id, token);
   if (existing && existing.fingerprint !== fingerprint) throw new MediaError(409, 'Thông tin yêu cầu đã thay đổi.');
   if (existing?.completed_at) return json({ requestCode: (await customer(existing.customer_id)).request_code, received: photos.length });
@@ -175,7 +171,7 @@ async function validateAndComplete(id: string, token: string, lease: string, cus
   const seen = new Set<string>();
   for (const photo of photos) {
     const position = photo.sort_order + 1;
-    const source = await supabase(`/storage/v1/object/${ORIGINALS}/${photo.original_storage_path}`);
+    const source = await supabase(`/storage/v1/object/authenticated/${ORIGINALS}/${photo.original_storage_path}`);
     const bytes = Buffer.from(await source.arrayBuffer());
     if (bytes.length !== photo.original_size) throw new MediaError(422, `Dung lượng ảnh số ${position} không khớp.`);
     const checksum = hash(bytes);
@@ -238,12 +234,8 @@ export default {
         return json({ ok: true });
       }
       if (request.method !== 'POST') throw new MediaError(405, 'Phương thức không hợp lệ.');
-      if (['challenge', 'init', 'complete', 'status', 'contact'].includes(action ?? '')) {
-        checkUploadRequest(request);
-        const uploads = flag('PUBLIC_UPLOAD_ENABLED');
-        if (action === 'init' && !uploads) throw new MediaError(503, 'Tính năng tải ảnh chưa được bật.');
-        if (action === 'contact' && uploads) throw new MediaError(403, 'Vui lòng gửi yêu cầu kèm ảnh.');
-      }
+      if (['challenge', 'init', 'complete', 'status'].includes(action ?? '')) checkUploadRequest(request);
+      if (action === 'contact') throw new MediaError(403, 'Vui lòng gửi yêu cầu kèm ảnh.');
       const raw = await request.text();
       if (raw.length > 32_768) throw new MediaError(413, 'Dữ liệu yêu cầu quá lớn.');
       let body: Record<string, unknown>;
@@ -254,7 +246,7 @@ export default {
         const timestamp = Date.now();
         return json({ challenge: timestamp + '.' + uploadChallenge(id, token, timestamp), waitMs: challengeDelay });
       }
-      if (action === 'init' || action === 'contact') return await init(request, body, action === 'init');
+      if (action === 'init') return await init(request, body);
       if (action === 'complete' || action === 'status') {
         const { id, token } = uploadIdentity(body);
         if (action === 'complete') return await complete(id, token);

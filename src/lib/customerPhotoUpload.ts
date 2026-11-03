@@ -1,6 +1,5 @@
 import { SupabaseRequestError } from './supabaseRest';
 
-export const photoUploadEnabled = import.meta.env.VITE_PUBLIC_UPLOAD_ENABLED === 'true';
 const storageUrl = String(import.meta.env.VITE_SUPABASE_URL ?? '').replace(/\/$/, '');
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export const photoMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
