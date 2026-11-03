@@ -6,11 +6,12 @@ interface Library {
   photos: Array<{ id: string; name: string; preferredCover: boolean; url: string }>;
   requestCode?: string;
   folderId?: string;
+  driveEnabled: boolean;
   status: string;
   error?: string;
 }
 const labels: Record<string, string> = {
-  queued: 'Chờ đồng bộ', syncing: 'Đang đồng bộ', retrying: 'Chờ thử lại', failed: 'Lỗi đồng bộ', ready: 'Đã lưu Drive',
+  storage_ready: 'Đã lưu ảnh trên Supabase', queued: 'Chờ đồng bộ', syncing: 'Đang đồng bộ', retrying: 'Chờ thử lại', failed: 'Lỗi đồng bộ', ready: 'Đã lưu Drive',
 };
 
 export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSelect, disabled }: {
@@ -78,8 +79,8 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
         {library?.folderId && /^[\w-]+$/.test(library.folderId) && (
           <a href={`https://drive.google.com/drive/folders/${library.folderId}`} target="_blank" rel="noopener noreferrer">Mở thư mục Google Drive</a>
         )}
-        <button type="button" disabled={busy} onClick={() => void run('drive-health')}>Kiểm tra kết nối Drive</button>
-        {['failed','retrying'].includes(library?.status ?? '') && <button type="button" disabled={busy} onClick={() => void run('retry')}>Đồng bộ lại</button>}
+        {library?.driveEnabled && <button type="button" disabled={busy} onClick={() => void run('drive-health')}>Kiểm tra kết nối Drive</button>}
+        {library?.driveEnabled && ['failed','retrying'].includes(library?.status ?? '') && <button type="button" disabled={busy} onClick={() => void run('retry')}>Đồng bộ lại</button>}
         {!!library?.photos.length && <button type="button" onClick={() => {
           const cover = library.photos.find((photo) => photo.preferredCover) ?? library.photos[0];
           onSelect([cover, ...library.photos.filter((photo) => photo.id !== cover.id)].map((photo, order) => ({

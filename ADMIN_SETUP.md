@@ -53,14 +53,25 @@ Thêm các biến môi trường cho Production và Preview:
 - Bảng khách hàng và demo không cấp quyền trực tiếp cho `anon`.
 - Preview công khai chỉ đọc qua RPC bằng token và chỉ khi còn hiệu lực.
 - Secret key chỉ tồn tại ở Vercel.
-- Nên bổ sung Cloudflare Turnstile cho form công khai khi traffic tăng.
 
-## 6. Triển khai upload ảnh và đồng bộ Drive
+## 6. Triển khai upload ảnh bằng Supabase
 
-1. Áp dụng migration `202611030001_customer_photos_drive.sql` sau migration CRM. Migration tạo ba bucket private. Kiểm tra giới hạn Storage toàn dự án đủ cho ảnh gốc 15 MiB và ZIP tối đa 32 MiB.
-2. Bật Drive API trong Google Cloud, cấp quyền OAuth offline cho tài khoản chủ website với scope `drive.file`. Tạo thư mục gốc bằng ứng dụng đã được cấp quyền hoặc chọn thư mục qua Google Picker. Giữ thư mục ở chế độ chia sẻ giới hạn.
-3. Cấu hình các biến server `GOOGLE_OAUTH_*`, `GOOGLE_DRIVE_ROOT_FOLDER_ID`, `CRON_SECRET`, `TURNSTILE_SECRET_KEY` và các biến Supabase theo `.env.example` trên Vercel. Cấu hình Turnstile cho hostname của môi trường thử nghiệm hoặc production. Chỉ site key và publishable key dùng ở trình duyệt.
-4. Bật `pg_cron`, `pg_net` và Vault trên Supabase. Trong Vault tạo hai secret `wedding_media_worker_url` là URL đầy đủ của `/api/customer-media?action=worker` và `wedding_media_worker_secret` trùng `CRON_SECRET`. Tạo lịch mỗi phút bằng SQL sau.
+1. Áp dụng `202611030001_customer_photos_drive.sql` và `202611030002_customer_photo_abuse_limits.sql` sau migration CRM. Kiểm tra giới hạn Storage toàn dự án đủ cho ảnh gốc 15 MiB và ZIP tối đa 32 MiB.
+2. Cấu hình các biến Supabase theo `.env.example` trên Vercel. Bật `PUBLIC_UPLOAD_ENABLED=true` và `VITE_PUBLIC_UPLOAD_ENABLED=true`, rồi deploy lại để Vite đọc biến mới. Giữ `GOOGLE_DRIVE_ENABLED=false` nếu chỉ lưu trên Supabase.
+3. Server cấp mã xác minh có chữ ký, dùng trong 5 phút và có thể gửi sau 1,5 giây. Server kiểm tra nguồn gửi từ trình duyệt và trường bẫy bot. PostgreSQL giới hạn 8 phiên mới mỗi IP và 4 phiên mới mỗi số điện thoại chuẩn hóa trong một giờ. Giới hạn toàn site mặc định 60 phiên mỗi giờ, chỉnh bằng `UPLOAD_LIMIT_PER_HOUR` (1–500). Thử lại phiên đã tạo dùng cùng mã phiên. Tùy chọn đặt `UPLOAD_ABUSE_SECRET` ổn định ở server để giữ các bộ đếm qua lần đổi khóa Supabase.
+4. Chạy thử 5 ảnh, có một ảnh trên 6 MiB. Kiểm tra mã yêu cầu, chọn cover/album, link đã hết hạn và ZIP mở offline.
+5. Khi bật upload bắt buộc ở production, thu hồi quyền gọi trực tiếp RPC form cũ từ khách bằng lệnh dưới đây. Khi rollback, tắt hai cờ upload, deploy lại frontend, rồi cấp lại `EXECUTE` cho hai role này.
+
+```sql
+revoke execute on function public.submit_customer_request(text,text,text,text,text,date,time,text,text,text,text,text)
+  from anon, authenticated;
+```
+
+### Tùy chọn đồng bộ Drive hoặc thu gom phiên bỏ dở
+
+Bật Drive API, cấu hình OAuth offline với scope `drive.file` và đặt `GOOGLE_DRIVE_ENABLED=true` nếu cần đồng bộ. Cấu hình `CRON_SECRET` và lịch worker nếu cần chạy đồng bộ hoặc thu gom ảnh phiên bỏ dở. Có thể chạy lịch với Drive tắt để chỉ thu gom.
+
+Bật `pg_cron`, `pg_net` và Vault trên Supabase. Trong Vault, đặt `wedding_media_worker_url` là URL đầy đủ của `/api/customer-media?action=worker` và `wedding_media_worker_secret` trùng `CRON_SECRET`.
 
 ```sql
 select cron.schedule('wedding-drive-sync', '* * * * *', $job$
@@ -75,13 +86,5 @@ select cron.schedule('wedding-drive-sync', '* * * * *', $job$
 $job$);
 ```
 
-5. Đặt `GOOGLE_DRIVE_ENABLED=true`, `PUBLIC_UPLOAD_ENABLED=true` và `VITE_PUBLIC_UPLOAD_ENABLED=true` ở môi trường thử nghiệm. Deploy lại frontend để Vite đọc biến `VITE_`. Chạy thử 5 ảnh, có một ảnh trên 6 MiB. Kiểm tra mã yêu cầu, Drive, cover/album, link bị khóa và ZIP mở offline.
-6. Khi bật upload bắt buộc ở production, chặn gọi trực tiếp RPC form cũ từ khách bằng lệnh dưới đây. Khi rollback, tắt hai cờ upload, deploy lại frontend, rồi cấp lại `EXECUTE` cho hai role này.
-
-```sql
-revoke execute on function public.submit_customer_request(text,text,text,text,text,date,time,text,text,text,text,text)
-  from anon, authenticated;
-```
-
-Worker lấy một hồ sơ mỗi lượt, sử dụng lease và ID Drive được giữ trong DB khi retry. Ảnh gốc đã nhận được giữ nguyên để đối chiếu. Job thu gom ảnh ở phiên bỏ dở sau khi phiên và token upload hết hạn. Với yêu cầu xóa dữ liệu, xác minh mã yêu cầu, thu hồi link demo, xóa bản gốc, bản web và ZIP theo tiền tố UUID trong ba bucket, xóa folder Drive theo ID, rồi xóa hồ sơ theo quy trình của chủ website. Link ảnh đã ký chỉ có hiệu lực ngắn và hết hạn theo thời hạn của demo.
+Worker lấy một hồ sơ mỗi lượt, sử dụng lease và ID Drive được giữ trong DB khi retry. Ảnh gốc đã nhận được giữ nguyên để đối chiếu. Phiên bỏ dở hết hạn sau 24 giờ. Tệp đã tải một phần chỉ được thu gom khi worker chạy, sau thời gian chờ để token upload hết hạn. Với yêu cầu xóa dữ liệu, xác minh mã yêu cầu, thu hồi link demo, xóa bản gốc, bản web và ZIP theo tiền tố UUID trong ba bucket, xóa folder Drive theo ID, rồi xóa hồ sơ theo quy trình của chủ website. Link ảnh đã ký chỉ có hiệu lực ngắn và hết hạn theo thời hạn của demo.
 

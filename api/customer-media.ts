@@ -18,6 +18,55 @@ const clean = (value: unknown, max: number) => typeof value === 'string' ? value
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const flag = (name: string) => process.env[name] === 'true';
 
+const challengeDelay = 1500;
+const challengeTTL = 5 * 60_000;
+
+function uploadIdentity(body: Record<string, unknown>) {
+  const id = uuid(body.idempotencyKey);
+  const token = clean(body.submissionToken, 128);
+  if (!/^[a-f0-9]{64}$/.test(token)) throw new MediaError(400, 'Token tải ảnh không hợp lệ.');
+  return { id, token };
+}
+
+function uploadDigest(purpose: string, value: string) {
+  const secret = process.env.UPLOAD_ABUSE_SECRET || process.env.SUPABASE_SECRET_KEY;
+  if (!secret) throw new MediaError(503, 'Kho ảnh chưa được cấu hình.');
+  return createHmac('sha256', secret).update(purpose + ':' + value).digest('hex');
+}
+
+function uploadIp(request: Request) {
+  return request.headers.get('x-vercel-forwarded-for')?.split(',')[0].trim() || 'unknown';
+}
+
+function checkUploadRequest(request: Request) {
+  if (!flag('PUBLIC_UPLOAD_ENABLED')) throw new MediaError(503, 'Tính năng tải ảnh chưa được bật.');
+  const origin = request.headers.get('origin');
+  const site = request.headers.get('sec-fetch-site');
+  if ((origin && origin !== new URL(request.url).origin) || (site && site !== 'same-origin' && site !== 'none')) {
+    throw new MediaError(403, 'Yêu cầu tải ảnh phải được gửi từ trang thiệp.');
+  }
+}
+
+function uploadChallenge(id: string, token: string, timestamp: number) {
+  return uploadDigest('challenge', JSON.stringify([id, hash(token), timestamp]));
+}
+
+function verifyChallenge(body: Record<string, unknown>, id: string, token: string) {
+  const [time, signature] = clean(body.challenge, 100).split('.');
+  const timestamp = Number(time);
+  const age = Date.now() - timestamp;
+  if (!Number.isSafeInteger(timestamp) || age < challengeDelay || age > challengeTTL
+    || !/^[a-f0-9]{64}$/.test(signature ?? '')
+    || !timingSafeEqual(Buffer.from(signature), Buffer.from(uploadChallenge(id, token, timestamp)))) {
+    throw new MediaError(403, 'Phiên xác minh đã hết hạn hoặc chưa hợp lệ. Vui lòng bấm gửi lại.');
+  }
+}
+
+function hourlyUploadLimit() {
+  const limit = Number(process.env.UPLOAD_LIMIT_PER_HOUR);
+  return Number.isInteger(limit) && limit >= 1 && limit <= 500 ? limit : 60;
+}
+
 interface UploadSession {
   customer_id: string;
   fingerprint: string;
@@ -38,18 +87,19 @@ async function customer(id: string) {
 }
 
 async function init(request: Request, body: Record<string, unknown>) {
-  if (!flag('PUBLIC_UPLOAD_ENABLED')) throw new MediaError(503, 'Tính năng tải ảnh chưa được bật.');
-  const id = uuid(body.idempotencyKey);
-  const token = clean(body.submissionToken, 128);
-  if (!/^[a-f0-9]{64}$/.test(token)) throw new MediaError(400, 'Token tải ảnh không hợp lệ.');
+  const { id, token } = uploadIdentity(body);
   const raw = body.customer as Record<string, unknown> | undefined;
   if (!raw || raw.company || body.consent !== true) throw new MediaError(400, 'Vui lòng xác nhận đồng ý sử dụng ảnh.');
   const limits = { fullName: 120, email: 180, phone: 30, brideName: 80, groomName: 80, weddingDate: 10,
     weddingTime: 5, venue: 180, address: 300, message: 1000, selectedTemplateId: 100 };
   const fields = Object.fromEntries(Object.entries(limits).map(([key, limit]) => [key, clean(raw[key], limit)]));
   fields.phone = fields.phone.replace(/[\s().-]/g, '').replace(/^(?:\+84|0084)/, '0');
+  const date = new Date(fields.weddingDate + 'T00:00:00Z');
+  const invalidDate = fields.weddingDate && (!/^\d{4}-\d{2}-\d{2}$/.test(fields.weddingDate)
+    || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== fields.weddingDate
+    || fields.weddingDate.startsWith('0000-'));
   if (!/^\d{9,15}$/.test(fields.phone) || fields.fullName.length < 2 || !fields.brideName || !fields.groomName
-    || (fields.weddingDate && !/^\d{4}-\d{2}-\d{2}$/.test(fields.weddingDate))
+    || invalidDate
     || (fields.weddingTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(fields.weddingTime))) {
     throw new MediaError(400, 'Thông tin liên hệ hoặc ngày giờ cưới chưa hợp lệ.');
   }
@@ -65,6 +115,7 @@ async function init(request: Request, body: Record<string, unknown>) {
     return { mime, size: photo.size, filename: clean(photo.filename, 180), order, cover: order === Math.max(0, cover), ext: formats[mime][0] };
   });
   if (photos.reduce((sum, photo) => sum + photo.size, 0) > 80 * MiB) throw new MediaError(413, 'Tổng dung lượng vượt 80 MiB.');
+  verifyChallenge(body, id, token);
   const fingerprint = hash(JSON.stringify([fields, photos]));
   const existing = await session(id, token);
   if (existing && existing.fingerprint !== fingerprint) throw new MediaError(409, 'Thông tin yêu cầu đã thay đổi.');
@@ -72,19 +123,10 @@ async function init(request: Request, body: Record<string, unknown>) {
   if (existing && new Date(existing.expires_at) <= new Date()) throw new MediaError(410, 'Phiên tải ảnh đã hết hạn.');
   let customerId = existing?.customer_id;
   if (!customerId) {
-    const secret = process.env.TURNSTILE_SECRET_KEY;
-    const captchaToken = clean(body.captchaToken, 2048);
-    if (!secret) throw new MediaError(503, 'Xác minh chống spam chưa được cấu hình.');
-    const ip = request.headers.get('x-vercel-forwarded-for')?.split(',')[0].trim() || 'unknown';
-    const verification = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST', body: new URLSearchParams({ secret, response: captchaToken }),
-    });
-    if (!verification.ok || !(await verification.json()).success) {
-      throw new MediaError(403, 'Vui lòng xác minh chống spam rồi thử lại.');
-    }
-    const digest = (value: string) => createHmac('sha256', secret).update(value).digest('hex');
-    customerId = await db<string>('rpc/init_photo_request', {
-      p_id: id, p_hash: hash(token), p_fingerprint: fingerprint, p_ip: digest(ip), p_phone: digest(fields.phone),
+    customerId = await db<string>('rpc/init_photo_request_limited', {
+      p_id: id, p_hash: hash(token), p_fingerprint: fingerprint,
+      p_ip: uploadDigest('ip', uploadIp(request)), p_phone: uploadDigest('phone', fields.phone),
+      p_hourly_limit: hourlyUploadLimit(),
       p_customer: fields, p_photos: photos,
     });
   }
@@ -150,7 +192,9 @@ async function validateAndComplete(id: string, token: string, lease: string, cus
     });
     results.push({ id: photo.id, path, checksum });
   }
-  const requestCode = await db<string>('rpc/complete_photo_request', { p_id: id, p_hash: hash(token), p_lease: lease, p_results: results });
+  const requestCode = await db<string>('rpc/complete_photo_request', {
+    p_id: id, p_hash: hash(token), p_lease: lease, p_results: results, p_sync_drive: flag('GOOGLE_DRIVE_ENABLED'),
+  });
   return json({ requestCode, received: photos.length }, 202);
 }
 
@@ -186,15 +230,22 @@ export default {
         return json({ ok: true });
       }
       if (request.method !== 'POST') throw new MediaError(405, 'Phương thức không hợp lệ.');
+      if (action === 'challenge' || action === 'init' || action === 'complete' || action === 'status') {
+        checkUploadRequest(request);
+      }
       const raw = await request.text();
       if (raw.length > 32_768) throw new MediaError(413, 'Dữ liệu yêu cầu quá lớn.');
       let body: Record<string, unknown>;
       try { body = JSON.parse(raw); } catch { throw new MediaError(400, 'Dữ liệu yêu cầu không hợp lệ.'); }
       if (!body || typeof body !== 'object' || Array.isArray(body)) throw new MediaError(400, 'Dữ liệu yêu cầu không hợp lệ.');
+      if (action === 'challenge') {
+        const { id, token } = uploadIdentity(body);
+        const timestamp = Date.now();
+        return json({ challenge: timestamp + '.' + uploadChallenge(id, token, timestamp), waitMs: challengeDelay });
+      }
       if (action === 'init') return await init(request, body);
       if (action === 'complete' || action === 'status') {
-        const id = uuid(body.idempotencyKey);
-        const token = clean(body.submissionToken, 128);
+        const { id, token } = uploadIdentity(body);
         if (action === 'complete') return await complete(id, token);
         const row = await session(id, token);
         if (!row) throw new MediaError(403, 'Phiên tải ảnh không hợp lệ.');
@@ -203,6 +254,10 @@ export default {
       }
       if (action === 'demo') return await publicDemo(clean(body.token, 64));
       await requireAdmin(request);
+      const driveEnabled = flag('GOOGLE_DRIVE_ENABLED');
+      if (!driveEnabled && (action === 'drive-health' || action === 'retry')) {
+        throw new MediaError(503, 'Đồng bộ Drive chưa được bật.');
+      }
       if (action === 'drive-health') return json(await checkDrive());
       const id = uuid(body.customerId);
       if (action === 'retry') {
@@ -217,13 +272,14 @@ export default {
       }
       if (action !== 'library') throw new MediaError(404, 'Không tìm thấy chức năng.');
       const [details, rows, jobs] = await Promise.all([
-        customer(id), photosFor(id), db<Array<{ status: string; last_error: string | null }>>(`drive_sync_jobs?customer_id=eq.${id}&select=status,last_error`),
+        customer(id), photosFor(id), driveEnabled ? db<Array<{ status: string; last_error: string | null }>>(`drive_sync_jobs?customer_id=eq.${id}&select=status,last_error`) : [],
       ]);
       const photos = await Promise.all(rows.filter((photo) => photo.web_storage_path).map(async (photo) => ({
         id: photo.id, name: photo.original_name, preferredCover: photo.preferred_cover,
         url: await signAsset(ASSETS, photo.web_storage_path!),
       })));
-      return json({ photos, requestCode: details.request_code, folderId: details.drive_folder_id, status: jobs[0]?.status ?? details.photo_sync_status, error: jobs[0]?.last_error });
+      const status = !driveEnabled && photos.length ? 'storage_ready' : jobs[0]?.status ?? details.photo_sync_status;
+      return json({ photos, requestCode: details.request_code, folderId: details.drive_folder_id, status, driveEnabled, error: jobs[0]?.last_error });
     } catch (error) {
       if (error instanceof MediaError) return json({ code: `MEDIA_${error.status}`, message: error.message }, error.status);
       return json({ code: 'MEDIA_500', message: 'Không thể xử lý yêu cầu ảnh. Vui lòng thử lại.' }, 500);
