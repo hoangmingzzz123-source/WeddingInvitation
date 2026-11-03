@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { ASSETS, EXPORTS, MediaError, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia';
+import { ASSETS, EXPORTS, MediaError, db, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -19,7 +19,7 @@ function env(name: string) {
 }
 
 function jsonResponse(message: string, status: number) {
-  return Response.json({ message }, { status });
+  return Response.json({ message }, { status, headers: { 'Cache-Control': 'no-store' } });
 }
 
 function escapeHtml(value: unknown) {
@@ -198,7 +198,7 @@ export function buildFiles(customer: JsonRecord, demo: JsonRecord, assets: Array
 </head>
 <body>
   <main>
-    <section class="hero"${cover ? ` style="--cover:url('${cover}')${coverPhoto ? `;background-position:${position(coverPhoto)}` : ''}"` : ''}>
+    <section class="hero"${cover ? ` style="--cover:url('${escapeHtml(cover)}')${coverPhoto ? `;background-position:${position(coverPhoto)}` : ''}"` : ''}>
       <div class="shade"></div>
       <div class="hero-content">
         <p>Wedding invitation</p>
@@ -241,16 +241,7 @@ export function buildFiles(customer: JsonRecord, demo: JsonRecord, assets: Array
   ];
 }
 
-async function supabaseFetch(url: string, secret: string, path: string, init: RequestInit = {}) {
-  return fetch(`${url}${path}`, {
-    ...init,
-    headers: {
-      apikey: secret,
-      'Content-Type': 'application/json',
-      ...init.headers,
-    },
-  });
-}
+const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
 
 export default {
   async fetch(request: Request) {
@@ -259,40 +250,33 @@ export default {
     try {
       const supabaseUrl = env('SUPABASE_URL').replace(/\/$/, '');
       const publishableKey = env('SUPABASE_PUBLISHABLE_KEY');
-      const secretKey = env('SUPABASE_SECRET_KEY');
       const authorization = request.headers.get('authorization') ?? '';
       const accessToken = authorization.startsWith('Bearer ') ? authorization.slice(7) : '';
       if (!accessToken) return jsonResponse('Bạn cần đăng nhập quản trị.', 401);
 
       const userResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
         headers: { apikey: publishableKey, Authorization: `Bearer ${accessToken}` },
+        signal: AbortSignal.timeout(15_000),
       });
       if (!userResponse.ok) return jsonResponse('Phiên đăng nhập không hợp lệ hoặc đã hết hạn.', 401);
       const user = await userResponse.json() as { id?: string };
       if (!user.id) return jsonResponse('Không xác định được người dùng.', 401);
 
-      const adminResponse = await supabaseFetch(
-        supabaseUrl, secretKey,
-        `/rest/v1/admin_users?user_id=eq.${encodeURIComponent(user.id)}&select=user_id&limit=1`,
-      );
-      const admins = await adminResponse.json() as JsonRecord[];
-      if (!adminResponse.ok || !admins.length) return jsonResponse('Tài khoản không có quyền xuất source code.', 403);
+      const admins = await db<JsonRecord[]>(`admin_users?user_id=eq.${encodeURIComponent(user.id)}&select=user_id&limit=1`);
+      if (!admins.length) return jsonResponse('Tài khoản không có quyền xuất source code.', 403);
 
-      const body = await request.json() as { customerId?: string; demoId?: string };
-      if (!body.customerId || !body.demoId) return jsonResponse('Thiếu customerId hoặc demoId.', 400);
-
-      const [customerResponse, demoResponse] = await Promise.all([
-        supabaseFetch(supabaseUrl, secretKey, `/rest/v1/customers?id=eq.${encodeURIComponent(body.customerId)}&select=*&limit=1`),
-        supabaseFetch(supabaseUrl, secretKey, `/rest/v1/invitation_demos?id=eq.${encodeURIComponent(body.demoId)}&select=*&limit=1`),
-      ]);
-      const customers = await customerResponse.json() as JsonRecord[];
-      const demos = await demoResponse.json() as JsonRecord[];
-      if (!customerResponse.ok || !demoResponse.ok || !customers.length || !demos.length) {
-        return jsonResponse('Không tìm thấy hồ sơ khách hàng hoặc demo.', 404);
+      const body = await request.json().catch(() => null) as { customerId?: unknown; demoId?: unknown } | null;
+      if (typeof body?.customerId !== 'string' || typeof body.demoId !== 'string'
+        || !uuid.test(body.customerId) || !uuid.test(body.demoId)) {
+        return jsonResponse('Mã hồ sơ hoặc demo không hợp lệ.', 400);
       }
+      const [customers, demos] = await Promise.all([
+        db<JsonRecord[]>(`customers?id=eq.${body.customerId}&limit=1`),
+        db<JsonRecord[]>(`invitation_demos?id=eq.${body.demoId}&customer_id=eq.${body.customerId}&limit=1`),
+      ]);
+      if (!customers.length || !demos.length) return jsonResponse('Không tìm thấy hồ sơ khách hàng hoặc demo.', 404);
       const customer = customers[0];
       const demo = demos[0];
-      if (String(demo.customer_id) !== String(customer.id)) return jsonResponse('Demo không thuộc khách hàng này.', 400);
       if (!['confirmed', 'completed'].includes(String(customer.status))) {
         return jsonResponse('Chỉ được xuất code sau khi khách đã xác nhận đặt mẫu.', 409);
       }
@@ -305,7 +289,7 @@ export default {
       for (const { ref, path } of selected) {
         const name = ref.role === 'cover' ? 'cover' : `gallery-${String(++galleryIndex).padStart(2, '0')}`;
         const src = `assets/${name}.webp`;
-        const response = await supabase(`/storage/v1/object/${ASSETS}/${path}`);
+        const response = await supabase(`/storage/v1/object/authenticated/${ASSETS}/${path}`);
         binaryFiles.push({ name: src, content: new Uint8Array(await response.arrayBuffer()) });
         assets.push({ ...ref, src });
       }
@@ -319,16 +303,7 @@ export default {
         });
         downloadUrl = await signAsset(EXPORTS, path, 600, filename);
       }
-      const now = new Date().toISOString();
-      await Promise.all([
-        supabaseFetch(supabaseUrl, secretKey, `/rest/v1/customers?id=eq.${encodeURIComponent(body.customerId)}`, {
-          method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ exported_at: now }),
-        }),
-        supabaseFetch(supabaseUrl, secretKey, '/rest/v1/code_exports', {
-          method: 'POST', headers: { Prefer: 'return=minimal' },
-          body: JSON.stringify({ customer_id: body.customerId, demo_id: body.demoId, exported_by: user.id }),
-        }),
-      ]);
+      await db('rpc/record_invitation_export', { p_customer: body.customerId, p_demo: body.demoId, p_actor: user.id });
 
       if (downloadUrl) return Response.json({ downloadUrl }, { headers: { 'Cache-Control': 'no-store' } });
       return new Response(Uint8Array.from(zip), {

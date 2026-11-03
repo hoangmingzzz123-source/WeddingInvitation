@@ -113,7 +113,7 @@ export async function syncDrive() {
         file.id === fileId && !file.trashed && file.parents?.includes(folderId)
         && file.appProperties?.photoId === photo.id && file.md5Checksum === checksum;
       if (remote.ok && photo.drive_md5 && matches(await remote.clone().json(), photo.drive_md5)) continue;
-      const source = await supabase(`/storage/v1/object/${ORIGINALS}/${photo.original_storage_path}`);
+      const source = await supabase(`/storage/v1/object/authenticated/${ORIGINALS}/${photo.original_storage_path}`);
       const bytes = Buffer.from(await source.arrayBuffer());
       if (createHash('sha256').update(bytes).digest('hex') !== photo.checksum_sha256) {
         throw new DriveError('Ảnh gốc đã thay đổi sau khi xác thực.');

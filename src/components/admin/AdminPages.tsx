@@ -165,9 +165,10 @@ export function AdminSetPasswordPage() {
     try {
       const session = readAuthCallbackSession();
       setCallbackSession(session);
-      window.history.replaceState({}, '', '/admin/setup-password');
     } catch (callbackError) {
       setError(callbackError instanceof Error ? callbackError.message : 'Liên kết không hợp lệ.');
+    } finally {
+      window.history.replaceState({}, '', '/admin/setup-password');
     }
   }, []);
 
@@ -276,6 +277,16 @@ export function AdminDashboardPage() {
   const demoPhotos = mediaSelection?.customerId === selectedCustomerId ? mediaSelection.photos : [];
   const customerDemos = demos.filter((demo) => demo.customerId === selectedCustomerId);
 
+  const loadCustomerPhotos = useCallback((customerId: string, photos: DemoPhoto[]) => {
+    setMediaSelection((current) => {
+      if (current?.customerId !== customerId) return { customerId, photos };
+      const freshUrls = new Map(photos.map((photo) => [photo.photoId, photo.url]));
+      return { customerId, photos: current.photos.map((photo) => ({
+        ...photo, url: freshUrls.get(photo.photoId) ?? photo.url,
+      })) };
+    });
+  }, []);
+
   const loadData = useCallback(async (preferredCustomerId?: string) => {
     const existingSession = readAdminSession();
     if (!existingSession) {
@@ -358,9 +369,10 @@ export function AdminDashboardPage() {
     setSaving(true);
     setError('');
     try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
       const saved = isNewCustomer || !selectedCustomer
-        ? await createCustomer(session, editor)
-        : await updateCustomer(session, selectedCustomer.id, editor);
+        ? await createCustomer(activeSession, editor)
+        : await updateCustomer(activeSession, selectedCustomer.id, editor);
       setIsNewCustomer(false);
       await loadData(saved.id);
       showMessage('Đã lưu thông tin khách hàng.');
@@ -372,7 +384,7 @@ export function AdminDashboardPage() {
   };
 
   const publishDemo = async () => {
-    if (!session || !selectedCustomer || publishing.current) return;
+    if (!session || !selectedCustomer || mediaSelection?.customerId !== selectedCustomer.id || publishing.current) return;
     if (!editor.selectedTemplateId) {
       setError('Hãy chọn mẫu thiệp trước khi tạo demo.');
       return;
@@ -381,14 +393,20 @@ export function AdminDashboardPage() {
       setError('Hãy chọn một ảnh bìa cho demo.');
       return;
     }
+    const expiry = demoExpiry ? new Date(`${demoExpiry}T23:59:59`) : null;
+    if (expiry && !(expiry.getTime() > Date.now())) {
+      setError('Ngày hết hạn của demo phải ở trong tương lai.');
+      return;
+    }
     publishing.current = true;
     setActionLoading('demo');
     setError('');
     try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
       if (JSON.stringify(customerToEditor(selectedCustomer)) !== JSON.stringify(editor)) {
-        await updateCustomer(session, selectedCustomer.id, editor);
+        await updateCustomer(activeSession, selectedCustomer.id, editor);
       }
-      const expiresAt = demoExpiry ? new Date(`${demoExpiry}T23:59:59`).toISOString() : null;
+      const expiresAt = expiry?.toISOString() ?? null;
       const input = {
         customerId: selectedCustomer.id,
         templateId: editor.selectedTemplateId,
@@ -410,9 +428,9 @@ export function AdminDashboardPage() {
       if (publishAttempt.current?.fingerprint !== fingerprint) {
         publishAttempt.current = { fingerprint, id: crypto.randomUUID() };
       }
-      const demo = await createDemo(session, { ...input, id: publishAttempt.current.id });
+      const demo = await createDemo(activeSession, { ...input, id: publishAttempt.current.id });
       if (!['confirmed', 'completed'].includes(editor.status)) {
-        await updateCustomer(session, selectedCustomer.id, { status: 'demo_ready', selectedTemplateId: editor.selectedTemplateId });
+        await updateCustomer(activeSession, selectedCustomer.id, { status: 'demo_ready', selectedTemplateId: editor.selectedTemplateId });
       }
       await loadData(selectedCustomer.id);
       await copyPreviewLink(demo.publicToken);
@@ -435,7 +453,8 @@ export function AdminDashboardPage() {
     if (!session || !selectedCustomer) return;
     setActionLoading('confirm');
     try {
-      await updateCustomer(session, selectedCustomer.id, { status: 'confirmed' });
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateCustomer(activeSession, selectedCustomer.id, { status: 'confirmed' });
       await loadData(selectedCustomer.id);
       showMessage('Đã xác nhận khách đặt mẫu. Nút xuất ZIP đã được mở.');
     } catch (confirmError) {
@@ -445,9 +464,22 @@ export function AdminDashboardPage() {
 
   const expireDemo = async (demo: InvitationDemoRecord) => {
     if (!session) return;
+    const reopening = demo.status === 'expired';
+    const now = Date.now();
+    const needsNewExpiry = reopening && demo.expiresAt && Date.parse(demo.expiresAt) <= now;
+    const newExpiry = demoExpiry ? new Date(`${demoExpiry}T23:59:59`) : null;
+    if (needsNewExpiry && (!newExpiry || !(newExpiry.getTime() > now))) {
+      setError('Link đã quá hạn. Hãy chọn ngày hết hạn mới trong phần tạo demo rồi mở lại link.');
+      return;
+    }
+    setError('');
     setActionLoading(`expire:${demo.id}`);
     try {
-      await updateDemo(session, demo.id, { status: demo.status === 'expired' ? 'published' : 'expired' });
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateDemo(activeSession, demo.id, {
+        status: reopening ? 'published' : 'expired',
+        ...(needsNewExpiry && newExpiry ? { expiresAt: newExpiry.toISOString() } : {}),
+      });
       await loadData(selectedCustomerId ?? undefined);
       showMessage(demo.status === 'expired' ? 'Đã mở lại link demo.' : 'Đã khóa link demo.');
     } catch (demoError) {
@@ -455,12 +487,34 @@ export function AdminDashboardPage() {
     } finally { setActionLoading(''); }
   };
 
+  const applyPhotosToDemo = async (demo: InvitationDemoRecord) => {
+    if (!session || !selectedCustomer || demo.customerId !== selectedCustomer.id || !demoPhotos.length || actionLoading) return;
+    if (!demoPhotos.some((photo) => photo.role === 'cover')) {
+      setError('Hãy chọn một ảnh bìa trước khi áp dụng ảnh.');
+      return;
+    }
+    setActionLoading(`photos:${demo.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateDemo(activeSession, demo.id, {
+        payload: { ...demo.payload, photos: demoPhotos.map(({ url: _url, ...photo }) => photo) },
+      });
+      await loadData(selectedCustomer.id);
+      showMessage('Đã cập nhật ảnh cho link preview và các lần xuất ZIP tiếp theo.');
+    } catch (photoError) {
+      setError(photoError instanceof Error ? photoError.message : 'Không thể cập nhật ảnh demo.');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
   const exportZip = async (demo: InvitationDemoRecord) => {
     if (!session || !selectedCustomer) return;
     setActionLoading(`export:${demo.id}`);
     setError('');
     try {
-      const activeSession = await refreshAdminSession(session);
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
       const response = await fetch('/api/export-invitation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${activeSession.accessToken}` },
@@ -616,7 +670,7 @@ export function AdminDashboardPage() {
           <section className="admin-demo-panel">
             <div className="admin-panel-heading"><div><p>Demo Studio</p><h2>Tạo và quản lý link preview</h2></div><span>{customerDemos.length} demo</span></div>
             {session && <CustomerPhotoLibrary key={selectedCustomer.id} customerId={selectedCustomer.id}
-              accessToken={session.accessToken} selection={demoPhotos} disabled={actionLoading === 'demo'}
+              accessToken={session.accessToken} selection={demoPhotos} onLoad={loadCustomerPhotos} disabled={Boolean(actionLoading)}
               onSelect={(photos) => setMediaSelection({ customerId: selectedCustomer.id, photos })} />}
             <div className="admin-demo-builder">
               <div className="admin-demo-preview">
@@ -633,7 +687,7 @@ export function AdminDashboardPage() {
               <div className="admin-demo-controls">
                 <label>Ghi chú hiển thị trên popup<textarea rows={4} value={demoNote} onChange={(e) => setDemoNote(e.target.value)} /></label>
                 <label>Ngày hết hạn<input type="date" value={demoExpiry} onChange={(e) => setDemoExpiry(e.target.value)} /></label>
-                <button type="button" className="is-primary" onClick={publishDemo} disabled={actionLoading === 'demo'}>
+                <button type="button" className="is-primary" onClick={publishDemo} disabled={Boolean(actionLoading) || mediaSelection?.customerId !== selectedCustomer.id}>
                   {actionLoading === 'demo' ? <LoaderCircle className="is-spinning" /> : <Link2 />} Tạo link preview
                 </button>
                 <button type="button" onClick={confirmOrder} disabled={selectedCustomer.status === 'confirmed' || selectedCustomer.status === 'completed' || actionLoading === 'confirm'}>
@@ -653,7 +707,10 @@ export function AdminDashboardPage() {
                     <label><input readOnly value={previewUrl} /><button type="button" onClick={() => void copyPreviewLink(demo.publicToken)} aria-label="Sao chép link"><Clipboard /></button><a href={previewUrl} target="_blank" rel="noreferrer" aria-label="Mở preview"><ExternalLink /></a></label>
                     <div className="admin-demo-list__actions">
                       <button type="button" onClick={() => void expireDemo(demo)}><Archive /> {demo.status === 'expired' ? 'Mở lại' : 'Khóa link'}</button>
-                      <button type="button" className="is-primary" disabled={!canExport || actionLoading === `export:${demo.id}`} title={canExport ? 'Xuất source code ZIP' : 'Cần xác nhận khách đặt mẫu trước'} onClick={() => void exportZip(demo)}>
+                      {!!demoPhotos.length && <button type="button" disabled={Boolean(actionLoading)} onClick={() => void applyPhotosToDemo(demo)}>
+                        {actionLoading === `photos:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Check />} Áp dụng ảnh đã chọn
+                      </button>}
+                      <button type="button" className="is-primary" disabled={!canExport || Boolean(actionLoading)} title={canExport ? 'Xuất source code ZIP' : 'Cần xác nhận khách đặt mẫu trước'} onClick={() => void exportZip(demo)}>
                         {actionLoading === `export:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Download />} Xuất code ZIP
                       </button>
                     </div>

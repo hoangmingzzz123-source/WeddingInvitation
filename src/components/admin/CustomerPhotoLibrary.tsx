@@ -14,11 +14,20 @@ const labels: Record<string, string> = {
   storage_ready: 'Đã lưu ảnh trên Supabase', queued: 'Chờ đồng bộ', syncing: 'Đang đồng bộ', retrying: 'Chờ thử lại', failed: 'Lỗi đồng bộ', ready: 'Đã lưu Drive',
 };
 
-export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSelect, disabled }: {
+function defaultSelection(photos: Library['photos']): DemoPhoto[] {
+  const cover = photos.find((photo) => photo.preferredCover) ?? photos[0];
+  if (!cover) return [];
+  return [cover, ...photos.filter((photo) => photo.id !== cover.id)].map((photo, order) => ({
+    photoId: photo.id, url: photo.url, role: order === 0 ? 'cover' : 'gallery', order,
+  }));
+}
+
+export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSelect, onLoad, disabled }: {
   customerId: string;
   accessToken: string;
   selection: DemoPhoto[];
   onSelect: (photos: DemoPhoto[]) => void;
+  onLoad: (customerId: string, photos: DemoPhoto[]) => void;
   disabled: boolean;
 }) {
   const [library, setLibrary] = useState<Library>();
@@ -30,12 +39,17 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
   useEffect(() => {
     let active = true;
     const refresh = () => mediaRequest<Library>('library', { customerId }, accessToken)
-      .then((result) => { if (active) { setLibrary(result); setError(''); } })
+      .then((result) => {
+        if (!active) return;
+        setLibrary(result);
+        setError('');
+        onLoad(customerId, defaultSelection(result.photos));
+      })
       .catch((error) => { if (active) setError(error.message); });
     void refresh();
     const timer = window.setInterval(refresh, 30_000);
     return () => { active = false; window.clearInterval(timer); };
-  }, [customerId, accessToken, version]);
+  }, [customerId, accessToken, onLoad, version]);
   const run = async (action: string) => {
     setBusy(true);
     setError('');
@@ -81,12 +95,8 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
         )}
         {library?.driveEnabled && <button type="button" disabled={busy} onClick={() => void run('drive-health')}>Kiểm tra kết nối Drive</button>}
         {library?.driveEnabled && ['failed','retrying'].includes(library?.status ?? '') && <button type="button" disabled={busy} onClick={() => void run('retry')}>Đồng bộ lại</button>}
-        {!!library?.photos.length && <button type="button" onClick={() => {
-          const cover = library.photos.find((photo) => photo.preferredCover) ?? library.photos[0];
-          onSelect([cover, ...library.photos.filter((photo) => photo.id !== cover.id)].map((photo, order) => ({
-            photoId: photo.id, url: photo.url, role: order === 0 ? 'cover' : 'gallery', order,
-          })));
-        }}>Dùng ảnh khách cho demo</button>}
+        {!!library?.photos.length && <button type="button" onClick={() => onSelect(defaultSelection(library.photos))}>Dùng tất cả ảnh khách</button>}
+        {error && <button type="button" onClick={() => setVersion((value) => value + 1)}>Tải lại ảnh</button>}
         {!!selection.length && <button type="button" onClick={() => onSelect([])}>Bỏ lựa chọn</button>}
       </div>
       <div className="customer-media__grid">

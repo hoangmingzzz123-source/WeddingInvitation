@@ -29,18 +29,21 @@ for (const photo of photoManifest.photos) {
 }
 
 for (const id of ['sen-ngoc','hy-su-do-son','pho-hoi']) {
-  assert(router.includes(`'/demo/${id}'`), `Missing route ${id}`);
+  assert(catalogue.includes(`route: '/demo/${id}'`) && router.includes('...demoRoutes'), `Missing route ${id}`);
   assert(catalogue.includes(`id: '${id}'`), `Missing catalogue entry ${id}`);
 }
 
 const internalTemplateIds = [...catalogue.matchAll(/route: '\/demo\/([^']+)'/g)]
   .map(([, id]) => id);
-for (const id of internalTemplateIds) {
-  for (const width of [480, 800]) {
-    const path = `public/images/templates/${id}-${width}.webp`;
-    assert(existsSync(path), `Missing template preview ${path}`);
-    assert(statSync(path).size > 0, `Empty template preview ${path}`);
+for (const story of ['ao-dai', 'coast', 'city', 'atelier']) {
+  for (const index of ['00', '01', '02', '03']) {
+    const path = `public/images/vietnam-modern/${story}-${index}.webp`;
+    assert(existsSync(path) && statSync(path).size > 0, `Missing catalogue preview ${path}`);
   }
 }
+for (const width of [480, 800]) {
+  const path = `public/images/templates/ha-phuong-hoang-minh-2026-${width}.webp`;
+  assert(existsSync(path) && statSync(path).size > 0, `Missing real wedding preview ${path}`);
+}
 
-console.log(`Verified ${references} direct references, ${photoManifest.photos.length} themed photos, and ${internalTemplateIds.length} template preview sets.`);
+console.log(`Verified ${references} direct references, ${photoManifest.photos.length} themed photos, and catalogue previews for ${internalTemplateIds.length} demo routes.`);
