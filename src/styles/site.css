@@ -2335,6 +2335,9 @@ body {
   z-index: 1;
   width: 100%;
   height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
   opacity: 0;
   cursor: pointer;
 }
@@ -2369,6 +2372,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 0.8rem;
 }
 
@@ -2376,9 +2380,11 @@ body {
 .creator-album-uploader__heading strong { color: #344052; font: 600 0.7rem/1.3 "Poppins", sans-serif; }
 .creator-album-uploader__heading > div > span { color: #818894; font: 400 0.56rem/1.4 "Poppins", sans-serif; }
 
-.creator-image-upload--compact {
+.creator-form .creator-image-upload--compact {
   display: inline-flex;
-  min-height: 2.4rem;
+  min-height: 44px;
+  flex-direction: row;
+  justify-content: center;
   flex: 0 0 auto;
   align-items: center;
   gap: 0.35rem;
@@ -2389,9 +2395,19 @@ body {
   border-radius: 999px;
   color: #80653d;
   background: #fff;
-  font: 500 0.58rem/1 "Poppins", sans-serif;
+  font: 600 0.75rem/1.2 "Poppins", sans-serif;
+  white-space: nowrap;
 }
 
+.creator-form .creator-image-upload--compact > svg {
+  position: static;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+.creator-image-upload--compact:focus-within { outline: 2px solid #80653d; outline-offset: 2px; }
+.creator-image-upload--compact.is-disabled input,
 .creator-image-upload--compact.is-disabled { cursor: not-allowed; }
 
 .creator-album-thumbnails {

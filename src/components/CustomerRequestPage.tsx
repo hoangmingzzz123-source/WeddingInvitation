@@ -6,12 +6,6 @@ import { isSupabaseConfigured, submitCustomerRequest, SupabaseRequestError } fro
 import { CustomerPhotoUploader } from './CustomerPhotoUploader';
 import { clearUploadDraft, mediaRequest, newUploadIdentity, photoUploadEnabled, readUploadDraft, saveUploadDraft, uploadPhoto, type SavedPhotoUpload, type SelectedPhoto, type UploadReceipt, type UploadResult } from '../lib/customerPhotoUpload';
 
-interface Turnstile {
-  render: (element: HTMLElement, options: Record<string, unknown>) => string;
-  reset: (id: string) => void;
-  remove: (id: string) => void;
-}
-
 const initialForm = {
   fullName: '', email: '', phone: '', brideName: '', groomName: '', weddingDate: '', weddingTime: '18:00',
   venue: '', address: '', message: '', selectedTemplateId: '', coverUrl: '', company: '',
@@ -31,13 +25,8 @@ export function CustomerRequestPage() {
   const [restoring, setRestoring] = useState(photoUploadEnabled);
   const [draft, setDraft] = useState<SavedPhotoUpload>();
   const [receipt, setReceipt] = useState<UploadReceipt>();
-  const [captcha, setCaptcha] = useState('');
   const [processing, setProcessing] = useState(false);
   const busy = useRef(false);
-  const captchaElement = useRef<HTMLDivElement>(null);
-  const widget = useRef<{ api: Turnstile; id: string }>();
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-
   useEffect(() => {
     if (!photoUploadEnabled) return;
     let active = true;
@@ -52,34 +41,6 @@ export function CustomerRequestPage() {
     }).catch(() => {}).finally(() => { if (active) setRestoring(false); });
     return () => { active = false; };
   }, []);
-
-  useEffect(() => {
-    if (!photoUploadEnabled || !siteKey || submitted) return;
-    const url = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-    let script = document.querySelector<HTMLScriptElement>('script[src="' + url + '"]');
-    const mount = () => {
-      const api = (window as Window & { turnstile?: Turnstile }).turnstile;
-      if (!api || !captchaElement.current || widget.current) return;
-      const id = api.render(captchaElement.current, {
-        sitekey: siteKey, callback: setCaptcha, 'expired-callback': () => setCaptcha(''),
-        'error-callback': () => setCaptcha(''),
-      });
-      widget.current = { api, id };
-    };
-    if (!script) {
-      script = document.createElement('script');
-      script.src = url;
-      script.async = true;
-      document.head.appendChild(script);
-    }
-    script.addEventListener('load', mount);
-    mount();
-    return () => {
-      script.removeEventListener('load', mount);
-      if (widget.current) widget.current.api.remove(widget.current.id);
-      widget.current = undefined;
-    };
-  }, [siteKey, submitted]);
 
   useEffect(() => { document.title = 'Gửi yêu cầu làm thiệp | Wedding Invitation MP'; }, []);
 
@@ -96,10 +57,6 @@ export function CustomerRequestPage() {
       setError('Vui lòng chọn 5–7 ảnh và xác nhận đồng ý sử dụng ảnh.');
       return;
     }
-    if (photoUploadEnabled && !draft && !captcha) {
-      setError('Vui lòng hoàn thành xác minh chống spam.');
-      return;
-    }
     busy.current = true;
     setSubmitting(true);
     setError('');
@@ -111,8 +68,10 @@ export function CustomerRequestPage() {
         };
         setDraft(current);
         await saveUploadDraft(current).catch(() => {});
+        const { challenge, waitMs } = await mediaRequest<{ challenge: string; waitMs: number }>('challenge', current.identity);
+        await new Promise((resolve) => window.setTimeout(resolve, waitMs));
         const result = await mediaRequest<UploadResult>('init', {
-          ...current.identity, customer: current.form, consent: true, captchaToken: captcha,
+          ...current.identity, customer: current.form, consent: true, challenge,
           photos: current.photos.map(({ file }, index) => ({
             filename: file.name, size: file.size, mime: file.type, preferredCover: current.cover === index,
           })),
@@ -154,13 +113,11 @@ export function CustomerRequestPage() {
       setSubmitted(true);
     } catch (submitError) {
       if (submitError instanceof SupabaseRequestError &&
-        ([410, 422].includes(submitError.status) || (initializingPhotos && [400, 413].includes(submitError.status)))) {
+        ([410, 422].includes(submitError.status) || (initializingPhotos && [400, 409, 413].includes(submitError.status)))) {
         await clearUploadDraft().catch(() => {});
         setDraft(undefined);
         setProgress({});
       }
-      setCaptcha('');
-      if (widget.current) widget.current.api.reset(widget.current.id);
       setError(submitError instanceof Error ? submitError.message : 'Chưa thể gửi yêu cầu. Vui lòng thử lại.');
     } finally {
       busy.current = false;
@@ -176,7 +133,7 @@ export function CustomerRequestPage() {
         <p>Đã gửi yêu cầu</p>
         <h1>Cảm ơn bạn, đội ngũ sẽ liên hệ sớm</h1>
         <span>Thông tin đã được chuyển vào hệ thống quản trị để tạo bản demo phù hợp.</span>
-        {receipt && <span>Đã nhận {receipt.received}/{receipt.received} ảnh · Mã yêu cầu <strong>{receipt.requestCode}</strong>. Hệ thống đang hoàn tất lưu trữ.</span>}
+        {receipt && <span>Đã nhận {receipt.received} ảnh · Mã yêu cầu <strong>{receipt.requestCode}</strong>.</span>}
         <button type="button" onClick={() => navigateTo('/templates')}>Tiếp tục xem mẫu</button>
       </main>
     );
@@ -241,16 +198,14 @@ export function CustomerRequestPage() {
           </label>
           <details id="photo-privacy" className="customer-media__privacy">
             <summary>Chính sách bảo mật ảnh</summary>
-            <p>Ảnh, tên và số điện thoại được dùng để xử lý yêu cầu. Ảnh gốc được lưu riêng tư trên Supabase và Google Drive của Wedding Invitation MP.
+            <p>Ảnh, tên và số điện thoại được dùng để xử lý yêu cầu. Ảnh gốc được lưu riêng tư trên Supabase. Khi bật đồng bộ, bản sao được lưu trong Google Drive riêng của Wedding Invitation MP.
               Quản trị viên xem ảnh trong hồ sơ. Người có link demo chỉ xem được ảnh đã chọn trong thời hạn link.
               Phiên tải chưa hoàn tất hết hạn sau 24 giờ. Với hồ sơ đã gửi, ảnh được giữ để phục vụ thiết kế và bàn giao.
               Bạn có thể liên hệ đội ngũ qua thông tin liên hệ của website, kèm mã yêu cầu, để yêu cầu xóa ảnh hoặc thu hồi quyền sử dụng.</p>
           </details>
-          <div ref={captchaElement} />
-          {!siteKey && <p role="alert">Xác minh tải ảnh chưa được cấu hình.</p>}
           {processing && <p role="status">Đã tải đủ ảnh. Đang xác thực và chuẩn bị bản xem trước…</p>}
         </>}
-        <button type="submit" disabled={submitting || inspecting || restoring || !isSupabaseConfigured() || (photoUploadEnabled && (!siteKey || photos.length < 5 || !consent))}>
+        <button type="submit" disabled={submitting || inspecting || restoring || !isSupabaseConfigured() || (photoUploadEnabled && (photos.length < 5 || !consent))}>
           {submitting ? <LoaderCircle className="is-spinning" aria-hidden="true" /> : <Send aria-hidden="true" />}
           {submitting ? 'Đang gửi...' : draft ? 'Tiếp tục gửi ảnh' : 'Gửi yêu cầu tạo demo'}
         </button>
