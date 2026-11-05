@@ -1,5 +1,4 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
-import sharp from 'sharp';
 import { ASSETS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia';
 import { checkDrive, syncDrive, cleanupUploads } from '../server/driveSync';
 
@@ -167,6 +166,7 @@ async function complete(id: string, token: string) {
 }
 
 async function validateAndComplete(id: string, token: string, lease: string, customerId: string, photos: Awaited<ReturnType<typeof photosFor>>) {
+  const sharp = (await import('sharp')).default ?? (await import('sharp'));
   const results: Array<{ id: string; path: string; checksum: string }> = [];
   const seen = new Set<string>();
   for (const photo of photos) {
