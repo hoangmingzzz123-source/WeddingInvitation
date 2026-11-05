@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { ASSETS, EXPORTS, MediaError, db, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia';
+import { ASSETS, EXPORTS, MediaError, db, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia.js';
 
 type JsonRecord = Record<string, unknown>;
 

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { ASSETS, ORIGINALS, db, photosFor, supabase } from './customerMedia';
+import { ASSETS, ORIGINALS, db, photosFor, supabase } from './customerMedia.js';
 
 const driveApi = 'https://www.googleapis.com/drive/v3';
 

@@ -11,12 +11,13 @@ function Thumbnail({ photo }: { photo: SelectedPhoto }) {
   return url ? <img src={url} alt={photo.file.name} /> : null;
 }
 
-export function CustomerPhotoUploader({ photos, setPhotos, cover, setCover, progress, frozen, disabled, onInspect }: {
+export function CustomerPhotoUploader({ photos, setPhotos, cover, setCover, progress, preparing, frozen, disabled, onInspect }: {
   photos: SelectedPhoto[];
   setPhotos: (photos: SelectedPhoto[]) => void;
   cover: number;
   setCover: (index: number) => void;
   progress: Record<number, number>;
+  preparing: boolean;
   frozen: boolean;
   disabled: boolean;
   onInspect: (inspecting: boolean) => void;
@@ -55,7 +56,7 @@ export function CustomerPhotoUploader({ photos, setPhotos, cover, setCover, prog
   return (
     <fieldset className="customer-media" disabled={disabled}>
       <legend>Ảnh cưới của hai bạn *</legend>
-      <p>Tải 5–7 ảnh JPEG, PNG hoặc WebP. Tối đa 15 MiB mỗi ảnh và 80 MiB tổng cộng.</p>
+      <p>Chọn 5–7 ảnh JPEG, PNG hoặc WebP. Tối đa 15 MiB mỗi ảnh và 80 MiB tổng cộng. Ảnh bắt đầu tải khi bạn bấm gửi yêu cầu.</p>
       {!frozen && (
         <label className="customer-media__drop" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); void add(event.dataTransfer.files); }}>
           Chọn ảnh hoặc kéo thả vào đây
@@ -72,7 +73,7 @@ export function CustomerPhotoUploader({ photos, setPhotos, cover, setCover, prog
             <Thumbnail photo={photo} />
             <strong title={photo.file.name}>{photo.file.name}</strong>
             <small>{(photo.file.size / MiB).toFixed(1)} MiB {photo.small && '· Ảnh dưới 900px'}</small>
-            <span>{progress[index] === 100 ? 'Đã tải' : progress[index] === -1 ? 'Cần thử lại' : progress[index] >= 0 ? `Đang tải ${progress[index]}%` : 'Chờ tải'}</span>
+            <span>{progress[index] === 100 ? 'Đã tải' : progress[index] === -1 ? 'Cần thử lại' : progress[index] >= 0 ? `Đang tải ${progress[index]}%` : preparing ? 'Đang chuẩn bị' : frozen ? 'Chưa tải' : 'Đã chọn'}</span>
             <label><input type="radio" name="preferred-cover" checked={cover === index} disabled={frozen} onChange={() => setCover(index)} /> Ưu tiên làm bìa</label>
             {!frozen && <div className="customer-media__actions">
               <button type="button" disabled={index === 0} onClick={() => move(index, -1)} aria-label={`Đưa ảnh ${index + 1} lên`}>↑</button>

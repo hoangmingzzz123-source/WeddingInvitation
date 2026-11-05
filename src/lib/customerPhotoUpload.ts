@@ -12,7 +12,11 @@ export async function mediaRequest<T>(action: string, body: object, accessToken?
     body: JSON.stringify(body),
   });
   const result = await response.json().catch(() => null);
-  if (!response.ok || !result) throw new SupabaseRequestError(result?.message ?? 'Kho ảnh tạm thời không phản hồi.', response.status);
+  if (!response.ok || !result) {
+    const trace = response.headers.get('x-vercel-error') && response.headers.get('x-vercel-id');
+    const fallback = 'Máy chủ tải ảnh tạm thời không phản hồi. Vui lòng thử lại.';
+    throw new SupabaseRequestError(result?.message ?? (trace ? `${fallback} Mã lỗi ${trace}.` : fallback), response.status);
+  }
   return result as T;
 }
 
