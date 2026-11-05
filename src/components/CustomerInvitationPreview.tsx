@@ -79,15 +79,25 @@ export function CustomerInvitationPreview({
   const template = weddingTemplates.find((item) => item.id === templateId);
   const visual = getTemplateVisual(templateId);
   const [openPhoto, setOpenPhoto] = useState<{ url: string; alt: string }>();
+  const studio = payload.studio;
+  const studioThemes = {
+    champagne: { accent: '#bc8e43', accentSoft: '#ead7ad', ink: '#5b4323', paper: '#fff8e8' },
+    blush: { accent: '#c4778a', accentSoft: '#f1c6d4', ink: '#70404c', paper: '#fff2f4' },
+    emerald: { accent: '#3e8068', accentSoft: '#b8d8ca', ink: '#234d3e', paper: '#edf7f1' },
+  } as const;
+  const selectedTheme = studio?.theme && studio.theme !== 'template' ? studioThemes[studio.theme] : undefined;
+  const headingFont = studio?.fontStyle === 'modern'
+    ? '"Be Vietnam Pro", sans-serif'
+    : studio?.fontStyle === 'classic' ? 'Georgia, serif' : visual.heading;
   const cover = payload.photos?.find((photo) => photo.role === 'cover' && photo.url);
   const gallery = (payload.photos ?? []).filter((photo) => photo.role === 'gallery' && photo.url).sort((a, b) => a.order - b.order);
   const coverUrl = safeCoverUrl(cover?.url || payload.coverUrl || '') || template?.thumbnail || '';
   const style = {
-    '--customer-accent': visual.accent,
-    '--customer-accent-soft': visual.accentSoft,
-    '--customer-ink': visual.ink,
-    '--customer-paper': visual.paper,
-    '--customer-heading': visual.heading,
+    '--customer-accent': selectedTheme?.accent ?? visual.accent,
+    '--customer-accent-soft': selectedTheme?.accentSoft ?? visual.accentSoft,
+    '--customer-ink': selectedTheme?.ink ?? visual.ink,
+    '--customer-paper': selectedTheme?.paper ?? visual.paper,
+    '--customer-heading': headingFont,
   } as CSSProperties;
 
   return (
@@ -98,7 +108,7 @@ export function CustomerInvitationPreview({
       }}>
         <div className="customer-invitation__shade" />
         <div className="customer-invitation__hero-content">
-          <span className="customer-invitation__kicker"><Sparkles aria-hidden="true" /> Wedding invitation</span>
+          <span className="customer-invitation__kicker"><Sparkles aria-hidden="true" /> {studio?.heroKicker || 'Wedding invitation'}</span>
           <h1>
             <span>{payload.brideName || 'Cô dâu'}</span>
             <Heart aria-hidden="true" />
@@ -108,7 +118,7 @@ export function CustomerInvitationPreview({
         </div>
       </section>
       {!!gallery.length && <section className="customer-invitation__album" aria-label="Album kỷ niệm">
-        <h2>Album kỷ niệm</h2>
+        <h2>{studio?.albumTitle || 'Album kỷ niệm'}</h2>
         <div className="customer-media__grid">
           {gallery.map((photo, index) => {
             const alt = photo.alt || `Ảnh cưới ${index + 1}`;
@@ -123,21 +133,21 @@ export function CustomerInvitationPreview({
       </section>}
 
       <section className="customer-invitation__details">
-        <p className="customer-invitation__mood">{visual.mood}</p>
+        <p className="customer-invitation__mood">{studio?.ceremonyTitle || visual.mood}{studio ? ` · ${visual.mood} · Gói ${studio.packageTier}` : ''}</p>
         <blockquote>“{payload.message || 'Trân trọng mời bạn đến chung vui trong ngày hạnh phúc của chúng mình.'}”</blockquote>
         <div className="customer-invitation__detail-grid">
           <div>
             <CalendarDays aria-hidden="true" />
-            <span><small>Thời gian</small>{payload.weddingTime || '18:00'} · {formatWeddingDate(payload.weddingDate)}</span>
+            <span><small>{studio?.receptionTitle || studio?.timeLabel || 'Thời gian'}</small>{studio?.timeLabel && studio.timeLabel !== studio.receptionTitle ? `${studio.timeLabel}: ` : ''}{payload.weddingTime || '18:00'} · {formatWeddingDate(payload.weddingDate)}</span>
           </div>
           <div>
             <MapPin aria-hidden="true" />
-            <span><small>Địa điểm</small>{payload.venue || 'Địa điểm tổ chức'}{payload.address ? ` · ${payload.address}` : ''}</span>
+            <span><small>{studio?.venueLabel || 'Địa điểm'}</small>{payload.venue || 'Địa điểm tổ chức'}{payload.address ? ` · ${payload.address}` : ''}</span>
           </div>
         </div>
         <div className="customer-invitation__signature">
           <i />
-          <span>Sự hiện diện của bạn là niềm vui của chúng mình</span>
+          <span>{studio?.signatureText || 'Sự hiện diện của bạn là niềm vui của chúng mình'}</span>
           <i />
         </div>
       </section>

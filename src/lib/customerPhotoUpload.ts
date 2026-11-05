@@ -1,4 +1,5 @@
 import { SupabaseRequestError } from './supabaseRest';
+import type { CustomInvitationTemplate } from '../types/admin';
 
 const storageUrl = String(import.meta.env.VITE_SUPABASE_URL ?? '').replace(/\/$/, '');
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -18,6 +19,21 @@ export async function mediaRequest<T>(action: string, body: object, accessToken?
     throw new SupabaseRequestError(result?.message ?? (trace ? `${fallback} Mã lỗi ${trace}.` : fallback), response.status);
   }
   return result as T;
+}
+
+export async function uploadCustomTemplate(file: File, accessToken: string): Promise<CustomInvitationTemplate> {
+  const form = new FormData();
+  form.set('file', file);
+  const response = await fetch('/api/customer-media?action=upload-template', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  });
+  const result = await response.json().catch(() => null);
+  if (!response.ok || !result?.id) {
+    throw new SupabaseRequestError(result?.message ?? 'Không thể tải gói mẫu ZIP lên.', response.status);
+  }
+  return result as CustomInvitationTemplate;
 }
 
 interface UploadSlot { photoId: string; order: number; path: string; signedUploadToken: string }

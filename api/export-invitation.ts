@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { ASSETS, EXPORTS, MediaError, db, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia.js';
+import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, MediaError, db, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia.js';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -29,6 +29,66 @@ function escapeHtml(value: unknown) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
+}
+
+function templateRelativePath(entryFile: string, target: string) {
+  const entryParts = entryFile.split('/').slice(0, -1);
+  const targetParts = target.split('/');
+  let shared = 0;
+  while (shared < entryParts.length && entryParts[shared] === targetParts[shared]) shared += 1;
+  return [...Array(entryParts.length - shared).fill('..'), ...targetParts.slice(shared)].join('/') || './';
+}
+
+async function buildCustomTemplateFiles(templateId: string, demo: JsonRecord, customerAssets: Array<PhotoRef & { src: string }>) {
+  const [template] = await db<Array<{ id: string; name: string; entry_file: string; file_paths: string[] }>>(
+    `custom_invitation_templates?id=eq.${encodeURIComponent(templateId)}&select=id,name,entry_file,file_paths&limit=1`,
+  );
+  if (!template || !Array.isArray(template.file_paths) || !template.file_paths.includes(template.entry_file)) {
+    throw new MediaError(422, 'Không tìm thấy gói mẫu ZIP đã chọn.');
+  }
+  const files = await Promise.all(template.file_paths.map(async (filePath) => {
+    if (!/^[a-zA-Z0-9._/-]+$/.test(filePath) || filePath.split('/').some((part) => !part || part === '.' || part === '..')) {
+      throw new MediaError(422, 'Gói mẫu chứa đường dẫn file không hợp lệ.');
+    }
+    const response = await supabase(`/storage/v1/object/authenticated/${CUSTOM_TEMPLATES}/${template.id}/${filePath}`);
+    return { name: filePath, content: new Uint8Array(await response.arrayBuffer()) };
+  }));
+  const entry = files.find((file) => file.name === template.entry_file);
+  if (!entry || typeof entry.content === 'string') throw new MediaError(422, 'Không tìm thấy trang HTML chính của mẫu.');
+
+  const payload = (demo.payload ?? {}) as JsonRecord;
+  const studio = (payload.studio ?? {}) as JsonRecord;
+  const cover = customerAssets.find((photo) => photo.role === 'cover');
+  const gallery = customerAssets.filter((photo) => photo.role === 'gallery').sort((a, b) => a.order - b.order);
+  const imagePosition = (photo?: PhotoRef) => {
+    const percent = (value?: number) => `${(Number.isFinite(value) ? Math.max(0, Math.min(1, value!)) : 0.5) * 100}%`;
+    return `${percent(photo?.focalX)} ${percent(photo?.focalY)}`;
+  };
+  const replacements: Record<string, string> = {
+    brideName: String(payload.brideName ?? ''), groomName: String(payload.groomName ?? ''),
+    weddingDate: String(payload.weddingDate ?? ''), weddingDateLabel: formatDate(payload.weddingDate), weddingTime: String(payload.weddingTime ?? ''),
+    venue: String(payload.venue ?? ''), address: String(payload.address ?? ''), message: String(payload.message ?? ''),
+    city: String(studio.city ?? ''), packageTier: String(studio.packageTier ?? ''),
+    ceremonyTitle: String(studio.ceremonyTitle ?? ''), receptionTitle: String(studio.receptionTitle ?? ''),
+    heroKicker: String(studio.heroKicker ?? ''), albumTitle: String(studio.albumTitle ?? ''),
+    timeLabel: String(studio.timeLabel ?? ''), venueLabel: String(studio.venueLabel ?? ''),
+    signatureText: String(studio.signatureText ?? ''),
+    story: String(payload.message ?? ''),
+    coverUrl: cover ? templateRelativePath(template.entry_file, cover.src) : safeUrl(payload.coverUrl),
+    coverPosition: imagePosition(cover),
+  };
+  for (let index = 0; index < 7; index += 1) {
+    const photo = gallery[index];
+    replacements[`gallery${index + 1}Url`] = photo ? templateRelativePath(template.entry_file, photo.src) : '';
+    replacements[`gallery${index + 1}Position`] = imagePosition(photo);
+  }
+  const renderedHtml = new TextDecoder().decode(entry.content)
+    .replace(/\{\{([A-Za-z0-9]+)\}\}/g, (match, key: string) => key in replacements ? escapeHtml(replacements[key]) : match);
+  const config = JSON.stringify({ templateId, templateName: template.name, ...payload }, null, 2);
+  return [
+    ...files.map((file) => file.name === template.entry_file ? { ...file, content: renderedHtml } : file),
+    { name: 'invitation.config.json', content: config },
+  ];
 }
 
 function safeUrl(value: unknown) {
@@ -168,6 +228,7 @@ const themeMap: Record<string, { accent: string; soft: string; ink: string; pape
 
 export function buildFiles(customer: JsonRecord, demo: JsonRecord, assets: Array<PhotoRef & { src: string }> = []) {
   const payload = (demo.payload ?? {}) as JsonRecord;
+  const studio = (payload.studio ?? {}) as JsonRecord;
   const bride = escapeHtml(payload.brideName || customer.bride_name || 'Cô dâu');
   const groom = escapeHtml(payload.groomName || customer.groom_name || 'Chú rể');
   const date = escapeHtml(formatDate(payload.weddingDate || customer.wedding_date));
@@ -183,7 +244,43 @@ export function buildFiles(customer: JsonRecord, demo: JsonRecord, assets: Array
   };
   const gallery = assets.filter((photo) => photo.role === 'gallery');
   const templateId = String(demo.template_id || customer.selected_template_id || 'classic-minimalist');
-  const theme = themeMap[templateId] ?? { accent: '#b58a45', soft: '#f1dfbd', ink: '#332a22', paper: '#fffaf2' };
+  const paletteMap = {
+    champagne: { accent: '#bc8e43', soft: '#ead7ad', ink: '#5b4323', paper: '#fff8e8' },
+    blush: { accent: '#c4778a', soft: '#f1c6d4', ink: '#70404c', paper: '#fff2f4' },
+    emerald: { accent: '#3e8068', soft: '#b8d8ca', ink: '#234d3e', paper: '#edf7f1' },
+  } as const;
+  const themeName = String(studio.theme ?? 'template');
+  const theme = {
+    ...(themeMap[templateId] ?? { accent: '#b58a45', soft: '#f1dfbd', ink: '#332a22', paper: '#fffaf2' }),
+    ...(themeName !== 'template' && themeName in paletteMap
+      ? paletteMap[themeName as keyof typeof paletteMap]
+      : {}),
+  };
+  const fontStyle = studio.fontStyle === 'modern' ? '"Be Vietnam Pro", sans-serif'
+    : studio.fontStyle === 'classic' ? 'Georgia, serif' : '"Playfair Display", serif';
+  const packageTier = ['109k', '159k', '199k'].includes(String(studio.packageTier)) ? String(studio.packageTier) : '109k';
+  const ceremonyTitle = escapeHtml(String(studio.ceremonyTitle || 'Trân trọng kính mời'));
+  const receptionTitle = escapeHtml(String(studio.receptionTitle || 'Tiệc mừng thân mật'));
+  const heroKicker = escapeHtml(String(studio.heroKicker || 'Wedding invitation'));
+  const albumTitle = escapeHtml(String(studio.albumTitle || 'Album kỷ niệm'));
+  const timeLabel = escapeHtml(String(studio.timeLabel || 'Thời gian'));
+  const venueLabel = escapeHtml(String(studio.venueLabel || 'Địa điểm'));
+  const signatureText = escapeHtml(String(studio.signatureText || 'Sự hiện diện của bạn là niềm vui của chúng mình'));
+  const studioConfig = {
+    packageTier,
+    city: String(studio.city ?? 'Việt Nam'),
+    ceremonyTitle: String(studio.ceremonyTitle ?? 'Lễ thành hôn'),
+    receptionTitle: String(studio.receptionTitle ?? 'Tiệc mừng thân mật'),
+    heroKicker: String(studio.heroKicker ?? 'Wedding invitation'),
+    albumTitle: String(studio.albumTitle ?? 'Album kỷ niệm'),
+    timeLabel: String(studio.timeLabel ?? 'Thời gian'),
+    venueLabel: String(studio.venueLabel ?? 'Địa điểm'),
+    signatureText: String(studio.signatureText ?? 'Sự hiện diện của bạn là niềm vui của chúng mình'),
+    theme: String(studio.theme ?? 'template'),
+    fontStyle: String(studio.fontStyle ?? 'editorial'),
+    guests: Array.isArray(studio.guests) ? studio.guests : [],
+    rsvpQuestions: Array.isArray(studio.rsvpQuestions) ? studio.rsvpQuestions : [],
+  };
   const title = `${bride} & ${groom}`;
   const mapQuery = encodeURIComponent(`${venue} ${address}`);
 
@@ -201,23 +298,23 @@ export function buildFiles(customer: JsonRecord, demo: JsonRecord, assets: Array
     <section class="hero"${cover ? ` style="--cover:url('${escapeHtml(cover)}')${coverPhoto ? `;background-position:${position(coverPhoto)}` : ''}"` : ''}>
       <div class="shade"></div>
       <div class="hero-content">
-        <p>Wedding invitation</p>
+        <p>${heroKicker}</p>
         <h1><span>${bride}</span><i>&amp;</i><span>${groom}</span></h1>
         <time>${date}</time>
         <a href="#details" aria-label="Xem thông tin lễ cưới">Khám phá <b>↓</b></a>
       </div>
     </section>
     <section class="details" id="details">
-      <p class="eyebrow">Trân trọng kính mời</p>
+      <p class="eyebrow">${ceremonyTitle}</p>
       <blockquote>“${message}”</blockquote>
       <div class="grid">
-        <article><small>Thời gian</small><h2>${time}</h2><p>${date}</p></article>
-        <article><small>Địa điểm</small><h2>${venue}</h2><p>${address || 'Địa chỉ sẽ được cập nhật'}</p></article>
+        <article><small>${receptionTitle}</small><h2>${time}</h2><p>${timeLabel}: ${date}</p></article>
+        <article><small>${venueLabel}</small><h2>${venue}</h2><p>${address || 'Địa chỉ sẽ được cập nhật'}</p></article>
       </div>
       <a class="map" href="https://www.google.com/maps/search/?api=1&query=${mapQuery}" target="_blank" rel="noreferrer">Mở bản đồ</a>
-      <footer><i></i><span>Sự hiện diện của bạn là niềm vui của chúng mình</span><i></i></footer>
+      <footer><i></i><span>${signatureText}</span><i></i></footer>
     </section>
-    ${gallery.length ? `<section class="album"><h2>Album kỷ niệm</h2><div class="album-grid">${gallery.map((photo, index) =>
+    ${gallery.length ? `<section class="album"><h2>${albumTitle}</h2><div class="album-grid">${gallery.map((photo, index) =>
       `<a href="${photo.src}"><img src="${photo.src}" alt="${escapeHtml(photo.alt || `Ảnh cưới ${index + 1}`)}" loading="lazy" style="object-position:${position(photo)}"></a>`,
     ).join('')}</div></section>` : ''}
   </main>
@@ -229,12 +326,12 @@ export function buildFiles(customer: JsonRecord, demo: JsonRecord, assets: Array
 
   const script = `document.documentElement.classList.add('js');\ndocument.querySelectorAll('a[href^="#"]').forEach((link)=>link.addEventListener('click',(event)=>{const target=document.querySelector(link.getAttribute('href'));if(target){event.preventDefault();target.scrollIntoView({behavior:'smooth'});}}));`;
 
-  const config = JSON.stringify({ templateId, brideName: payload.brideName, groomName: payload.groomName, weddingDate: payload.weddingDate, weddingTime: payload.weddingTime, venue: payload.venue, address: payload.address, message: payload.message, coverUrl: coverPhoto?.src ?? payload.coverUrl, photos: assets.map(({ photoId: _id, ...photo }) => photo) }, null, 2);
+  const config = JSON.stringify({ templateId, ...payload, packageTier, studio: studioConfig, coverUrl: coverPhoto?.src ?? payload.coverUrl, photos: assets.map(({ photoId: _id, ...photo }) => photo) }, null, 2);
   const readme = `# Thiệp cưới ${String(payload.brideName || '')} & ${String(payload.groomName || '')}\n\nMẫu: ${templateId}\n\n## Chạy thử\n\nMở file \`index.html\` hoặc chạy một static server:\n\n\`\`\`bash\nnpx serve .\n\`\`\`\n\nDữ liệu gốc nằm trong \`invitation.config.json\`.\n`;
 
   return [
     { name: 'index.html', content: html },
-    { name: 'styles.css', content: css + '.album{padding:48px 24px;text-align:center}.album-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;max-width:900px;margin:auto}.album-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:12px}' },
+    { name: 'styles.css', content: css + `.hero h1,.details blockquote,.grid h2,footer{font-family:${fontStyle}}.album{padding:48px 24px;text-align:center}.album>h2{font-family:${fontStyle}}.album-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;max-width:900px;margin:auto}.album-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:12px}` },
     { name: 'script.js', content: script },
     { name: 'invitation.config.json', content: config },
     { name: 'README.md', content: readme },
@@ -283,17 +380,22 @@ export default {
 
       const refs = (demo.payload as { photos?: PhotoRef[] } | undefined)?.photos ?? [];
       const selected = await selectedPhotos(String(customer.id), refs);
+      const customTemplateId = (demo.payload as { customTemplateId?: unknown } | undefined)?.customTemplateId;
+      const customTemplate = typeof customTemplateId === 'string' && uuid.test(customTemplateId) ? customTemplateId : null;
       const assets: Array<PhotoRef & { src: string }> = [];
       const binaryFiles: Array<{ name: string; content: Uint8Array }> = [];
       let galleryIndex = 0;
       for (const { ref, path } of selected) {
         const name = ref.role === 'cover' ? 'cover' : `gallery-${String(++galleryIndex).padStart(2, '0')}`;
-        const src = `assets/${name}.webp`;
+        const src = `${customTemplate ? 'customer-assets' : 'assets'}/${name}.webp`;
         const response = await supabase(`/storage/v1/object/authenticated/${ASSETS}/${path}`);
         binaryFiles.push({ name: src, content: new Uint8Array(await response.arrayBuffer()) });
         assets.push({ ...ref, src });
       }
-      const zip = createZip([...buildFiles(customer, demo, assets), ...binaryFiles]);
+      const outputFiles = customTemplate
+        ? await buildCustomTemplateFiles(customTemplate, demo, assets)
+        : buildFiles(customer, demo, assets);
+      const zip = createZip([...outputFiles, ...binaryFiles]);
       const filename = `${slugify(`${String(customer.bride_name ?? '')}-${String(customer.groom_name ?? '')}`)}.zip`;
       let downloadUrl: string | undefined;
       if (assets.length || zip.byteLength > 4_000_000) {

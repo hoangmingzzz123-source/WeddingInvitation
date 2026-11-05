@@ -36,10 +36,17 @@ export interface SignatureDemoCustomization {
   story?: string;
   ceremonyTitle?: string;
   receptionTitle?: string;
+  heroKicker?: string;
+  albumTitle?: string;
+  timeLabel?: string;
+  venueLabel?: string;
+  signatureText?: string;
   theme?: SignatureTheme;
   fontStyle?: SignatureFont;
   hero?: string;
+  heroPosition?: string;
   gallery?: string[];
+  galleryPositions?: string[];
 }
 
 export interface SignatureRsvpPayload {
@@ -381,7 +388,7 @@ export function SignatureDemo({
         <div className="signature-hero__ornament" aria-hidden="true" />
         <div className="signature-hero__layout">
           <div className="signature-hero__image">
-            <img src={demo.hero} alt={`Ảnh cưới Việt Nam minh họa cho ${couple}`} fetchPriority="high" />
+            <img src={demo.hero} alt={`Ảnh cưới Việt Nam minh họa cho ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} />
             <span className="signature-hero__image-note">{locationLabel}</span>
           </div>
           <motion.div
@@ -390,7 +397,7 @@ export function SignatureDemo({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <SmallLabel>{demo.label}</SmallLabel>
+            <SmallLabel>{customization?.heroKicker || demo.label}</SmallLabel>
             <h1><span>{demo.bride}</span><i>&amp;</i><span>{demo.groom}</span></h1>
             <p className="signature-hero__invitation">
               {guestName
@@ -420,7 +427,7 @@ export function SignatureDemo({
             <p>{demo.story}</p>
           </div>
           <figure className="signature-story__photo">
-            <img src={demo.gallery[1]} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" />
+            <img src={demo.gallery[1]} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" style={customization?.galleryPositions?.[1] ? { objectPosition: customization.galleryPositions[1] } : undefined} />
             <figcaption>{demo.bride} <i>&amp;</i> {demo.groom}</figcaption>
           </figure>
         </section>
@@ -438,7 +445,7 @@ export function SignatureDemo({
             <CalendarDays aria-hidden="true" />
             <h3>{ceremonyTitle}</h3>
             <p>{demo.dateLabel}</p>
-            <span><Clock3 aria-hidden="true" /> {demo.time}</span>
+            <span><Clock3 aria-hidden="true" /> {customization?.timeLabel ? `${customization.timeLabel}: ` : ''}{demo.time}</span>
             <span><MapPin aria-hidden="true" /> {demo.venue}</span>
           </article>
           <article className="signature-event-card">
@@ -492,13 +499,13 @@ export function SignatureDemo({
       <section className="signature-gallery" id="album" aria-labelledby="signature-gallery-title">
         <header className="signature-section-heading">
           <SmallLabel>THE ALBUM</SmallLabel>
-          <h2 id="signature-gallery-title">Những khoảnh khắc thương</h2>
+          <h2 id="signature-gallery-title">{customization?.albumTitle || 'Những khoảnh khắc thương'}</h2>
           <p>{diamond ? 'Một album mở rộng để lưu giữ trọn vẹn câu chuyện của chúng mình.' : 'Một vài khung hình yêu thích trước ngày chung đôi.'}</p>
         </header>
         <div className="signature-gallery__grid">
           {demo.gallery.map((src, index) => (
             <button key={src} type="button" onClick={() => setLightbox(index)} aria-label={`Phóng to ảnh ${index + 1}`}>
-              <img src={src} alt={`Khoảnh khắc ${index + 1} của ${couple}`} loading="lazy" />
+              <img src={src} alt={`Khoảnh khắc ${index + 1} của ${couple}`} loading="lazy" style={customization?.galleryPositions?.[index] ? { objectPosition: customization.galleryPositions[index] } : undefined} />
               <span>0{index + 1}</span>
             </button>
           ))}
@@ -508,7 +515,7 @@ export function SignatureDemo({
       {diamond && (
         <section className="signature-extras" aria-label="Tính năng cao cấp">
           <div className="signature-video-card">
-            <img src={demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" />
+            <img src={demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
             <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>
             <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
           </div>
@@ -531,7 +538,7 @@ export function SignatureDemo({
 
       <section className="signature-venue" aria-labelledby="signature-venue-title">
         <div>
-          <SmallLabel>THE PLACE</SmallLabel>
+          <SmallLabel>{customization?.venueLabel || 'THE PLACE'}</SmallLabel>
           <h2 id="signature-venue-title">Chúng mình đợi bạn tại đây</h2>
           <h3>{demo.venue}</h3>
           <p>{demo.address}, {demo.city}</p>
@@ -590,14 +597,14 @@ export function SignatureDemo({
 
       <footer className="signature-footer">
         <span>{demo.bride} <i>&amp;</i> {demo.groom}</span>
-        <p>Made with love · {demo.dateLabel}</p>
+        <p>{customization?.signatureText || `Made with love · ${demo.dateLabel}`}</p>
         <a href="#trang-chu">Về đầu thiệp</a>
       </footer>
 
       {lightbox !== null && (
         <div className="signature-lightbox" role="dialog" aria-modal="true" aria-label={`Ảnh ${lightbox + 1}`} onClick={() => setLightbox(null)}>
           <button type="button" onClick={() => setLightbox(null)} aria-label="Đóng ảnh"><X aria-hidden="true" /></button>
-          <img src={demo.gallery[lightbox]} alt={`Khoảnh khắc ${lightbox + 1} của ${couple}`} onClick={(event) => event.stopPropagation()} />
+          <img src={demo.gallery[lightbox]} alt={`Khoảnh khắc ${lightbox + 1} của ${couple}`} style={customization?.galleryPositions?.[lightbox] ? { objectPosition: customization.galleryPositions[lightbox] } : undefined} onClick={(event) => event.stopPropagation()} />
         </div>
       )}
 

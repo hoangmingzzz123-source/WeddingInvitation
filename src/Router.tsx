@@ -2,6 +2,16 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { REAL_WEDDING_TEMPLATE_ID, REAL_WEDDING_URL, weddingTemplates } from './data/templates';
 
 const productionUrl = 'https://wedding-invitation-mp.vercel.app';
+const invitationDomain = (import.meta.env.VITE_PUBLIC_INVITATION_DOMAIN ?? '').toLowerCase().replace(/^\.+|\.+$/g, '');
+
+function getCurrentRoute() {
+  const hostname = window.location.hostname.toLowerCase();
+  if (invitationDomain && hostname.endsWith(`.${invitationDomain}`)) {
+    const slug = hostname.slice(0, -(invitationDomain.length + 1));
+    if (/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return `/invite/${slug}`;
+  }
+  return window.location.pathname;
+}
 
 function updateMeta(selector: string, attribute: string, value: string) {
   document.querySelector<HTMLMetaElement>(selector)?.setAttribute(attribute, value);
@@ -14,6 +24,7 @@ const LiveInvitationPreviewPage = lazy(() => import('./components/InvitationCrea
 const GeneratedInvitationPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.GeneratedInvitationPage })));
 const CustomerRequestPage = lazy(() => import('./components/CustomerRequestPage').then((module) => ({ default: module.CustomerRequestPage })));
 const PublicDemoPage = lazy(() => import('./components/PublicDemoPage').then((module) => ({ default: module.PublicDemoPage })));
+const PublishedInvitationPage = lazy(() => import('./components/PublishedInvitationPage').then((module) => ({ default: module.PublishedInvitationPage })));
 const AdminLoginPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminLoginPage })));
 const AdminSetPasswordPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminSetPasswordPage })));
 const AdminDashboardPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminDashboardPage })));
@@ -54,10 +65,10 @@ function NotFoundPage() {
 }
 
 export function Router() {
-  const [currentRoute, setCurrentRoute] = useState(window.location.pathname);
+  const [currentRoute, setCurrentRoute] = useState(getCurrentRoute);
 
   useEffect(() => {
-    const handlePopState = () => setCurrentRoute(window.location.pathname);
+    const handlePopState = () => setCurrentRoute(getCurrentRoute());
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
@@ -65,6 +76,7 @@ export function Router() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
     const demoTemplate = weddingTemplates.find((template) => template.route === currentRoute);
+    const invitationSlug = /^\/invite\/([a-z0-9-]+)$/i.exec(currentRoute)?.[1];
     let title = 'Wedding Invitation MP | Thiệp cưới online';
     let description = 'Thư viện thiệp cưới online cá nhân hóa, tối ưu điện thoại với album, RSVP, bản đồ và âm nhạc.';
 
@@ -85,6 +97,9 @@ export function Router() {
     } else if (currentRoute.startsWith('/preview/')) {
       title = 'Bản demo riêng | Wedding Invitation MP';
       description = 'Bản xem trước thiệp cưới dành riêng cho khách hàng.';
+    } else if (invitationSlug) {
+      title = 'Thiệp cưới | Wedding Invitation MP';
+      description = 'Thiệp cưới cá nhân hóa dành cho khách mời.';
     } else if (currentRoute.startsWith('/admin')) {
       title = 'Quản trị | Wedding Invitation MP';
       description = 'Khu vực quản trị nội bộ.';
@@ -97,7 +112,9 @@ export function Router() {
     }
 
     document.title = title;
-    const publicUrl = currentRoute.startsWith('/preview/') ? productionUrl : productionUrl + currentRoute;
+    const publicUrl = invitationSlug && invitationDomain
+      ? `https://${invitationSlug}.${invitationDomain}`
+      : currentRoute.startsWith('/preview/') ? productionUrl : productionUrl + currentRoute;
     document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
       ?.setAttribute('href', publicUrl);
     updateMeta('meta[name="description"]', 'content', description);
@@ -141,9 +158,11 @@ export function Router() {
   };
 
   const previewToken = /^\/preview\/([a-f0-9]{48})$/i.exec(currentRoute)?.[1];
+  const publishedSlug = /^\/invite\/([a-z0-9-]+)$/i.exec(currentRoute)?.[1];
   const page = previewToken
     ? <PublicDemoPage key={previewToken} token={previewToken} />
-    : Object.hasOwn(routes, currentRoute) ? routes[currentRoute] : <NotFoundPage />;
+    : publishedSlug ? <PublishedInvitationPage key={publishedSlug} slug={publishedSlug} />
+      : Object.hasOwn(routes, currentRoute) ? routes[currentRoute] : <NotFoundPage />;
 
   return (
     <Suspense fallback={<RouteLoader />}>

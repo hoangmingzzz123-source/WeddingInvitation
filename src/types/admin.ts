@@ -12,6 +12,22 @@ export interface DemoPhoto {
   url?: string;
 }
 
+export interface InvitationStudioConfig {
+  packageTier: '109k' | '159k' | '199k';
+  city: string;
+  ceremonyTitle: string;
+  receptionTitle: string;
+  heroKicker: string;
+  albumTitle: string;
+  timeLabel: string;
+  venueLabel: string;
+  signatureText: string;
+  theme: 'template' | 'champagne' | 'blush' | 'emerald';
+  fontStyle: 'editorial' | 'modern' | 'classic';
+  guests: Array<{ id: string; name: string; greeting: 'formal' | 'friendly' }>;
+  rsvpQuestions: Array<'transport' | 'meal'>;
+}
+
 export interface InvitationPayload {
   brideName: string;
   groomName: string;
@@ -22,6 +38,17 @@ export interface InvitationPayload {
   message: string;
   coverUrl: string;
   photos?: DemoPhoto[];
+  studio?: InvitationStudioConfig;
+  customTemplateId?: string | null;
+}
+
+export interface CustomInvitationTemplate {
+  id: string;
+  name: string;
+  entryFile: string;
+  manifest: { version: 1; name: string; entry: string };
+  assetBaseUrl: string;
+  createdAt?: string;
 }
 
 export interface CustomerRecord extends InvitationPayload {
@@ -52,12 +79,20 @@ export interface InvitationDemoRecord {
   updatedAt: string;
 }
 
+export interface PublishedInvitationRecord {
+  slug: string;
+  customerId: string;
+  demoId: string;
+  createdAt: string;
+}
+
 export interface PublicInvitationDemo {
   id: string;
   templateId: string;
   note: string;
   expiresAt: string | null;
   payload: InvitationPayload;
+  customTemplate?: CustomInvitationTemplate | null;
 }
 
 export interface AdminProfile {

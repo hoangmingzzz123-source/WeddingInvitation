@@ -1,6 +1,7 @@
 export const ORIGINALS = 'customer-photos-original';
 export const ASSETS = 'customer-demo-assets';
 export const EXPORTS = 'customer-demo-exports';
+export const CUSTOM_TEMPLATES = 'custom-invitation-templates';
 
 export class MediaError extends Error {
   constructor(public status: number, message: string) { super(message); }

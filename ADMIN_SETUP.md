@@ -4,8 +4,10 @@
 
 1. Tạo project trong Supabase.
 2. Mở **SQL Editor** và chạy file `supabase/migrations/202610060001_admin_crm.sql`.
-3. Vào **Authentication → Users**, tạo tài khoản admin bằng email và mật khẩu riêng.
-4. Chạy câu SQL sau, thay email bằng tài khoản vừa tạo:
+3. Sau đó chạy `supabase/migrations/202611060001_published_invitations.sql` để bật link thiệp chính thức theo slug.
+4. Chạy `supabase/migrations/202611060002_custom_invitation_templates.sql` để tạo kho gói mẫu ZIP.
+5. Vào **Authentication → Users**, tạo tài khoản admin bằng email và mật khẩu riêng.
+6. Chạy câu SQL sau, thay email bằng tài khoản vừa tạo:
 
 ```sql
 insert into public.admin_users (user_id, email, display_name)
@@ -36,16 +38,18 @@ Thêm các biến môi trường cho Production và Preview:
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
 - `SUPABASE_SECRET_KEY`
+- `VITE_PUBLIC_INVITATION_DOMAIN` (tùy chọn, domain gốc do bạn sở hữu và có wildcard DNS để dùng link dạng `ten-co-dau-ten-chu-re.domain`)
 
 `SUPABASE_SECRET_KEY` chỉ được dùng ở server Vercel và tuyệt đối không được thêm tiền tố `VITE_`.
+Để dùng subdomain riêng cho từng khách, cần domain do bạn quản lý, thêm domain gốc và wildcard `*.domain` vào Vercel, đồng thời cấu hình DNS theo hướng dẫn Vercel. Không thể tự tạo wildcard con dưới domain hệ thống `wedding-invitation-mp.vercel.app`; nếu chưa cấu hình, hãy để `VITE_PUBLIC_INVITATION_DOMAIN` trống để hệ thống tạo link hoạt động dạng `/invite/slug` trên domain hiện tại.
 
 ## 4. Luồng vận hành
 
 1. Khách gửi `/yeu-cau-thiep` hoặc admin tạo hồ sơ thủ công.
 2. Admin chọn mẫu, rà soát dữ liệu và tạo link preview.
 3. Khách mở `/preview/:token`, xác nhận popup demo rồi xem thiệp.
-4. Admin nhấn **Xác nhận khách đặt mẫu**.
-5. Nút **Xuất code ZIP** được mở; server xác minh lại JWT, quyền admin và trạng thái đơn trước khi sinh file.
+4. Admin nhấn **Xác nhận khách đặt mẫu**. Hệ thống tạo và sao chép link thiệp chính thức theo tên cô dâu/chú rể; có thể mở hoặc sao chép link từ demo.
+5. Nút **Xuất code ZIP** được mở; server xác minh lại JWT, quyền admin và trạng thái đơn trước khi sinh file. Xóa demo sẽ gỡ cả link preview và link chính thức liên kết với demo đó.
 
 ## 5. Kiểm tra bảo mật
 
@@ -56,7 +60,7 @@ Thêm các biến môi trường cho Production và Preview:
 
 ## 6. Triển khai upload ảnh bằng Supabase
 
-1. Áp dụng `202611030001_customer_photos_drive.sql` , `202611030002_customer_photo_abuse_limits.sql` và `202611030003_secure_customer_workflows.sql` sau migration CRM. Kiểm tra giới hạn Storage toàn dự án đủ cho ảnh gốc 15 MiB và ZIP tối đa 32 MiB.
+1. Áp dụng `202611030001_customer_photos_drive.sql`, `202611030002_customer_photo_abuse_limits.sql`, `202611030003_secure_customer_workflows.sql`, `202611060001_published_invitations.sql` và `202611060002_custom_invitation_templates.sql` sau migration CRM. Kiểm tra giới hạn Storage toàn dự án đủ cho ảnh gốc 15 MiB và ZIP tối đa 32 MiB.
 2. Cấu hình các biến Supabase theo `.env.example` trên Vercel. Triển khai lại sau khi áp dụng migration. Trang gửi yêu cầu luôn hiện phần tải 5–7 ảnh. Giữ `GOOGLE_DRIVE_ENABLED=false` nếu chỉ lưu trên Supabase.
 3. Server cấp mã xác minh có chữ ký, dùng trong 5 phút và có thể gửi sau 1,5 giây. Server kiểm tra nguồn gửi từ trình duyệt và trường bẫy bot. PostgreSQL giới hạn 8 phiên mới mỗi IP và 4 phiên mới mỗi số điện thoại chuẩn hóa trong một giờ. Giới hạn toàn site mặc định 60 phiên mỗi giờ, chỉnh bằng `UPLOAD_LIMIT_PER_HOUR` (1–500). Thử lại phiên đã tạo dùng cùng mã phiên. Tùy chọn đặt `UPLOAD_ABUSE_SECRET` ổn định ở server để giữ các bộ đếm qua lần đổi khóa Supabase.
 4. Chạy thử 5 ảnh, có một ảnh trên 6 MiB. Kiểm tra mã yêu cầu, chọn cover/album, link đã hết hạn và ZIP mở offline.

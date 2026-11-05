@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Archive,
   ArrowLeft,
+  ArrowRight,
   Check,
   Clipboard,
   Download,
@@ -19,6 +20,7 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
+  Trash2,
   UserRound,
   Users,
   WandSparkles,
@@ -29,10 +31,12 @@ import {
   clearAdminSession,
   createCustomer,
   createDemo,
+  deleteDemo,
   getAdminProfile,
   isSupabaseConfigured,
   listCustomers,
   listDemos,
+  listPublishedInvitations,
   readAdminSession,
   readAuthCallbackSession,
   refreshAdminSession,
@@ -48,14 +52,26 @@ import {
   type AdminSession,
   type CustomerRecord,
   type CustomerStatus,
+  type CustomInvitationTemplate,
   type DemoPhoto,
   type InvitationDemoRecord,
+  type InvitationStudioConfig,
+  type PublishedInvitationRecord,
 } from '../../types/admin';
 import type { AuthCallbackSession } from '../../lib/supabaseRest';
+import { mediaRequest, uploadCustomTemplate } from '../../lib/customerPhotoUpload';
 import { CustomerInvitationPreview } from '../CustomerInvitationPreview';
+import { CustomTemplateRenderer } from '../CustomTemplateRenderer';
 import { CustomerPhotoLibrary } from './CustomerPhotoLibrary';
 
 const customerStatuses = Object.keys(customerStatusLabels) as CustomerStatus[];
+const publicInvitationDomain = (import.meta.env.VITE_PUBLIC_INVITATION_DOMAIN ?? '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
+
+function publicInvitationUrl(slug: string) {
+  return publicInvitationDomain
+    ? `https://${slug}.${publicInvitationDomain}`
+    : `${window.location.origin}/invite/${slug}`;
+}
 
 type CustomerEditor = Omit<CustomerRecord, 'id' | 'createdAt' | 'updatedAt' | 'confirmedAt' | 'exportedAt'>;
 
@@ -93,6 +109,157 @@ function customerToEditor(customer: CustomerRecord): CustomerEditor {
 function formatDate(value: string) {
   if (!value) return '—';
   return new Intl.DateTimeFormat('vi-VN', { dateStyle: 'medium' }).format(new Date(value));
+}
+
+const studioSteps = ['Đôi bạn', 'Thời gian', 'Địa điểm', 'Lời mời', 'Thiết kế', 'Khách mời', 'Xem lại'];
+
+const defaultStudioConfig: InvitationStudioConfig = {
+  packageTier: '109k',
+  city: 'Việt Nam',
+  ceremonyTitle: 'Lễ thành hôn',
+  receptionTitle: 'Tiệc mừng thân mật',
+  heroKicker: 'Wedding invitation',
+  albumTitle: 'Album kỷ niệm',
+  timeLabel: 'Thời gian',
+  venueLabel: 'Địa điểm',
+  signatureText: 'Sự hiện diện của bạn là niềm vui của chúng mình',
+  theme: 'template',
+  fontStyle: 'editorial',
+  guests: [],
+  rsvpQuestions: [],
+};
+
+function AdminStudioEditor({
+  customer,
+  config,
+  onConfigChange,
+  onCustomerChange,
+  onSave,
+  saving,
+  customTemplates,
+  onTemplateUpload,
+  templateUploading,
+}: {
+  customer: CustomerEditor;
+  config: InvitationStudioConfig;
+  onConfigChange: (config: InvitationStudioConfig) => void;
+  onCustomerChange: (key: 'brideName' | 'groomName' | 'weddingDate' | 'weddingTime' | 'venue' | 'address' | 'message' | 'selectedTemplateId', value: string) => void;
+  onSave: () => void;
+  saving: boolean;
+  customTemplates: CustomInvitationTemplate[];
+  onTemplateUpload: (file: File) => void;
+  templateUploading: boolean;
+}) {
+  const [step, setStep] = useState(0);
+  const [guestName, setGuestName] = useState('');
+  const [templateError, setTemplateError] = useState('');
+  const updateConfig = <Key extends keyof InvitationStudioConfig>(key: Key, value: InvitationStudioConfig[Key]) => {
+    onConfigChange({ ...config, [key]: value });
+  };
+  const addGuest = () => {
+    const name = guestName.trim();
+    if (!name) return;
+    updateConfig('guests', [...config.guests, {
+      id: crypto.randomUUID(), name, greeting: 'friendly',
+    }]);
+    setGuestName('');
+  };
+
+  return (
+    <section className="admin-studio-editor" aria-label="Trình chỉnh sửa Studio">
+      <header className="admin-studio-editor__heading">
+        <div><p>Studio theo hồ sơ khách</p><h3>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</h3></div>
+        <span>Bước {step + 1} / 7</span>
+      </header>
+      <nav className="admin-studio-editor__steps" aria-label="Các bước Studio">
+        {studioSteps.map((label, index) => <button type="button" key={label} className={index === step ? 'is-current' : ''}
+          aria-current={index === step ? 'step' : undefined} onClick={() => setStep(index)}><i>{String(index + 1).padStart(2, '0')}</i><span>{label}</span></button>)}
+      </nav>
+      <div className="admin-studio-editor__body">
+        {step === 0 && <div className="admin-form-grid">
+          <label>Tên cô dâu<input value={customer.brideName} onChange={(event) => onCustomerChange('brideName', event.target.value)} /></label>
+          <label>Tên chú rể<input value={customer.groomName} onChange={(event) => onCustomerChange('groomName', event.target.value)} /></label>
+        </div>}
+        {step === 1 && <div className="admin-form-grid">
+          <label>Ngày cưới<input type="date" value={customer.weddingDate} onChange={(event) => onCustomerChange('weddingDate', event.target.value)} /></label>
+          <label>Giờ đón khách<input type="time" value={customer.weddingTime} onChange={(event) => onCustomerChange('weddingTime', event.target.value)} /></label>
+        </div>}
+        {step === 2 && <div className="admin-form-grid">
+          <label className="is-wide">Địa điểm<input value={customer.venue} onChange={(event) => onCustomerChange('venue', event.target.value)} /></label>
+          <label className="is-wide">Địa chỉ<input value={customer.address} onChange={(event) => onCustomerChange('address', event.target.value)} /></label>
+          <label>Thành phố<input value={config.city} onChange={(event) => updateConfig('city', event.target.value)} /></label>
+        </div>}
+        {step === 3 && <div className="admin-form-grid">
+          <label className="is-wide">Story / lời mời<textarea rows={5} value={customer.message} onChange={(event) => onCustomerChange('message', event.target.value)} /></label>
+          <label>Tiêu đề lễ<input value={config.ceremonyTitle} onChange={(event) => updateConfig('ceremonyTitle', event.target.value)} /></label>
+          <label>Tiêu đề tiệc<input value={config.receptionTitle} onChange={(event) => updateConfig('receptionTitle', event.target.value)} /></label>
+          <details className="admin-studio-copy-fields is-wide">
+            <summary>Chỉnh các text khác trên thiệp</summary>
+            <div className="admin-form-grid">
+              <label>Chữ trên ảnh bìa<input value={config.heroKicker} onChange={(event) => updateConfig('heroKicker', event.target.value)} /></label>
+              <label>Tiêu đề album<input value={config.albumTitle} onChange={(event) => updateConfig('albumTitle', event.target.value)} /></label>
+              <label>Nhãn thời gian<input value={config.timeLabel} onChange={(event) => updateConfig('timeLabel', event.target.value)} /></label>
+              <label>Nhãn địa điểm<input value={config.venueLabel} onChange={(event) => updateConfig('venueLabel', event.target.value)} /></label>
+              <label className="is-wide">Câu kết thiệp<input value={config.signatureText} onChange={(event) => updateConfig('signatureText', event.target.value)} /></label>
+            </div>
+          </details>
+        </div>}
+        {step === 4 && <div className="admin-form-grid">
+          <label className="is-wide">Mẫu thiệp<select value={customer.selectedTemplateId} onChange={(event) => onCustomerChange('selectedTemplateId', event.target.value)}>
+            <option value="">Chọn mẫu</option>{weddingTemplates.filter((item) => item.route).map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}
+            {customTemplates.map((template) => <option key={template.id} value={template.id}>Mẫu riêng · {template.name}</option>)}
+          </select></label>
+          <div className="admin-custom-template-upload is-wide">
+            <label htmlFor="admin-custom-template-zip">Tải gói mẫu ZIP (tối đa 4 MiB)</label>
+            <input id="admin-custom-template-zip" type="file" accept=".zip,application/zip" disabled={templateUploading}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = '';
+                if (!file) return;
+                if (file.size > 4 * 1024 * 1024) { setTemplateError('ZIP mẫu cần nhỏ hơn 4 MiB.'); return; }
+                setTemplateError('');
+                onTemplateUpload(file);
+              }} />
+            <small>Cần manifest.json và index.html; có thể kèm styles.css, script.js và assets/. Dùng placeholder như {'{{brideName}}'}, {'{{coverUrl}}'}, {'{{gallery1Url}}'}. <a href="/custom-template-starter/README.md" target="_blank" rel="noreferrer">Hướng dẫn &amp; mẫu starter</a></small>
+            {templateUploading && <small role="status">Đang kiểm tra và tải gói mẫu...</small>}
+            {templateError && <small role="alert">{templateError}</small>}
+          </div>
+          <fieldset className="admin-studio-packages"><legend>Gói thiệp</legend>{([
+            ['109k', 'Cơ bản'], ['159k', 'Premium'], ['199k', 'Diamond'],
+          ] as const).map(([tier, label]) => <label key={tier}><input type="radio" name="admin-studio-package" checked={config.packageTier === tier} onChange={() => updateConfig('packageTier', tier)} /><span><b>{label}</b><small>{tier}</small></span></label>)}</fieldset>
+          <label>Bảng màu<select value={config.theme} onChange={(event) => updateConfig('theme', event.target.value as InvitationStudioConfig['theme'])}>
+            <option value="template">Nguyên bản</option><option value="champagne">Champagne</option><option value="blush">Blush Rose</option><option value="emerald">Emerald</option>
+          </select></label>
+          <label>Kiểu chữ<select value={config.fontStyle} onChange={(event) => updateConfig('fontStyle', event.target.value as InvitationStudioConfig['fontStyle'])}>
+            <option value="editorial">Editorial</option><option value="modern">Hiện đại</option><option value="classic">Cổ điển</option>
+          </select></label>
+          <p className="admin-studio-editor__hint">Ảnh bìa, album, thứ tự và canh ảnh được lấy từ thư viện ảnh khách ngay phía trên.</p>
+        </div>}
+        {step === 5 && (config.packageTier === '109k' ? <div className="admin-studio-guests-locked">
+          <strong>Quản lý khách và RSVP nâng cao cần gói Premium</strong>
+          <span>{config.guests.length ? `${config.guests.length} khách đã nhập sẽ được giữ lại khi đổi gói.` : 'Gói Cơ bản vẫn có RSVP Có / Không.'}</span>
+          <div><button type="button" onClick={() => updateConfig('packageTier', '159k')}>Chọn 159K Premium</button><button type="button" onClick={() => updateConfig('packageTier', '199k')}>Chọn 199K Diamond</button></div>
+        </div> : <div className="admin-studio-guests">
+          <div className="admin-studio-guests__add"><label htmlFor="admin-studio-guest">Thêm khách mời</label><div><input id="admin-studio-guest" value={guestName} onChange={(event) => setGuestName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addGuest(); } }} placeholder="Tên khách" /><button type="button" onClick={addGuest} disabled={!guestName.trim()}><Users aria-hidden="true" /> Thêm</button></div></div>
+          <div className="admin-studio-guests__list">{config.guests.map((guest) => <div key={guest.id}><span>{guest.name}</span><select aria-label={`Lời chào cho ${guest.name}`} value={guest.greeting} onChange={(event) => updateConfig('guests', config.guests.map((item) => item.id === guest.id ? { ...item, greeting: event.target.value as 'formal' | 'friendly' } : item))}><option value="friendly">Thân mời</option><option value="formal">Trân trọng kính mời</option></select><button type="button" aria-label={`Xóa ${guest.name}`} onClick={() => updateConfig('guests', config.guests.filter((item) => item.id !== guest.id))}>×</button></div>)}</div>
+          <fieldset className="admin-studio-rsvp"><legend>Câu hỏi RSVP</legend><label><input type="checkbox" checked={config.rsvpQuestions.includes('transport')} onChange={() => updateConfig('rsvpQuestions', config.rsvpQuestions.includes('transport') ? config.rsvpQuestions.filter((item) => item !== 'transport') : [...config.rsvpQuestions, 'transport'])} /> Xe đưa đón</label><label><input type="checkbox" checked={config.rsvpQuestions.includes('meal')} onChange={() => updateConfig('rsvpQuestions', config.rsvpQuestions.includes('meal') ? config.rsvpQuestions.filter((item) => item !== 'meal') : [...config.rsvpQuestions, 'meal'])} /> Chế độ ăn</label></fieldset>
+        </div>)}
+        {step === 6 && <dl className="admin-studio-review">
+          <div><dt>Đôi bạn</dt><dd>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</dd></div>
+          <div><dt>Thời gian</dt><dd>{customer.weddingDate || 'Chưa chọn ngày'} · {customer.weddingTime || '18:00'}</dd></div>
+          <div><dt>Địa điểm</dt><dd>{customer.venue || 'Chưa thêm địa điểm'} · {customer.address}</dd></div>
+          <div><dt>Thiết kế</dt><dd>{weddingTemplates.find((item) => item.id === customer.selectedTemplateId)?.name || 'Chưa chọn mẫu'} · {config.packageTier} · {config.theme} · {config.fontStyle}</dd></div>
+          <div><dt>Khách mời &amp; RSVP</dt><dd>{config.guests.length} khách · {config.rsvpQuestions.length} câu hỏi</dd></div>
+        </dl>}
+      </div>
+      <footer className="admin-studio-editor__actions">
+        <button type="button" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}><ArrowLeft aria-hidden="true" /> Trước</button>
+        {step < studioSteps.length - 1
+          ? <button type="button" className="is-primary" onClick={() => setStep((current) => Math.min(studioSteps.length - 1, current + 1))}>Tiếp theo <ArrowRight aria-hidden="true" /></button>
+          : <button type="button" className="is-primary" onClick={onSave} disabled={saving}><Save aria-hidden="true" /> {saving ? 'Đang lưu...' : 'Lưu cấu hình vào demo'}</button>}
+      </footer>
+    </section>
+  );
 }
 
 export function AdminLoginPage() {
@@ -254,6 +421,8 @@ export function AdminDashboardPage() {
   const [profile, setProfile] = useState<AdminProfile | null>(null);
   const [customers, setCustomers] = useState<CustomerRecord[]>([]);
   const [demos, setDemos] = useState<InvitationDemoRecord[]>([]);
+  const [publishedInvitations, setPublishedInvitations] = useState<PublishedInvitationRecord[]>([]);
+  const [customTemplates, setCustomTemplates] = useState<CustomInvitationTemplate[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [editor, setEditor] = useState<CustomerEditor>(emptyCustomer);
   const [isNewCustomer, setIsNewCustomer] = useState(false);
@@ -270,12 +439,16 @@ export function AdminDashboardPage() {
     return nextWeek.toISOString().slice(0, 10);
   });
   const [mediaSelection, setMediaSelection] = useState<{ customerId: string; photos: DemoPhoto[] }>();
+  const [studioConfig, setStudioConfig] = useState<InvitationStudioConfig>(defaultStudioConfig);
+  const [studioOpen, setStudioOpen] = useState(false);
+  const [templateUploading, setTemplateUploading] = useState(false);
   const publishAttempt = useRef<{ fingerprint: string; id: string }>();
   const publishing = useRef(false);
 
   const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? null;
   const demoPhotos = mediaSelection?.customerId === selectedCustomerId ? mediaSelection.photos : [];
   const customerDemos = demos.filter((demo) => demo.customerId === selectedCustomerId);
+  const selectedCustomTemplate = customTemplates.find((template) => template.id === editor.selectedTemplateId);
 
   const loadCustomerPhotos = useCallback((customerId: string, photos: DemoPhoto[]) => {
     setMediaSelection((current) => {
@@ -297,13 +470,16 @@ export function AdminDashboardPage() {
     setError('');
     try {
       const activeSession = await refreshAdminSession(existingSession);
-      const [nextProfile, nextCustomers, nextDemos] = await Promise.all([
-        getAdminProfile(activeSession), listCustomers(activeSession), listDemos(activeSession),
+      const [nextProfile, nextCustomers, nextDemos, nextPublishedInvitations, nextCustomTemplates] = await Promise.all([
+        getAdminProfile(activeSession), listCustomers(activeSession), listDemos(activeSession), listPublishedInvitations(activeSession),
+        mediaRequest<CustomInvitationTemplate[]>('templates', {}, activeSession.accessToken),
       ]);
       setSession(activeSession);
       setProfile(nextProfile);
       setCustomers(nextCustomers);
       setDemos(nextDemos);
+      setPublishedInvitations(nextPublishedInvitations);
+      setCustomTemplates(nextCustomTemplates);
       const nextSelectedId = preferredCustomerId
         ?? selectedCustomerId
         ?? nextCustomers[0]?.id
@@ -332,6 +508,25 @@ export function AdminDashboardPage() {
     setEditor(customerToEditor(selectedCustomer));
   }, [isNewCustomer, selectedCustomer]);
 
+  useEffect(() => {
+    if (!selectedCustomer) return;
+    const savedConfig = customerDemos[0]?.payload.studio;
+    setStudioConfig(savedConfig ? {
+      ...defaultStudioConfig,
+      ...savedConfig,
+      heroKicker: savedConfig.heroKicker || defaultStudioConfig.heroKicker,
+      albumTitle: savedConfig.albumTitle || defaultStudioConfig.albumTitle,
+      timeLabel: savedConfig.timeLabel || defaultStudioConfig.timeLabel,
+      venueLabel: savedConfig.venueLabel || defaultStudioConfig.venueLabel,
+      signatureText: savedConfig.signatureText || defaultStudioConfig.signatureText,
+      guests: Array.isArray(savedConfig.guests) ? savedConfig.guests : [],
+      rsvpQuestions: Array.isArray(savedConfig.rsvpQuestions) ? savedConfig.rsvpQuestions : [],
+    } : {
+      ...defaultStudioConfig,
+      packageTier: weddingTemplates.find((item) => item.id === selectedCustomer.selectedTemplateId)?.tier ?? '109k',
+    });
+  }, [selectedCustomerId, demos]);
+
   const filteredCustomers = useMemo(() => {
     const search = searchTerm.trim().toLocaleLowerCase('vi');
     return customers.filter((customer) => {
@@ -357,6 +552,21 @@ export function AdminDashboardPage() {
   const showMessage = (value: string) => {
     setMessage(value);
     window.setTimeout(() => setMessage(''), 3200);
+  };
+
+  const uploadTemplatePackage = async (file: File) => {
+    if (!session || templateUploading) return;
+    setTemplateUploading(true);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      const uploaded = await uploadCustomTemplate(file, activeSession.accessToken);
+      setCustomTemplates((current) => [uploaded, ...current.filter((template) => template.id !== uploaded.id)]);
+      updateEditor('selectedTemplateId', uploaded.id);
+      showMessage(`Đã tải mẫu riêng “${uploaded.name}” và chọn cho hồ sơ này.`);
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : 'Không thể tải gói mẫu ZIP lên.');
+    } finally { setTemplateUploading(false); }
   };
 
   const saveCustomer = async (event: React.FormEvent) => {
@@ -422,6 +632,8 @@ export function AdminDashboardPage() {
           message: editor.message,
           coverUrl: editor.coverUrl,
           ...(demoPhotos.length ? { photos: demoPhotos.map(({ url: _url, ...photo }) => photo) } : {}),
+          studio: studioConfig,
+          customTemplateId: selectedCustomTemplate?.id ?? null,
         },
       };
       const fingerprint = JSON.stringify(input);
@@ -444,9 +656,98 @@ export function AdminDashboardPage() {
     }
   };
 
+  const saveStudioConfig = async () => {
+    if (!session || !selectedCustomer || actionLoading) return;
+    const demo = customerDemos[0];
+    if (!demo) {
+      await publishDemo();
+      return;
+    }
+    setActionLoading(`studio:${demo.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateCustomer(activeSession, selectedCustomer.id, editor);
+      const photos = demoPhotos.length
+        ? demoPhotos.map(({ url: _url, ...photo }) => photo)
+        : demo.payload.photos ?? [];
+      await updateDemo(activeSession, demo.id, {
+        templateId: editor.selectedTemplateId,
+        payload: {
+          ...demo.payload,
+          brideName: editor.brideName,
+          groomName: editor.groomName,
+          weddingDate: editor.weddingDate,
+          weddingTime: editor.weddingTime,
+          venue: editor.venue,
+          address: editor.address,
+          message: editor.message,
+          coverUrl: editor.coverUrl,
+          photos,
+          studio: studioConfig,
+        },
+      });
+      await loadData(selectedCustomer.id);
+      setStudioOpen(false);
+      showMessage('Đã lưu cấu hình Studio vào demo. Link preview hiện tại vẫn được giữ nguyên.');
+    } catch (studioError) {
+      setError(studioError instanceof Error ? studioError.message : 'Không thể lưu cấu hình Studio.');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
   const copyPreviewLink = async (token: string) => {
     const url = `${window.location.origin}/preview/${token}`;
     try { await navigator.clipboard.writeText(url); } catch { window.prompt('Sao chép link preview:', url); }
+  };
+
+  const copyInvitationLink = async (slug: string) => {
+    const url = publicInvitationUrl(slug);
+    try { await navigator.clipboard.writeText(url); } catch { window.prompt('Sao chép link thiệp chính thức:', url); }
+  };
+
+  const saveCurrentDemoSettings = async (activeSession: AdminSession, demo: InvitationDemoRecord) => {
+    if (!selectedCustomer) return;
+    const photos = mediaSelection?.customerId === selectedCustomer.id
+      ? demoPhotos.map(({ url: _url, ...photo }) => photo)
+      : demo.payload.photos ?? [];
+    await updateDemo(activeSession, demo.id, {
+      templateId: editor.selectedTemplateId || demo.templateId,
+      payload: {
+        ...demo.payload,
+        brideName: editor.brideName,
+        groomName: editor.groomName,
+        weddingDate: editor.weddingDate,
+        weddingTime: editor.weddingTime,
+        venue: editor.venue,
+        address: editor.address,
+        message: editor.message,
+        coverUrl: editor.coverUrl,
+        photos,
+        studio: studioConfig,
+        customTemplateId: selectedCustomTemplate?.id ?? null,
+      },
+    });
+  };
+
+  const publishLiveDemo = async (demo: InvitationDemoRecord) => {
+    if (!session || !selectedCustomer || !['confirmed', 'completed'].includes(selectedCustomer.status)) return;
+    setActionLoading(`publish:${demo.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await updateCustomer(activeSession, selectedCustomer.id, { ...editor, status: selectedCustomer.status });
+      await saveCurrentDemoSettings(activeSession, demo);
+      const result = await mediaRequest<{ slug: string }>('publish-invitation', {
+        customerId: selectedCustomer.id, demoId: demo.id,
+      }, activeSession.accessToken);
+      await loadData(selectedCustomer.id);
+      await copyInvitationLink(result.slug);
+      showMessage('Đã tạo link thiệp chính thức và sao chép vào clipboard.');
+    } catch (publishError) {
+      setError(publishError instanceof Error ? publishError.message : 'Không thể tạo link thiệp chính thức.');
+    } finally { setActionLoading(''); }
   };
 
   const confirmOrder = async () => {
@@ -454,11 +755,39 @@ export function AdminDashboardPage() {
     setActionLoading('confirm');
     try {
       const activeSession = await refreshAdminSession(readAdminSession() ?? session);
-      await updateCustomer(activeSession, selectedCustomer.id, { status: 'confirmed' });
+      const demo = customerDemos[0];
+      await updateCustomer(activeSession, selectedCustomer.id, { ...editor, status: 'confirmed' });
+      if (demo) await saveCurrentDemoSettings(activeSession, demo);
+      const liveLink = demo
+        ? await mediaRequest<{ slug: string }>('publish-invitation', {
+          customerId: selectedCustomer.id, demoId: demo.id,
+        }, activeSession.accessToken)
+        : null;
       await loadData(selectedCustomer.id);
-      showMessage('Đã xác nhận khách đặt mẫu. Nút xuất ZIP đã được mở.');
+      if (liveLink) {
+        await copyInvitationLink(liveLink.slug);
+        showMessage('Đã xác nhận, tạo link thiệp chính thức và sao chép link.');
+      } else {
+        showMessage('Đã xác nhận khách đặt mẫu. Chọn demo để tạo link thiệp chính thức hoặc xuất ZIP.');
+      }
     } catch (confirmError) {
       setError(confirmError instanceof Error ? confirmError.message : 'Không thể xác nhận đơn.');
+    } finally { setActionLoading(''); }
+  };
+
+  const removeDemo = async (demo: InvitationDemoRecord) => {
+    if (!session || actionLoading) return;
+    const confirmed = window.confirm('Xóa demo này? Link preview và link thiệp chính thức gắn với demo sẽ ngừng hoạt động.');
+    if (!confirmed) return;
+    setActionLoading(`delete:${demo.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await deleteDemo(activeSession, demo.id);
+      await loadData(selectedCustomerId ?? undefined);
+      showMessage('Đã xóa demo và các link đang trỏ tới demo này.');
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Không thể xóa demo.');
     } finally { setActionLoading(''); }
   };
 
@@ -668,21 +997,42 @@ export function AdminDashboardPage() {
 
         {selectedCustomer && !isNewCustomer && (
           <section className="admin-demo-panel">
-            <div className="admin-panel-heading"><div><p>Demo Studio</p><h2>Tạo và quản lý link preview</h2></div><span>{customerDemos.length} demo</span></div>
+            <div className="admin-panel-heading"><div><p>Demo Studio</p><h2>Tạo và quản lý link preview</h2></div><div className="admin-demo-panel__heading-actions"><span>{customerDemos.length} demo</span><button type="button" className="is-primary" onClick={() => setStudioOpen((open) => !open)}><WandSparkles aria-hidden="true" /> {studioOpen ? 'Đóng Studio' : 'Mở Studio'}</button></div></div>
             {session && <CustomerPhotoLibrary key={selectedCustomer.id} customerId={selectedCustomer.id}
               accessToken={session.accessToken} selection={demoPhotos} onLoad={loadCustomerPhotos} disabled={Boolean(actionLoading)}
               onSelect={(photos) => setMediaSelection({ customerId: selectedCustomer.id, photos })} />}
+            {studioOpen && <AdminStudioEditor
+              customer={editor}
+              config={studioConfig}
+              onConfigChange={setStudioConfig}
+              onCustomerChange={(key, value) => updateEditor(key, value)}
+              onSave={() => void saveStudioConfig()}
+              saving={actionLoading.startsWith('studio:') || actionLoading === 'demo'}
+              customTemplates={customTemplates}
+              onTemplateUpload={(file) => void uploadTemplatePackage(file)}
+              templateUploading={templateUploading}
+            />}
             <div className="admin-demo-builder">
               <div className="admin-demo-preview">
-                <CustomerInvitationPreview
+                {selectedCustomTemplate ? <CustomTemplateRenderer
+                  compact
+                  template={selectedCustomTemplate}
+                  title={`Xem trước mẫu riêng ${selectedCustomTemplate.name}`}
+                  payload={{
+                    brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
+                    weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
+                    message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
+                    customTemplateId: selectedCustomTemplate.id,
+                  }}
+                /> : <CustomerInvitationPreview
                   compact
                   templateId={editor.selectedTemplateId || 'classic-minimalist'}
                   payload={{
                     brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
                     weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
-                    message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos,
+                    message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
                   }}
-                />
+                />}
               </div>
               <div className="admin-demo-controls">
                 <label>Ghi chú hiển thị trên popup<textarea rows={4} value={demoNote} onChange={(e) => setDemoNote(e.target.value)} /></label>
@@ -700,18 +1050,27 @@ export function AdminDashboardPage() {
               {customerDemos.map((demo) => {
                 const previewUrl = `${window.location.origin}/preview/${demo.publicToken}`;
                 const canExport = selectedCustomer.status === 'confirmed' || selectedCustomer.status === 'completed';
+                const publishedSlug = publishedInvitations.find((item) => item.demoId === demo.id)?.slug;
+                const invitationUrl = publishedSlug ? publicInvitationUrl(publishedSlug) : '';
                 return (
                   <article key={demo.id}>
                     <span className={demo.status === 'published' ? 'is-live' : ''}><i /> {demo.status === 'published' ? 'Đang hoạt động' : 'Đã khóa'}</span>
-                    <div><b>{weddingTemplates.find((item) => item.id === demo.templateId)?.name ?? demo.templateId}</b><small>Tạo {formatDate(demo.createdAt)}{demo.expiresAt ? ` · Hết hạn ${formatDate(demo.expiresAt)}` : ''}</small></div>
+                    <div><b>{weddingTemplates.find((item) => item.id === demo.templateId)?.name ?? customTemplates.find((item) => item.id === demo.templateId)?.name ?? demo.templateId}</b><small>Tạo {formatDate(demo.createdAt)}{demo.expiresAt ? ` · Hết hạn ${formatDate(demo.expiresAt)}` : ''}</small></div>
                     <label><input readOnly value={previewUrl} /><button type="button" onClick={() => void copyPreviewLink(demo.publicToken)} aria-label="Sao chép link"><Clipboard /></button><a href={previewUrl} target="_blank" rel="noreferrer" aria-label="Mở preview"><ExternalLink /></a></label>
+                    {publishedSlug && <label className="admin-demo-live-link"><input readOnly value={invitationUrl} aria-label="Link thiệp chính thức" /><button type="button" onClick={() => void copyInvitationLink(publishedSlug)} aria-label="Sao chép link thiệp"><Clipboard /></button><a href={invitationUrl} target="_blank" rel="noreferrer" aria-label="Mở thiệp chính thức"><ExternalLink /></a></label>}
                     <div className="admin-demo-list__actions">
                       <button type="button" onClick={() => void expireDemo(demo)}><Archive /> {demo.status === 'expired' ? 'Mở lại' : 'Khóa link'}</button>
+                      {canExport && !publishedSlug && <button type="button" onClick={() => void publishLiveDemo(demo)} disabled={Boolean(actionLoading)}>
+                        {actionLoading === `publish:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Link2 />} Tạo link thiệp thực tế
+                      </button>}
                       {!!demoPhotos.length && <button type="button" disabled={Boolean(actionLoading)} onClick={() => void applyPhotosToDemo(demo)}>
                         {actionLoading === `photos:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Check />} Áp dụng ảnh đã chọn
                       </button>}
                       <button type="button" className="is-primary" disabled={!canExport || Boolean(actionLoading)} title={canExport ? 'Xuất source code ZIP' : 'Cần xác nhận khách đặt mẫu trước'} onClick={() => void exportZip(demo)}>
                         {actionLoading === `export:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Download />} Xuất code ZIP
+                      </button>
+                      <button type="button" className="is-danger" disabled={Boolean(actionLoading)} onClick={() => void removeDemo(demo)} title="Xóa demo và các link gắn với demo">
+                        {actionLoading === `delete:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Trash2 />} Xóa demo
                       </button>
                     </div>
                   </article>

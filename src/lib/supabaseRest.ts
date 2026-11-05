@@ -5,6 +5,7 @@ import type {
   CustomerStatus,
   InvitationDemoRecord,
   InvitationPayload,
+  PublishedInvitationRecord,
   PublicInvitationDemo,
 } from '../types/admin';
 
@@ -87,6 +88,7 @@ function toCamelDemo(row: JsonRecord): InvitationDemoRecord {
     note: String(row.note ?? ''),
     expiresAt: row.expires_at ? String(row.expires_at) : null,
     payload: {
+      ...payload,
       brideName: String(payload.brideName ?? ''),
       groomName: String(payload.groomName ?? ''),
       weddingDate: String(payload.weddingDate ?? ''),
@@ -95,6 +97,7 @@ function toCamelDemo(row: JsonRecord): InvitationDemoRecord {
       address: String(payload.address ?? ''),
       message: String(payload.message ?? ''),
       coverUrl: String(payload.coverUrl ?? ''),
+      photos: Array.isArray(payload.photos) ? payload.photos : [],
     },
     createdAt: String(row.created_at ?? ''),
     updatedAt: String(row.updated_at ?? ''),
@@ -340,6 +343,19 @@ export async function listDemos(session: AdminSession, customerId?: string) {
   return rows.map(toCamelDemo);
 }
 
+export async function listPublishedInvitations(session: AdminSession) {
+  const rows = await request<JsonRecord[]>(
+    '/rest/v1/published_invitations?select=slug,customer_id,demo_id,created_at',
+    { token: session.accessToken },
+  );
+  return rows.map((row): PublishedInvitationRecord => ({
+    slug: String(row.slug),
+    customerId: String(row.customer_id),
+    demoId: String(row.demo_id),
+    createdAt: String(row.created_at),
+  }));
+}
+
 export async function createDemo(
   session: AdminSession,
   data: { id?: string; customerId: string; templateId: string; note: string; expiresAt: string | null; payload: InvitationPayload },
@@ -386,6 +402,12 @@ export async function updateDemo(
   return toCamelDemo(rows[0]);
 }
 
+export async function deleteDemo(session: AdminSession, demoId: string) {
+  await request<null>(`/rest/v1/invitation_demos?id=eq.${encodeURIComponent(demoId)}`, {
+    method: 'DELETE', token: session.accessToken,
+  });
+}
+
 export async function getPublicDemo(token: string): Promise<PublicInvitationDemo> {
   const response = await fetch('/api/customer-media?action=demo', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }),
@@ -396,6 +418,6 @@ export async function getPublicDemo(token: string): Promise<PublicInvitationDemo
   }
   return {
     id: String(demo.id), templateId: String(demo.template_id), note: String(demo.note ?? ''),
-    expiresAt: demo.expires_at ?? null, payload: demo.payload,
+    expiresAt: demo.expires_at ?? null, payload: demo.payload, customTemplate: demo.customTemplate ?? null,
   };
 }

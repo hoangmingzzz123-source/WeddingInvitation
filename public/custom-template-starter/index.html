@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{brideName}} &amp; {{groomName}}</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <section class="cover" style="background-image:linear-gradient(180deg,rgba(13,32,28,.08),rgba(13,32,28,.62)),url('{{coverUrl}}');background-position:{{coverPosition}}">
+      <p class="eyebrow">{{heroKicker}}</p>
+      <h1>{{brideName}} <span>&amp;</span> {{groomName}}</h1>
+      <p class="date">{{weddingDate}} · {{weddingTime}}</p>
+    </section>
+    <section class="story">
+      <p class="eyebrow">{{ceremonyTitle}}</p>
+      <h2>{{receptionTitle}}</h2>
+      <p class="message">{{message}}</p>
+      <div class="details">
+        <p><b>{{timeLabel}}</b><br>{{weddingDate}} · {{weddingTime}}</p>
+        <p><b>{{venueLabel}}</b><br>{{venue}}<br>{{address}}</p>
+      </div>
+      <p class="signoff">{{signatureText}}</p>
+    </section>
+    <section class="album">
+      <h2>{{albumTitle}}</h2>
+      <div class="photos">
+        <img src="{{gallery1Url}}" alt="Khoanh khac 1" style="object-position:{{gallery1Position}}">
+        <img src="{{gallery2Url}}" alt="Khoanh khac 2" style="object-position:{{gallery2Position}}">
+        <img src="{{gallery3Url}}" alt="Khoanh khac 3" style="object-position:{{gallery3Position}}">
+        <img src="{{gallery4Url}}" alt="Khoanh khac 4" style="object-position:{{gallery4Position}}">
+      </div>
+    </section>
+  </main>
+</body>
+</html>

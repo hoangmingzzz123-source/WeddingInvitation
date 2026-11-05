@@ -4,6 +4,7 @@ import { navigateTo } from '../Router';
 import { getPublicDemo } from '../lib/supabaseRest';
 import type { PublicInvitationDemo } from '../types/admin';
 import { CustomerInvitationPreview } from './CustomerInvitationPreview';
+import { CustomTemplateRenderer } from './CustomTemplateRenderer';
 
 export function PublicDemoPage({ token }: { token: string }) {
   const [demo, setDemo] = useState<PublicInvitationDemo | null>(null);
@@ -56,7 +57,9 @@ export function PublicDemoPage({ token }: { token: string }) {
   return (
     <main className={`public-customer-demo${noticeAccepted ? ' is-ready' : ' is-obscured'}`}>
       <div className="public-demo-watermark"><Sparkles aria-hidden="true" /> Bản demo · Không phải bản chính thức</div>
-      <CustomerInvitationPreview payload={demo.payload} templateId={demo.templateId} />
+      {demo.customTemplate
+        ? <CustomTemplateRenderer template={demo.customTemplate} payload={demo.payload} title={`Bản demo ${demo.customTemplate.name}`} />
+        : <CustomerInvitationPreview payload={demo.payload} templateId={demo.templateId} />}
 
       {!noticeAccepted && (
         <div className="demo-consent" role="presentation">

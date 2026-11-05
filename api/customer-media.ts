@@ -1,5 +1,6 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
-import { ASSETS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
+import { unzipSync } from 'fflate';
+import { ASSETS, CUSTOM_TEMPLATES, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
 import { checkDrive, syncDrive, cleanupUploads } from '../server/driveSync.js';
 
 const MiB = 1024 * 1024;
@@ -16,6 +17,140 @@ const uuid = (value: unknown) => {
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const flag = (name: string) => process.env[name] === 'true';
+const publicStudioKeys = ['packageTier', 'city', 'ceremonyTitle', 'receptionTitle', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
+const templateMimeTypes: Record<string, string> = {
+  html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'application/javascript; charset=utf-8',
+  json: 'application/json; charset=utf-8', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
+  webp: 'image/webp', svg: 'image/svg+xml', woff: 'font/woff', woff2: 'font/woff2', ttf: 'font/ttf', otf: 'font/otf',
+  md: 'text/markdown; charset=utf-8',
+};
+const templateExtensions = new Set(Object.keys(templateMimeTypes));
+const maxTemplateZipBytes = 4 * MiB;
+const maxTemplateExpandedBytes = 12 * MiB;
+const maxTemplateFileBytes = 2 * MiB;
+
+function templateAssetBase(id: string) {
+  return `${supabaseUrl()}/storage/v1/object/public/${CUSTOM_TEMPLATES}/${id}/`;
+}
+
+async function customTemplateRecord(id: string) {
+  const [template] = await db<Array<{ id: string; name: string; entry_file: string; manifest: Record<string, unknown> }>>(
+    `custom_invitation_templates?id=eq.${uuid(id)}&select=id,name,entry_file,manifest&limit=1`,
+  );
+  return template ? {
+    id: template.id,
+    name: template.name,
+    entryFile: template.entry_file,
+    manifest: template.manifest,
+    assetBaseUrl: templateAssetBase(template.id),
+  } : null;
+}
+
+async function customTemplateForPayload(payload: Record<string, unknown>) {
+  return typeof payload.customTemplateId === 'string'
+    ? customTemplateRecord(payload.customTemplateId)
+    : null;
+}
+
+async function listCustomTemplates() {
+  const rows = await db<Array<{ id: string; name: string; entry_file: string; manifest: Record<string, unknown>; created_at: string }>>(
+    'custom_invitation_templates?select=id,name,entry_file,manifest,created_at&order=created_at.desc',
+  );
+  return rows.map((row) => ({
+    id: row.id, name: row.name, entryFile: row.entry_file, manifest: row.manifest,
+    createdAt: row.created_at, assetBaseUrl: templateAssetBase(row.id),
+  }));
+}
+
+function safeTemplatePath(value: string) {
+  const path = value;
+  return Boolean(path) && !path.includes('\\') && !path.startsWith('/') && !path.includes(':')
+    && path.split('/').every((part) => Boolean(part) && part !== '.' && part !== '..')
+    && /^[a-zA-Z0-9._/-]+$/.test(path);
+}
+
+async function uploadCustomTemplate(request: Request) {
+  const contentLength = Number(request.headers.get('content-length') ?? 0);
+  if (contentLength > maxTemplateZipBytes + 128 * 1024) throw new MediaError(413, 'ZIP mẫu cần nhỏ hơn 4 MiB.');
+  const form = await request.formData();
+  const archive = form.get('file');
+  if (!(archive instanceof File) || !archive.name.toLowerCase().endsWith('.zip') || !archive.size || archive.size > maxTemplateZipBytes) {
+    throw new MediaError(400, 'Hãy tải lên file ZIP có dung lượng tối đa 4 MiB.');
+  }
+
+  let fileCount = 0;
+  let expandedBytes = 0;
+  const seenPaths = new Set<string>();
+  let extracted: Record<string, Uint8Array>;
+  try {
+    extracted = unzipSync(new Uint8Array(await archive.arrayBuffer()), {
+      filter: (file) => {
+        const path = file.name;
+        if (path.endsWith('/')) return false;
+        fileCount += 1;
+        const size = file.originalSize;
+        expandedBytes += size;
+        const extension = path.split('.').pop()?.toLowerCase() ?? '';
+        if (fileCount > 60 || !Number.isSafeInteger(size) || size < 0 || !safeTemplatePath(path) || seenPaths.has(path)
+          || path === 'invitation.config.json' || path.startsWith('customer-assets/')
+          || !templateExtensions.has(extension)
+          || size > maxTemplateFileBytes || expandedBytes > maxTemplateExpandedBytes) {
+          throw new MediaError(422, 'ZIP có đường dẫn, định dạng hoặc dung lượng file không được hỗ trợ.');
+        }
+        seenPaths.add(path);
+        return true;
+      },
+    });
+  } catch (error) {
+    if (error instanceof MediaError) throw error;
+    throw new MediaError(422, 'Không đọc được ZIP mẫu. Hãy kiểm tra file nén và thử lại.');
+  }
+
+  const manifestBytes = extracted['manifest.json'];
+  if (!manifestBytes || manifestBytes.length > 32 * 1024) throw new MediaError(422, 'ZIP cần có manifest.json tối đa 32 KiB.');
+  let manifest: Record<string, unknown>;
+  try { manifest = JSON.parse(new TextDecoder().decode(manifestBytes)) as Record<string, unknown>; }
+  catch { throw new MediaError(422, 'manifest.json không phải JSON hợp lệ.'); }
+  const entryFile = typeof manifest.entry === 'string' ? manifest.entry : 'index.html';
+  if (manifest.version !== 1 || typeof manifest.name !== 'string' || !manifest.name.trim()
+    || manifest.name.length > 80 || !safeTemplatePath(entryFile) || !entryFile.toLowerCase().endsWith('.html')
+    || !extracted[entryFile]) {
+    throw new MediaError(422, 'manifest.json cần version: 1, name và entry trỏ tới file HTML có trong ZIP.');
+  }
+  const html = new TextDecoder().decode(extracted[entryFile]);
+  if (/<\s*(iframe|object|embed)\b/i.test(html) || /<\s*base\b/i.test(html)) {
+    throw new MediaError(422, 'Mẫu không được chứa iframe, object, embed hoặc base tag.');
+  }
+
+  const id = randomUUID();
+  const paths = Object.keys(extracted);
+  for (const path of paths) {
+    const extension = path.split('.').pop()?.toLowerCase() ?? '';
+    await supabase(`/storage/v1/object/${CUSTOM_TEMPLATES}/${id}/${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': templateMimeTypes[extension], 'x-upsert': 'true' },
+      body: extracted[path].buffer.slice(
+        extracted[path].byteOffset,
+        extracted[path].byteOffset + extracted[path].byteLength,
+      ) as ArrayBuffer,
+    });
+  }
+  const cleanManifest = { version: 1, name: manifest.name.trim(), entry: entryFile };
+  await db('custom_invitation_templates', {
+    id, name: cleanManifest.name, entry_file: entryFile, manifest: cleanManifest,
+    file_paths: paths,
+  });
+  return json({
+    id, name: cleanManifest.name, entryFile, manifest: cleanManifest,
+    assetBaseUrl: templateAssetBase(id),
+  }, 201);
+}
+
+function publicStudio(value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const config = value as Record<string, unknown>;
+  return Object.fromEntries(publicStudioKeys.filter((key) => key in config).map((key) => [key, config[key]]));
+}
 
 const challengeDelay = 1500;
 const challengeTTL = 5 * 60_000;
@@ -224,7 +359,102 @@ async function publicDemo(token: string) {
   })));
   const publicFields = ['brideName', 'groomName', 'weddingDate', 'weddingTime', 'venue', 'address', 'message', 'coverUrl'];
   const invitation = Object.fromEntries(publicFields.map((key) => [key, String(payload[key] ?? (key === 'weddingTime' ? '18:00' : ''))]));
-  return json({ ...details, payload: { ...invitation, photos } });
+  const studio = publicStudio(payload.studio);
+  return json({ ...details, customTemplate: await customTemplateForPayload(payload), payload: { ...invitation, photos, studio, customTemplateId: payload.customTemplateId } });
+}
+
+function invitationSlug(value: unknown) {
+  const slug = clean(value, 80).toLowerCase();
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new MediaError(400, 'Đường dẫn thiệp không hợp lệ.');
+  return slug;
+}
+
+function slugifyInvitation(value: string) {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64) || 'thiep-cuoi';
+}
+
+async function publishInvitation(body: Record<string, unknown>) {
+  const customerId = uuid(body.customerId);
+  const demoId = uuid(body.demoId);
+  const [customerRow] = await db<Array<{ id: string; status: string; bride_name: string; groom_name: string }>>(
+    `customers?id=eq.${customerId}&select=id,status,bride_name,groom_name&limit=1`,
+  );
+  const [demo] = await db<Array<{ id: string; customer_id: string }>>(
+    `invitation_demos?id=eq.${demoId}&customer_id=eq.${customerId}&select=id,customer_id&limit=1`,
+  );
+  if (!customerRow || !demo) throw new MediaError(404, 'Không tìm thấy hồ sơ hoặc demo đã chọn.');
+  if (!['confirmed', 'completed'].includes(customerRow.status)) {
+    throw new MediaError(409, 'Chỉ có thể tạo link chính thức sau khi khách xác nhận đặt mẫu.');
+  }
+
+  const existing = () => db<Array<{ slug: string }>>(
+    `published_invitations?demo_id=eq.${demoId}&select=slug&limit=1`,
+  );
+  const [published] = await existing();
+  if (published) return json({ slug: published.slug });
+
+  const baseSlug = slugifyInvitation(`${customerRow.bride_name}-${customerRow.groom_name}`);
+  const [collision] = await db<Array<{ demo_id: string }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(baseSlug)}&select=demo_id&limit=1`,
+  );
+  const slug = collision ? `${baseSlug}-${customerId.slice(0, 6)}` : baseSlug;
+  try {
+    await db('published_invitations', { slug, customer_id: customerId, demo_id: demoId });
+  } catch {
+    const [raced] = await existing();
+    if (raced) return json({ slug: raced.slug });
+    throw new MediaError(409, 'Tên link này vừa được sử dụng. Hãy thử tạo lại.');
+  }
+  return json({ slug });
+}
+
+async function publicInvitation(slugValue: unknown) {
+  const slug = invitationSlug(slugValue);
+  const [published] = await db<Array<{ customer_id: string; demo_id: string }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=customer_id,demo_id&limit=1`,
+  );
+  if (!published) throw new MediaError(404, 'Thiệp này không tồn tại.');
+  const [[demo], [customerRow]] = await Promise.all([
+    db<Array<{ id: string; template_id: string; payload: Record<string, unknown> }>>(
+      `invitation_demos?id=eq.${published.demo_id}&select=id,template_id,payload&limit=1`,
+    ),
+    db<Array<{ status: string }>>(`customers?id=eq.${published.customer_id}&select=status&limit=1`),
+  ]);
+  if (!demo || !customerRow || !['confirmed', 'completed'].includes(customerRow.status)) {
+    throw new MediaError(404, 'Thiệp này không còn được xuất bản.');
+  }
+  const payload = demo.payload ?? {};
+  const refs = (Array.isArray(payload.photos) ? payload.photos : []) as PhotoRef[];
+  const selected = await selectedPhotos(published.customer_id, refs);
+  const photos = selected.map(({ ref }) => ({
+    ...ref,
+    url: `/api/customer-media?action=invitation-photo&slug=${encodeURIComponent(slug)}&photoId=${encodeURIComponent(ref.photoId)}`,
+  }));
+  const publicFields = ['brideName', 'groomName', 'weddingDate', 'weddingTime', 'venue', 'address', 'message', 'coverUrl'];
+  const invitation = Object.fromEntries(publicFields.map((key) => [key, String(payload[key] ?? (key === 'weddingTime' ? '18:00' : ''))]));
+  const studio = publicStudio(payload.studio);
+  return json({ templateId: demo.template_id, customTemplate: await customTemplateForPayload(payload), payload: { ...invitation, studio, photos, customTemplateId: payload.customTemplateId } });
+}
+
+async function publicInvitationPhoto(slugValue: unknown, photoIdValue: unknown) {
+  const slug = invitationSlug(slugValue);
+  const photoId = uuid(photoIdValue);
+  const [published] = await db<Array<{ customer_id: string; demo_id: string }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=customer_id,demo_id&limit=1`,
+  );
+  if (!published) throw new MediaError(404, 'Ảnh thiệp không tồn tại.');
+  const [[demo], [customerRow]] = await Promise.all([
+    db<Array<{ payload: Record<string, unknown> }>>(`invitation_demos?id=eq.${published.demo_id}&select=payload&limit=1`),
+    db<Array<{ status: string }>>(`customers?id=eq.${published.customer_id}&select=status&limit=1`),
+  ]);
+  if (!customerRow || !['confirmed', 'completed'].includes(customerRow.status)) throw new MediaError(404, 'Thiệp này không còn được xuất bản.');
+  const refs = (Array.isArray(demo?.payload?.photos) ? demo.payload.photos : []) as PhotoRef[];
+  const selected = await selectedPhotos(published.customer_id, refs);
+  const photo = selected.find(({ ref }) => ref.photoId === photoId);
+  if (!photo) throw new MediaError(404, 'Ảnh thiệp không tồn tại.');
+  const image = await supabase(`/storage/v1/object/authenticated/${ASSETS}/${photo.path}`);
+  return new Response(image.body, { headers: { 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=3600' } });
 }
 
 export default {
@@ -241,9 +471,17 @@ export default {
         await cleanupUploads();
         return json({ ok: true });
       }
+      if (request.method === 'GET' && action === 'invitation-photo') {
+        const url = new URL(request.url);
+        return await publicInvitationPhoto(url.searchParams.get('slug'), url.searchParams.get('photoId'));
+      }
       if (request.method !== 'POST') throw new MediaError(405, 'Phương thức không hợp lệ.');
       if (['challenge', 'init', 'complete', 'status'].includes(action ?? '')) checkUploadRequest(request);
       if (action === 'contact') throw new MediaError(403, 'Vui lòng gửi yêu cầu kèm ảnh.');
+      if (action === 'upload-template') {
+        await requireAdmin(request);
+        return await uploadCustomTemplate(request);
+      }
       const raw = await request.text();
       if (raw.length > 32_768) throw new MediaError(413, 'Dữ liệu yêu cầu quá lớn.');
       let body: Record<string, unknown>;
@@ -264,7 +502,10 @@ export default {
         return json({ requestCode: details.request_code, status: details.photo_sync_status });
       }
       if (action === 'demo') return await publicDemo(clean(body.token, 64));
+      if (action === 'invitation') return await publicInvitation(body.slug);
       await requireAdmin(request);
+      if (action === 'publish-invitation') return await publishInvitation(body);
+      if (action === 'templates') return json(await listCustomTemplates());
       const driveEnabled = flag('GOOGLE_DRIVE_ENABLED');
       if (!driveEnabled && (action === 'drive-health' || action === 'retry')) {
         throw new MediaError(503, 'Đồng bộ Drive chưa được bật.');

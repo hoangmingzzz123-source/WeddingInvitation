@@ -1,0 +1,19 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: #23332d; background: #f5f4ed; font-family: Georgia, "Times New Roman", serif; }
+.cover { min-height: 100svh; display: grid; align-content: end; justify-items: center; padding: 4rem 1.5rem 12vh; color: #fff; text-align: center; background-color: #426451; background-size: cover; background-position: center; }
+.eyebrow { margin: 0; color: #b7c8a9; font: 700 .72rem/1.5 Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase; }
+h1 { max-width: 16ch; margin: 1.25rem 0; font-size: 4.5rem; font-weight: 400; line-height: 1.05; }
+h1 span { color: #d3b980; }
+.date { margin: 0; font: 600 .85rem/1.6 Arial, sans-serif; letter-spacing: .1em; }
+.story { max-width: 54rem; margin: auto; padding: 7rem 1.5rem; text-align: center; }
+.story h2, .album h2 { margin: 1rem 0; font-size: 3.2rem; font-weight: 400; }
+.message { max-width: 42rem; margin: 2rem auto; font-size: 1.2rem; line-height: 1.9; white-space: pre-line; }
+.details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 3rem; text-align: left; }
+.details p { padding: 1.5rem; border-top: 1px solid #b9bcae; font: 1rem/1.8 Arial, sans-serif; }
+.details b { color: #52765f; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
+.signoff { margin-top: 3rem; color: #52765f; font-style: italic; }
+.album { padding: 5rem max(1.5rem, calc((100% - 70rem) / 2)); color: #f7f5ef; background: #263d33; text-align: center; }
+.photos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; margin-top: 2rem; }
+.photos img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: #40584d; }
+@media (max-width: 640px) { h1 { font-size: 2.8rem; }.story h2, .album h2 { font-size: 2rem; }.details { grid-template-columns: 1fr; }.photos { grid-template-columns: repeat(2, minmax(0, 1fr)); }.story { padding-block: 4.5rem; } }
