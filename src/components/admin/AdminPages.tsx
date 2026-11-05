@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Archive,
   ArrowLeft,
@@ -112,6 +112,15 @@ function formatDate(value: string) {
 }
 
 const studioSteps = ['Đôi bạn', 'Thời gian', 'Địa điểm', 'Lời mời', 'Thiết kế', 'Khách mời', 'Xem lại'];
+const studioStepDetails = [
+  ['Ai là nhân vật chính?', 'Điền tên hai bạn để cá nhân hóa lời mời.'],
+  ['Chọn ngày vui', 'Xác nhận ngày và giờ đón khách trên thiệp.'],
+  ['Hẹn nhau ở đâu?', 'Thêm địa điểm, địa chỉ và thành phố để khách tìm đường.'],
+  ['Gửi một lời thật riêng', 'Viết story cho đôi bạn và chỉnh các câu chữ hiển thị.'],
+  ['Chọn thiết kế', 'Chọn gói, mẫu, màu sắc và kiểu chữ cho bản preview.'],
+  ['Chuẩn bị lời mời riêng', 'Quản lý danh sách khách và thông tin cần hỏi trong RSVP.'],
+  ['Sẵn sàng gửi lời mời?', 'Rà soát cấu hình trước khi lưu vào demo.'],
+] as const;
 
 const defaultStudioConfig: InvitationStudioConfig = {
   packageTier: '109k',
@@ -139,6 +148,8 @@ function AdminStudioEditor({
   customTemplates,
   onTemplateUpload,
   templateUploading,
+  preview,
+  previewLabel,
 }: {
   customer: CustomerEditor;
   config: InvitationStudioConfig;
@@ -149,6 +160,8 @@ function AdminStudioEditor({
   customTemplates: CustomInvitationTemplate[];
   onTemplateUpload: (file: File) => void;
   templateUploading: boolean;
+  preview: ReactNode;
+  previewLabel: string;
 }) {
   const [step, setStep] = useState(0);
   const [guestName, setGuestName] = useState('');
@@ -169,13 +182,22 @@ function AdminStudioEditor({
     <section className="admin-studio-editor" aria-label="Trình chỉnh sửa Studio">
       <header className="admin-studio-editor__heading">
         <div><p>Studio theo hồ sơ khách</p><h3>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</h3></div>
-        <span>Bước {step + 1} / 7</span>
+        <div className="admin-studio-editor__progress-copy"><strong>0{step + 1}</strong><span>/ 07 bước</span></div>
       </header>
+      <div className="admin-studio-editor__progress" role="progressbar" aria-label="Tiến độ chỉnh sửa" aria-valuemin={1} aria-valuemax={studioSteps.length} aria-valuenow={step + 1}>
+        <i style={{ width: `${((step + 1) / studioSteps.length) * 100}%` }} />
+      </div>
       <nav className="admin-studio-editor__steps" aria-label="Các bước Studio">
-        {studioSteps.map((label, index) => <button type="button" key={label} className={index === step ? 'is-current' : ''}
+        {studioSteps.map((label, index) => <button type="button" key={label} className={`${index === step ? 'is-current' : ''}${index < step ? ' is-complete' : ''}`}
           aria-current={index === step ? 'step' : undefined} onClick={() => setStep(index)}><i>{String(index + 1).padStart(2, '0')}</i><span>{label}</span></button>)}
       </nav>
-      <div className="admin-studio-editor__body">
+      <div className="admin-studio-editor__workspace">
+       <div className="admin-studio-editor__body">
+        <div className="admin-studio-editor__step-intro">
+          <span>BƯỚC 0{step + 1}</span>
+          <h4>{studioStepDetails[step][0]}</h4>
+          <p>{studioStepDetails[step][1]}</p>
+        </div>
         {step === 0 && <div className="admin-form-grid">
           <label>Tên cô dâu<input value={customer.brideName} onChange={(event) => onCustomerChange('brideName', event.target.value)} /></label>
           <label>Tên chú rể<input value={customer.groomName} onChange={(event) => onCustomerChange('groomName', event.target.value)} /></label>
@@ -251,6 +273,11 @@ function AdminStudioEditor({
           <div><dt>Thiết kế</dt><dd>{weddingTemplates.find((item) => item.id === customer.selectedTemplateId)?.name || 'Chưa chọn mẫu'} · {config.packageTier} · {config.theme} · {config.fontStyle}</dd></div>
           <div><dt>Khách mời &amp; RSVP</dt><dd>{config.guests.length} khách · {config.rsvpQuestions.length} câu hỏi</dd></div>
         </dl>}
+       </div>
+       <aside className="admin-studio-editor__preview" aria-label="Xem trước trực tiếp">
+         <div><span><i /> Preview trực tiếp</span><small>{previewLabel}</small></div>
+         {preview}
+       </aside>
       </div>
       <footer className="admin-studio-editor__actions">
         <button type="button" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}><ArrowLeft aria-hidden="true" /> Trước</button>
@@ -449,6 +476,28 @@ export function AdminDashboardPage() {
   const demoPhotos = mediaSelection?.customerId === selectedCustomerId ? mediaSelection.photos : [];
   const customerDemos = demos.filter((demo) => demo.customerId === selectedCustomerId);
   const selectedCustomTemplate = customTemplates.find((template) => template.id === editor.selectedTemplateId);
+  const selectedTemplateName = weddingTemplates.find((template) => template.id === editor.selectedTemplateId)?.name
+    ?? selectedCustomTemplate?.name
+    ?? 'Chọn mẫu thiệp';
+  const studioPreview = selectedCustomTemplate ? <CustomTemplateRenderer
+    compact
+    template={selectedCustomTemplate}
+    title={`Xem trước mẫu riêng ${selectedCustomTemplate.name}`}
+    payload={{
+      brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
+      weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
+      message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
+      customTemplateId: selectedCustomTemplate.id,
+    }}
+  /> : <CustomerInvitationPreview
+    compact
+    templateId={editor.selectedTemplateId || 'classic-minimalist'}
+    payload={{
+      brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
+      weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
+      message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
+    }}
+  />;
 
   const loadCustomerPhotos = useCallback((customerId: string, photos: DemoPhoto[]) => {
     setMediaSelection((current) => {
@@ -1011,29 +1060,11 @@ export function AdminDashboardPage() {
               customTemplates={customTemplates}
               onTemplateUpload={(file) => void uploadTemplatePackage(file)}
               templateUploading={templateUploading}
+              preview={studioPreview}
+              previewLabel={selectedTemplateName}
             />}
             <div className="admin-demo-builder">
-              <div className="admin-demo-preview">
-                {selectedCustomTemplate ? <CustomTemplateRenderer
-                  compact
-                  template={selectedCustomTemplate}
-                  title={`Xem trước mẫu riêng ${selectedCustomTemplate.name}`}
-                  payload={{
-                    brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
-                    weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
-                    message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
-                    customTemplateId: selectedCustomTemplate.id,
-                  }}
-                /> : <CustomerInvitationPreview
-                  compact
-                  templateId={editor.selectedTemplateId || 'classic-minimalist'}
-                  payload={{
-                    brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
-                    weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
-                    message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
-                  }}
-                />}
-              </div>
+              {!studioOpen && <div className="admin-demo-preview">{studioPreview}</div>}
               <div className="admin-demo-controls">
                 <label>Ghi chú hiển thị trên popup<textarea rows={4} value={demoNote} onChange={(e) => setDemoNote(e.target.value)} /></label>
                 <label>Ngày hết hạn<input type="date" value={demoExpiry} onChange={(e) => setDemoExpiry(e.target.value)} /></label>
