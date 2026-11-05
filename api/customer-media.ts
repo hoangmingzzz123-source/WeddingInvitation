@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
-import { ASSETS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia';
-import { checkDrive, syncDrive, cleanupUploads } from '../server/driveSync';
+import { ASSETS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
+import { checkDrive, syncDrive, cleanupUploads } from '../server/driveSync.js';
 
 const MiB = 1024 * 1024;
 const formats: Record<string, [string, string]> = {
@@ -167,7 +167,7 @@ async function complete(id: string, token: string) {
 
 async function loadSharp() {
   try {
-    return (await import('sharp')).default ?? (await import('sharp'));
+    return (await import('sharp')).default;
   } catch {
     throw new MediaError(503, 'Dịch vụ xử lý ảnh không khả dụng. Vui lòng thử lại sau.');
   }

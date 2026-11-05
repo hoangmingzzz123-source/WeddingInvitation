@@ -20,7 +20,8 @@ async function getRequestChallenge(identity: UploadIdentity) {
 export function CustomerRequestPage() {
   const defaultTemplate = useMemo(() => new URLSearchParams(window.location.search).get('template') ?? '', []);
   const [form, setForm] = useState({ ...initialForm, selectedTemplateId: defaultTemplate });
-  const [submitting, setSubmitting] = useState(false);
+  const [phase, setPhase] = useState<'prepare' | 'upload' | 'validate'>();
+  const submitting = Boolean(phase);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [photos, setPhotos] = useState<SelectedPhoto[]>([]);
@@ -31,7 +32,6 @@ export function CustomerRequestPage() {
   const [restoring, setRestoring] = useState(true);
   const [draft, setDraft] = useState<SavedPhotoUpload>();
   const [receipt, setReceipt] = useState<UploadReceipt>();
-  const [processing, setProcessing] = useState(false);
   const busy = useRef(false);
   useEffect(() => {
     let active = true;
@@ -65,16 +65,16 @@ export function CustomerRequestPage() {
       return;
     }
     busy.current = true;
-    setSubmitting(true);
+    setPhase('prepare');
     setError('');
     let initializingPhotos = true;
     try {
       let current = draft ?? {
         identity: newUploadIdentity(), form, photos, cover, completed: [], expiresAt: Date.now() + 24 * 3600_000,
       };
+      const challenge = await getRequestChallenge(current.identity);
       setDraft(current);
       await saveUploadDraft(current).catch(() => {});
-      const challenge = await getRequestChallenge(current.identity);
       const result = await mediaRequest<UploadResult>('init', {
         ...current.identity, customer: current.form, consent: true, challenge,
         photos: current.photos.map(({ file }, index) => ({
@@ -87,11 +87,13 @@ export function CustomerRequestPage() {
         completed = { requestCode: result.requestCode, received: result.received ?? photos.length };
       } else {
         if (!result.uploads || !result.tusEndpoint || result.uploads.length !== photos.length) throw new Error('Phiên tải ảnh chưa đầy đủ.');
+        setPhase('upload');
         const slots = result.uploads.filter((slot) => !current.completed.includes(slot.order));
         let failed = false;
         for (let start = 0; start < slots.length; start += 2) {
           const uploaded = await Promise.all(slots.slice(start, start + 2).map(async (slot) => {
             try {
+              setProgress((previous) => ({ ...previous, [slot.order]: 0 }));
               await uploadPhoto(current.photos[slot.order].file, slot, result.tusEndpoint!, (value) => {
                 setProgress((previous) => ({ ...previous, [slot.order]: value }));
               });
@@ -107,7 +109,7 @@ export function CustomerRequestPage() {
           await saveUploadDraft(current).catch(() => {});
         }
         if (failed) throw new Error('Một số ảnh chưa tải xong. Bấm gửi lại để tiếp tục các ảnh còn thiếu.');
-        setProcessing(true);
+        setPhase('validate');
         completed = await mediaRequest<UploadReceipt>('complete', current.identity);
       }
       setReceipt(completed);
@@ -123,8 +125,7 @@ export function CustomerRequestPage() {
       setError(submitError instanceof Error ? submitError.message : 'Chưa thể gửi yêu cầu. Vui lòng thử lại.');
     } finally {
       busy.current = false;
-      setProcessing(false);
-      setSubmitting(false);
+      setPhase(undefined);
     }
   };
 
@@ -192,7 +193,7 @@ export function CustomerRequestPage() {
         </fieldset>
 
         <CustomerPhotoUploader photos={photos} setPhotos={setPhotos} cover={cover} setCover={setCover}
-          progress={progress} frozen={Boolean(draft)} disabled={submitting || restoring} onInspect={setInspecting} />
+          progress={progress} preparing={phase === 'prepare'} frozen={Boolean(draft)} disabled={submitting || restoring} onInspect={setInspecting} />
         <label className="customer-media__consent">
           <input type="checkbox" checked={consent} disabled={submitting || Boolean(draft)} onChange={(event) => setConsent(event.target.checked)} />
           <span>Tôi đồng ý sử dụng ảnh cho yêu cầu thiết kế và bản xem trước. <a href="#photo-privacy">Chính sách bảo mật ảnh</a></span>
@@ -204,7 +205,8 @@ export function CustomerRequestPage() {
             Phiên tải chưa hoàn tất hết hạn sau 24 giờ. Với hồ sơ đã gửi, ảnh được giữ để phục vụ thiết kế và bàn giao.
             Bạn có thể liên hệ đội ngũ qua thông tin liên hệ của website, kèm mã yêu cầu, để yêu cầu xóa ảnh hoặc thu hồi quyền sử dụng.</p>
         </details>
-        {processing && <p role="status">Đã tải đủ ảnh. Đang xác thực và chuẩn bị bản xem trước…</p>}
+        {phase === 'prepare' && <p role="status">Đang xác minh và chuẩn bị tải ảnh…</p>}
+        {phase === 'validate' && <p role="status">Đã tải đủ ảnh. Đang xác thực và chuẩn bị bản xem trước…</p>}
         <button type="submit" disabled={submitting || inspecting || restoring || !isSupabaseConfigured() || photos.length < 5 || !consent}>
           {submitting ? <LoaderCircle className="is-spinning" aria-hidden="true" /> : <Send aria-hidden="true" />}
           {submitting ? 'Đang gửi...' : draft ? 'Tiếp tục gửi ảnh' : 'Gửi yêu cầu tạo demo'}
