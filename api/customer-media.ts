@@ -165,8 +165,16 @@ async function complete(id: string, token: string) {
   }
 }
 
+async function loadSharp() {
+  try {
+    return (await import('sharp')).default ?? (await import('sharp'));
+  } catch {
+    throw new MediaError(503, 'Dịch vụ xử lý ảnh không khả dụng. Vui lòng thử lại sau.');
+  }
+}
+
 async function validateAndComplete(id: string, token: string, lease: string, customerId: string, photos: Awaited<ReturnType<typeof photosFor>>) {
-  const sharp = (await import('sharp')).default ?? (await import('sharp'));
+  const sharp = await loadSharp();
   const results: Array<{ id: string; path: string; checksum: string }> = [];
   const seen = new Set<string>();
   for (const photo of photos) {
