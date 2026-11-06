@@ -120,14 +120,17 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
       ...current, photoId: id, role, order: current?.order ?? selection.length, url: photo.url,
     }]));
   };
-  const move = (id: string, delta: number) => {
+  const setGalleryOrder = (id: string, position: number) => {
     const next = selection.filter((item) => item.role === 'gallery').sort((first, second) => first.order - second.order);
     const index = next.findIndex((item) => item.photoId === id);
-    const destination = index + delta;
-    if (index < 0 || destination < 0 || destination >= next.length) return;
-    [next[index], next[destination]] = [next[destination], next[index]];
-    onSelect(orderedSelection([...selection.filter((item) => item.role !== 'gallery'), ...next]));
+    const destination = position - 1;
+    if (index < 0 || destination < 0 || destination >= next.length || index === destination) return;
+    const [photo] = next.splice(index, 1);
+    next.splice(destination, 0, photo);
+    const reorderedGallery = next.map((item, order) => ({ ...item, order }));
+    onSelect(orderedSelection([...selection.filter((item) => item.role !== 'gallery'), ...reorderedGallery]));
   };
+  const gallerySelection = selection.filter((item) => item.role === 'gallery').sort((first, second) => first.order - second.order);
   return (
     <fieldset className="customer-media" disabled={disabled || uploading}>
       <legend>Ảnh khách hàng ({library?.photos.length ?? 0}/30)</legend>
@@ -168,10 +171,12 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
                 <option value="gallery">Album</option>
               </select>
             </label>
-            {selected?.role === 'gallery' && <div className="customer-media__actions">
-              <button type="button" onClick={() => move(photo.id, -1)} aria-label="Đưa ảnh lên">↑</button>
-              <button type="button" onClick={() => move(photo.id, 1)} aria-label="Đưa ảnh xuống">↓</button>
-            </div>}
+            {selected?.role === 'gallery' && <label>Thứ tự album
+              <select aria-label={`Thứ tự album ảnh ${photo.name}`} value={gallerySelection.findIndex((item) => item.photoId === photo.id) + 1}
+                onChange={(event) => setGalleryOrder(photo.id, Number(event.target.value))}>
+                {gallerySelection.map((item, position) => <option key={item.photoId} value={position + 1}>{position + 1}</option>)}
+              </select>
+            </label>}
             {selected && (['focalX','focalY'] as const).map((axis) => (
               <label key={axis}>{axis === 'focalX' ? 'Canh ngang' : 'Canh dọc'}
                 <input type="range" min="0" max="1" step="0.05" value={selected[axis] ?? 0.5}

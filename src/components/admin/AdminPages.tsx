@@ -291,7 +291,7 @@ function AdminStudioEditor({
           <label className="is-wide">Chữ viết tắt trên header<input value={config.headerMonogramText} onChange={(event) => updateConfig('headerMonogramText', event.target.value)} placeholder="Để trống để dùng chữ cái đầu tên hai bạn" maxLength={40} /><small>Ví dụ: N &amp; M · N &lt;3 M · Nhàn &amp; Mai</small></label>
           <details className="admin-studio-copy-fields is-wide">
             <summary>Nội dung riêng cho nhà trai / nhà gái</summary>
-            <small>Link nhà trai thêm <code>?side=trai</code>; link nhà gái thêm <code>?side=gai</code>.</small>
+            <small>Link nhà trai thêm <code>?side=groom</code>; link nhà gái thêm <code>?side=bride</code>.</small>
             <div className="admin-form-grid">
               <label>Nhà trai · Tiêu đề lễ<input value={config.groomCeremonyTitle} onChange={(event) => updateConfig('groomCeremonyTitle', event.target.value)} /></label>
               <label>Nhà trai · Tiêu đề tiệc<input value={config.groomReceptionTitle} onChange={(event) => updateConfig('groomReceptionTitle', event.target.value)} /></label>
