@@ -15,6 +15,7 @@ export interface DemoPhoto {
 export interface InvitationStudioConfig {
   packageTier: '109k' | '159k' | '199k';
   city: string;
+  heroCoupleText: string;
   ceremonyTitle: string;
   receptionTitle: string;
   heroKicker: string;

@@ -3650,6 +3650,11 @@ body {
 .demo-page-content .signature-demo .signature-hero h1 span {
   display: block;
 }
+.demo-page-content .signature-demo .signature-hero h1 .signature-hero__couple-title {
+  font-size: .72em;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
 
 .demo-page-content .signature-demo .signature-hero h1 i {
   display: block;

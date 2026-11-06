@@ -35,7 +35,7 @@ The entry HTML can link local files with relative paths. Use the supported place
 <img src="{{gallery1Url}}" style="object-position:{{gallery1Position}}" alt="">
 ```
 
-Available text placeholders: `brideName`, `groomName`, `weddingDate`, `weddingDateLabel`, `weddingTime`, `venue`, `address`, `message` (alias: `story`), `city`, `packageTier`, `ceremonyTitle`, `receptionTitle`, `heroKicker`, `albumTitle`, `timeLabel`, `venueLabel`, and `signatureText`.
+Available text placeholders: `brideName`, `groomName`, `heroCoupleText` (custom couple title; empty means use the two names), `weddingDate`, `weddingDateLabel`, `weddingTime`, `venue`, `address`, `message` (alias: `story`), `city`, `packageTier`, `ceremonyTitle`, `receptionTitle`, `heroKicker`, `albumTitle`, `timeLabel`, `venueLabel`, and `signatureText`.
 
 Photo placeholders: `coverUrl`/`coverPosition` for the hero, `mainUrl`/`mainPosition` for the primary story photo, `videoUrl`/`videoPosition` for the video panel, and `gallery1Url` through `gallery7Url`, each with a matching `galleryNPosition` token. The admin library role menu assigns these positions; remaining selected photos are album images. Each demo can use at most seven selected photos. Unselected image roles are replaced with an empty URL.
 

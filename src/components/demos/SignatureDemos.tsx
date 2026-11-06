@@ -33,6 +33,7 @@ export interface SignatureDemoCustomization {
   venue?: string;
   address?: string;
   city?: string;
+  heroCoupleText?: string;
   story?: string;
   ceremonyTitle?: string;
   receptionTitle?: string;
@@ -346,6 +347,7 @@ export function SignatureDemo({
   const diamond = demo.tier === '199k';
   const ceremonyTitle = customization?.ceremonyTitle || 'Lễ thành hôn';
   const receptionTitle = customization?.receptionTitle || 'Tiệc mừng thân mật';
+  const heroCoupleText = customization?.heroCoupleText?.trim();
   const appearanceClasses = [
     `signature-demo signature-demo--${demo.id}`,
     demo.visualStyle ? `signature-demo--${demo.visualStyle}` : '',
@@ -404,7 +406,9 @@ export function SignatureDemo({
             transition={staticExport ? undefined : { duration: 0.7 }}
           >
             <SmallLabel>{customization?.heroKicker || demo.label}</SmallLabel>
-            <h1><span>{demo.bride}</span><i>&amp;</i><span>{demo.groom}</span></h1>
+            <h1>{heroCoupleText
+              ? <span className="signature-hero__couple-title">{heroCoupleText}</span>
+              : <><span>{demo.bride}</span><i>&amp;</i><span>{demo.groom}</span></>}</h1>
             <p className="signature-hero__invitation">
               {guestName
                 ? `${guestGreeting === 'friendly' ? 'Thân mời' : 'Trân trọng kính mời'} ${guestName} đến chung vui`
