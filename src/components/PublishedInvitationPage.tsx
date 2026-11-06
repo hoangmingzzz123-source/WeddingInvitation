@@ -69,6 +69,8 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
   const studio = payload.studio;
   const selectedPhotos = [...(payload.photos ?? [])].sort((a, b) => a.order - b.order);
   const cover = selectedPhotos.find((photo) => photo.role === 'cover');
+  const mainPhoto = selectedPhotos.find((photo) => photo.role === 'main');
+  const videoPhoto = selectedPhotos.find((photo) => photo.role === 'video');
   const galleryPhotos = selectedPhotos.filter((photo) => photo.role === 'gallery');
   const repeatedGallery = galleryPhotos.length
     ? Array.from({ length: Math.max(4, galleryPhotos.length) }, (_, index) => galleryPhotos[index % galleryPhotos.length])
@@ -96,6 +98,10 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     fontStyle: studio?.packageTier === '109k' ? 'editorial' : studio?.fontStyle,
     hero: cover?.url ?? payload.coverUrl,
     heroPosition: cover ? position(cover) : undefined,
+    mainPhoto: mainPhoto?.url,
+    mainPhotoPosition: mainPhoto ? position(mainPhoto) : undefined,
+    videoBackground: videoPhoto?.url,
+    videoBackgroundPosition: videoPhoto ? position(videoPhoto) : undefined,
     gallery: repeatedGallery.map((photo) => photo.url),
     galleryPositions: repeatedGallery.map((photo) => position(photo)),
   };

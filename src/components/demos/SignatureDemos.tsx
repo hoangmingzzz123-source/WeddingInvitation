@@ -45,6 +45,10 @@ export interface SignatureDemoCustomization {
   fontStyle?: SignatureFont;
   hero?: string;
   heroPosition?: string;
+  mainPhoto?: string;
+  mainPhotoPosition?: string;
+  videoBackground?: string;
+  videoBackgroundPosition?: string;
   gallery?: string[];
   galleryPositions?: string[];
 }
@@ -60,6 +64,7 @@ interface SignatureDemoProps {
   id: SignatureDemoId;
   customization?: SignatureDemoCustomization;
   embedded?: boolean;
+  staticExport?: boolean;
   guestName?: string;
   guestGreeting?: 'formal' | 'friendly';
   rsvpQuestions?: SignatureRsvpQuestion[];
@@ -307,6 +312,7 @@ export function SignatureDemo({
   id,
   customization,
   embedded = false,
+  staticExport = false,
   guestName,
   guestGreeting = 'formal',
   rsvpQuestions = [],
@@ -393,9 +399,9 @@ export function SignatureDemo({
           </div>
           <motion.div
             className="signature-hero__content"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+            initial={staticExport ? false : { opacity: 0, y: 20 }}
+            animate={staticExport ? false : { opacity: 1, y: 0 }}
+            transition={staticExport ? undefined : { duration: 0.7 }}
           >
             <SmallLabel>{customization?.heroKicker || demo.label}</SmallLabel>
             <h1><span>{demo.bride}</span><i>&amp;</i><span>{demo.groom}</span></h1>
@@ -419,6 +425,12 @@ export function SignatureDemo({
         <span className="signature-hero__side-note" aria-hidden="true">A day made for us · {demo.dateLabel}</span>
       </section>
 
+      {!premium && customization?.mainPhoto && (
+        <section className="signature-main-photo" aria-label="Ảnh chính">
+          <img src={customization.mainPhoto} alt={`Ảnh chính của ${couple}`} style={customization.mainPhotoPosition ? { objectPosition: customization.mainPhotoPosition } : undefined} />
+        </section>
+      )}
+
       {premium && (
         <section className="signature-story" id="cau-chuyen" aria-labelledby="signature-story-title">
           <div className="signature-story__copy">
@@ -427,7 +439,7 @@ export function SignatureDemo({
             <p>{demo.story}</p>
           </div>
           <figure className="signature-story__photo">
-            <img src={demo.gallery[1]} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" style={customization?.galleryPositions?.[1] ? { objectPosition: customization.galleryPositions[1] } : undefined} />
+            <img src={customization?.mainPhoto || demo.gallery[1]} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" style={customization?.mainPhotoPosition ? { objectPosition: customization.mainPhotoPosition } : customization?.galleryPositions?.[1] ? { objectPosition: customization.galleryPositions[1] } : undefined} />
             <figcaption>{demo.bride} <i>&amp;</i> {demo.groom}</figcaption>
           </figure>
         </section>
@@ -515,7 +527,7 @@ export function SignatureDemo({
       {diamond && (
         <section className="signature-extras" aria-label="Tính năng cao cấp">
           <div className="signature-video-card">
-            <img src={demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
+            <img src={customization?.videoBackground || demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
             <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>
             <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
           </div>

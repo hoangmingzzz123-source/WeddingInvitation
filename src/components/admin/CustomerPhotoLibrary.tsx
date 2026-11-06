@@ -23,6 +23,15 @@ function defaultSelection(photos: Library['photos']): DemoPhoto[] {
   }));
 }
 
+const rolePriority: Record<DemoPhoto['role'], number> = { cover: 0, main: 1, video: 2, gallery: 3 };
+
+function orderedSelection(photos: DemoPhoto[]) {
+  return [...photos]
+    .sort((first, second) => rolePriority[first.role] - rolePriority[second.role]
+      || first.order - second.order)
+    .map((photo, order) => ({ ...photo, order }));
+}
+
 export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSelect, onLoad, disabled }: {
   customerId: string;
   accessToken: string;
@@ -86,30 +95,38 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
       setUploadProgress('');
     } finally { setUploading(false); }
   };
-  const choose = (id: string, role: DemoPhoto['role']) => {
+  const choose = (id: string, role: DemoPhoto['role'] | '') => {
     const photo = library?.photos.find((item) => item.id === id);
     if (!photo) return;
     const current = selection.find((item) => item.photoId === id);
-    if (role === 'gallery' && current?.role === 'gallery') {
-      onSelect(selection.filter((item) => item.photoId !== id).map((item, order) => ({ ...item, order })));
+    if (current?.role === 'cover' && role !== 'cover') {
+      setError('Hãy chọn ảnh bìa mới trước khi đổi vị trí ảnh bìa hiện tại.');
       return;
     }
-    if (role === 'gallery' && !current && selection.length >= 7) {
+    if (!role) {
+      onSelect(orderedSelection(selection.filter((item) => item.photoId !== id)));
+      return;
+    }
+    if (!current && selection.length >= 7) {
       setError('Mỗi demo hiện hỗ trợ tối đa 7 ảnh: 1 ảnh bìa và 6 ảnh album.');
       return;
     }
-    const rest = selection.filter((item) => item.photoId !== id).map((item) =>
-      role === 'cover' && item.role === 'cover' ? { ...item, role: 'gallery' as const } : item);
-    const next: DemoPhoto = { ...current, photoId: id, role, order: 0, url: photo.url };
-    onSelect((role === 'cover' ? [next, ...rest] : [...rest, next]).map((item, order) => ({ ...item, order })));
+    const specialRole = role === 'cover' || role === 'main' || role === 'video';
+    const withoutCurrent = selection.filter((item) => item.photoId !== id);
+    const nextSelection = specialRole
+      ? withoutCurrent.map((item) => item.role === role ? { ...item, role: 'gallery' as const } : item)
+      : withoutCurrent;
+    onSelect(orderedSelection([...nextSelection, {
+      ...current, photoId: id, role, order: current?.order ?? selection.length, url: photo.url,
+    }]));
   };
   const move = (id: string, delta: number) => {
-    const next = [...selection];
+    const next = selection.filter((item) => item.role === 'gallery').sort((first, second) => first.order - second.order);
     const index = next.findIndex((item) => item.photoId === id);
     const destination = index + delta;
-    if (index < 0 || next[destination]?.role !== 'gallery') return;
+    if (index < 0 || destination < 0 || destination >= next.length) return;
     [next[index], next[destination]] = [next[destination], next[index]];
-    onSelect(next.map((item, order) => ({ ...item, order })));
+    onSelect(orderedSelection([...selection.filter((item) => item.role !== 'gallery'), ...next]));
   };
   return (
     <fieldset className="customer-media" disabled={disabled || uploading}>
@@ -140,11 +157,17 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
               <img src={photo.url} alt={`Ảnh khách ${index + 1}`} loading="lazy" />
             </button>
             <strong title={photo.name}>{photo.name}</strong>
-            <div className="customer-media__actions">
-              <button type="button" aria-pressed={selected?.role === 'cover'} onClick={() => choose(photo.id, 'cover')}>Ảnh bìa</button>
-              <button type="button" aria-pressed={selected?.role === 'gallery'} disabled={selected?.role === 'cover' || (!selected && selection.length >= 7)}
-                onClick={() => choose(photo.id, 'gallery')}>Album</button>
-            </div>
+            <label>Vị trí ảnh
+              <select aria-label={`Vị trí ảnh ${photo.name}`} value={selected?.role ?? ''}
+                disabled={!selected && selection.length >= 7}
+                onChange={(event) => choose(photo.id, event.target.value as DemoPhoto['role'] | '')}>
+                <option value="">Không sử dụng</option>
+                <option value="cover">Ảnh bìa</option>
+                <option value="main">Ảnh chính</option>
+                <option value="video">Ảnh nền video</option>
+                <option value="gallery">Album</option>
+              </select>
+            </label>
             {selected?.role === 'gallery' && <div className="customer-media__actions">
               <button type="button" onClick={() => move(photo.id, -1)} aria-label="Đưa ảnh lên">↑</button>
               <button type="button" onClick={() => move(photo.id, 1)} aria-label="Đưa ảnh xuống">↓</button>

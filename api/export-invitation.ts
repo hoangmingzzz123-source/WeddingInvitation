@@ -1,5 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, MediaError, db, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia.js';
+import { renderSignatureInvitation } from '../server/signatureExport.js';
+import { weddingTemplates } from '../src/data/templates.js';
+import type { SignatureDemoCustomization, SignatureRsvpQuestion } from '../src/components/demos/SignatureDemos.js';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -59,6 +62,8 @@ async function buildCustomTemplateFiles(templateId: string, demo: JsonRecord, cu
   const payload = (demo.payload ?? {}) as JsonRecord;
   const studio = (payload.studio ?? {}) as JsonRecord;
   const cover = customerAssets.find((photo) => photo.role === 'cover');
+  const mainPhoto = customerAssets.find((photo) => photo.role === 'main');
+  const videoPhoto = customerAssets.find((photo) => photo.role === 'video');
   const gallery = customerAssets.filter((photo) => photo.role === 'gallery').sort((a, b) => a.order - b.order);
   const imagePosition = (photo?: PhotoRef) => {
     const percent = (value?: number) => `${(Number.isFinite(value) ? Math.max(0, Math.min(1, value!)) : 0.5) * 100}%`;
@@ -76,6 +81,10 @@ async function buildCustomTemplateFiles(templateId: string, demo: JsonRecord, cu
     story: String(payload.message ?? ''),
     coverUrl: cover ? templateRelativePath(template.entry_file, cover.src) : safeUrl(payload.coverUrl),
     coverPosition: imagePosition(cover),
+    mainUrl: mainPhoto ? templateRelativePath(template.entry_file, mainPhoto.src) : '',
+    mainPosition: imagePosition(mainPhoto),
+    videoUrl: videoPhoto ? templateRelativePath(template.entry_file, videoPhoto.src) : '',
+    videoPosition: imagePosition(videoPhoto),
   };
   for (let index = 0; index < 7; index += 1) {
     const photo = gallery[index];
@@ -88,6 +97,118 @@ async function buildCustomTemplateFiles(templateId: string, demo: JsonRecord, cu
   return [
     ...files.map((file) => file.name === template.entry_file ? { ...file, content: renderedHtml } : file),
     { name: 'invitation.config.json', content: config },
+  ];
+}
+
+function publicAppOrigin() {
+  const configuredOrigin = process.env.PUBLIC_APP_URL;
+  const deploymentHost = process.env.VERCEL_URL;
+  const origin = configuredOrigin || (deploymentHost && /^[a-z0-9.-]+(?::\d+)?$/i.test(deploymentHost)
+    ? `https://${deploymentHost}`
+    : 'https://wedding-invitation-mp.vercel.app');
+  const url = new URL(origin);
+  if (!['http:', 'https:'].includes(url.protocol)) throw new MediaError(503, 'Địa chỉ website không hợp lệ để đóng gói giao diện.');
+  return url.origin;
+}
+
+async function loadBuiltInvitationStyles(origin: string) {
+  const pageResponse = await fetch(new URL('/', origin), { signal: AbortSignal.timeout(15_000) });
+  if (!pageResponse.ok) throw new MediaError(502, 'Không tải được stylesheet của mẫu thiệp.');
+  const pageHtml = await pageResponse.text();
+  const stylesheetTag = pageHtml.match(/<link\b[^>]*>/gi)?.find((tag) =>
+    /\brel=["']stylesheet["']/i.test(tag) && /\bhref=["'][^"']+\.css(?:\?[^"']*)?["']/i.test(tag));
+  const href = stylesheetTag?.match(/\bhref=["']([^"']+)["']/i)?.[1];
+  if (!href) throw new MediaError(502, 'Không tìm thấy stylesheet đã build để đóng gói.');
+  const stylesheetUrl = new URL(href, origin);
+  if (stylesheetUrl.origin !== origin || !/^\/assets\/[a-zA-Z0-9._-]+\.css$/.test(stylesheetUrl.pathname)) {
+    throw new MediaError(502, 'Đường dẫn stylesheet của mẫu không hợp lệ.');
+  }
+  const stylesheetResponse = await fetch(stylesheetUrl, { signal: AbortSignal.timeout(15_000) });
+  if (!stylesheetResponse.ok) throw new MediaError(502, 'Không tải được stylesheet của mẫu thiệp.');
+  let css = await stylesheetResponse.text();
+  const fontPaths = new Set<string>();
+  css = css.replace(/url\(\s*(["']?)\/fonts\/([a-zA-Z0-9._-]+)\1\s*\)/g, (_match, _quote: string, filename: string) => {
+    fontPaths.add(filename);
+    return `url("fonts/${filename}")`;
+  });
+  css = css.replace(/url\(\s*(["']?)\/images\/([^)'"\s]+)\1\s*\)/g, (_match, _quote: string, path: string) =>
+    `url("${origin}/images/${path}")`);
+  if (fontPaths.size > 12) throw new MediaError(502, 'Stylesheet tham chiếu quá nhiều font không xác định.');
+  const fonts = await Promise.all([...fontPaths].map(async (filename) => {
+    const response = await fetch(new URL(`/fonts/${filename}`, origin), { signal: AbortSignal.timeout(15_000) });
+    if (!response.ok) throw new MediaError(502, 'Không tải được font của mẫu thiệp.');
+    return { name: `fonts/${filename}`, content: new Uint8Array(await response.arrayBuffer()) };
+  }));
+  return { css, fonts };
+}
+
+async function buildSignatureTemplateFiles(customer: JsonRecord, demo: JsonRecord, assets: Array<PhotoRef & { src: string }>) {
+  const payload = (demo.payload ?? {}) as JsonRecord;
+  const studio = (payload.studio ?? {}) as Record<string, unknown>;
+  const templateId = String(demo.template_id || customer.selected_template_id || 'classic-minimalist');
+  const templateTier = weddingTemplates.find((template) => template.id === templateId)?.tier ?? '109k';
+  const cover = assets.find((photo) => photo.role === 'cover');
+  const mainPhoto = assets.find((photo) => photo.role === 'main');
+  const videoPhoto = assets.find((photo) => photo.role === 'video');
+  const gallery = assets.filter((photo) => photo.role === 'gallery').sort((first, second) => first.order - second.order);
+  const repeatedGallery = gallery.length
+    ? Array.from({ length: Math.max(4, gallery.length) }, (_, index) => gallery[index % gallery.length])
+    : [];
+  const dateValue = String(payload.weddingDate || customer.wedding_date || '');
+  const dateParts = dateValue.split('-');
+  const dateLabel = dateParts.length === 3 ? `${dateParts[2]} · ${dateParts[1]} · ${dateParts[0]}` : dateValue;
+  const position = (photo?: PhotoRef) => {
+    const percent = (value?: number) => `${Math.round((Number.isFinite(value) ? Math.max(0, Math.min(1, value!)) : 0.5) * 100)}%`;
+    return `${percent(photo?.focalX)} ${percent(photo?.focalY)}`;
+  };
+  const customization: SignatureDemoCustomization = {
+    tier: ['109k', '159k', '199k'].includes(String(studio.packageTier)) ? studio.packageTier as '109k' | '159k' | '199k' : templateTier,
+    bride: String(payload.brideName || customer.bride_name || ''),
+    groom: String(payload.groomName || customer.groom_name || ''),
+    date: dateValue,
+    dateLabel,
+    time: String(payload.weddingTime || customer.wedding_time || ''),
+    venue: String(payload.venue || customer.venue || ''),
+    address: String(payload.address || customer.address || ''),
+    city: String(studio.city ?? 'Việt Nam'),
+    story: String(payload.message || customer.message || ''),
+    ceremonyTitle: typeof studio.ceremonyTitle === 'string' ? studio.ceremonyTitle : undefined,
+    receptionTitle: typeof studio.receptionTitle === 'string' ? studio.receptionTitle : undefined,
+    heroKicker: typeof studio.heroKicker === 'string' ? studio.heroKicker : undefined,
+    albumTitle: typeof studio.albumTitle === 'string' ? studio.albumTitle : undefined,
+    timeLabel: typeof studio.timeLabel === 'string' ? studio.timeLabel : undefined,
+    venueLabel: typeof studio.venueLabel === 'string' ? studio.venueLabel : undefined,
+    signatureText: typeof studio.signatureText === 'string' ? studio.signatureText : undefined,
+    theme: ['template', 'champagne', 'blush', 'emerald'].includes(String(studio.theme)) ? studio.theme as SignatureDemoCustomization['theme'] : undefined,
+    fontStyle: studio.packageTier === '109k' ? 'editorial' : ['editorial', 'modern', 'classic'].includes(String(studio.fontStyle)) ? studio.fontStyle as SignatureDemoCustomization['fontStyle'] : undefined,
+    hero: cover?.src ?? safeUrl(payload.coverUrl || customer.cover_url),
+    heroPosition: cover ? position(cover) : undefined,
+    mainPhoto: mainPhoto?.src,
+    mainPhotoPosition: mainPhoto ? position(mainPhoto) : undefined,
+    videoBackground: videoPhoto?.src,
+    videoBackgroundPosition: videoPhoto ? position(videoPhoto) : undefined,
+    gallery: repeatedGallery.map((photo) => photo.src),
+    galleryPositions: repeatedGallery.map((photo) => position(photo)),
+  };
+  const rawQuestions = Array.isArray(studio.rsvpQuestions) ? studio.rsvpQuestions : [];
+  const rsvpQuestions = rawQuestions.filter((question): question is SignatureRsvpQuestion => question === 'transport' || question === 'meal');
+  const origin = publicAppOrigin();
+  const { css, fonts } = await loadBuiltInvitationStyles(origin);
+  const markup = renderSignatureInvitation(templateId, customization, rsvpQuestions)
+    .replaceAll('src="/images/', `src="${origin}/images/`)
+    .replaceAll('href="/images/', `href="${origin}/images/`);
+  const title = `${String(payload.brideName || customer.bride_name || 'Cô dâu')} & ${String(payload.groomName || customer.groom_name || 'Chú rể')}`;
+  const html = `<!doctype html>\n<html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Thiệp cưới ${escapeHtml(title)}"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="styles.css"></head><body>${markup}<script src="script.js"></script></body></html>`;
+  const script = `document.querySelectorAll('a[href^="#"]').forEach((link)=>link.addEventListener('click',(event)=>{const target=document.querySelector(link.getAttribute('href'));if(target){event.preventDefault();target.scrollIntoView({behavior:'smooth'});}}));\ndocument.querySelectorAll('.signature-rsvp form').forEach((form)=>form.addEventListener('submit',(event)=>{event.preventDefault();const success=document.createElement('p');success.className='signature-rsvp__success';success.setAttribute('role','status');success.textContent='Cảm ơn bạn đã gửi lời hồi đáp!';form.replaceWith(success);}));`;
+  const config = JSON.stringify({ templateId, ...payload, photos: assets.map(({ photoId: _photoId, ...photo }) => photo) }, null, 2);
+  const readme = `# Thiệp cưới ${title}\n\nMẫu: ${templateId}\n\nĐây là bản xuất từ renderer của mẫu đã chọn. Sửa styles.css để đổi giao diện hoặc sửa index.html để đổi nội dung/bố cục.\n\n## Chạy thử\n\nMở index.html hoặc chạy npx serve .\n`;
+  return [
+    { name: 'index.html', content: html },
+    { name: 'styles.css', content: css },
+    { name: 'script.js', content: script },
+    { name: 'invitation.config.json', content: config },
+    ...fonts,
+    { name: 'README.md', content: readme },
   ];
 }
 
@@ -394,7 +515,10 @@ export default {
       const binaryFiles: Array<{ name: string; content: Uint8Array }> = [];
       let galleryIndex = 0;
       for (const { ref, path } of selected) {
-        const name = ref.role === 'cover' ? 'cover' : `gallery-${String(++galleryIndex).padStart(2, '0')}`;
+        const name = ref.role === 'cover' ? 'cover'
+          : ref.role === 'main' ? 'main'
+            : ref.role === 'video' ? 'video-background'
+              : `gallery-${String(++galleryIndex).padStart(2, '0')}`;
         const src = `${customTemplate ? 'customer-assets' : 'assets'}/${name}.webp`;
         const response = await supabase(`/storage/v1/object/authenticated/${ASSETS}/${path}`);
         binaryFiles.push({ name: src, content: new Uint8Array(await response.arrayBuffer()) });
@@ -402,7 +526,7 @@ export default {
       }
       const outputFiles = customTemplate
         ? await buildCustomTemplateFiles(customTemplate, demo, assets)
-        : buildFiles(customer, demo, assets);
+        : await buildSignatureTemplateFiles(customer, demo, assets);
       const exportMetadata = {
         version: 1,
         customerId: String(customer.id),

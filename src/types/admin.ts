@@ -4,7 +4,7 @@ export type DemoStatus = 'draft' | 'published' | 'expired';
 
 export interface DemoPhoto {
   photoId: string;
-  role: 'cover' | 'gallery';
+  role: 'cover' | 'main' | 'video' | 'gallery';
   order: number;
   focalX?: number;
   focalY?: number;

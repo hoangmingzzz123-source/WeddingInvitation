@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Music, Volume2, VolumeX, Settings, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import Le_duong from '../asset/Le_duong.mp3';
+const Le_duong = '/audio/Le_duong.mp3';
 
 interface MusicPlayerProps {
   autoPlay?: boolean;

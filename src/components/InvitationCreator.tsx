@@ -34,7 +34,7 @@ import {
 import { navigateTo } from '../Router';
 import { getWeddingPackage, weddingPackages } from '../data/packages';
 import { weddingTemplates, type TemplateTier } from '../data/templates';
-import weddingTrack from '../asset/Le_duong.mp3';
+const weddingTrack = '/audio/Le_duong.mp3';
 import {
   SignatureDemo,
   type SignatureFont,

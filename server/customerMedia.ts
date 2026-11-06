@@ -68,7 +68,7 @@ export interface PhotoRow {
 
 export interface PhotoRef {
   photoId: string;
-  role: 'cover' | 'gallery';
+  role: 'cover' | 'main' | 'video' | 'gallery';
   order: number;
   focalX?: number;
   focalY?: number;
@@ -81,9 +81,11 @@ export function photosFor(customerId: string) {
 
 export async function selectedPhotos(customerId: string, refs: PhotoRef[]) {
   if (!Array.isArray(refs) || refs.length > 7 || refs.some((ref) => !ref || typeof ref.photoId !== 'string'
-    || !['cover', 'gallery'].includes(ref.role) || !Number.isInteger(ref.order))
+    || !['cover', 'main', 'video', 'gallery'].includes(ref.role) || !Number.isInteger(ref.order)
+    || ref.order < 0 || ref.order > 6)
     || new Set(refs.map(({ photoId }) => photoId)).size !== refs.length
-    || refs.filter(({ role }) => role === 'cover').length > 1) {
+    || (refs.length > 0 && refs.filter(({ role }) => role === 'cover').length !== 1)
+    || (['main', 'video'] as const).some((role) => refs.filter((ref) => ref.role === role).length > 1)) {
     throw new MediaError(422, 'Danh sách ảnh của demo không hợp lệ.');
   }
   if (!refs.length) return [];

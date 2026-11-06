@@ -70,7 +70,7 @@ Build output là `build/`; đây là thư mục sinh tự động, không sửa 
 
 - Upload gốc đi thẳng browser -> Supabase Storage bằng signed token; server xác thực MIME/nội dung, dùng `sharp` tạo WebP rồi ghi `customer_photos`.
 - Public request ban đầu nhận 5-7 ảnh; admin có thể bổ sung để thư viện đạt tối đa 30 ảnh. Giới hạn này nằm trong migration customer media và endpoint admin.
-- Mỗi demo hiện chọn tối đa 7 ảnh: cover + gallery. Giới hạn được kiểm tra trong `server/customerMedia.ts`, trigger `guard_demo_photos` và UI; nếu thay đổi phải cập nhật cả ba.
+- Mỗi demo hiện chọn tối đa 7 ảnh: đúng 1 `cover` bắt buộc, tối đa 1 `main`, tối đa 1 `video`, phần còn lại `gallery`. Giới hạn/role được kiểm tra trong `server/customerMedia.ts`, trigger `guard_demo_photos` và UI; nếu thay đổi phải cập nhật cả ba.
 - `sort_order` của bảng ảnh có giới hạn database; không thêm ảnh chỉ ở UI mà quên migration/schema.
 - Ảnh gốc và WebP nằm ở buckets `customer-photos-original` và `customer-demo-assets`; tên bucket/path tập trung ở `server/customerMedia.ts`.
 

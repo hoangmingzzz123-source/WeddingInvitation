@@ -30,12 +30,14 @@ The entry HTML can link local files with relative paths. Use the supported place
 <p>{{venue}} · {{address}}</p>
 <p>{{message}}</p>
 <img src="{{coverUrl}}" style="object-position:{{coverPosition}}" alt="">
+<img src="{{mainUrl}}" style="object-position:{{mainPosition}}" alt="">
+<div class="video" style="background-image:url('{{videoUrl}}');background-position:{{videoPosition}}"></div>
 <img src="{{gallery1Url}}" style="object-position:{{gallery1Position}}" alt="">
 ```
 
 Available text placeholders: `brideName`, `groomName`, `weddingDate`, `weddingDateLabel`, `weddingTime`, `venue`, `address`, `message` (alias: `story`), `city`, `packageTier`, `ceremonyTitle`, `receptionTitle`, `heroKicker`, `albumTitle`, `timeLabel`, `venueLabel`, and `signatureText`.
 
-Photo placeholders: `coverUrl`, `coverPosition`, and `gallery1Url` through `gallery7Url`, each with a matching `galleryNPosition` token. Unselected images are replaced with an empty URL.
+Photo placeholders: `coverUrl`/`coverPosition` for the hero, `mainUrl`/`mainPosition` for the primary story photo, `videoUrl`/`videoPosition` for the video panel, and `gallery1Url` through `gallery7Url`, each with a matching `galleryNPosition` token. The admin library role menu assigns these positions; remaining selected photos are album images. Each demo can use at most seven selected photos. Unselected image roles are replaced with an empty URL.
 
 ## Upload limits and behavior
 
@@ -46,7 +48,7 @@ Photo placeholders: `coverUrl`, `coverPosition`, and `gallery1Url` through `gall
 - The entry page cannot contain `iframe`, `object`, `embed`, or `base` elements.
 - Custom HTML runs in a sandboxed iframe without same-origin access. Its CSP blocks network requests, form submission, nested frames, and external scripts/styles. Keep JavaScript self-contained and use local assets.
 - RSVP forms in a static package do not submit to the Wedding Invitation MP RSVP system automatically. Use the built-in templates for integrated RSVP, or connect a separately approved RSVP workflow.
-- Admin Studio currently uses the customer photo library for preview and the public invitation. Use the `coverUrl` and gallery placeholders to position those selected images.
+- Admin Studio uses the customer photo library for preview and the public invitation. Use the role-specific photo placeholders to position selected images; gallery placeholders only include photos assigned to Album.
 
 After upload, select the package in Studio, choose/crop the customer photos, then create the preview. The selected package ID is saved with the demo and reused by the published slug.
 

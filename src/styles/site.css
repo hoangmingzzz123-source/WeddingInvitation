@@ -3897,15 +3897,16 @@ body {
 .signature-event-card > span svg { width: .9rem; height: .9rem; color: var(--sig-accent); }
 
 .signature-gallery { width: min(100%, 78rem); margin-inline: auto; }
-.signature-gallery__grid { display: grid; grid-template-columns: 1.15fr .85fr .85fr 1.15fr; gap: .8rem; }
-.signature-gallery__grid button { position: relative; min-width: 0; aspect-ratio: 4 / 5; padding: 0; overflow: hidden; border: 0; background: #ddd8cc; cursor: zoom-in; }
-.signature-gallery__grid button:nth-child(even) { margin-top: 2rem; }
+.signature-gallery__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; }
+.signature-gallery__grid button { position: relative; min-width: 0; aspect-ratio: 4 / 5; height: auto; margin: 0; padding: 0; overflow: hidden; border: 0; background: #ddd8cc; cursor: zoom-in; }
+.signature-gallery__grid button { margin-top: 0; }
 .signature-gallery__grid img { position: absolute; inset: 0; transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
 .signature-gallery__grid button:hover img { transform: scale(1.045); }
 .signature-gallery__grid button > span { position: absolute; right: .7rem; bottom: .65rem; color: #fff; font: 500 .65rem/1 "Poppins", sans-serif; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
 .signature-demo--bloom-crystal-3d .signature-gallery__grid button { border-radius: 10rem 10rem .8rem .8rem; }
 .signature-demo--modern-dark-blue .signature-gallery__grid button { border: 1px solid #d3dfed; }
-.signature-demo--minimal-elegant .signature-gallery__grid button:nth-child(2) { margin-top: 0; }
+.signature-main-photo { width: min(calc(100% - 2rem), 48rem); margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) 0; }
+.signature-main-photo img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
 
 .signature-extras { display: grid; width: min(calc(100% - 2rem), 72rem); grid-template-columns: 1.2fr .8fr; gap: 1rem; margin: 0 auto; padding-bottom: clamp(4.5rem, 9vw, 8rem); }
 .signature-video-card,
@@ -4015,7 +4016,7 @@ body {
   .signature-event-grid { grid-template-columns: 1fr; }
   .signature-event-card { min-height: 16rem; }
   .signature-gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
-  .signature-gallery__grid button:nth-child(even) { margin-top: 1rem; }
+  .signature-gallery__grid button { margin-top: 0; }
   .signature-extras { grid-template-columns: 1fr; }
   .signature-guestbook { grid-column: auto; }
   .signature-venue__map { min-height: 18rem; }

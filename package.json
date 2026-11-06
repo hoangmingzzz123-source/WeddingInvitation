@@ -63,6 +63,6 @@
       "scripts": {
             "dev": "vite",
             "build": "npm run typecheck && vite build",
-            "typecheck": "tsc --noEmit && tsc --noEmit --module NodeNext --target ES2022 --skipLibCheck api/customer-media.ts api/export-invitation.ts"
+            "typecheck": "tsc --noEmit && tsc --noEmit --module ESNext --moduleResolution Bundler --target ES2022 --skipLibCheck --jsx react-jsx src/vite-env.d.ts api/customer-media.ts api/export-invitation.ts server/signatureExport.tsx"
       }
 }

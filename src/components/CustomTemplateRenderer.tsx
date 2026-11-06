@@ -21,6 +21,8 @@ function imageUrl(value: string) {
 function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayload, sourceHtml: string) {
   const photos = [...(payload.photos ?? [])].sort((a, b) => a.order - b.order);
   const cover = photos.find((photo) => photo.role === 'cover');
+  const mainPhoto = photos.find((photo) => photo.role === 'main');
+  const videoPhoto = photos.find((photo) => photo.role === 'video');
   const gallery = photos.filter((photo) => photo.role === 'gallery');
   const studio = payload.studio;
   const parsedDate = payload.weddingDate ? new Date(`${payload.weddingDate}T00:00:00`) : null;
@@ -48,6 +50,10 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     signatureText: studio?.signatureText ?? '',
     coverUrl: imageUrl(cover?.url ?? payload.coverUrl),
     coverPosition: photoPosition(cover?.focalX, cover?.focalY),
+    mainUrl: imageUrl(mainPhoto?.url ?? ''),
+    mainPosition: photoPosition(mainPhoto?.focalX, mainPhoto?.focalY),
+    videoUrl: imageUrl(videoPhoto?.url ?? ''),
+    videoPosition: photoPosition(videoPhoto?.focalX, videoPhoto?.focalY),
   };
   for (let index = 0; index < 7; index += 1) {
     const photo = gallery[index];

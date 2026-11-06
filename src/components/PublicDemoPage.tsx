@@ -49,6 +49,8 @@ export function PublicDemoPage({ token }: { token: string }) {
   const payload = demo?.payload;
   const photos = [...(payload?.photos ?? [])].sort((a, b) => a.order - b.order);
   const cover = photos.find((photo) => photo.role === 'cover');
+  const mainPhoto = photos.find((photo) => photo.role === 'main');
+  const videoPhoto = photos.find((photo) => photo.role === 'video');
   const galleryPhotos = photos.filter((photo) => photo.role === 'gallery');
   const repeatedGallery = galleryPhotos.length
     ? Array.from({ length: Math.max(4, galleryPhotos.length) }, (_, index) => galleryPhotos[index % galleryPhotos.length])
@@ -77,6 +79,10 @@ export function PublicDemoPage({ token }: { token: string }) {
     fontStyle: studio?.packageTier === '109k' ? 'editorial' : studio?.fontStyle,
     hero: cover?.url ?? payload?.coverUrl,
     heroPosition: cover ? photoPosition(cover) : undefined,
+    mainPhoto: mainPhoto?.url,
+    mainPhotoPosition: mainPhoto ? photoPosition(mainPhoto) : undefined,
+    videoBackground: videoPhoto?.url,
+    videoBackgroundPosition: videoPhoto ? photoPosition(videoPhoto) : undefined,
     gallery: repeatedGallery.map((photo) => photo.url ?? '').filter(Boolean),
     galleryPositions: repeatedGallery.map((photo) => photoPosition(photo)),
   };

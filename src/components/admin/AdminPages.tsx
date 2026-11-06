@@ -529,6 +529,8 @@ export function AdminDashboardPage() {
     ?? weddingTemplates.find((template) => template.id === editor.selectedTemplateId)?.name
     ?? 'Chọn mẫu thiệp';
   const studioCover = demoPhotos.find((photo) => photo.role === 'cover' && photo.url);
+  const studioMainPhoto = demoPhotos.find((photo) => photo.role === 'main' && photo.url);
+  const studioVideoPhoto = demoPhotos.find((photo) => photo.role === 'video' && photo.url);
   const studioGallery = demoPhotos.filter((photo) => photo.role === 'gallery' && photo.url).sort((a, b) => a.order - b.order);
   const repeatedStudioGallery = studioGallery.length
     ? Array.from({ length: Math.max(4, studioGallery.length) }, (_, index) => studioGallery[index % studioGallery.length])
@@ -555,6 +557,10 @@ export function AdminDashboardPage() {
     fontStyle: studioConfig.packageTier === '109k' ? 'editorial' : studioConfig.fontStyle,
     hero: (studioCover?.url ?? editor.coverUrl) || undefined,
     heroPosition: studioCover ? photoPosition(studioCover) : undefined,
+    mainPhoto: studioMainPhoto?.url,
+    mainPhotoPosition: studioMainPhoto ? photoPosition(studioMainPhoto) : undefined,
+    videoBackground: studioVideoPhoto?.url,
+    videoBackgroundPosition: studioVideoPhoto ? photoPosition(studioVideoPhoto) : undefined,
     gallery: repeatedStudioGallery.map((photo) => photo.url!).filter(Boolean),
     galleryPositions: repeatedStudioGallery.map((photo) => photoPosition(photo)),
   };
