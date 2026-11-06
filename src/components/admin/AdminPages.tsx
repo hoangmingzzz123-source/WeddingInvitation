@@ -661,6 +661,7 @@ export function AdminDashboardPage() {
     setStudioConfig(savedConfig ? {
       ...defaultStudioConfig,
       ...savedConfig,
+      headerMonogramText: savedConfig.headerMonogramText || defaultStudioConfig.headerMonogramText,
       heroKicker: savedConfig.heroKicker || defaultStudioConfig.heroKicker,
       albumTitle: savedConfig.albumTitle || defaultStudioConfig.albumTitle,
       timeLabel: savedConfig.timeLabel || defaultStudioConfig.timeLabel,

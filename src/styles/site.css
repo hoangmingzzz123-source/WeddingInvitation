@@ -3744,6 +3744,7 @@ body {
   position: relative;
   min-height: clamp(23rem, 48vw, 42rem);
   overflow: hidden;
+  border-radius: 1.15rem;
   background: #d8d2c4;
 }
 .signature-hero__image img,
@@ -3756,6 +3757,10 @@ body {
   object-fit: cover;
 }
 .signature-hero__image img { position: absolute; inset: 0; }
+.signature-story__photo img,
+.signature-main-photo img {
+  border-radius: 1rem;
+}
 .signature-hero__image-note {
   position: absolute;
   right: 1rem;
@@ -3851,7 +3856,7 @@ body {
 .signature-hero--luxury-gold-cinematic .signature-hero__invitation,
 .signature-hero--luxury-gold-cinematic .signature-hero__side-note { color: rgba(255,255,255,.76); }
 .signature-hero--luxury-gold-cinematic .signature-hero__image-note { display: none; }
-.signature-hero--luxury-gold-frame .signature-hero__image { border: 1px solid var(--sig-accent); outline: 1px solid color-mix(in srgb, var(--sig-accent) 55%, transparent); outline-offset: 0.55rem; }
+.signature-hero--luxury-gold-frame .signature-hero__image { border: 1px solid var(--sig-accent); border-radius: 1.2rem; outline: 1px solid color-mix(in srgb, var(--sig-accent) 55%, transparent); outline-offset: 0.55rem; }
 .signature-hero--luxury-gold-frame .signature-hero__image img { filter: saturate(0.78); }
 .signature-hero--luxury-gold-frame .signature-hero__content { padding: 2rem 0; }
 .signature-hero--bloom-crystal-3d { background: radial-gradient(circle at 77% 35%, rgba(203, 183, 232, .42), transparent 24rem), linear-gradient(145deg, #fbf9fd, #f0eaf6); }
@@ -3860,7 +3865,7 @@ body {
 .signature-hero--bloom-crystal-3d .signature-hero__ornament { top: 17%; right: 9%; width: 8rem; height: 8rem; border: 1px solid rgba(139,118,170,.24); transform: rotate(32deg); }
 .signature-hero--bloom-crystal-3d .signature-hero__ornament::after { position: absolute; inset: 1rem; border: 1px solid rgba(139,118,170,.24); content: ''; transform: rotate(25deg); }
 .signature-hero--modern-dark-blue { color: #fff; background: radial-gradient(circle at 15% 20%, rgba(60, 105, 164, .26), transparent 26rem), #142238; }
-.signature-hero--modern-dark-blue .signature-hero__image { border: 1px solid rgba(177,207,238,.52); box-shadow: 1.1rem 1.1rem 0 rgba(146,188,232…642 tokens truncated…accent) 6%); }
+.signature-hero--modern-dark-blue .signature-hero__image { border: 1px solid rgba(177,207,238,.52); border-radius: 1.1rem; box-shadow: 1.1rem 1.1rem 0 rgba(146,188,232…642 tokens truncated…accent) 6%); }
 .signature-section-heading { width: min(100%, 48rem); margin: 0 auto 2.5rem; text-align: center; }
 .signature-section-heading > .signature-eyebrow { justify-content: center; }
 .signature-section-heading h2 { margin-top: 1rem !important; }
@@ -3891,7 +3896,7 @@ body {
 }
 .signature-story__photo figcaption i { padding-inline: .3rem; color: var(--sig-accent); }
 .signature-event-grid { display: grid; width: min(100%, 66rem); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-inline: auto; }
-.signature-event-card { position: relative; display: flex; min-height: 19rem; padding: clamp(1.4rem, 3vw, 2.5rem); border: 1px solid var(--sig-line); flex-direction: column; align-items: flex-start; background: color-mix(in srgb, var(--sig-paper) 95%, white); }
+.signature-event-card { position: relative; display: flex; min-height: 19rem; padding: clamp(1.4rem, 3vw, 2.5rem); border: 1px solid var(--sig-line); border-radius: 1rem; flex-direction: column; align-items: flex-start; background: color-mix(in srgb, var(--sig-paper) 95%, white); }
 .signature-event-card--primary { color: var(--sig-paper); border-color: transparent; background: var(--sig-ink); }
 .signature-event-card__number { align-self: flex-end; color: var(--sig-accent); font: 600 .58rem/1 "Poppins", sans-serif; letter-spacing: .14em; }
 .signature-event-card > svg { width: 1.35rem; height: 1.35rem; margin-top: 1.6rem; color: var(--sig-accent); stroke-width: 1.4; }
@@ -3903,20 +3908,20 @@ body {
 
 .signature-gallery { width: min(100%, 78rem); margin-inline: auto; }
 .signature-gallery__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; }
-.signature-gallery__grid button { position: relative; min-width: 0; aspect-ratio: 4 / 5; height: auto; margin: 0; padding: 0; overflow: hidden; border: 0; background: #ddd8cc; cursor: zoom-in; }
+.signature-gallery__grid button { position: relative; min-width: 0; aspect-ratio: 4 / 5; height: auto; margin: 0; padding: 0; overflow: hidden; border: 0; border-radius: .8rem; background: #ddd8cc; cursor: zoom-in; }
 .signature-gallery__grid button { margin-top: 0; }
 .signature-gallery__grid img { position: absolute; inset: 0; transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
 .signature-gallery__grid button:hover img { transform: scale(1.045); }
 .signature-gallery__grid button > span { position: absolute; right: .7rem; bottom: .65rem; color: #fff; font: 500 .65rem/1 "Poppins", sans-serif; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
 .signature-demo--bloom-crystal-3d .signature-gallery__grid button { border-radius: 10rem 10rem .8rem .8rem; }
-.signature-demo--modern-dark-blue .signature-gallery__grid button { border: 1px solid #d3dfed; }
+.signature-demo--modern-dark-blue .signature-gallery__grid button { border: 1px solid #d3dfed; border-radius: .9rem; }
 .signature-main-photo { width: min(calc(100% - 2rem), 48rem); margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) 0; }
 .signature-main-photo img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
 
 .signature-extras { display: grid; width: min(calc(100% - 2rem), 72rem); grid-template-columns: 1.2fr .8fr; gap: 1rem; margin: 0 auto; padding-bottom: clamp(4.5rem, 9vw, 8rem); }
 .signature-video-card,
 .signature-gift-card,
-.signature-guestbook { position: relative; min-height: 17rem; padding: clamp(1.3rem, 3vw, 2rem); overflow: hidden; border: 1px solid var(--sig-line); background: color-mix(in srgb, var(--sig-paper) 91%, white); }
+.signature-guestbook { position: relative; min-height: 17rem; padding: clamp(1.3rem, 3vw, 2rem); overflow: hidden; border: 1px solid var(--sig-line); border-radius: 1.1rem; background: color-mix(in srgb, var(--sig-paper) 91%, white); }
 .signature-video-card { display: grid; min-height: 22rem; align-content: end; color: #fff; }
 .signature-video-card > img { position: absolute; inset: 0; }
 .signature-video-card::after { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(13,13,17,.82), transparent 75%); content: ''; }
@@ -3947,7 +3952,7 @@ body {
 .signature-venue h3 { margin-top: 1.5rem !important; color: var(--sig-accent); font-size: 1.9rem !important; }
 .signature-venue > div:first-child > p:not(.signature-eyebrow) { margin-top: .45rem; color: var(--sig-muted); font-size: .72rem; }
 .signature-venue__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.4rem; }
-.signature-venue__map { position: relative; min-height: 21rem; overflow: hidden; border: 1px solid var(--sig-line); background: #e4e6df; }
+.signature-venue__map { position: relative; min-height: 21rem; overflow: hidden; border: 1px solid var(--sig-line); border-radius: 1.1rem; background: #e4e6df; }
 .signature-venue__map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: saturate(.75); }
 .signature-venue__map > span { position: absolute; bottom: .8rem; left: .8rem; display: inline-flex; align-items: center; gap: .4rem; padding: .6rem .8rem; color: var(--sig-ink); background: rgba(255,255,255,.93); font-size: .62rem; box-shadow: 0 6px 18px rgba(0,0,0,.11); }
 .signature-venue__map > span svg { width: .9rem; height: .9rem; color: var(--sig-accent); }
