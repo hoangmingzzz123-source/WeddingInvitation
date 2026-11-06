@@ -18,12 +18,13 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isHomePage = window.location.pathname === '/';
   const navItems = [
-    { label: 'Trang chủ', href: '#home' },
-    { label: 'Gói thiệp', href: '#packages' },
-    { label: 'Mẫu thiệp', href: '#templates' },
+    { label: 'Trang chủ', href: isHomePage ? '#home' : '/' },
+    { label: 'Gói thiệp', href: isHomePage ? '#packages' : '/#packages' },
+    { label: 'Mẫu thiệp', href: isHomePage ? '#templates' : '/templates' },
     { label: 'Tính năng', href: '/tinh-nang' },
-    { label: 'Đánh giá', href: '#testimonials' },
+    { label: 'Đánh giá', href: isHomePage ? '#testimonials' : '/#testimonials' },
   ];
 
   return (

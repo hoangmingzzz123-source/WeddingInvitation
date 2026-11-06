@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowRight, Check, Heart, MapPin, MessageCircle, Music2, Users, Video } from 'lucide-react';
 import { weddingPackages } from '../data/packages';
 import { InvitationCreationLauncher } from './InvitationCreationDialog';
+import { Navigation } from './Navigation';
 import './FeaturesPage.css';
 
 const featureItems = [
@@ -51,23 +52,10 @@ const featureItems = [
 export function FeaturesPage() {
   return (
     <main className="features-page">
-      <header className="features-nav">
-        <a className="features-brand" href="/" aria-label="Wedding Invitation MP, trang chủ">
-          <span className="features-brand__mark">MP</span>
-          <span>Wedding Invitation<small>THIỆP CƯỚI ONLINE</small></span>
-        </a>
-        <nav aria-label="Điều hướng">
-          <a href="/">Trang chủ</a>
-          <a href="/templates">Mẫu thiệp</a>
-          <a href="#packages">Gói thiệp</a>
-        </nav>
-        <InvitationCreationLauncher>
-          {(openOptions) => <button className="features-nav__cta" type="button" onClick={openOptions}>Tạo thiệp <ArrowRight aria-hidden="true" /></button>}
-        </InvitationCreationLauncher>
-      </header>
+      <Navigation />
 
       <section className="features-hero" aria-labelledby="features-title">
-        <img src="/images/vietnam/wedding-19476296.webp" alt="Cặp đôi trong trang phục cưới truyền thống Việt Nam" fetchPriority="high" />
+        <img src="/images/vietnam/wedding-19476296.webp" alt="Cặp đôi trong trang phục cưới truyền thống Việt Nam" loading="eager" />
         <div className="features-hero__shade" />
         <div className="features-hero__content">
           <p className="features-eyebrow"><span /> THIỆP CƯỚI, THEO CÁCH CỦA HAI BẠN</p>
@@ -118,7 +106,7 @@ export function FeaturesPage() {
       <section className="features-guest" aria-labelledby="guest-title">
         <div className="features-guest__photo">
           <img src="/images/vietnam-modern/ao-dai-02.webp" alt="Cô dâu và chú rể trong bộ áo dài cưới" loading="lazy" />
-          <span>THÂN MỜI GIA ĐÌNH ANH MINH</span>
+          <span>THÂN MỜI THAM DỰ TIỆC MỪNG</span>
         </div>
         <div className="features-guest__copy">
           <p className="features-eyebrow features-eyebrow--dark">CHO TỪNG KHÁCH MỜI</p>
