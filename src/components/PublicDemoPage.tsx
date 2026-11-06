@@ -18,6 +18,28 @@ function photoPosition(photo?: DemoPhoto) {
   return `${percent(photo?.focalX)} ${percent(photo?.focalY)}`;
 }
 
+function resolveFamilyVariant(studio?: PublicInvitationDemo['payload']['studio']) {
+  const side = new URLSearchParams(window.location.search).get('side')?.trim().toLowerCase();
+  const brideSides = new Set(['bride', 'gai', 'nha-gai', 'nhà-gái', 'female']);
+  const groomSides = new Set(['groom', 'trai', 'nha-trai', 'nhà-trai', 'male']);
+
+  if (brideSides.has(side ?? '')) return {
+    ceremonyTitle: studio?.brideCeremonyTitle || 'Lễ Vu Quy',
+    receptionTitle: studio?.brideReceptionTitle || 'Đón khách nhà gái',
+    heroKicker: studio?.brideHeroKicker || 'Lễ Vu Quy',
+    address: studio?.brideAddress || '',
+  };
+
+  if (groomSides.has(side ?? '')) return {
+    ceremonyTitle: studio?.groomCeremonyTitle || 'Lễ Thành Hôn',
+    receptionTitle: studio?.groomReceptionTitle || 'Tiệc mừng thân mật',
+    heroKicker: studio?.groomHeroKicker || 'Lễ Thành Hôn',
+    address: studio?.groomAddress || '',
+  };
+
+  return null;
+}
+
 export function PublicDemoPage({ token }: { token: string }) {
   const [demo, setDemo] = useState<PublicInvitationDemo | null>(null);
   const [error, setError] = useState('');
@@ -57,6 +79,7 @@ export function PublicDemoPage({ token }: { token: string }) {
     : [];
   const studio = payload?.studio;
   const templateTier = weddingTemplates.find((template) => template.id === demo?.templateId)?.tier ?? '109k';
+  const familyVariant = resolveFamilyVariant(studio);
   const customization: SignatureDemoCustomization = {
     tier: studio?.packageTier ?? templateTier,
     bride: payload?.brideName,
@@ -65,13 +88,13 @@ export function PublicDemoPage({ token }: { token: string }) {
     dateLabel: dateLabel(payload?.weddingDate ?? ''),
     time: payload?.weddingTime,
     venue: payload?.venue,
-    address: payload?.address,
+    address: familyVariant?.address || payload?.address,
     city: studio?.city ?? 'Việt Nam',
     headerMonogramText: studio?.headerMonogramText,
     story: payload?.message,
-    ceremonyTitle: studio?.ceremonyTitle,
-    receptionTitle: studio?.receptionTitle,
-    heroKicker: studio?.heroKicker,
+    ceremonyTitle: familyVariant?.ceremonyTitle ?? studio?.ceremonyTitle,
+    receptionTitle: familyVariant?.receptionTitle ?? studio?.receptionTitle,
+    heroKicker: familyVariant?.heroKicker ?? studio?.heroKicker,
     albumTitle: studio?.albumTitle,
     timeLabel: studio?.timeLabel,
     venueLabel: studio?.venueLabel,

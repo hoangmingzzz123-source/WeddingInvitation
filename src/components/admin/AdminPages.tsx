@@ -127,6 +127,14 @@ const defaultStudioConfig: InvitationStudioConfig = {
   headerMonogramText: '',
   ceremonyTitle: 'Lễ thành hôn',
   receptionTitle: 'Tiệc mừng thân mật',
+  brideCeremonyTitle: 'Lễ Vu Quy',
+  brideReceptionTitle: 'Đón khách nhà gái',
+  brideHeroKicker: 'Lễ Vu Quy',
+  brideAddress: '',
+  groomCeremonyTitle: 'Lễ Thành Hôn',
+  groomReceptionTitle: 'Tiệc mừng thân mật',
+  groomHeroKicker: 'Lễ Thành Hôn',
+  groomAddress: '',
   heroKicker: 'Wedding invitation',
   albumTitle: 'Album kỷ niệm',
   timeLabel: 'Thời gian',
@@ -281,6 +289,20 @@ function AdminStudioEditor({
           <label>Tiêu đề lễ<input value={config.ceremonyTitle} onChange={(event) => updateConfig('ceremonyTitle', event.target.value)} /></label>
           <label>Tiêu đề tiệc<input value={config.receptionTitle} onChange={(event) => updateConfig('receptionTitle', event.target.value)} /></label>
           <label className="is-wide">Chữ viết tắt trên header<input value={config.headerMonogramText} onChange={(event) => updateConfig('headerMonogramText', event.target.value)} placeholder="Để trống để dùng chữ cái đầu tên hai bạn" maxLength={40} /><small>Ví dụ: N &amp; M · N &lt;3 M · Nhàn &amp; Mai</small></label>
+          <details className="admin-studio-copy-fields is-wide">
+            <summary>Nội dung riêng cho nhà trai / nhà gái</summary>
+            <small>Link nhà trai thêm <code>?side=trai</code>; link nhà gái thêm <code>?side=gai</code>.</small>
+            <div className="admin-form-grid">
+              <label>Nhà trai · Tiêu đề lễ<input value={config.groomCeremonyTitle} onChange={(event) => updateConfig('groomCeremonyTitle', event.target.value)} /></label>
+              <label>Nhà trai · Tiêu đề tiệc<input value={config.groomReceptionTitle} onChange={(event) => updateConfig('groomReceptionTitle', event.target.value)} /></label>
+              <label className="is-wide">Nhà trai · Chữ trên ảnh bìa<input value={config.groomHeroKicker} onChange={(event) => updateConfig('groomHeroKicker', event.target.value)} /></label>
+              <label className="is-wide">Nhà trai · Địa chỉ<input value={config.groomAddress} onChange={(event) => updateConfig('groomAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
+              <label>Nhà gái · Tiêu đề lễ<input value={config.brideCeremonyTitle} onChange={(event) => updateConfig('brideCeremonyTitle', event.target.value)} /></label>
+              <label>Nhà gái · Tiêu đề tiệc<input value={config.brideReceptionTitle} onChange={(event) => updateConfig('brideReceptionTitle', event.target.value)} /></label>
+              <label className="is-wide">Nhà gái · Chữ trên ảnh bìa<input value={config.brideHeroKicker} onChange={(event) => updateConfig('brideHeroKicker', event.target.value)} /></label>
+              <label className="is-wide">Nhà gái · Địa chỉ<input value={config.brideAddress} onChange={(event) => updateConfig('brideAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
+            </div>
+          </details>
           <details className="admin-studio-copy-fields is-wide">
             <summary>Chỉnh các text khác trên thiệp</summary>
             <div className="admin-form-grid">

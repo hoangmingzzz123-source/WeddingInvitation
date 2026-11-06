@@ -18,6 +18,14 @@ export interface InvitationStudioConfig {
   headerMonogramText: string;
   ceremonyTitle: string;
   receptionTitle: string;
+  brideCeremonyTitle: string;
+  brideReceptionTitle: string;
+  brideHeroKicker: string;
+  brideAddress: string;
+  groomCeremonyTitle: string;
+  groomReceptionTitle: string;
+  groomHeroKicker: string;
+  groomAddress: string;
   heroKicker: string;
   albumTitle: string;
   timeLabel: string;

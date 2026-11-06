@@ -17,7 +17,7 @@ const uuid = (value: unknown) => {
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const flag = (name: string) => process.env[name] === 'true';
-const publicStudioKeys = ['packageTier', 'city', 'ceremonyTitle', 'receptionTitle', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
+const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideHeroKicker', 'brideAddress', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomHeroKicker', 'groomAddress', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
 const templateMimeTypes: Record<string, string> = {
   html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'application/javascript; charset=utf-8',
   json: 'application/json; charset=utf-8', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
