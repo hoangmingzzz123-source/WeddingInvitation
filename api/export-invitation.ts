@@ -382,6 +382,14 @@ export default {
       const selected = await selectedPhotos(String(customer.id), refs);
       const customTemplateId = (demo.payload as { customTemplateId?: unknown } | undefined)?.customTemplateId;
       const customTemplate = typeof customTemplateId === 'string' && uuid.test(customTemplateId) ? customTemplateId : null;
+      let entryFile = 'index.html';
+      if (customTemplate) {
+        const [template] = await db<Array<{ entry_file: string }>>(
+          `custom_invitation_templates?id=eq.${encodeURIComponent(customTemplate)}&select=entry_file&limit=1`,
+        );
+        if (!template) return jsonResponse('Không tìm thấy mẫu đang dùng cho demo.', 422);
+        entryFile = template.entry_file;
+      }
       const assets: Array<PhotoRef & { src: string }> = [];
       const binaryFiles: Array<{ name: string; content: Uint8Array }> = [];
       let galleryIndex = 0;
@@ -395,7 +403,17 @@ export default {
       const outputFiles = customTemplate
         ? await buildCustomTemplateFiles(customTemplate, demo, assets)
         : buildFiles(customer, demo, assets);
-      const zip = createZip([...outputFiles, ...binaryFiles]);
+      const exportMetadata = {
+        version: 1,
+        customerId: String(customer.id),
+        demoId: String(demo.id),
+        entryFile,
+      };
+      const zip = createZip([
+        ...outputFiles,
+        ...binaryFiles,
+        { name: 'mp-invitation-export.json', content: JSON.stringify(exportMetadata, null, 2) },
+      ]);
       const filename = `${slugify(`${String(customer.bride_name ?? '')}-${String(customer.groom_name ?? '')}`)}.zip`;
       let downloadUrl: string | undefined;
       if (assets.length || zip.byteLength > 4_000_000) {

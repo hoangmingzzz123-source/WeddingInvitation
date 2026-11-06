@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { mediaRequest } from '../../lib/customerPhotoUpload';
+import { mediaRequest, uploadAdditionalCustomerPhotos } from '../../lib/customerPhotoUpload';
 import type { DemoPhoto } from '../../types/admin';
 
 interface Library {
@@ -15,9 +15,10 @@ const labels: Record<string, string> = {
 };
 
 function defaultSelection(photos: Library['photos']): DemoPhoto[] {
-  const cover = photos.find((photo) => photo.preferredCover) ?? photos[0];
+  const available = photos.slice(0, 7);
+  const cover = available.find((photo) => photo.preferredCover) ?? available[0];
   if (!cover) return [];
-  return [cover, ...photos.filter((photo) => photo.id !== cover.id)].map((photo, order) => ({
+  return [cover, ...available.filter((photo) => photo.id !== cover.id)].map((photo, order) => ({
     photoId: photo.id, url: photo.url, role: order === 0 ? 'cover' : 'gallery', order,
   }));
 }
@@ -36,6 +37,8 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
   const [busy, setBusy] = useState(false);
   const [health, setHealth] = useState('');
   const [viewing, setViewing] = useState<string>();
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
   useEffect(() => {
     let active = true;
     const refresh = () => mediaRequest<Library>('library', { customerId }, accessToken)
@@ -61,13 +64,38 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
     finally { setBusy(false); }
   };
   if (!library && !error) return <p role="status">Đang tải ảnh hồ sơ…</p>;
-  if (library?.status === 'none' && !library.photos.length) return <p>Hồ sơ này chưa có ảnh tải lên. Bạn có thể dùng ảnh bìa URL.</p>;
+  const addPhotos = async (files: FileList | null) => {
+    if (!files?.length) return;
+    const selectedFiles = Array.from(files);
+    if ((library?.photos.length ?? 0) + selectedFiles.length > 30) {
+      setError('Thư viện khách hàng tối đa 30 ảnh.');
+      return;
+    }
+    setUploading(true);
+    setError('');
+    setUploadProgress(`Đang chuẩn bị ${selectedFiles.length} ảnh...`);
+    try {
+      const result = await uploadAdditionalCustomerPhotos(selectedFiles, customerId, accessToken, (completed, total) => {
+        setUploadProgress(`Đang tải ảnh ${completed}/${total}...`);
+      });
+      setHealth(`Đã thêm ${result.added} ảnh vào thư viện khách hàng.`);
+      setUploadProgress('');
+      setVersion((value) => value + 1);
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : 'Không thể tải thêm ảnh.');
+      setUploadProgress('');
+    } finally { setUploading(false); }
+  };
   const choose = (id: string, role: DemoPhoto['role']) => {
     const photo = library?.photos.find((item) => item.id === id);
     if (!photo) return;
     const current = selection.find((item) => item.photoId === id);
     if (role === 'gallery' && current?.role === 'gallery') {
       onSelect(selection.filter((item) => item.photoId !== id).map((item, order) => ({ ...item, order })));
+      return;
+    }
+    if (role === 'gallery' && !current && selection.length >= 7) {
+      setError('Mỗi demo hiện hỗ trợ tối đa 7 ảnh: 1 ảnh bìa và 6 ảnh album.');
       return;
     }
     const rest = selection.filter((item) => item.photoId !== id).map((item) =>
@@ -84,18 +112,23 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
     onSelect(next.map((item, order) => ({ ...item, order })));
   };
   return (
-    <fieldset className="customer-media" disabled={disabled}>
-      <legend>Ảnh khách hàng ({library?.photos.length ?? 0}/7)</legend>
+    <fieldset className="customer-media" disabled={disabled || uploading}>
+      <legend>Ảnh khách hàng ({library?.photos.length ?? 0}/30)</legend>
       <p aria-live="polite">{library?.requestCode} · {labels[library?.status ?? ''] ?? 'Đang tải'}</p>
       {(error || library?.error) && <p role="alert">{error || library?.error}</p>}
       {health && <p role="status">{health}</p>}
+      {uploadProgress && <p role="status">{uploadProgress}</p>}
       <div className="customer-media__actions">
+        {(library?.photos.length ?? 0) < 30 && <label className="customer-media__upload">Thêm ảnh
+          <input type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={uploading}
+            onChange={(event) => { void addPhotos(event.currentTarget.files); event.currentTarget.value = ''; }} />
+        </label>}
         {library?.folderId && /^[\w-]+$/.test(library.folderId) && (
           <a href={`https://drive.google.com/drive/folders/${library.folderId}`} target="_blank" rel="noopener noreferrer">Mở thư mục Google Drive</a>
         )}
         {library?.driveEnabled && <button type="button" disabled={busy} onClick={() => void run('drive-health')}>Kiểm tra kết nối Drive</button>}
         {library?.driveEnabled && ['failed','retrying'].includes(library?.status ?? '') && <button type="button" disabled={busy} onClick={() => void run('retry')}>Đồng bộ lại</button>}
-        {!!library?.photos.length && <button type="button" onClick={() => onSelect(defaultSelection(library.photos))}>Dùng tất cả ảnh khách</button>}
+        {!!library?.photos.length && <button type="button" onClick={() => onSelect(defaultSelection(library.photos))}>Dùng tối đa 7 ảnh cho demo</button>}
         {error && <button type="button" onClick={() => setVersion((value) => value + 1)}>Tải lại ảnh</button>}
         {!!selection.length && <button type="button" onClick={() => onSelect([])}>Bỏ lựa chọn</button>}
       </div>
@@ -109,7 +142,7 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
             <strong title={photo.name}>{photo.name}</strong>
             <div className="customer-media__actions">
               <button type="button" aria-pressed={selected?.role === 'cover'} onClick={() => choose(photo.id, 'cover')}>Ảnh bìa</button>
-              <button type="button" aria-pressed={selected?.role === 'gallery'} disabled={selected?.role === 'cover'}
+              <button type="button" aria-pressed={selected?.role === 'gallery'} disabled={selected?.role === 'cover' || (!selected && selection.length >= 7)}
                 onClick={() => choose(photo.id, 'gallery')}>Album</button>
             </div>
             {selected?.role === 'gallery' && <div className="customer-media__actions">

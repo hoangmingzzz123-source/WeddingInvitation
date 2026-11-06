@@ -64,6 +64,8 @@ Hệ thống có khu vực quản trị nội bộ tại `/admin/login`, dùng S
 - Chọn mẫu và tạo link preview riêng có token/hạn dùng.
 - Hiển thị popup xác nhận đây là bản demo trước khi khách xem.
 - Xác nhận khách đặt mẫu và xuất source code thiệp thành file ZIP qua Vercel Function.
+- Tải thêm tối đa 30 ảnh vào thư viện của từng khách; chọn tối đa 7 ảnh để áp dụng cho một demo.
+- Có thể giải nén ZIP mới xuất, sửa `index.html` hoặc `styles.css`, rồi dùng **Cập nhật từ ZIP** ở đúng demo. Bản preview và link thiệp chính thức sẽ dùng revision vừa tải lên; file phải được xuất từ chính demo đó.
 
 Xem hướng dẫn cấu hình tại [`ADMIN_SETUP.md`](./ADMIN_SETUP.md). Không commit `.env.local` hoặc Supabase secret key.
 

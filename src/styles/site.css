@@ -5459,6 +5459,13 @@ body {
   font-size: 0.62rem;
 }
 
+.admin-demo-list article > .admin-demo-zip-hint {
+  grid-column: 1 / -1;
+  color: #75695f;
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
 .admin-demo-list article > label {
   display: grid;
   grid-template-columns: 1fr auto auto;

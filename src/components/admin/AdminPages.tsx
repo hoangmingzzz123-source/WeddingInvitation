@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
+  Upload,
   UserRound,
   Users,
   WandSparkles,
@@ -32,7 +33,6 @@ import {
   clearAdminSession,
   createCustomer,
   createDemo,
-  deleteDemo,
   getAdminProfile,
   isSupabaseConfigured,
   listCustomers,
@@ -60,7 +60,7 @@ import {
   type PublishedInvitationRecord,
 } from '../../types/admin';
 import type { AuthCallbackSession } from '../../lib/supabaseRest';
-import { mediaRequest, uploadCustomTemplate } from '../../lib/customerPhotoUpload';
+import { mediaRequest, uploadCustomTemplate, uploadEditedInvitationZip } from '../../lib/customerPhotoUpload';
 import { CustomTemplateRenderer } from '../CustomTemplateRenderer';
 import { SignatureDemo, type SignatureDemoCustomization } from '../demos/SignatureDemos';
 import { CustomerPhotoLibrary } from './CustomerPhotoLibrary';
@@ -510,18 +510,23 @@ export function AdminDashboardPage() {
     return nextWeek.toISOString().slice(0, 10);
   });
   const [mediaSelection, setMediaSelection] = useState<{ customerId: string; photos: DemoPhoto[] }>();
+  const [zipTargetDemoId, setZipTargetDemoId] = useState('');
   const [studioConfig, setStudioConfig] = useState<InvitationStudioConfig>(defaultStudioConfig);
   const [studioOpen, setStudioOpen] = useState(false);
   const [templateUploading, setTemplateUploading] = useState(false);
+  const zipInputRef = useRef<HTMLInputElement>(null);
   const publishAttempt = useRef<{ fingerprint: string; id: string }>();
   const publishing = useRef(false);
 
   const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? null;
   const demoPhotos = mediaSelection?.customerId === selectedCustomerId ? mediaSelection.photos : [];
   const customerDemos = demos.filter((demo) => demo.customerId === selectedCustomerId);
-  const selectedCustomTemplate = customTemplates.find((template) => template.id === editor.selectedTemplateId);
-  const selectedTemplateName = weddingTemplates.find((template) => template.id === editor.selectedTemplateId)?.name
-    ?? selectedCustomTemplate?.name
+  const activeRevisionId = customerDemos.find((demo) => demo.templateId === editor.selectedTemplateId
+    && typeof demo.payload.customTemplateId === 'string')?.payload.customTemplateId;
+  const selectedCustomTemplate = customTemplates.find((template) => template.id === editor.selectedTemplateId)
+    ?? customTemplates.find((template) => template.id === activeRevisionId);
+  const selectedTemplateName = selectedCustomTemplate?.name
+    ?? weddingTemplates.find((template) => template.id === editor.selectedTemplateId)?.name
     ?? 'Chọn mẫu thiệp';
   const studioCover = demoPhotos.find((photo) => photo.role === 'cover' && photo.url);
   const studioGallery = demoPhotos.filter((photo) => photo.role === 'gallery' && photo.url).sort((a, b) => a.order - b.order);
@@ -594,7 +599,9 @@ export function AdminDashboardPage() {
       const activeSession = await refreshAdminSession(existingSession);
       const [nextProfile, nextCustomers, nextDemos, nextPublishedInvitations, nextCustomTemplates] = await Promise.all([
         getAdminProfile(activeSession), listCustomers(activeSession), listDemos(activeSession), listPublishedInvitations(activeSession),
-        mediaRequest<CustomInvitationTemplate[]>('templates', {}, activeSession.accessToken),
+        mediaRequest<CustomInvitationTemplate[]>('templates', {
+          customerId: preferredCustomerId ?? selectedCustomerId,
+        }, activeSession.accessToken),
       ]);
       setSession(activeSession);
       setProfile(nextProfile);
@@ -629,6 +636,15 @@ export function AdminDashboardPage() {
     if (!selectedCustomer || isNewCustomer) return;
     setEditor(customerToEditor(selectedCustomer));
   }, [isNewCustomer, selectedCustomer]);
+
+  useEffect(() => {
+    if (!session || !selectedCustomerId) return;
+    let active = true;
+    mediaRequest<CustomInvitationTemplate[]>('templates', { customerId: selectedCustomerId }, session.accessToken)
+      .then((templates) => { if (active) setCustomTemplates(templates); })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, [session?.accessToken, selectedCustomerId]);
 
   useEffect(() => {
     if (!selectedCustomer) return;
@@ -905,7 +921,9 @@ export function AdminDashboardPage() {
     setError('');
     try {
       const activeSession = await refreshAdminSession(readAdminSession() ?? session);
-      await deleteDemo(activeSession, demo.id);
+      await mediaRequest<{ ok: boolean }>('delete-demo', {
+        customerId: demo.customerId, demoId: demo.id,
+      }, activeSession.accessToken);
       await loadData(selectedCustomerId ?? undefined);
       showMessage('Đã xóa demo và các link đang trỏ tới demo này.');
     } catch (deleteError) {
@@ -1022,6 +1040,20 @@ export function AdminDashboardPage() {
       showMessage('Đã xuất source code thiệp cưới thành file ZIP.');
     } catch (exportError) {
       setError(exportError instanceof Error ? exportError.message : 'Không thể xuất file ZIP.');
+    } finally { setActionLoading(''); }
+  };
+
+  const importEditedZip = async (demo: InvitationDemoRecord, file: File) => {
+    if (!session || !selectedCustomer || demo.customerId !== selectedCustomer.id || actionLoading) return;
+    setActionLoading(`import:${demo.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      const result = await uploadEditedInvitationZip(file, selectedCustomer.id, demo.id, activeSession.accessToken);
+      await loadData(selectedCustomer.id);
+      showMessage(`Đã cập nhật thiệp từ ZIP: ${result.name}. Preview và link thiệp chính thức dùng bản mới.`);
+    } catch (importError) {
+      setError(importError instanceof Error ? importError.message : 'Không thể cập nhật thiệp từ ZIP.');
     } finally { setActionLoading(''); }
   };
 
@@ -1190,6 +1222,13 @@ export function AdminDashboardPage() {
             </div>
 
             <div className="admin-demo-list">
+              <input ref={zipInputRef} className="admin-demo-zip-input" type="file" accept=".zip,application/zip"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  const demo = customerDemos.find((item) => item.id === zipTargetDemoId);
+                  event.currentTarget.value = '';
+                  if (file && demo) void importEditedZip(demo, file);
+                }} />
               {customerDemos.map((demo) => {
                 const previewUrl = `${window.location.origin}/preview/${demo.publicToken}`;
                 const canExport = selectedCustomer.status === 'confirmed' || selectedCustomer.status === 'completed';
@@ -1201,6 +1240,7 @@ export function AdminDashboardPage() {
                     <div><b>{weddingTemplates.find((item) => item.id === demo.templateId)?.name ?? customTemplates.find((item) => item.id === demo.templateId)?.name ?? demo.templateId}</b><small>Tạo {formatDate(demo.createdAt)}{demo.expiresAt ? ` · Hết hạn ${formatDate(demo.expiresAt)}` : ''}</small></div>
                     <label><input readOnly value={previewUrl} /><button type="button" onClick={() => void copyPreviewLink(demo.publicToken)} aria-label="Sao chép link"><Clipboard /></button><a href={previewUrl} target="_blank" rel="noreferrer" aria-label="Mở preview"><ExternalLink /></a></label>
                     {publishedSlug && <label className="admin-demo-live-link"><input readOnly value={invitationUrl} aria-label="Link thiệp chính thức" /><button type="button" onClick={() => void copyInvitationLink(publishedSlug)} aria-label="Sao chép link thiệp"><Clipboard /></button><a href={invitationUrl} target="_blank" rel="noreferrer" aria-label="Mở thiệp chính thức"><ExternalLink /></a></label>}
+                    <small className="admin-demo-zip-hint">Tải ZIP mới nhất, sửa index.html hoặc styles.css, rồi nạp lại vào đúng demo để cập nhật preview và link thiệp.</small>
                     <div className="admin-demo-list__actions">
                       <button type="button" onClick={() => void expireDemo(demo)}><Archive /> {demo.status === 'expired' ? 'Mở lại' : 'Khóa link'}</button>
                       {canExport && !publishedSlug && <button type="button" onClick={() => void publishLiveDemo(demo)} disabled={Boolean(actionLoading)}>
@@ -1211,6 +1251,12 @@ export function AdminDashboardPage() {
                       </button>}
                       <button type="button" className="is-primary" disabled={!canExport || Boolean(actionLoading)} title={canExport ? 'Xuất source code ZIP' : 'Cần xác nhận khách đặt mẫu trước'} onClick={() => void exportZip(demo)}>
                         {actionLoading === `export:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Download />} Xuất code ZIP
+                      </button>
+                      <button type="button" disabled={Boolean(actionLoading)} title="Tải ZIP đã chỉnh sửa để cập nhật thiệp" onClick={() => {
+                        setZipTargetDemoId(demo.id);
+                        zipInputRef.current?.click();
+                      }}>
+                        {actionLoading === `import:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Upload />} Cập nhật từ ZIP
                       </button>
                       <button type="button" className="is-danger" disabled={Boolean(actionLoading)} onClick={() => void removeDemo(demo)} title="Xóa demo và các link gắn với demo">
                         {actionLoading === `delete:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Trash2 />} Xóa demo

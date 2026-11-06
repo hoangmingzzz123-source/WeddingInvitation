@@ -38,8 +38,11 @@
   background: #faf7f1;
   color: #342e27;
 }
+.customer-media__upload { display: inline-flex; min-height: 44px; align-items: center; padding: .35rem .65rem; border: 1px solid #b4a390; border-radius: .5rem; color: #342e27; background: #faf7f1; cursor: pointer; }
+.customer-media__upload input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .customer-media__actions button[aria-pressed="true"] { background: #29493e; color: white; }
 .customer-media__actions button:disabled { opacity: .5; }
+.admin-demo-zip-input { display: none; }
 .request-form .customer-media__consent { display: flex; gap: .65rem; align-items: flex-start; margin-block: .75rem; }
 .request-form .customer-media__consent input, .request-form .customer-media input[type="radio"] { width: 1.15rem; min-height: 1.15rem; flex: 0 0 auto; }
 .customer-media__consent a, .customer-media__actions a { text-decoration: underline; }

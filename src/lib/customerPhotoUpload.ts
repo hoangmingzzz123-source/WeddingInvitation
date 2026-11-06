@@ -111,6 +111,76 @@ export async function uploadPhoto(file: File, slot: UploadSlot, endpoint: string
   });
 }
 
+export async function uploadAdditionalCustomerPhotos(
+  files: File[],
+  customerId: string,
+  accessToken: string,
+  onProgress: (completed: number, total: number) => void,
+) {
+  if (!files.length || files.length > 10) throw new Error('Chọn từ 1 đến 10 ảnh mỗi lần tải.');
+  const inspected: SelectedPhoto[] = [];
+  for (const file of files) inspected.push(await inspectPhoto(file));
+  if (new Set(inspected.map((photo) => photo.checksum)).size !== inspected.length) {
+    throw new Error('Danh sách có ảnh trùng nội dung.');
+  }
+
+  const { uploads, tusEndpoint } = await mediaRequest<{
+    uploads: Array<UploadSlot & { name: string; mime: string; size: number }>;
+    tusEndpoint: string;
+  }>('admin-photo-init', {
+    customerId,
+    files: inspected.map(({ file }) => ({ name: file.name, mime: file.type, size: file.size })),
+  }, accessToken);
+
+  const completed = new Set<number>();
+  await Promise.all(uploads.map(async (slot, index) => {
+    await uploadPhoto(inspected[index].file, slot, tusEndpoint, (value) => {
+      if (value === 100) completed.add(index);
+      onProgress(completed.size, files.length);
+    });
+  }));
+  return mediaRequest<{ added: number; driveEnabled: boolean }>('admin-photo-complete', {
+    customerId,
+    uploads: uploads.map(({ photoId, name, mime, size }) => ({ photoId, name, mime, size })),
+  }, accessToken);
+}
+
+export async function uploadEditedInvitationZip(
+  file: File,
+  customerId: string,
+  demoId: string,
+  accessToken: string,
+) {
+  if (!file.name.toLowerCase().endsWith('.zip') || !file.size || file.size > 32 * MiB) {
+    throw new Error('Chọn file ZIP tối đa 32 MiB.');
+  }
+  const { path, signedUploadToken } = await mediaRequest<{
+    path: string;
+    signedUploadToken: string;
+  }>('init-invitation-zip-update', { customerId, demoId, size: file.size }, accessToken);
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', `${storageUrl}/storage/v1/object/upload/sign/customer-demo-exports/${path}?token=${encodeURIComponent(signedUploadToken)}`);
+      xhr.setRequestHeader('apikey', key);
+      xhr.setRequestHeader('Content-Type', 'application/zip');
+      xhr.timeout = 120_000;
+      xhr.onload = () => xhr.status >= 200 && xhr.status < 300
+        ? resolve()
+        : reject(new Error('Không tải được ZIP lên kho lưu trữ.'));
+      xhr.onerror = () => reject(new Error('Kết nối tải ZIP bị gián đoạn.'));
+      xhr.ontimeout = () => reject(new Error('Tải ZIP quá thời gian cho phép.'));
+      xhr.send(file);
+    });
+  } catch (error) {
+    await mediaRequest('cancel-invitation-zip-update', { customerId, demoId, path }, accessToken).catch(() => undefined);
+    throw error;
+  }
+  return mediaRequest<{ ok: boolean; name: string; revisionId: string }>(
+    'apply-invitation-zip-update', { customerId, demoId, path }, accessToken,
+  );
+}
+
 export interface SavedPhotoUpload {
   identity: UploadIdentity;
   form: Record<string, string>;

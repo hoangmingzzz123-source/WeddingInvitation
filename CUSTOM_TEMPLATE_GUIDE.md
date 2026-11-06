@@ -50,6 +50,10 @@ Photo placeholders: `coverUrl`, `coverPosition`, and `gallery1Url` through `gall
 
 After upload, select the package in Studio, choose/crop the customer photos, then create the preview. The selected package ID is saved with the demo and reused by the published slug.
 
+## Edit an exported customer invitation
+
+From the admin demo row, export a fresh ZIP, edit `index.html`, `styles.css`, or local assets, then use **Cập nhật từ ZIP** on that same demo. The archive is checked against its embedded customer/demo marker and becomes a private revision for that invitation; its preview and published URL use the new revision. Older ZIPs without the marker must be exported again. Keep files at the archive root and within the existing ZIP size and file-type limits.
+
 ## Vercel domain setting
 
 `VITE_PUBLIC_INVITATION_DOMAIN` is optional. Leave it empty to use `https://your-site-domain/invite/slug`. To use `https://slug.your-domain`, set it to the domain you own, without a scheme or trailing slash, for example:
