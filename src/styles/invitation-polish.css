@@ -1,0 +1,248 @@
+/* Consistent display face for the couple's names, monogram and ampersands. */
+.signature-demo .signature-nav__monogram,
+.signature-demo .signature-nav__monogram i,
+.signature-demo .signature-hero h1 span,
+.signature-demo .signature-hero h1 i {
+  font-family: "Wedding Serif", Georgia, serif !important;
+  font-weight: 400 !important;
+}
+
+.signature-demo .signature-nav__monogram {
+  font-size: 1.55rem !important;
+  line-height: 1;
+}
+
+.signature-demo .signature-nav__monogram i {
+  font-size: .72em;
+  font-style: italic;
+}
+
+.signature-demo .signature-nav__monogram-text {
+  font-style: italic;
+}
+
+.signature-demo .signature-hero h1 span {
+  font-size: .72em;
+  font-style: italic;
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+.signature-demo .signature-hero h1 i {
+  font-size: .54em;
+  font-style: italic;
+  line-height: 1;
+}
+
+.signature-demo .signature-extras .signature-video-card h2,
+.signature-demo .signature-extras .signature-gift-card h2,
+.signature-demo .signature-guestbook h3 {
+  font-family: "Wedding Serif", Georgia, serif !important;
+  font-size: clamp(2.25rem, 4.4vw, 4rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0 !important;
+}
+
+.signature-demo .signature-gallery .signature-section-heading > p:not(.signature-eyebrow) {
+  margin-top: .75rem;
+  color: var(--sig-muted);
+  font-family: "Wedding Sans", "Segoe UI", sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.6;
+}
+
+.signature-demo .signature-section-heading > p:not(.signature-eyebrow) {
+  color: var(--sig-muted);
+  font-family: "Wedding Sans", "Segoe UI", sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.6;
+}
+
+.signature-demo .signature-extras {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.signature-demo .signature-video-card,
+.signature-demo .signature-gift-card {
+  min-width: 0;
+  min-height: 26rem;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border-radius: .6rem;
+}
+
+.signature-demo .signature-video-card h2,
+.signature-demo .signature-gift-card h2 {
+  max-width: 20ch !important;
+  margin-top: .75rem !important;
+}
+
+.signature-demo .signature-gift-card > p,
+.signature-demo .signature-guestbook__heading p,
+.signature-demo .signature-guestbook li {
+  color: var(--sig-muted);
+  font-family: "Wedding Sans", "Segoe UI", sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.55;
+}
+
+.signature-demo .signature-gift-card > p {
+  max-width: 38ch;
+  margin-top: .75rem;
+}
+
+.signature-demo .signature-guestbook {
+  grid-column: 1 / -1;
+  min-height: 0;
+  padding: 1.5rem;
+  border-radius: .6rem;
+}
+
+.signature-demo .signature-guestbook__heading p {
+  margin-top: .3rem;
+}
+
+.signature-demo .signature-guestbook input {
+  min-height: 3rem;
+  font-family: "Wedding Sans", "Segoe UI", sans-serif !important;
+  font-size: 1rem !important;
+}
+
+.signature-demo .signature-guestbook form button {
+  width: auto;
+  min-width: 3rem;
+  padding-inline: .85rem;
+  font-family: "Wedding Sans", "Segoe UI", sans-serif !important;
+  font-size: 1rem;
+}
+
+.signature-demo .signature-guestbook li {
+  padding: .65rem .8rem;
+}
+
+.signature-demo .signature-demo-note {
+  font-family: "Wedding Sans", "Segoe UI", sans-serif !important;
+  font-size: .8rem !important;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+.admin-studio-family-fields {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: .75rem;
+  min-width: 0;
+  margin: 0;
+  padding: .85rem;
+  border: 1px solid #e1e9e1;
+  border-radius: .45rem;
+}
+
+.admin-studio-editor__body .admin-form-grid > .is-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-studio-family-fields legend {
+  padding-inline: .3rem;
+  color: #263a31;
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+.admin-studio-family-fields > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+}
+
+.admin-studio-family-fields > div > label.is-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-studio-sections > div {
+  grid-template-columns: minmax(0, 1fr);
+  gap: .25rem;
+}
+
+.admin-studio-sections label {
+  display: grid !important;
+  grid-template-columns: 1.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: .7rem !important;
+  min-height: 2.6rem;
+  padding: .3rem .4rem;
+  border-bottom: 1px solid rgba(38, 58, 49, .08);
+  color: #263a31 !important;
+  font-size: .9rem !important;
+  line-height: 1.4;
+}
+
+.admin-studio-sections label:last-child {
+  border-bottom: 0;
+}
+
+.admin-studio-sections label span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-studio-sections input[type="checkbox"] {
+  appearance: none;
+  display: grid;
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 1.2rem;
+  place-items: center;
+  margin: 0;
+  border: 1.5px solid #87978b;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.admin-studio-sections input[type="checkbox"]:checked {
+  border-color: #356b58;
+  background: #356b58;
+}
+
+.admin-studio-sections input[type="checkbox"]:checked::before {
+  width: .32rem;
+  height: .58rem;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  content: "";
+  transform: translateY(-1px) rotate(45deg);
+}
+
+.admin-studio-sections input[type="checkbox"]:disabled {
+  border-color: #c6cec8;
+  background: #e3e8e4;
+}
+
+.admin-studio-sections input[type="checkbox"]:disabled + span {
+  color: #69786f;
+}
+
+@media (max-width: 760px) {
+  .signature-demo .signature-extras {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .signature-demo .signature-video-card,
+  .signature-demo .signature-gift-card {
+    min-height: 26rem;
+  }
+
+  .signature-demo .signature-guestbook {
+    grid-column: auto;
+  }
+
+  .admin-studio-family-fields > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-studio-family-fields > div > label.is-wide {
+    grid-column: auto;
+  }
+}

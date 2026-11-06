@@ -37,7 +37,7 @@ The entry HTML can link local files with relative paths. Use the supported place
 <img src="{{gallery1Url}}" style="object-position:{{gallery1Position}}" alt="">
 ```
 
-Available text placeholders: `brideName`, `groomName`, `headerMonogramText` (custom text in the header monogram; empty means use the initials), `weddingDate`, `weddingDateLabel`, `weddingTime`, `ceremonyTime`, `receptionTime`, `venue`, `address`, `message` (alias: `story`), `city`, `packageTier`, `ceremonyTitle`, `receptionTitle`, `heroKicker`, `albumTitle`, `timeLabel`, `venueLabel`, and `signatureText`.
+Available text placeholders: `brideName`, `groomName`, `headerMonogramText` (custom text in the header monogram; empty means use the initials), `weddingDate`, `weddingDateLabel`, `weddingTime`, `ceremonyTime`, `receptionTime`, `ceremonyAddress`, `receptionAddress`, `venue`, `address`, `message` (alias: `story`), `city`, `packageTier`, `ceremonyTitle`, `receptionTitle`, `heroKicker`, `brideCeremonyTitle`, `brideReceptionTitle`, `brideCeremonyTime`, `brideReceptionTime`, `brideCeremonyAddress`, `brideReceptionAddress`, `groomCeremonyTitle`, `groomReceptionTitle`, `groomCeremonyTime`, `groomReceptionTime`, `groomCeremonyAddress`, `groomReceptionAddress`, `albumTitle`, `timeLabel`, `venueLabel`, and `signatureText`.
 
 To let Studio hide optional sections in a custom template, mark each section wrapper with `data-invitation-section`. Supported values are `story`, `events`, `timeline`, `album`, `video`, `qr`, `guestbook`, `venue`, and `rsvp`. For example: `<section data-invitation-section="album">...</section>`. Hidden marked sections are hidden in both the custom-template preview and exported HTML.
 

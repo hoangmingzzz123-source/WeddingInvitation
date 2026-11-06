@@ -1,43 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, X } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { HERO_IMAGES } from '../utils/imageConstants';
 
+const desktopVideoUrl = 'https://youtube.com/shorts/1Klof84DNic?si=498FWUmZT18akGNI';
+const mobileVideoUrl = 'https://youtube.com/shorts/1Klof84DNic?si=498FWUmZT18akGNI';
+
+function youtubeEmbedUrl(value: string) {
+  const url = new URL(value);
+  const videoId = url.pathname.match(/\/(?:shorts|embed)\/([\w-]+)/)?.[1] ?? url.searchParams.get('v');
+  if (!videoId || !/^[\w-]{11}$/.test(videoId)) return '';
+  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
+}
+
 export function VideoSection() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => window.matchMedia('(max-width: 767px)').matches,
+  );
+
+  useEffect(() => {
+    const viewport = window.matchMedia('(max-width: 767px)');
+    const updateViewport = () => setIsMobileViewport(viewport.matches);
+    updateViewport();
+    viewport.addEventListener('change', updateViewport);
+    window.addEventListener('resize', updateViewport);
+    return () => {
+      viewport.removeEventListener('change', updateViewport);
+      window.removeEventListener('resize', updateViewport);
+    };
+  }, []);
+
+  const embedUrl = youtubeEmbedUrl(isMobileViewport ? mobileVideoUrl : desktopVideoUrl);
 
   return (
-    <section className="relative py-24 px-4 md:px-16 bg-gradient-to-b from-[#FAF7F2] to-white overflow-hidden">
-      {/* Bokeh Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full blur-3xl"
-            style={{
-              width: Math.random() * 200 + 100,
-              height: Math.random() * 200 + 100,
-              background: `radial-gradient(circle, ${
-                i % 2 === 0 ? 'rgba(194, 155, 67, 0.1)' : 'rgba(247, 218, 218, 0.1)'
-              } 0%, transparent 70%)`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              x: [0, Math.random() * 100 - 50, 0],
-              y: [0, Math.random() * 100 - 50, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 10 + Math.random() * 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
+    <section className="home-video relative py-24 px-4 md:px-16 bg-gradient-to-b from-[#FAF7F2] to-white overflow-hidden">
       <div className="relative z-10 max-w-5xl mx-auto">
         {/* Section Header */}
         <motion.div
@@ -119,7 +117,9 @@ export function VideoSection() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
+                className={`relative w-full bg-black overflow-hidden shadow-2xl ${isMobileViewport
+                  ? 'max-w-[min(100%,28rem)] aspect-[9/16] max-h-[82svh] rounded-xl'
+                  : 'max-w-5xl aspect-video rounded-2xl'}`}
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close Button */}
@@ -132,7 +132,7 @@ export function VideoSection() {
                   <X className="w-6 h-6 text-white" />
                 </button>
                 <iframe
-                  src="https://www.youtube.com/embed/VvkYROIh5qc?si=NzBVHEmRQ-pFrKQ5"
+                  src={embedUrl}
                   title="Video giới thiệu thiệp cưới online"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"

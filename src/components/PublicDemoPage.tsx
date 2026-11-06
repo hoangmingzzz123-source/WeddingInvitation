@@ -4,6 +4,7 @@ import { navigateTo } from '../Router';
 import { weddingTemplates } from '../data/templates';
 import { getPublicDemo } from '../lib/supabaseRest';
 import type { DemoPhoto, PublicInvitationDemo } from '../types/admin';
+import { resolveInvitationSide } from '../utils/invitationSide';
 import { CustomTemplateRenderer } from './CustomTemplateRenderer';
 import { SignatureDemo, type SignatureDemoCustomization } from './demos/SignatureDemos';
 
@@ -16,28 +17,6 @@ function dateLabel(value: string) {
 function photoPosition(photo?: DemoPhoto) {
   const percent = (value?: number) => `${Math.round(Math.max(0, Math.min(1, value ?? 0.5)) * 100)}%`;
   return `${percent(photo?.focalX)} ${percent(photo?.focalY)}`;
-}
-
-function resolveFamilyVariant(studio?: PublicInvitationDemo['payload']['studio']) {
-  const side = new URLSearchParams(window.location.search).get('side')?.trim().toLowerCase();
-  const brideSides = new Set(['bride', 'gai', 'nha-gai', 'nhà-gái', 'female']);
-  const groomSides = new Set(['groom', 'trai', 'nha-trai', 'nhà-trai', 'male']);
-
-  if (brideSides.has(side ?? '')) return {
-    ceremonyTitle: studio?.brideCeremonyTitle || 'Lễ Vu Quy',
-    receptionTitle: studio?.brideReceptionTitle || 'Đón khách nhà gái',
-    heroKicker: studio?.brideHeroKicker || 'Lễ Vu Quy',
-    address: studio?.brideAddress || '',
-  };
-
-  if (groomSides.has(side ?? '')) return {
-    ceremonyTitle: studio?.groomCeremonyTitle || 'Lễ Thành Hôn',
-    receptionTitle: studio?.groomReceptionTitle || 'Tiệc mừng thân mật',
-    heroKicker: studio?.groomHeroKicker || 'Lễ Thành Hôn',
-    address: studio?.groomAddress || '',
-  };
-
-  return null;
 }
 
 export function PublicDemoPage({ token }: { token: string }) {
@@ -79,7 +58,7 @@ export function PublicDemoPage({ token }: { token: string }) {
     : [];
   const studio = payload?.studio;
   const templateTier = weddingTemplates.find((template) => template.id === demo?.templateId)?.tier ?? '109k';
-  const familyVariant = resolveFamilyVariant(studio);
+  const familyVariant = resolveInvitationSide(studio);
   const customization: SignatureDemoCustomization = {
     tier: studio?.packageTier ?? templateTier,
     bride: payload?.brideName,
@@ -87,11 +66,13 @@ export function PublicDemoPage({ token }: { token: string }) {
     date: payload?.weddingDate,
     dateLabel: dateLabel(payload?.weddingDate ?? ''),
     time: payload?.weddingTime,
-    ceremonyTime: studio?.ceremonyTime || payload?.weddingTime,
-    receptionTime: studio?.receptionTime || payload?.weddingTime,
+    ceremonyTime: familyVariant?.ceremonyTime || studio?.ceremonyTime || payload?.weddingTime,
+    receptionTime: familyVariant?.receptionTime || studio?.receptionTime || payload?.weddingTime,
     hiddenSections: studio?.hiddenSections,
     venue: payload?.venue,
-    address: familyVariant?.address || payload?.address,
+    address: familyVariant?.receptionAddress || payload?.address,
+    ceremonyAddress: familyVariant?.ceremonyAddress || payload?.address,
+    receptionAddress: familyVariant?.receptionAddress || payload?.address,
     city: studio?.city ?? 'Việt Nam',
     headerMonogramText: studio?.headerMonogramText,
     story: payload?.message,

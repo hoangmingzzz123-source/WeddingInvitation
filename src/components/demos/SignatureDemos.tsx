@@ -34,6 +34,8 @@ export interface SignatureDemoCustomization {
   ceremonyTime?: string;
   receptionTime?: string;
   hiddenSections?: InvitationHiddenSection[];
+  ceremonyAddress?: string;
+  receptionAddress?: string;
   venue?: string;
   address?: string;
   city?: string;
@@ -342,7 +344,7 @@ export function SignatureDemo({
   };
   const [submitted, setSubmitted] = useState(existingSubmitted);
   const [lightbox, setLightbox] = useState<number | null>(null);
-  const mapQuery = encodeURIComponent(`${demo.venue}, ${demo.address}, ${demo.city}`);
+  const mapQuery = encodeURIComponent(`${demo.venue}, ${customization?.receptionAddress || demo.address}, ${demo.city}`);
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
   const couple = `${demo.bride} & ${demo.groom}`;
@@ -394,7 +396,11 @@ export function SignatureDemo({
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
         <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${headerMonogramText || couple}`}>
-          {headerMonogramText || <>{demo.bride.charAt(0)}<i>&amp;</i>{demo.groom.charAt(0)}</>}
+          {headerMonogramText
+            ? headerMonogramText.split(/(&)/g).map((part, index) => part === '&'
+              ? <i key={`amp-${index}`}>&amp;</i>
+              : <span className="signature-nav__monogram-text" key={`text-${index}`}>{part}</span>)
+            : <><span className="signature-nav__monogram-text">{demo.bride.charAt(0)}</span><i>&amp;</i><span className="signature-nav__monogram-text">{demo.groom.charAt(0)}</span></>}
         </a>
         <div className="signature-nav__links">
           {premium && isSectionVisible('story') && <a href="#cau-chuyen">Câu chuyện</a>}
@@ -473,7 +479,7 @@ export function SignatureDemo({
             <h3>{ceremonyTitle}</h3>
             <p>{demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {customization?.timeLabel ? `${customization.timeLabel}: ` : ''}{customization?.ceremonyTime || demo.time}</span>
-            <span><MapPin aria-hidden="true" /> {demo.venue}</span>
+            <span><MapPin aria-hidden="true" /> {customization?.ceremonyAddress || demo.venue}</span>
           </article>
           <article className="signature-event-card">
             <span className="signature-event-card__number">02 / RECEPTION</span>
@@ -481,7 +487,7 @@ export function SignatureDemo({
             <h3>{receptionTitle}</h3>
             <p>{demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {customization?.receptionTime || demo.time} · Đón khách</span>
-            <span><MapPin aria-hidden="true" /> {demo.city}</span>
+            <span><MapPin aria-hidden="true" /> {customization?.receptionAddress || demo.city}</span>
           </article>
         </div>
       </section>}
@@ -568,7 +574,7 @@ export function SignatureDemo({
           <SmallLabel>{customization?.venueLabel || 'THE PLACE'}</SmallLabel>
           <h2 id="signature-venue-title">Chúng mình đợi bạn tại đây</h2>
           <h3>{demo.venue}</h3>
-          <p>{demo.address}, {demo.city}</p>
+          <p>{customization?.receptionAddress || demo.address}{demo.city ? `, ${demo.city}` : ''}</p>
           <div className="signature-venue__actions">
             <a href={directionsLink} target="_blank" rel="noopener noreferrer">Chỉ đường <ArrowUpRight aria-hidden="true" /></a>
             <a href={mapLink} target="_blank" rel="noopener noreferrer">Mở Google Maps</a>

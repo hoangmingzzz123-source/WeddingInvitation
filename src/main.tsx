@@ -6,5 +6,6 @@
   import "./styles/invitation-studio.css";
   import "./styles/invitation-typography.css";
   import "./styles/customer-media.css";
+  import "./styles/invitation-polish.css";
 
   createRoot(document.getElementById("root")!).render(<App />);

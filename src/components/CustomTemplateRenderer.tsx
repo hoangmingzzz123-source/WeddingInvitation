@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CustomInvitationTemplate, InvitationPayload } from '../types/admin';
+import { resolveInvitationSide } from '../utils/invitationSide';
 
 function escapeHtml(value: string) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -18,28 +19,6 @@ function imageUrl(value: string) {
   } catch { return ''; }
 }
 
-function resolveFamilyVariant(studio?: InvitationPayload['studio']) {
-  const side = new URLSearchParams(window.location.search).get('side')?.trim().toLowerCase();
-  const brideSides = new Set(['bride', 'gai', 'nha-gai', 'nhà-gái', 'female']);
-  const groomSides = new Set(['groom', 'trai', 'nha-trai', 'nhà-trai', 'male']);
-
-  if (brideSides.has(side ?? '')) return {
-    ceremonyTitle: studio?.brideCeremonyTitle || 'Lễ Vu Quy',
-    receptionTitle: studio?.brideReceptionTitle || 'Đón khách nhà gái',
-    heroKicker: studio?.brideHeroKicker || 'Lễ Vu Quy',
-    address: studio?.brideAddress || '',
-  };
-
-  if (groomSides.has(side ?? '')) return {
-    ceremonyTitle: studio?.groomCeremonyTitle || 'Lễ Thành Hôn',
-    receptionTitle: studio?.groomReceptionTitle || 'Tiệc mừng thân mật',
-    heroKicker: studio?.groomHeroKicker || 'Lễ Thành Hôn',
-    address: studio?.groomAddress || '',
-  };
-
-  return null;
-}
-
 function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayload, sourceHtml: string) {
   const photos = [...(payload.photos ?? [])].sort((a, b) => a.order - b.order);
   const cover = photos.find((photo) => photo.role === 'cover');
@@ -52,7 +31,7 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     .filter((section) => allowedSections.has(section))
     .map((section) => `[data-invitation-section="${section}"]{display:none!important}`)
     .join('');
-  const familyVariant = resolveFamilyVariant(studio);
+  const familyVariant = resolveInvitationSide(studio);
   const parsedDate = payload.weddingDate ? new Date(`${payload.weddingDate}T00:00:00`) : null;
   const weddingDateLabel = parsedDate && !Number.isNaN(parsedDate.getTime())
     ? new Intl.DateTimeFormat('vi-VN', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }).format(parsedDate)
@@ -64,14 +43,28 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     weddingDateLabel,
     weddingTime: payload.weddingTime,
     venue: payload.venue,
-    address: familyVariant?.address || payload.address,
+    address: familyVariant?.receptionAddress || payload.address,
+    ceremonyAddress: familyVariant?.ceremonyAddress || payload.address,
+    receptionAddress: familyVariant?.receptionAddress || payload.address,
     message: payload.message,
     story: payload.message,
     city: studio?.city ?? '',
     headerMonogramText: studio?.headerMonogramText ?? '',
     packageTier: studio?.packageTier ?? '',
-    ceremonyTime: studio?.ceremonyTime || payload.weddingTime,
-    receptionTime: studio?.receptionTime || payload.weddingTime,
+    ceremonyTime: familyVariant?.ceremonyTime || studio?.ceremonyTime || payload.weddingTime,
+    receptionTime: familyVariant?.receptionTime || studio?.receptionTime || payload.weddingTime,
+    brideCeremonyTitle: studio?.brideCeremonyTitle ?? '',
+    brideReceptionTitle: studio?.brideReceptionTitle ?? '',
+    brideCeremonyTime: studio?.brideCeremonyTime || studio?.ceremonyTime || payload.weddingTime,
+    brideReceptionTime: studio?.brideReceptionTime || studio?.receptionTime || payload.weddingTime,
+    brideCeremonyAddress: studio?.brideAddress || payload.address,
+    brideReceptionAddress: studio?.brideReceptionAddress || studio?.brideAddress || payload.address,
+    groomCeremonyTime: studio?.groomCeremonyTime || studio?.ceremonyTime || payload.weddingTime,
+    groomReceptionTime: studio?.groomReceptionTime || studio?.receptionTime || payload.weddingTime,
+    groomCeremonyAddress: studio?.groomAddress || payload.address,
+    groomReceptionAddress: studio?.groomReceptionAddress || studio?.groomAddress || payload.address,
+    groomCeremonyTitle: studio?.groomCeremonyTitle ?? '',
+    groomReceptionTitle: studio?.groomReceptionTitle ?? '',
     ceremonyTitle: familyVariant?.ceremonyTitle ?? studio?.ceremonyTitle ?? '',
     receptionTitle: familyVariant?.receptionTitle ?? studio?.receptionTitle ?? '',
     heroKicker: familyVariant?.heroKicker ?? studio?.heroKicker ?? '',

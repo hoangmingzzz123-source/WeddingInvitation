@@ -24,12 +24,18 @@ export interface InvitationStudioConfig {
   receptionTitle: string;
   brideCeremonyTitle: string;
   brideReceptionTitle: string;
+  brideCeremonyTime: string;
+  brideReceptionTime: string;
   brideHeroKicker: string;
   brideAddress: string;
+  brideReceptionAddress: string;
   groomCeremonyTitle: string;
   groomReceptionTitle: string;
+  groomCeremonyTime: string;
+  groomReceptionTime: string;
   groomHeroKicker: string;
   groomAddress: string;
+  groomReceptionAddress: string;
   heroKicker: string;
   albumTitle: string;
   timeLabel: string;
