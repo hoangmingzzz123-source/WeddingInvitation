@@ -106,12 +106,14 @@ export function PublicDemoPage({ token }: { token: string }) {
       <div className="public-demo-watermark"><Sparkles aria-hidden="true" /> Bản demo · Không phải bản chính thức</div>
       {demo.customTemplate
         ? <CustomTemplateRenderer template={demo.customTemplate} payload={demo.payload} title={`Bản demo ${demo.customTemplate.name}`} />
-        : <SignatureDemo
-          id={demo.templateId}
-          customization={customization}
-          rsvpQuestions={studio?.rsvpQuestions ?? []}
-          embedded
-        />}
+        : <div className="demo-page-content demo-page-content--signature" data-template={demo.templateId}>
+          <SignatureDemo
+            id={demo.templateId}
+            customization={customization}
+            rsvpQuestions={studio?.rsvpQuestions ?? []}
+            embedded
+          />
+        </div>}
 
       {!noticeAccepted && (
         <div className="demo-consent" role="presentation">
