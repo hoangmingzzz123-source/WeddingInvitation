@@ -75,6 +75,8 @@ async function buildCustomTemplateFiles(templateId: string, demo: JsonRecord, cu
     venue: String(payload.venue ?? ''), address: String(payload.address ?? ''), message: String(payload.message ?? ''),
     city: String(studio.city ?? ''), packageTier: String(studio.packageTier ?? ''),
     headerMonogramText: String(studio.headerMonogramText ?? ''),
+    ceremonyTime: String(studio.ceremonyTime || payload.weddingTime || ''),
+    receptionTime: String(studio.receptionTime || payload.weddingTime || ''),
     ceremonyTitle: String(studio.ceremonyTitle ?? ''), receptionTitle: String(studio.receptionTitle ?? ''),
     heroKicker: String(studio.heroKicker ?? ''), albumTitle: String(studio.albumTitle ?? ''),
     timeLabel: String(studio.timeLabel ?? ''), venueLabel: String(studio.venueLabel ?? ''),
@@ -92,8 +94,18 @@ async function buildCustomTemplateFiles(templateId: string, demo: JsonRecord, cu
     replacements[`gallery${index + 1}Url`] = photo ? templateRelativePath(template.entry_file, photo.src) : '';
     replacements[`gallery${index + 1}Position`] = imagePosition(photo);
   }
-  const renderedHtml = new TextDecoder().decode(entry.content)
+  const allowedSections = new Set(['story', 'events', 'timeline', 'album', 'video', 'qr', 'guestbook', 'venue', 'rsvp']);
+  const hiddenSectionStyles = (Array.isArray(studio.hiddenSections) ? studio.hiddenSections : [])
+    .filter((section): section is string => typeof section === 'string' && allowedSections.has(section))
+    .map((section) => `[data-invitation-section="${section}"]{display:none!important}`)
+    .join('');
+  const sourceHtml = new TextDecoder().decode(entry.content)
     .replace(/\{\{([A-Za-z0-9]+)\}\}/g, (match, key: string) => key in replacements ? escapeHtml(replacements[key]) : match);
+  const renderedHtml = hiddenSectionStyles
+    ? /<head\b[^>]*>/i.test(sourceHtml)
+      ? sourceHtml.replace(/<head\b[^>]*>/i, (head) => `${head}<style>${hiddenSectionStyles}</style>`)
+      : `<head><style>${hiddenSectionStyles}</style></head>${sourceHtml}`
+    : sourceHtml;
   const config = JSON.stringify({ templateId, templateName: template.name, ...payload }, null, 2);
   return [
     ...files.map((file) => file.name === template.entry_file ? { ...file, content: renderedHtml } : file),
@@ -169,6 +181,9 @@ async function buildSignatureTemplateFiles(customer: JsonRecord, demo: JsonRecor
     date: dateValue,
     dateLabel,
     time: String(payload.weddingTime || customer.wedding_time || ''),
+    ceremonyTime: String(studio.ceremonyTime || payload.weddingTime || customer.wedding_time || ''),
+    receptionTime: String(studio.receptionTime || payload.weddingTime || customer.wedding_time || ''),
+    hiddenSections: Array.isArray(studio.hiddenSections) ? studio.hiddenSections : [],
     venue: String(payload.venue || customer.venue || ''),
     address: String(payload.address || customer.address || ''),
     city: String(studio.city ?? 'Việt Nam'),

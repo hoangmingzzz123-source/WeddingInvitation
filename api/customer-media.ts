@@ -17,7 +17,8 @@ const uuid = (value: unknown) => {
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const flag = (name: string) => process.env[name] === 'true';
-const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideHeroKicker', 'brideAddress', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomHeroKicker', 'groomAddress', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
+const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTime', 'receptionTime', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideHeroKicker', 'brideAddress', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomHeroKicker', 'groomAddress', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
+const invitationSections = new Set(['story', 'events', 'timeline', 'album', 'video', 'qr', 'guestbook', 'venue', 'rsvp']);
 const templateMimeTypes: Record<string, string> = {
   html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'application/javascript; charset=utf-8',
   json: 'application/json; charset=utf-8', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
@@ -507,7 +508,12 @@ async function deleteCustomerDemo(body: Record<string, unknown>) {
 function publicStudio(value: unknown) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   const config = value as Record<string, unknown>;
-  return Object.fromEntries(publicStudioKeys.filter((key) => key in config).map((key) => [key, config[key]]));
+  return {
+    ...Object.fromEntries(publicStudioKeys.filter((key) => key in config).map((key) => [key, config[key]])),
+    ...(Array.isArray(config.hiddenSections)
+      ? { hiddenSections: config.hiddenSections.filter((section): section is string => typeof section === 'string' && invitationSections.has(section)) }
+      : {}),
+  };
 }
 
 const challengeDelay = 1500;

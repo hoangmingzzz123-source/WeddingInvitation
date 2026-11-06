@@ -47,6 +47,11 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
   const videoPhoto = photos.find((photo) => photo.role === 'video');
   const gallery = photos.filter((photo) => photo.role === 'gallery');
   const studio = payload.studio;
+  const allowedSections = new Set(['story', 'events', 'timeline', 'album', 'video', 'qr', 'guestbook', 'venue', 'rsvp']);
+  const hiddenSectionStyles = (studio?.hiddenSections ?? [])
+    .filter((section) => allowedSections.has(section))
+    .map((section) => `[data-invitation-section="${section}"]{display:none!important}`)
+    .join('');
   const familyVariant = resolveFamilyVariant(studio);
   const parsedDate = payload.weddingDate ? new Date(`${payload.weddingDate}T00:00:00`) : null;
   const weddingDateLabel = parsedDate && !Number.isNaN(parsedDate.getTime())
@@ -65,6 +70,8 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     city: studio?.city ?? '',
     headerMonogramText: studio?.headerMonogramText ?? '',
     packageTier: studio?.packageTier ?? '',
+    ceremonyTime: studio?.ceremonyTime || payload.weddingTime,
+    receptionTime: studio?.receptionTime || payload.weddingTime,
     ceremonyTitle: familyVariant?.ceremonyTitle ?? studio?.ceremonyTitle ?? '',
     receptionTitle: familyVariant?.receptionTitle ?? studio?.receptionTitle ?? '',
     heroKicker: familyVariant?.heroKicker ?? studio?.heroKicker ?? '',
@@ -100,7 +107,8 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     "object-src 'none'",
     `base-uri ${storageOrigin}`,
   ].join('; ');
-  const headContent = `<base href="${escapeHtml(template.assetBaseUrl)}"><meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}">`;
+  const hiddenStyles = hiddenSectionStyles ? `<style>${hiddenSectionStyles}</style>` : '';
+  const headContent = `<base href="${escapeHtml(template.assetBaseUrl)}"><meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}">${hiddenStyles}`;
   if (/<head\b[^>]*>/i.test(expanded)) return expanded.replace(/<head\b[^>]*>/i, (head) => `${head}${headContent}`);
   return `<!doctype html><html><head>${headContent}</head><body>${expanded}</body></html>`;
 }

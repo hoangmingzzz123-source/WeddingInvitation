@@ -12,10 +12,14 @@ export interface DemoPhoto {
   url?: string;
 }
 
+export type InvitationHiddenSection = 'story' | 'events' | 'timeline' | 'album' | 'video' | 'qr' | 'guestbook' | 'venue' | 'rsvp';
+
 export interface InvitationStudioConfig {
   packageTier: '109k' | '159k' | '199k';
   city: string;
   headerMonogramText: string;
+  ceremonyTime: string;
+  receptionTime: string;
   ceremonyTitle: string;
   receptionTitle: string;
   brideCeremonyTitle: string;
@@ -31,6 +35,7 @@ export interface InvitationStudioConfig {
   timeLabel: string;
   venueLabel: string;
   signatureText: string;
+  hiddenSections?: InvitationHiddenSection[];
   theme: 'template' | 'champagne' | 'blush' | 'emerald';
   fontStyle: 'editorial' | 'modern' | 'classic';
   guests: Array<{ id: string; name: string; greeting: 'formal' | 'friendly' }>;

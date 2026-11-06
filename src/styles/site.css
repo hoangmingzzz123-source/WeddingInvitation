@@ -5357,6 +5357,12 @@ body {
 .admin-studio-copy-fields summary { color: #5d5047; font-size: .75rem; font-weight: 700; cursor: pointer; }
 .admin-studio-copy-fields[open] summary { margin-bottom: .8rem; }
 .admin-studio-copy-fields .admin-form-grid { gap: .75rem; }
+.admin-studio-sections { display: grid; gap: .65rem; margin: 0; padding: .8rem; border: 1px solid #e8e1da; border-radius: .5rem; background: #fbfaf8; }
+.admin-studio-sections legend { padding: 0 .25rem; color: #5d5047; font-size: .82rem; font-weight: 700; }
+.admin-studio-sections > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem .8rem; }
+.admin-studio-sections label { display: flex !important; min-width: 0; align-items: flex-start; gap: .5rem !important; color: #51463d !important; font-size: .78rem !important; font-weight: 500 !important; line-height: 1.4; }
+.admin-studio-sections input { flex: 0 0 auto; margin: .15rem 0 0; }
+.admin-studio-sections input:disabled + span { color: #8c8a83; }
 .admin-custom-template-upload { display: grid; gap: .45rem; padding: .8rem; border: 1px solid #e8e1da; border-radius: .5rem; background: #fbfaf8; }
 .admin-custom-template-upload > label { color: #5d5047; font-size: .74rem; font-weight: 700; }
 .admin-custom-template-upload input { width: 100%; padding: .5rem; border: 1px dashed #cfc5ba; border-radius: .4rem; background: #fff; }
@@ -7240,4 +7246,40 @@ body {
 /* Signature navigation reserves the first row for music controls on all widths. */
 .demo-shell .signature-demo .demo-music-control {
   top: calc(.75rem + env(safe-area-inset-top, 0px));
+}
+
+.demo-page-content .signature-demo { padding-top: 1.25rem; }
+.demo-page-content .signature-demo .signature-nav { top: calc(env(safe-area-inset-top, 0px) + 1rem); }
+.demo-page-content .signature-demo section[id] { scroll-margin-top: 6rem; }
+.signature-nav__links a { font-size: .85rem !important; }
+.signature-nav__rsvp { font-size: .84rem !important; }
+.signature-eyebrow { font-size: .78rem !important; }
+.signature-hero__invitation { font-size: 1.02rem !important; }
+.signature-hero__date { font-size: .94rem !important; }
+.signature-hero__image-note { font-size: .72rem; }
+.signature-photo-disclaimer { font-size: .82rem; }
+.signature-section-heading > p:not(.signature-eyebrow) { font-size: .95rem; }
+.signature-event-card__number { font-size: .72rem; }
+.signature-event-card p { font-size: .88rem; }
+.signature-event-card > span:not(.signature-event-card__number) { font-size: .86rem; }
+.signature-gift-card > p { font-size: .88rem; }
+.signature-demo-note { font-size: .62rem; }
+.signature-venue > div:first-child > p:not(.signature-eyebrow) { font-size: .9rem; }
+.signature-venue__map > span { font-size: .78rem; }
+.signature-rsvp form > p:not(.signature-eyebrow),
+.signature-rsvp__success > p { font-size: .9rem; }
+.signature-rsvp label { font-size: .78rem; }
+.signature-rsvp input,
+.signature-rsvp select { font-size: .9rem !important; }
+.signature-rsvp form > button { font-size: .85rem !important; }
+.signature-footer > p { font-size: .74rem; }
+.signature-extras--single { grid-template-columns: minmax(0, 1fr); }
+
+@media (min-width: 768px) {
+  .demo-page-content .signature-demo { padding-top: 1rem; }
+  .demo-page-content .signature-demo .signature-nav { top: calc(env(safe-area-inset-top, 0px) + .75rem); }
+}
+
+@media (max-width: 767px) {
+  .admin-studio-sections > div { grid-template-columns: minmax(0, 1fr); }
 }

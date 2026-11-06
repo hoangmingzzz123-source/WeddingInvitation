@@ -26,7 +26,7 @@ export function VideoBgSection({
   subtitleColor = 'text-[#666]',
   bokehColors = ['rgba(194, 155, 67, 0.1)', 'rgba(247, 218, 218, 0.1)'],
   playButtonColor,
-  videoUrl = 'https://www.youtube.com/embed/VvkYROIh5qc?si=NzBVHEmRQ-pFrKQ5',
+  videoUrl = 'https://youtube.com/shorts/1Klof84DNic?feature=share',
   thumbnailUrl = HERO_IMAGES.banner,
   borderColor = 'border-[#C29B43]/30',
   accentColor = '[#C29B43]',

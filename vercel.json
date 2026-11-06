@@ -4,7 +4,8 @@
   "outputDirectory": "build",
   "functions": {
     "api/customer-media.ts": { "maxDuration": 300 },
-    "api/export-invitation.ts": { "maxDuration": 120 }
+    "api/export-invitation.ts": { "maxDuration": 120 },
+    "api/share-preview.ts": { "maxDuration": 15 }
   },
   "headers": [
     {
@@ -50,6 +51,16 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/preview/:token",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|Twitterbot|WhatsApp|TelegramBot|LinkedInBot|Slackbot-LinkExpanding|Discordbot|Googlebot|Google-InspectionTool|bingbot).*" }],
+      "destination": "/api/share-preview?token=:token"
+    },
+    {
+      "source": "/invite/:slug",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|Twitterbot|WhatsApp|TelegramBot|LinkedInBot|Slackbot-LinkExpanding|Discordbot|Googlebot|Google-InspectionTool|bingbot).*" }],
+      "destination": "/api/share-preview?slug=:slug"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

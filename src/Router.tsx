@@ -118,7 +118,7 @@ export function Router() {
     document.title = title;
     const publicUrl = invitationSlug && invitationDomain
       ? `https://${invitationSlug}.${invitationDomain}`
-      : currentRoute.startsWith('/preview/') ? productionUrl : productionUrl + currentRoute;
+      : productionUrl + currentRoute;
     document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
       ?.setAttribute('href', publicUrl);
     updateMeta('meta[name="description"]', 'content', description);

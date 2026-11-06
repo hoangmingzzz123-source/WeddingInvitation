@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { MusicPlayer } from '../MusicPlayer';
 import { weddingTemplates, type TemplateTier } from '../../data/templates';
+import type { InvitationHiddenSection } from '../../types/admin';
 import {
   VIETNAM_WEDDING_THEMES,
   type VietnamWeddingTheme,
@@ -30,6 +31,9 @@ export interface SignatureDemoCustomization {
   date?: string;
   dateLabel?: string;
   time?: string;
+  ceremonyTime?: string;
+  receptionTime?: string;
+  hiddenSections?: InvitationHiddenSection[];
   venue?: string;
   address?: string;
   city?: string;
@@ -345,6 +349,14 @@ export function SignatureDemo({
   const locationLabel = demo.city.toLocaleLowerCase('vi') === 'việt nam' ? 'Việt Nam' : `${demo.city} · Việt Nam`;
   const premium = demo.tier !== '109k';
   const diamond = demo.tier === '199k';
+  const isSectionVisible = (section: InvitationHiddenSection) => !customization?.hiddenSections?.includes(section);
+  const visibleExtraCount = Number(diamond && isSectionVisible('video'))
+    + Number(diamond && isSectionVisible('qr'))
+    + Number(diamond && isSectionVisible('guestbook'));
+  const firstSectionTarget = premium && isSectionVisible('story') ? '#cau-chuyen'
+    : isSectionVisible('events') ? '#su-kien'
+      : isSectionVisible('album') ? '#album'
+        : isSectionVisible('venue') ? '#dia-diem' : '#trang-chu';
   const ceremonyTitle = customization?.ceremonyTitle || 'Lễ thành hôn';
   const receptionTitle = customization?.receptionTitle || 'Tiệc mừng thân mật';
   const headerMonogramText = customization?.headerMonogramText?.trim();
@@ -385,11 +397,12 @@ export function SignatureDemo({
           {headerMonogramText || <>{demo.bride.charAt(0)}<i>&amp;</i>{demo.groom.charAt(0)}</>}
         </a>
         <div className="signature-nav__links">
-          <a href={premium ? '#cau-chuyen' : '#su-kien'}>{premium ? 'Câu chuyện' : 'Địa điểm'}</a>
-          <a href="#su-kien">Ngày vui</a>
-          <a href="#album">Album</a>
+          {premium && isSectionVisible('story') && <a href="#cau-chuyen">Câu chuyện</a>}
+          {isSectionVisible('events') && <a href="#su-kien">Ngày vui</a>}
+          {isSectionVisible('album') && <a href="#album">Album</a>}
+          {isSectionVisible('venue') && <a href="#dia-diem">Địa điểm</a>}
         </div>
-        <a className="signature-nav__rsvp" href="#xac-nhan" aria-label="Hồi âm tham dự">Hồi âm</a>
+        {isSectionVisible('rsvp') && <a className="signature-nav__rsvp" href="#xac-nhan" aria-label="Hồi âm tham dự">Hồi âm</a>}
       </nav>
 
       <section className={`signature-hero signature-hero--${demo.visualStyle ?? demo.id}`} id="trang-chu" aria-label="Thiệp mời cưới">
@@ -414,8 +427,8 @@ export function SignatureDemo({
             </p>
             <p className="signature-hero__date">{demo.dateLabel}</p>
             <div className="signature-hero__actions">
-              <a href="#su-kien">Khám phá thiệp</a>
-              <a href="#xac-nhan">Gửi lời hồi đáp</a>
+              <a href={firstSectionTarget}>Khám phá thiệp</a>
+              {isSectionVisible('rsvp') && <a href="#xac-nhan">Gửi lời hồi đáp</a>}
             </div>
           </motion.div>
         </div>
@@ -433,7 +446,7 @@ export function SignatureDemo({
         </section>
       )}
 
-      {premium && (
+      {premium && isSectionVisible('story') && (
         <section className="signature-story" id="cau-chuyen" aria-labelledby="signature-story-title">
           <div className="signature-story__copy">
             <SmallLabel>OUR STORY</SmallLabel>
@@ -447,7 +460,7 @@ export function SignatureDemo({
         </section>
       )}
 
-      <section className="signature-events" id="su-kien" aria-labelledby="signature-events-title">
+      {isSectionVisible('events') && <section className="signature-events" id="su-kien" aria-labelledby="signature-events-title">
         <header className="signature-section-heading">
           <SmallLabel>SAVE THE DATE</SmallLabel>
           <h2 id="signature-events-title">Hẹn gặp bạn trong ngày vui</h2>
@@ -459,7 +472,7 @@ export function SignatureDemo({
             <CalendarDays aria-hidden="true" />
             <h3>{ceremonyTitle}</h3>
             <p>{demo.dateLabel}</p>
-            <span><Clock3 aria-hidden="true" /> {customization?.timeLabel ? `${customization.timeLabel}: ` : ''}{demo.time}</span>
+            <span><Clock3 aria-hidden="true" /> {customization?.timeLabel ? `${customization.timeLabel}: ` : ''}{customization?.ceremonyTime || demo.time}</span>
             <span><MapPin aria-hidden="true" /> {demo.venue}</span>
           </article>
           <article className="signature-event-card">
@@ -467,13 +480,13 @@ export function SignatureDemo({
             <Heart aria-hidden="true" />
             <h3>{receptionTitle}</h3>
             <p>{demo.dateLabel}</p>
-            <span><Clock3 aria-hidden="true" /> {demo.time} · Đón khách</span>
+            <span><Clock3 aria-hidden="true" /> {customization?.receptionTime || demo.time} · Đón khách</span>
             <span><MapPin aria-hidden="true" /> {demo.city}</span>
           </article>
         </div>
-      </section>
+      </section>}
 
-      {demo.visualStyle === 'playful-handdrawn' && (
+      {demo.visualStyle === 'playful-handdrawn' && isSectionVisible('timeline') && (
         <section className="signature-playful-guide" aria-labelledby="signature-playful-guide-title">
           <header className="signature-section-heading">
             <SmallLabel>NHỚ NHA!</SmallLabel>
@@ -510,7 +523,7 @@ export function SignatureDemo({
         </section>
       )}
 
-      <section className="signature-gallery" id="album" aria-labelledby="signature-gallery-title">
+      {isSectionVisible('album') && <section className="signature-gallery" id="album" aria-labelledby="signature-gallery-title">
         <header className="signature-section-heading">
           <SmallLabel>THE ALBUM</SmallLabel>
           <h2 id="signature-gallery-title">{customization?.albumTitle || 'Những khoảnh khắc thương'}</h2>
@@ -524,16 +537,16 @@ export function SignatureDemo({
             </button>
           ))}
         </div>
-      </section>
+      </section>}
 
-      {diamond && (
-        <section className="signature-extras" aria-label="Tính năng cao cấp">
-          <div className="signature-video-card">
+      {diamond && visibleExtraCount > 0 && (
+        <section className={`signature-extras${visibleExtraCount === 1 ? ' signature-extras--single' : ''}`} aria-label="Tính năng cao cấp">
+          {isSectionVisible('video') && <div className="signature-video-card">
             <img src={customization?.videoBackground || demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
-            <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>
+            {isSectionVisible('album') && <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>}
             <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
-          </div>
-          <div className="signature-gift-card">
+          </div>}
+          {isSectionVisible('qr') && <div className="signature-gift-card">
             <SmallLabel>A LITTLE WISH</SmallLabel>
             <h2>Gửi lời chúc &amp; mừng cưới</h2>
             <p>Nếu muốn gửi lời chúc, bạn có thể dùng mã QR mô phỏng trong bản demo này.</p>
@@ -545,12 +558,12 @@ export function SignatureDemo({
               </svg>
             </div>
             <span className="signature-demo-note">QR DEMO · KHÔNG DÙNG ĐỂ THANH TOÁN</span>
-          </div>
-          <GuestBook couple={couple} />
+          </div>}
+          {isSectionVisible('guestbook') && <GuestBook couple={couple} />}
         </section>
       )}
 
-      <section className="signature-venue" aria-labelledby="signature-venue-title">
+      {isSectionVisible('venue') && <section className="signature-venue" id="dia-diem" aria-labelledby="signature-venue-title">
         <div>
           <SmallLabel>{customization?.venueLabel || 'THE PLACE'}</SmallLabel>
           <h2 id="signature-venue-title">Chúng mình đợi bạn tại đây</h2>
@@ -565,9 +578,9 @@ export function SignatureDemo({
           <iframe title={`Bản đồ đến ${demo.venue}`} src={`https://www.google.com/maps?q=${mapQuery}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
           <span><MapPin aria-hidden="true" /> {demo.city}</span>
         </div>
-      </section>
+      </section>}
 
-      <section className="signature-rsvp" id="xac-nhan" aria-labelledby="signature-rsvp-title">
+      {isSectionVisible('rsvp') && <section className="signature-rsvp" id="xac-nhan" aria-labelledby="signature-rsvp-title">
         <div className="signature-rsvp__ornament" aria-hidden="true">✳</div>
         {!submitted ? (
           <form onSubmit={submitRsvp}>
@@ -607,7 +620,7 @@ export function SignatureDemo({
             <p>Chúng mình rất mong được gặp bạn trong ngày vui.</p>
           </div>
         )}
-      </section>
+      </section>}
 
       <footer className="signature-footer">
         <span>{demo.bride} <i>&amp;</i> {demo.groom}</span>

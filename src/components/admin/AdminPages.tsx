@@ -56,6 +56,7 @@ import {
   type CustomInvitationTemplate,
   type DemoPhoto,
   type InvitationDemoRecord,
+  type InvitationHiddenSection,
   type InvitationStudioConfig,
   type PublishedInvitationRecord,
 } from '../../types/admin';
@@ -125,6 +126,8 @@ const defaultStudioConfig: InvitationStudioConfig = {
   packageTier: '109k',
   city: 'Việt Nam',
   headerMonogramText: '',
+  ceremonyTime: '',
+  receptionTime: '',
   ceremonyTitle: 'Lễ thành hôn',
   receptionTitle: 'Tiệc mừng thân mật',
   brideCeremonyTitle: 'Lễ Vu Quy',
@@ -204,6 +207,17 @@ function AdminStudioEditor({
   const updateConfig = <Key extends keyof InvitationStudioConfig>(key: Key, value: InvitationStudioConfig[Key]) => {
     onConfigChange({ ...config, [key]: value });
   };
+  const sectionOptions: Array<{ id: InvitationHiddenSection; label: string; available: boolean }> = [
+    { id: 'story', label: 'Câu chuyện', available: config.packageTier !== '109k' },
+    { id: 'events', label: 'Lịch trình', available: true },
+    { id: 'timeline', label: 'Timeline đặc biệt', available: customer.selectedTemplateId === 'tui-minh-cuoi-roi' },
+    { id: 'album', label: 'Album ảnh', available: true },
+    { id: 'video', label: 'Video', available: config.packageTier === '199k' },
+    { id: 'qr', label: 'QR mừng cưới', available: config.packageTier === '199k' },
+    { id: 'guestbook', label: 'Sổ lưu bút', available: config.packageTier === '199k' },
+    { id: 'venue', label: 'Địa điểm & bản đồ', available: true },
+    { id: 'rsvp', label: 'RSVP', available: true },
+  ];
   const addGuest = () => {
     const name = guestName.trim();
     if (!name) return;
@@ -277,7 +291,8 @@ function AdminStudioEditor({
         </div>}
         {step === 3 && <div className="admin-form-grid">
           <label>Ngày cưới<input type="date" value={customer.weddingDate} onChange={(event) => onCustomerChange('weddingDate', event.target.value)} /></label>
-          <label>Giờ đón khách<input type="time" value={customer.weddingTime} onChange={(event) => onCustomerChange('weddingTime', event.target.value)} /></label>
+          <label>Giờ làm lễ<input type="time" value={config.ceremonyTime} onChange={(event) => updateConfig('ceremonyTime', event.target.value)} /></label>
+          <label>Giờ đón khách<input type="time" value={config.receptionTime} onChange={(event) => updateConfig('receptionTime', event.target.value)} /></label>
         </div>}
         {step === 4 && <div className="admin-form-grid">
           <label className="is-wide">Địa điểm<input value={customer.venue} onChange={(event) => onCustomerChange('venue', event.target.value)} /></label>
@@ -288,6 +303,15 @@ function AdminStudioEditor({
           <label className="is-wide">Story / lời mời<textarea rows={5} value={customer.message} onChange={(event) => onCustomerChange('message', event.target.value)} /></label>
           <label>Tiêu đề lễ<input value={config.ceremonyTitle} onChange={(event) => updateConfig('ceremonyTitle', event.target.value)} /></label>
           <label>Tiêu đề tiệc<input value={config.receptionTitle} onChange={(event) => updateConfig('receptionTitle', event.target.value)} /></label>
+          <fieldset className="admin-studio-sections is-wide"><legend>Hiển thị trên thiệp</legend><div>
+            {sectionOptions.map(({ id, label, available }) => <label key={id}>
+              <input type="checkbox" checked={!config.hiddenSections?.includes(id)} disabled={!available}
+                onChange={(event) => updateConfig('hiddenSections', event.target.checked
+                  ? (config.hiddenSections ?? []).filter((section) => section !== id)
+                  : [...(config.hiddenSections ?? []), id])} />
+              <span>{label}{!available ? ' · Chưa có trong gói/mẫu này' : ''}</span>
+            </label>)}
+          </div></fieldset>
           <label className="is-wide">Chữ viết tắt trên header<input value={config.headerMonogramText} onChange={(event) => updateConfig('headerMonogramText', event.target.value)} placeholder="Để trống để dùng chữ cái đầu tên hai bạn" maxLength={40} /><small>Ví dụ: N &amp; M · N &lt;3 M · Nhàn &amp; Mai</small></label>
           <details className="admin-studio-copy-fields is-wide">
             <summary>Nội dung riêng cho nhà trai / nhà gái</summary>
@@ -334,7 +358,7 @@ function AdminStudioEditor({
         </div>}
         {step === 9 && <dl className="admin-studio-review">
           <div><dt>Đôi bạn</dt><dd>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</dd></div>
-          <div><dt>Thời gian</dt><dd>{customer.weddingDate || 'Chưa chọn ngày'} · {customer.weddingTime || '18:00'}</dd></div>
+          <div><dt>Thời gian</dt><dd>{customer.weddingDate || 'Chưa chọn ngày'} · Lễ {config.ceremonyTime || customer.weddingTime || '18:00'} · Đón khách {config.receptionTime || customer.weddingTime || '18:00'}</dd></div>
           <div><dt>Địa điểm</dt><dd>{customer.venue || 'Chưa thêm địa điểm'} · {customer.address}</dd></div>
           <div><dt>Thiết kế</dt><dd>{selectedTemplateName} · {selectedPackage.name} · {config.theme}{config.packageTier !== '109k' ? ` · ${config.fontStyle}` : ''}</dd></div>
           <div><dt>Các phần trong gói</dt><dd>{selectedPackage.features.join(' · ')}</dd></div>
@@ -566,11 +590,14 @@ export function AdminDashboardPage() {
     date: editor.weddingDate,
     dateLabel: dateDots(editor.weddingDate),
     time: editor.weddingTime,
+    ceremonyTime: studioConfig.ceremonyTime || editor.weddingTime,
+    receptionTime: studioConfig.receptionTime || editor.weddingTime,
     venue: editor.venue,
     address: editor.address,
     city: studioConfig.city,
     headerMonogramText: studioConfig.headerMonogramText,
     story: editor.message,
+    hiddenSections: studioConfig.hiddenSections,
     ceremonyTitle: studioConfig.ceremonyTitle,
     receptionTitle: studioConfig.receptionTitle,
     heroKicker: studioConfig.heroKicker,
@@ -691,9 +718,13 @@ export function AdminDashboardPage() {
       signatureText: savedConfig.signatureText || defaultStudioConfig.signatureText,
       guests: Array.isArray(savedConfig.guests) ? savedConfig.guests : [],
       rsvpQuestions: Array.isArray(savedConfig.rsvpQuestions) ? savedConfig.rsvpQuestions : [],
+      ceremonyTime: savedConfig.ceremonyTime || selectedCustomer.weddingTime || '',
+      receptionTime: savedConfig.receptionTime || selectedCustomer.weddingTime || '',
     } : {
       ...defaultStudioConfig,
       packageTier: weddingTemplates.find((item) => item.id === selectedCustomer.selectedTemplateId)?.tier ?? '109k',
+      ceremonyTime: selectedCustomer.weddingTime,
+      receptionTime: selectedCustomer.weddingTime,
     });
   }, [selectedCustomerId, demos]);
 

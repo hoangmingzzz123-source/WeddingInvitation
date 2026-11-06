@@ -27,6 +27,8 @@ The entry HTML can link local files with relative paths. Use the supported place
 ```html
 <h1>{{brideName}} &amp; {{groomName}}</h1>
 <p>{{weddingDate}} · {{weddingTime}}</p>
+<p>{{ceremonyTitle}}: {{ceremonyTime}}</p>
+<p>{{receptionTitle}}: {{receptionTime}}</p>
 <p>{{venue}} · {{address}}</p>
 <p>{{message}}</p>
 <img src="{{coverUrl}}" style="object-position:{{coverPosition}}" alt="">
@@ -35,7 +37,9 @@ The entry HTML can link local files with relative paths. Use the supported place
 <img src="{{gallery1Url}}" style="object-position:{{gallery1Position}}" alt="">
 ```
 
-Available text placeholders: `brideName`, `groomName`, `headerMonogramText` (custom text in the header monogram; empty means use the initials), `weddingDate`, `weddingDateLabel`, `weddingTime`, `venue`, `address`, `message` (alias: `story`), `city`, `packageTier`, `ceremonyTitle`, `receptionTitle`, `heroKicker`, `albumTitle`, `timeLabel`, `venueLabel`, and `signatureText`.
+Available text placeholders: `brideName`, `groomName`, `headerMonogramText` (custom text in the header monogram; empty means use the initials), `weddingDate`, `weddingDateLabel`, `weddingTime`, `ceremonyTime`, `receptionTime`, `venue`, `address`, `message` (alias: `story`), `city`, `packageTier`, `ceremonyTitle`, `receptionTitle`, `heroKicker`, `albumTitle`, `timeLabel`, `venueLabel`, and `signatureText`.
+
+To let Studio hide optional sections in a custom template, mark each section wrapper with `data-invitation-section`. Supported values are `story`, `events`, `timeline`, `album`, `video`, `qr`, `guestbook`, `venue`, and `rsvp`. For example: `<section data-invitation-section="album">...</section>`. Hidden marked sections are hidden in both the custom-template preview and exported HTML.
 
 Photo placeholders: `coverUrl`/`coverPosition` for the hero, `mainUrl`/`mainPosition` for the primary story photo, `videoUrl`/`videoPosition` for the video panel, and `gallery1Url` through `gallery7Url`, each with a matching `galleryNPosition` token. The admin library role menu assigns these positions; remaining selected photos are album images. Each demo can use at most seven selected photos. Unselected image roles are replaced with an empty URL.
 
