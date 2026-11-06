@@ -4243,7 +4243,13 @@ body {
   margin: 0 auto;
 }
 
-.public-customer-demo.is-obscured > .customer-invitation {
+.public-customer-demo > .signature-demo {
+  max-width: 82rem;
+  min-height: 100svh;
+  margin: 0 auto;
+}
+
+.public-customer-demo.is-obscured > :is(.customer-invitation, .signature-demo) {
   filter: blur(18px) saturate(0.7);
   pointer-events: none;
   user-select: none;

@@ -1,10 +1,22 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, Check, Clock3, LockKeyhole, Sparkles } from 'lucide-react';
 import { navigateTo } from '../Router';
+import { weddingTemplates } from '../data/templates';
 import { getPublicDemo } from '../lib/supabaseRest';
-import type { PublicInvitationDemo } from '../types/admin';
-import { CustomerInvitationPreview } from './CustomerInvitationPreview';
+import type { DemoPhoto, PublicInvitationDemo } from '../types/admin';
 import { CustomTemplateRenderer } from './CustomTemplateRenderer';
+import { SignatureDemo, type SignatureDemoCustomization } from './demos/SignatureDemos';
+
+function dateLabel(value: string) {
+  if (!value) return '';
+  const [year, month, day] = value.split('-');
+  return year && month && day ? `${day} · ${month} · ${year}` : value;
+}
+
+function photoPosition(photo?: DemoPhoto) {
+  const percent = (value?: number) => `${Math.round(Math.max(0, Math.min(1, value ?? 0.5)) * 100)}%`;
+  return `${percent(photo?.focalX)} ${percent(photo?.focalY)}`;
+}
 
 export function PublicDemoPage({ token }: { token: string }) {
   const [demo, setDemo] = useState<PublicInvitationDemo | null>(null);
@@ -34,6 +46,41 @@ export function PublicDemoPage({ token }: { token: string }) {
     setNoticeAccepted(true);
   };
 
+  const payload = demo?.payload;
+  const photos = [...(payload?.photos ?? [])].sort((a, b) => a.order - b.order);
+  const cover = photos.find((photo) => photo.role === 'cover');
+  const galleryPhotos = photos.filter((photo) => photo.role === 'gallery');
+  const repeatedGallery = galleryPhotos.length
+    ? Array.from({ length: Math.max(4, galleryPhotos.length) }, (_, index) => galleryPhotos[index % galleryPhotos.length])
+    : [];
+  const studio = payload?.studio;
+  const templateTier = weddingTemplates.find((template) => template.id === demo?.templateId)?.tier ?? '109k';
+  const customization: SignatureDemoCustomization = {
+    tier: studio?.packageTier ?? templateTier,
+    bride: payload?.brideName,
+    groom: payload?.groomName,
+    date: payload?.weddingDate,
+    dateLabel: dateLabel(payload?.weddingDate ?? ''),
+    time: payload?.weddingTime,
+    venue: payload?.venue,
+    address: payload?.address,
+    city: studio?.city ?? 'Việt Nam',
+    story: payload?.message,
+    ceremonyTitle: studio?.ceremonyTitle,
+    receptionTitle: studio?.receptionTitle,
+    heroKicker: studio?.heroKicker,
+    albumTitle: studio?.albumTitle,
+    timeLabel: studio?.timeLabel,
+    venueLabel: studio?.venueLabel,
+    signatureText: studio?.signatureText,
+    theme: studio?.theme,
+    fontStyle: studio?.packageTier === '109k' ? 'editorial' : studio?.fontStyle,
+    hero: cover?.url ?? payload?.coverUrl,
+    heroPosition: cover ? photoPosition(cover) : undefined,
+    gallery: repeatedGallery.map((photo) => photo.url ?? '').filter(Boolean),
+    galleryPositions: repeatedGallery.map((photo) => photoPosition(photo)),
+  };
+
   if (error) {
     return (
       <main className="public-demo-state">
@@ -59,7 +106,12 @@ export function PublicDemoPage({ token }: { token: string }) {
       <div className="public-demo-watermark"><Sparkles aria-hidden="true" /> Bản demo · Không phải bản chính thức</div>
       {demo.customTemplate
         ? <CustomTemplateRenderer template={demo.customTemplate} payload={demo.payload} title={`Bản demo ${demo.customTemplate.name}`} />
-        : <CustomerInvitationPreview payload={demo.payload} templateId={demo.templateId} />}
+        : <SignatureDemo
+          id={demo.templateId}
+          customization={customization}
+          rsvpQuestions={studio?.rsvpQuestions ?? []}
+          embedded
+        />}
 
       {!noticeAccepted && (
         <div className="demo-consent" role="presentation">
