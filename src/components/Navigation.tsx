@@ -22,7 +22,7 @@ export function Navigation() {
     { label: 'Trang chủ', href: '#home' },
     { label: 'Gói thiệp', href: '#packages' },
     { label: 'Mẫu thiệp', href: '#templates' },
-    { label: 'Tính năng', href: '#features' },
+    { label: 'Tính năng', href: '/tinh-nang' },
     { label: 'Đánh giá', href: '#testimonials' },
   ];
 

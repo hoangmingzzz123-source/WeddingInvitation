@@ -19,6 +19,7 @@ function updateMeta(selector: string, attribute: string, value: string) {
 
 const HomePage = lazy(() => import('./components/HomePage').then((module) => ({ default: module.HomePage })));
 const TemplatesPage = lazy(() => import('./components/TemplatesPage').then((module) => ({ default: module.TemplatesPage })));
+const FeaturesPage = lazy(() => import('./components/FeaturesPage').then((module) => ({ default: module.FeaturesPage })));
 const InvitationCreatorPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.InvitationCreatorPage })));
 const LiveInvitationPreviewPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.LiveInvitationPreviewPage })));
 const GeneratedInvitationPage = lazy(() => import('./components/InvitationCreator').then((module) => ({ default: module.GeneratedInvitationPage })));
@@ -85,6 +86,9 @@ export function Router() {
     } else if (currentRoute === '/templates') {
       title = 'Thư viện mẫu thiệp cưới | Wedding Invitation MP';
       description = `Khám phá ${weddingTemplates.length} mẫu thiệp cưới online hiện đại, responsive và giàu tương tác.`;
+    } else if (currentRoute === '/tinh-nang') {
+      title = 'Tính năng thiệp cưới online | Wedding Invitation MP';
+      description = 'Khám phá thiệp cưới cá nhân hóa, link riêng cho hai bên gia đình và khách mời, RSVP, bản đồ, album ảnh và các gói thiệp.';
     } else if (currentRoute === '/tao-thiep') {
       title = 'Tự tạo demo thiệp cưới | Wedding Invitation MP';
       description = 'Tạo nhanh bản demo thiệp cưới online từ thông tin và phong cách của bạn.';
@@ -125,6 +129,7 @@ export function Router() {
     updateMeta('meta[name="twitter:description"]', 'content', description);
     const isIndexableRoute = currentRoute === '/'
       || currentRoute === '/templates'
+      || currentRoute === '/tinh-nang'
       || currentRoute === '/tao-thiep'
       || currentRoute === '/yeu-cau-thiep'
       || Boolean(demoTemplate);
@@ -144,6 +149,7 @@ export function Router() {
   const routes: Record<string, ReactNode> = {
     '/': <HomePage />,
     '/templates': <TemplatesPage />,
+    '/tinh-nang': <FeaturesPage />,
     '/tao-thiep': new URLSearchParams(window.location.search).get('template') === REAL_WEDDING_TEMPLATE_ID
       ? <RealWeddingRedirect />
       : <InvitationCreatorPage />,
