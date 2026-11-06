@@ -86,7 +86,7 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     venue: payload.venue,
     address: payload.address,
     city: studio?.city ?? 'Việt Nam',
-    heroCoupleText: studio?.heroCoupleText,
+    headerMonogramText: studio?.headerMonogramText,
     story: payload.message,
     ceremonyTitle: studio?.ceremonyTitle,
     receptionTitle: studio?.receptionTitle,

@@ -40,7 +40,7 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     message: payload.message,
     story: payload.message,
     city: studio?.city ?? '',
-    heroCoupleText: studio?.heroCoupleText ?? '',
+    headerMonogramText: studio?.headerMonogramText ?? '',
     packageTier: studio?.packageTier ?? '',
     ceremonyTitle: studio?.ceremonyTitle ?? '',
     receptionTitle: studio?.receptionTitle ?? '',
