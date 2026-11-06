@@ -5307,6 +5307,7 @@ body {
 .admin-studio-editor__preview > div:first-child i { width: .45rem; height: .45rem; border-radius: 50%; background: #58a16b; box-shadow: 0 0 0 3px rgba(88, 161, 107, .14); }
 .admin-studio-editor__preview > div:first-child small { max-width: 12rem; overflow: hidden; color: #7b877d; font-size: .62rem; text-overflow: ellipsis; white-space: nowrap; }
 .admin-studio-editor__preview > .customer-invitation { max-height: min(72vh, 52rem); overflow: auto; border-radius: 0; }
+.admin-studio-editor__preview > .admin-studio-signature-preview { max-height: min(72vh, 52rem); }
 .admin-studio-editor__preview > .custom-template-frame { height: min(72vh, 52rem); min-height: 32rem; }
 .admin-studio-editor__body label,
 .admin-studio-guests__add > label { display: grid; gap: .4rem; color: #5d5047; font-size: .74rem; font-weight: 700; }
@@ -5321,6 +5322,17 @@ body {
 .admin-studio-packages label { display: flex; min-width: 8rem; flex: 1; align-items: center; gap: .55rem; padding: .65rem; border: 1px solid #e7e1da; border-radius: .4rem; cursor: pointer; }
 .admin-studio-packages label span { display: grid; gap: .15rem; }
 .admin-studio-packages label small { color: #806f62; font-size: .66rem; }
+.admin-studio-package-selection { display: grid; gap: .8rem; }
+.admin-studio-package-summary { padding: .9rem; border: 1px solid #e5ddd6; border-radius: .55rem; background: #fbfaf8; }
+.admin-studio-package-summary > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; align-items: baseline; }
+.admin-studio-package-summary h5 { margin: 0; color: #44392f; font-size: .9rem; }
+.admin-studio-package-summary strong { color: #557d65; font-size: .82rem; }
+.admin-studio-package-summary p { margin: .45rem 0 .7rem; color: #75695f; font-size: .74rem; line-height: 1.5; }
+.admin-studio-package-summary ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem 1rem; margin: 0; padding-left: 1.1rem; color: #51463d; font-size: .72rem; line-height: 1.45; }
+.admin-studio-media-step { min-width: 0; }
+.admin-studio-signature-preview { max-height: min(72vh, 52rem); overflow: auto; background: #fff; }
+.admin-studio-signature-preview .signature-demo { min-height: 0; }
+.admin-demo-preview .admin-studio-signature-preview { max-height: none; overflow: visible; }
 .admin-studio-editor__hint { grid-column: 1 / -1; margin: 0; color: #75695f; font-size: .72rem; line-height: 1.5; }
 .admin-studio-copy-fields { padding: .8rem; border: 1px solid #e8e1da; border-radius: .5rem; background: #fbfaf8; }
 .admin-studio-copy-fields summary { color: #5d5047; font-size: .75rem; font-weight: 700; cursor: pointer; }
@@ -5383,7 +5395,9 @@ body {
   .admin-studio-editor__body { min-height: 0; padding: .9rem; }
   .admin-studio-editor__preview { position: static; }
   .admin-studio-editor__preview > .customer-invitation { max-height: 65vh; }
+  .admin-studio-editor__preview > .admin-studio-signature-preview { max-height: 65vh; }
   .admin-studio-editor__preview > .custom-template-frame { height: 68vh; min-height: 28rem; }
+  .admin-studio-package-summary ul { grid-template-columns: minmax(0, 1fr); }
   .admin-studio-review > div { grid-template-columns: 1fr; gap: .25rem; }
   .admin-studio-guests__list > div { grid-template-columns: minmax(0, 1fr) minmax(7rem, .55fr) 2.25rem; }
 }

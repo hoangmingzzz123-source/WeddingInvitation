@@ -148,6 +148,45 @@ export async function syncDrive() {
   }
 }
 
+export async function deleteDriveCustomer(
+  customerId: string,
+  folderId: string | null,
+  photos: Array<{ id: string; drive_file_id: string | null }>,
+) {
+  if (!folderId && photos.every((photo) => !photo.drive_file_id)) return;
+  if (!folderId || !/^[\w-]+$/.test(folderId)) throw new DriveError('Không xác định được thư mục ảnh trên Google Drive.');
+
+  const drive = await driveSession();
+  await requirePrivateRoot(drive);
+  const { root, call } = drive;
+  const folderResponse = await call(
+    `${driveApi}/files/${folderId}?fields=trashed,parents,appProperties,mimeType`, {}, [404],
+  );
+  const folder = folderResponse.ok ? await folderResponse.json() : null;
+  if (folder && (folder.trashed || !folder.parents?.includes(root)
+    || folder.appProperties?.customerId !== customerId
+    || folder.mimeType !== 'application/vnd.google-apps.folder')) {
+    throw new DriveError('Thư mục Drive không khớp hồ sơ khách hàng.');
+  }
+
+  for (const photo of photos) {
+    if (!photo.drive_file_id) continue;
+    if (!/^[\w-]+$/.test(photo.drive_file_id)) throw new DriveError('Mã ảnh trên Google Drive không hợp lệ.');
+    const response = await call(
+      `${driveApi}/files/${photo.drive_file_id}?fields=trashed,parents,appProperties`, {}, [404],
+    );
+    if (!response.ok) continue;
+    const file = await response.json();
+    if (file.trashed) continue;
+    if (!file.parents?.includes(folderId) || file.appProperties?.photoId !== photo.id) {
+      throw new DriveError('Ảnh trên Drive không khớp hồ sơ khách hàng.');
+    }
+    await call(`${driveApi}/files/${photo.drive_file_id}`, { method: 'DELETE' }, [404]);
+  }
+
+  if (folder) await call(`${driveApi}/files/${folderId}`, { method: 'DELETE' }, [404]);
+}
+
 export async function cleanupUploads() {
   const cutoff = new Date(Date.now() - 3 * 3600_000).toISOString();
   const stale = await db<{ id: string; customer_id: string }[]>(

@@ -93,7 +93,7 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     venueLabel: studio?.venueLabel,
     signatureText: studio?.signatureText,
     theme: studio?.theme,
-    fontStyle: studio?.fontStyle,
+    fontStyle: studio?.packageTier === '109k' ? 'editorial' : studio?.fontStyle,
     hero: cover?.url ?? payload.coverUrl,
     heroPosition: cover ? position(cover) : undefined,
     gallery: repeatedGallery.map((photo) => photo.url),

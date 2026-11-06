@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { navigateTo } from '../../Router';
 import { weddingTemplates } from '../../data/templates';
+import { weddingPackages } from '../../data/packages';
 import {
   clearAdminSession,
   createCustomer,
@@ -60,8 +61,8 @@ import {
 } from '../../types/admin';
 import type { AuthCallbackSession } from '../../lib/supabaseRest';
 import { mediaRequest, uploadCustomTemplate } from '../../lib/customerPhotoUpload';
-import { CustomerInvitationPreview } from '../CustomerInvitationPreview';
 import { CustomTemplateRenderer } from '../CustomTemplateRenderer';
+import { SignatureDemo, type SignatureDemoCustomization } from '../demos/SignatureDemos';
 import { CustomerPhotoLibrary } from './CustomerPhotoLibrary';
 
 const customerStatuses = Object.keys(customerStatusLabels) as CustomerStatus[];
@@ -111,16 +112,14 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat('vi-VN', { dateStyle: 'medium' }).format(new Date(value));
 }
 
-const studioSteps = ['Đôi bạn', 'Thời gian', 'Địa điểm', 'Lời mời', 'Thiết kế', 'Khách mời', 'Xem lại'];
-const studioStepDetails = [
-  ['Ai là nhân vật chính?', 'Điền tên hai bạn để cá nhân hóa lời mời.'],
-  ['Chọn ngày vui', 'Xác nhận ngày và giờ đón khách trên thiệp.'],
-  ['Hẹn nhau ở đâu?', 'Thêm địa điểm, địa chỉ và thành phố để khách tìm đường.'],
-  ['Gửi một lời thật riêng', 'Viết story cho đôi bạn và chỉnh các câu chữ hiển thị.'],
-  ['Chọn thiết kế', 'Chọn gói, mẫu, màu sắc và kiểu chữ cho bản preview.'],
-  ['Chuẩn bị lời mời riêng', 'Quản lý danh sách khách và thông tin cần hỏi trong RSVP.'],
-  ['Sẵn sàng gửi lời mời?', 'Rà soát cấu hình trước khi lưu vào demo.'],
-] as const;
+function dateDots(value: string) {
+  return value ? value.split('-').reverse().join(' · ') : '';
+}
+
+function photoPosition(photo?: DemoPhoto) {
+  const percent = (value?: number) => `${Math.round(Math.max(0, Math.min(1, value ?? 0.5)) * 100)}%`;
+  return `${percent(photo?.focalX)} ${percent(photo?.focalY)}`;
+}
 
 const defaultStudioConfig: InvitationStudioConfig = {
   packageTier: '109k',
@@ -148,6 +147,8 @@ function AdminStudioEditor({
   customTemplates,
   onTemplateUpload,
   templateUploading,
+  mediaLibrary,
+  mediaCount,
   preview,
   previewLabel,
 }: {
@@ -160,12 +161,37 @@ function AdminStudioEditor({
   customTemplates: CustomInvitationTemplate[];
   onTemplateUpload: (file: File) => void;
   templateUploading: boolean;
+  mediaLibrary: ReactNode;
+  mediaCount: number;
   preview: ReactNode;
   previewLabel: string;
 }) {
   const [step, setStep] = useState(0);
   const [guestName, setGuestName] = useState('');
   const [templateError, setTemplateError] = useState('');
+  const studioSteps = [
+    'Chọn mẫu', 'Chọn gói', 'Đôi bạn', 'Thời gian', 'Địa điểm', 'Nội dung', 'Ảnh & album',
+    config.packageTier === '109k' ? 'RSVP cơ bản' : 'Khách mời & RSVP', 'Phong cách', 'Xem lại',
+  ];
+  const studioStepDetails = [
+    ['Chọn mẫu thiệp', 'Chọn thiết kế trước; mẫu sẽ đề xuất gói phù hợp để bạn bắt đầu.'],
+    ['Chọn gói thiệp', 'Xem đầy đủ quyền lợi và các phần sẽ xuất hiện theo gói.'],
+    ['Ai là nhân vật chính?', 'Điền tên hai bạn để cá nhân hóa lời mời.'],
+    ['Chọn ngày vui', 'Xác nhận ngày và giờ đón khách trên thiệp.'],
+    ['Hẹn nhau ở đâu?', 'Thêm địa điểm, địa chỉ và thành phố để khách tìm đường.'],
+    ['Gửi một lời thật riêng', 'Viết lời mời hoặc câu chuyện; các phần hiển thị được dựng theo mẫu và gói.'],
+    ['Chọn ảnh cho thiệp', 'Chọn ảnh bìa, album, thứ tự và vị trí ảnh trong thư viện khách.'],
+    [config.packageTier === '109k' ? 'Hồi đáp tham dự' : 'Cá nhân hóa khách mời', config.packageTier === '109k'
+      ? 'Gói Cơ bản có RSVP Có / Không và không bật câu hỏi nâng cao.'
+      : 'Thêm khách để tạo lời mời riêng và chọn thông tin cần hỏi trong RSVP.'],
+    ['Hoàn thiện phong cách', 'Tùy chỉnh bảng màu và kiểu chữ theo quyền lợi của gói.'],
+    ['Rà soát cấu hình', 'Kiểm tra nội dung, ảnh, các phần theo mẫu và quyền lợi gói trước khi lưu.'],
+  ] as const;
+  const selectedTemplate = weddingTemplates.find((template) => template.id === customer.selectedTemplateId);
+  const selectedTemplateName = selectedTemplate?.name
+    ?? customTemplates.find((template) => template.id === customer.selectedTemplateId)?.name
+    ?? 'Chưa chọn mẫu';
+  const selectedPackage = weddingPackages.find((item) => item.id === config.packageTier) ?? weddingPackages[0];
   const updateConfig = <Key extends keyof InvitationStudioConfig>(key: Key, value: InvitationStudioConfig[Key]) => {
     onConfigChange({ ...config, [key]: value });
   };
@@ -182,7 +208,7 @@ function AdminStudioEditor({
     <section className="admin-studio-editor" aria-label="Trình chỉnh sửa Studio">
       <header className="admin-studio-editor__heading">
         <div><p>Studio theo hồ sơ khách</p><h3>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</h3></div>
-        <div className="admin-studio-editor__progress-copy"><strong>0{step + 1}</strong><span>/ 07 bước</span></div>
+        <div className="admin-studio-editor__progress-copy"><strong>{String(step + 1).padStart(2, '0')}</strong><span>/ {String(studioSteps.length).padStart(2, '0')} bước</span></div>
       </header>
       <div className="admin-studio-editor__progress" role="progressbar" aria-label="Tiến độ chỉnh sửa" aria-valuemin={1} aria-valuemax={studioSteps.length} aria-valuenow={step + 1}>
         <i style={{ width: `${((step + 1) / studioSteps.length) * 100}%` }} />
@@ -194,24 +220,62 @@ function AdminStudioEditor({
       <div className="admin-studio-editor__workspace">
        <div className="admin-studio-editor__body">
         <div className="admin-studio-editor__step-intro">
-          <span>BƯỚC 0{step + 1}</span>
+          <span>BƯỚC {String(step + 1).padStart(2, '0')}</span>
           <h4>{studioStepDetails[step][0]}</h4>
           <p>{studioStepDetails[step][1]}</p>
         </div>
         {step === 0 && <div className="admin-form-grid">
+          <label className="is-wide">Mẫu thiệp<select value={customer.selectedTemplateId} onChange={(event) => {
+            const templateId = event.target.value;
+            onCustomerChange('selectedTemplateId', templateId);
+            const suggestedTier = weddingTemplates.find((template) => template.id === templateId)?.tier;
+            if (suggestedTier) updateConfig('packageTier', suggestedTier);
+          }}>
+            <option value="">Chọn mẫu</option>{weddingTemplates.filter((item) => item.route).map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}
+            {customTemplates.map((template) => <option key={template.id} value={template.id}>Mẫu riêng · {template.name}</option>)}
+          </select></label>
+          {selectedTemplate && <p className="admin-studio-editor__hint is-wide">Mẫu này đề xuất gói {selectedTemplate.tier}. Bạn có thể chọn gói khác ở bước kế tiếp.</p>}
+          <div className="admin-custom-template-upload is-wide">
+            <label htmlFor="admin-custom-template-zip">Tải gói mẫu ZIP (tối đa 4 MiB)</label>
+            <input id="admin-custom-template-zip" type="file" accept=".zip,application/zip" disabled={templateUploading}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = '';
+                if (!file) return;
+                if (file.size > 4 * 1024 * 1024) { setTemplateError('ZIP mẫu cần nhỏ hơn 4 MiB.'); return; }
+                setTemplateError('');
+                onTemplateUpload(file);
+              }} />
+            <small>Cần manifest.json và index.html; có thể kèm styles.css, script.js và assets/. Dùng placeholder như {'{{brideName}}'}, {'{{packageTier}}'}, {'{{coverUrl}}'}, {'{{gallery1Url}}'}. <a href="/custom-template-starter/README.md" target="_blank" rel="noreferrer">Hướng dẫn &amp; mẫu starter</a></small>
+            {templateUploading && <small role="status">Đang kiểm tra và tải gói mẫu...</small>}
+            {templateError && <small role="alert">{templateError}</small>}
+          </div>
+        </div>}
+        {step === 1 && <div className="admin-studio-package-selection">
+          <fieldset className="admin-studio-packages"><legend>Chọn gói</legend>{weddingPackages.map((item) => <label key={item.id}>
+            <input type="radio" name="admin-studio-package" checked={config.packageTier === item.id} onChange={() => updateConfig('packageTier', item.id)} />
+            <span><b>{item.name}</b><small>{item.price}</small></span>
+          </label>)}</fieldset>
+          <section className="admin-studio-package-summary" aria-live="polite">
+            <div><h5>{selectedPackage.name}</h5><strong>{selectedPackage.price}</strong></div>
+            <p>{selectedPackage.summary}</p>
+            <ul>{selectedPackage.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
+          </section>
+        </div>}
+        {step === 2 && <div className="admin-form-grid">
           <label>Tên cô dâu<input value={customer.brideName} onChange={(event) => onCustomerChange('brideName', event.target.value)} /></label>
           <label>Tên chú rể<input value={customer.groomName} onChange={(event) => onCustomerChange('groomName', event.target.value)} /></label>
         </div>}
-        {step === 1 && <div className="admin-form-grid">
+        {step === 3 && <div className="admin-form-grid">
           <label>Ngày cưới<input type="date" value={customer.weddingDate} onChange={(event) => onCustomerChange('weddingDate', event.target.value)} /></label>
           <label>Giờ đón khách<input type="time" value={customer.weddingTime} onChange={(event) => onCustomerChange('weddingTime', event.target.value)} /></label>
         </div>}
-        {step === 2 && <div className="admin-form-grid">
+        {step === 4 && <div className="admin-form-grid">
           <label className="is-wide">Địa điểm<input value={customer.venue} onChange={(event) => onCustomerChange('venue', event.target.value)} /></label>
           <label className="is-wide">Địa chỉ<input value={customer.address} onChange={(event) => onCustomerChange('address', event.target.value)} /></label>
           <label>Thành phố<input value={config.city} onChange={(event) => updateConfig('city', event.target.value)} /></label>
         </div>}
-        {step === 3 && <div className="admin-form-grid">
+        {step === 5 && <div className="admin-form-grid">
           <label className="is-wide">Story / lời mời<textarea rows={5} value={customer.message} onChange={(event) => onCustomerChange('message', event.target.value)} /></label>
           <label>Tiêu đề lễ<input value={config.ceremonyTitle} onChange={(event) => updateConfig('ceremonyTitle', event.target.value)} /></label>
           <label>Tiêu đề tiệc<input value={config.receptionTitle} onChange={(event) => updateConfig('receptionTitle', event.target.value)} /></label>
@@ -226,52 +290,32 @@ function AdminStudioEditor({
             </div>
           </details>
         </div>}
-        {step === 4 && <div className="admin-form-grid">
-          <label className="is-wide">Mẫu thiệp<select value={customer.selectedTemplateId} onChange={(event) => onCustomerChange('selectedTemplateId', event.target.value)}>
-            <option value="">Chọn mẫu</option>{weddingTemplates.filter((item) => item.route).map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}
-            {customTemplates.map((template) => <option key={template.id} value={template.id}>Mẫu riêng · {template.name}</option>)}
-          </select></label>
-          <div className="admin-custom-template-upload is-wide">
-            <label htmlFor="admin-custom-template-zip">Tải gói mẫu ZIP (tối đa 4 MiB)</label>
-            <input id="admin-custom-template-zip" type="file" accept=".zip,application/zip" disabled={templateUploading}
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                event.target.value = '';
-                if (!file) return;
-                if (file.size > 4 * 1024 * 1024) { setTemplateError('ZIP mẫu cần nhỏ hơn 4 MiB.'); return; }
-                setTemplateError('');
-                onTemplateUpload(file);
-              }} />
-            <small>Cần manifest.json và index.html; có thể kèm styles.css, script.js và assets/. Dùng placeholder như {'{{brideName}}'}, {'{{coverUrl}}'}, {'{{gallery1Url}}'}. <a href="/custom-template-starter/README.md" target="_blank" rel="noreferrer">Hướng dẫn &amp; mẫu starter</a></small>
-            {templateUploading && <small role="status">Đang kiểm tra và tải gói mẫu...</small>}
-            {templateError && <small role="alert">{templateError}</small>}
-          </div>
-          <fieldset className="admin-studio-packages"><legend>Gói thiệp</legend>{([
-            ['109k', 'Cơ bản'], ['159k', 'Premium'], ['199k', 'Diamond'],
-          ] as const).map(([tier, label]) => <label key={tier}><input type="radio" name="admin-studio-package" checked={config.packageTier === tier} onChange={() => updateConfig('packageTier', tier)} /><span><b>{label}</b><small>{tier}</small></span></label>)}</fieldset>
-          <label>Bảng màu<select value={config.theme} onChange={(event) => updateConfig('theme', event.target.value as InvitationStudioConfig['theme'])}>
-            <option value="template">Nguyên bản</option><option value="champagne">Champagne</option><option value="blush">Blush Rose</option><option value="emerald">Emerald</option>
-          </select></label>
-          <label>Kiểu chữ<select value={config.fontStyle} onChange={(event) => updateConfig('fontStyle', event.target.value as InvitationStudioConfig['fontStyle'])}>
-            <option value="editorial">Editorial</option><option value="modern">Hiện đại</option><option value="classic">Cổ điển</option>
-          </select></label>
-          <p className="admin-studio-editor__hint">Ảnh bìa, album, thứ tự và canh ảnh được lấy từ thư viện ảnh khách ngay phía trên.</p>
-        </div>}
-        {step === 5 && (config.packageTier === '109k' ? <div className="admin-studio-guests-locked">
-          <strong>Quản lý khách và RSVP nâng cao cần gói Premium</strong>
-          <span>{config.guests.length ? `${config.guests.length} khách đã nhập sẽ được giữ lại khi đổi gói.` : 'Gói Cơ bản vẫn có RSVP Có / Không.'}</span>
+        {step === 6 && <div className="admin-studio-media-step">{mediaLibrary}</div>}
+        {step === 7 && (config.packageTier === '109k' ? <div className="admin-studio-guests-locked">
+          <strong>Gói Cơ bản gồm RSVP Có / Không</strong>
+          <span>Danh sách khách riêng, số khách và câu hỏi xe/ăn sẽ mở ở gói Premium. Nội dung đã nhập được giữ lại khi đổi gói.</span>
           <div><button type="button" onClick={() => updateConfig('packageTier', '159k')}>Chọn 159K Premium</button><button type="button" onClick={() => updateConfig('packageTier', '199k')}>Chọn 199K Diamond</button></div>
         </div> : <div className="admin-studio-guests">
           <div className="admin-studio-guests__add"><label htmlFor="admin-studio-guest">Thêm khách mời</label><div><input id="admin-studio-guest" value={guestName} onChange={(event) => setGuestName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addGuest(); } }} placeholder="Tên khách" /><button type="button" onClick={addGuest} disabled={!guestName.trim()}><Users aria-hidden="true" /> Thêm</button></div></div>
           <div className="admin-studio-guests__list">{config.guests.map((guest) => <div key={guest.id}><span>{guest.name}</span><select aria-label={`Lời chào cho ${guest.name}`} value={guest.greeting} onChange={(event) => updateConfig('guests', config.guests.map((item) => item.id === guest.id ? { ...item, greeting: event.target.value as 'formal' | 'friendly' } : item))}><option value="friendly">Thân mời</option><option value="formal">Trân trọng kính mời</option></select><button type="button" aria-label={`Xóa ${guest.name}`} onClick={() => updateConfig('guests', config.guests.filter((item) => item.id !== guest.id))}>×</button></div>)}</div>
           <fieldset className="admin-studio-rsvp"><legend>Câu hỏi RSVP</legend><label><input type="checkbox" checked={config.rsvpQuestions.includes('transport')} onChange={() => updateConfig('rsvpQuestions', config.rsvpQuestions.includes('transport') ? config.rsvpQuestions.filter((item) => item !== 'transport') : [...config.rsvpQuestions, 'transport'])} /> Xe đưa đón</label><label><input type="checkbox" checked={config.rsvpQuestions.includes('meal')} onChange={() => updateConfig('rsvpQuestions', config.rsvpQuestions.includes('meal') ? config.rsvpQuestions.filter((item) => item !== 'meal') : [...config.rsvpQuestions, 'meal'])} /> Chế độ ăn</label></fieldset>
         </div>)}
-        {step === 6 && <dl className="admin-studio-review">
+        {step === 8 && <div className="admin-form-grid">
+          <label>Bảng màu<select value={config.theme} onChange={(event) => updateConfig('theme', event.target.value as InvitationStudioConfig['theme'])}>
+            <option value="template">Nguyên bản</option><option value="champagne">Champagne</option><option value="blush">Blush Rose</option><option value="emerald">Emerald</option>
+          </select></label>
+          {config.packageTier === '109k' ? <p className="admin-studio-editor__hint">Tùy chỉnh kiểu chữ là quyền lợi từ gói Premium; lựa chọn hiện tại được giữ lại nếu bạn hạ gói.</p> : <label>Kiểu chữ<select value={config.fontStyle} onChange={(event) => updateConfig('fontStyle', event.target.value as InvitationStudioConfig['fontStyle'])}>
+            <option value="editorial">Editorial</option><option value="modern">Hiện đại</option><option value="classic">Cổ điển</option>
+          </select></label>}
+        </div>}
+        {step === 9 && <dl className="admin-studio-review">
           <div><dt>Đôi bạn</dt><dd>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</dd></div>
           <div><dt>Thời gian</dt><dd>{customer.weddingDate || 'Chưa chọn ngày'} · {customer.weddingTime || '18:00'}</dd></div>
           <div><dt>Địa điểm</dt><dd>{customer.venue || 'Chưa thêm địa điểm'} · {customer.address}</dd></div>
-          <div><dt>Thiết kế</dt><dd>{weddingTemplates.find((item) => item.id === customer.selectedTemplateId)?.name || 'Chưa chọn mẫu'} · {config.packageTier} · {config.theme} · {config.fontStyle}</dd></div>
-          <div><dt>Khách mời &amp; RSVP</dt><dd>{config.guests.length} khách · {config.rsvpQuestions.length} câu hỏi</dd></div>
+          <div><dt>Thiết kế</dt><dd>{selectedTemplateName} · {selectedPackage.name} · {config.theme}{config.packageTier !== '109k' ? ` · ${config.fontStyle}` : ''}</dd></div>
+          <div><dt>Các phần trong gói</dt><dd>{selectedPackage.features.join(' · ')}</dd></div>
+          <div><dt>Ảnh</dt><dd>{mediaCount} ảnh đã chọn</dd></div>
+          <div><dt>Khách mời &amp; RSVP</dt><dd>{config.packageTier === '109k' ? 'RSVP Có / Không' : `${config.guests.length} khách · ${config.rsvpQuestions.length} câu hỏi thêm`}</dd></div>
         </dl>}
        </div>
        <aside className="admin-studio-editor__preview" aria-label="Xem trước trực tiếp">
@@ -479,6 +523,36 @@ export function AdminDashboardPage() {
   const selectedTemplateName = weddingTemplates.find((template) => template.id === editor.selectedTemplateId)?.name
     ?? selectedCustomTemplate?.name
     ?? 'Chọn mẫu thiệp';
+  const studioCover = demoPhotos.find((photo) => photo.role === 'cover' && photo.url);
+  const studioGallery = demoPhotos.filter((photo) => photo.role === 'gallery' && photo.url).sort((a, b) => a.order - b.order);
+  const repeatedStudioGallery = studioGallery.length
+    ? Array.from({ length: Math.max(4, studioGallery.length) }, (_, index) => studioGallery[index % studioGallery.length])
+    : [];
+  const studioPreviewCustomization: SignatureDemoCustomization = {
+    tier: studioConfig.packageTier,
+    bride: editor.brideName,
+    groom: editor.groomName,
+    date: editor.weddingDate,
+    dateLabel: dateDots(editor.weddingDate),
+    time: editor.weddingTime,
+    venue: editor.venue,
+    address: editor.address,
+    city: studioConfig.city,
+    story: editor.message,
+    ceremonyTitle: studioConfig.ceremonyTitle,
+    receptionTitle: studioConfig.receptionTitle,
+    heroKicker: studioConfig.heroKicker,
+    albumTitle: studioConfig.albumTitle,
+    timeLabel: studioConfig.timeLabel,
+    venueLabel: studioConfig.venueLabel,
+    signatureText: studioConfig.signatureText,
+    theme: studioConfig.theme,
+    fontStyle: studioConfig.packageTier === '109k' ? 'editorial' : studioConfig.fontStyle,
+    hero: (studioCover?.url ?? editor.coverUrl) || undefined,
+    heroPosition: studioCover ? photoPosition(studioCover) : undefined,
+    gallery: repeatedStudioGallery.map((photo) => photo.url!).filter(Boolean),
+    galleryPositions: repeatedStudioGallery.map((photo) => photoPosition(photo)),
+  };
   const studioPreview = selectedCustomTemplate ? <CustomTemplateRenderer
     compact
     template={selectedCustomTemplate}
@@ -489,15 +563,14 @@ export function AdminDashboardPage() {
       message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
       customTemplateId: selectedCustomTemplate.id,
     }}
-  /> : <CustomerInvitationPreview
-    compact
-    templateId={editor.selectedTemplateId || 'classic-minimalist'}
-    payload={{
-      brideName: editor.brideName, groomName: editor.groomName, weddingDate: editor.weddingDate,
-      weddingTime: editor.weddingTime, venue: editor.venue, address: editor.address,
-      message: editor.message, coverUrl: editor.coverUrl, photos: demoPhotos, studio: studioConfig,
-    }}
-  />;
+  /> : <div className="admin-studio-signature-preview">
+    <SignatureDemo
+      id={editor.selectedTemplateId || 'classic-minimalist'}
+      customization={studioPreviewCustomization}
+      rsvpQuestions={studioConfig.rsvpQuestions}
+      embedded
+    />
+  </div>;
 
   const loadCustomerPhotos = useCallback((customerId: string, photos: DemoPhoto[]) => {
     setMediaSelection((current) => {
@@ -840,6 +913,41 @@ export function AdminDashboardPage() {
     } finally { setActionLoading(''); }
   };
 
+  const removeCustomer = async () => {
+    if (!session || !selectedCustomer || actionLoading || saving) return;
+    const customer = selectedCustomer;
+    const displayName = customer.brideName && customer.groomName
+      ? `${customer.brideName} & ${customer.groomName}`
+      : customer.fullName;
+    const confirmed = window.confirm(
+      `Xóa khách hàng ${displayName}? Thao tác này sẽ xóa hồ sơ, ảnh trên máy chủ và Google Drive, demo, link preview/thiệp chính thức và ZIP đã xuất. Không thể hoàn tác. Mẫu tùy chỉnh dùng chung sẽ được giữ lại.`,
+    );
+    if (!confirmed) return;
+
+    setActionLoading(`delete-customer:${customer.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      await mediaRequest<{ ok: boolean }>('delete-customer', { customerId: customer.id }, activeSession.accessToken);
+
+      const nextCustomers = customers.filter((item) => item.id !== customer.id);
+      const nextCustomer = nextCustomers[0] ?? null;
+      setCustomers(nextCustomers);
+      setDemos((current) => current.filter((demo) => demo.customerId !== customer.id));
+      setPublishedInvitations((current) => current.filter((invitation) => invitation.customerId !== customer.id));
+      setMediaSelection((current) => current?.customerId === customer.id ? undefined : current);
+      if (selectedCustomerId === customer.id) {
+        setSelectedCustomerId(nextCustomer?.id ?? null);
+        setEditor(nextCustomer ? customerToEditor(nextCustomer) : emptyCustomer);
+        setIsNewCustomer(false);
+        setStudioOpen(false);
+      }
+      showMessage(`Đã xóa khách hàng ${displayName} cùng dữ liệu liên quan.`);
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Không thể xóa khách hàng.');
+    } finally { setActionLoading(''); }
+  };
+
   const expireDemo = async (demo: InvitationDemoRecord) => {
     if (!session) return;
     const reopening = demo.status === 'expired';
@@ -1037,6 +1145,9 @@ export function AdminDashboardPage() {
                 </div>
                 <div className="admin-form-actions">
                   {isNewCustomer && <button type="button" onClick={() => { setIsNewCustomer(false); setSelectedCustomerId(customers[0]?.id ?? null); }}>Hủy</button>}
+                  {selectedCustomer && !isNewCustomer && <button type="button" className="is-danger" onClick={() => void removeCustomer()} disabled={Boolean(actionLoading) || saving}>
+                    {actionLoading === `delete-customer:${selectedCustomer.id}` ? <LoaderCircle className="is-spinning" /> : <Trash2 />} Xóa khách hàng
+                  </button>}
                   <button type="submit" className="is-primary" disabled={saving}>{saving ? <LoaderCircle className="is-spinning" /> : <Save />} {saving ? 'Đang lưu...' : 'Lưu hồ sơ'}</button>
                 </div>
               </form>
@@ -1047,9 +1158,6 @@ export function AdminDashboardPage() {
         {selectedCustomer && !isNewCustomer && (
           <section className="admin-demo-panel">
             <div className="admin-panel-heading"><div><p>Demo Studio</p><h2>Tạo và quản lý link preview</h2></div><div className="admin-demo-panel__heading-actions"><span>{customerDemos.length} demo</span><button type="button" className="is-primary" onClick={() => setStudioOpen((open) => !open)}><WandSparkles aria-hidden="true" /> {studioOpen ? 'Đóng Studio' : 'Mở Studio'}</button></div></div>
-            {session && <CustomerPhotoLibrary key={selectedCustomer.id} customerId={selectedCustomer.id}
-              accessToken={session.accessToken} selection={demoPhotos} onLoad={loadCustomerPhotos} disabled={Boolean(actionLoading)}
-              onSelect={(photos) => setMediaSelection({ customerId: selectedCustomer.id, photos })} />}
             {studioOpen && <AdminStudioEditor
               customer={editor}
               config={studioConfig}
@@ -1060,6 +1168,10 @@ export function AdminDashboardPage() {
               customTemplates={customTemplates}
               onTemplateUpload={(file) => void uploadTemplatePackage(file)}
               templateUploading={templateUploading}
+              mediaLibrary={session ? <CustomerPhotoLibrary key={selectedCustomer.id} customerId={selectedCustomer.id}
+                accessToken={session.accessToken} selection={demoPhotos} onLoad={loadCustomerPhotos} disabled={Boolean(actionLoading)}
+                onSelect={(photos) => setMediaSelection({ customerId: selectedCustomer.id, photos })} /> : null}
+              mediaCount={demoPhotos.length}
               preview={studioPreview}
               previewLabel={selectedTemplateName}
             />}

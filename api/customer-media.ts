@@ -1,7 +1,7 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { unzipSync } from 'fflate';
-import { ASSETS, CUSTOM_TEMPLATES, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
-import { checkDrive, syncDrive, cleanupUploads } from '../server/driveSync.js';
+import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
+import { checkDrive, syncDrive, cleanupUploads, deleteDriveCustomer } from '../server/driveSync.js';
 
 const MiB = 1024 * 1024;
 const formats: Record<string, [string, string]> = {
@@ -144,6 +144,59 @@ async function uploadCustomTemplate(request: Request) {
     id, name: cleanManifest.name, entryFile, manifest: cleanManifest,
     assetBaseUrl: templateAssetBase(id),
   }, 201);
+}
+
+async function storageFiles(bucket: string, prefix: string) {
+  const entries: Array<{ name?: string; id?: string | null }> = [];
+  for (let offset = 0; ; offset += 1000) {
+    const response = await supabase(`/storage/v1/object/list/${bucket}`, {
+      method: 'POST', body: JSON.stringify({ prefix, limit: 1000, offset, sortBy: { column: 'name', order: 'asc' } }),
+    });
+    const page = await response.json() as Array<{ name?: string; id?: string | null }>;
+    entries.push(...page);
+    if (page.length < 1000) break;
+  }
+  const files: string[] = [];
+  for (const entry of entries) {
+    if (typeof entry.name !== 'string') continue;
+    const path = prefix + entry.name;
+    if (entry.id === null) files.push(...await storageFiles(bucket, `${path}/`));
+    else files.push(path);
+  }
+  return files;
+}
+
+async function removeStorageFiles(bucket: string, paths: string[]) {
+  for (let index = 0; index < paths.length; index += 100) {
+    await supabase(`/storage/v1/object/${bucket}`, {
+      method: 'DELETE', body: JSON.stringify({ prefixes: paths.slice(index, index + 100) }),
+    });
+  }
+}
+
+async function deleteCustomer(customerIdValue: unknown) {
+  const customerId = uuid(customerIdValue);
+  const [customerRow] = await db<Array<{ id: string; drive_folder_id: string | null }>>(
+    `customers?id=eq.${customerId}&select=id,drive_folder_id&limit=1`,
+  );
+  if (!customerRow) throw new MediaError(404, 'Không tìm thấy khách hàng cần xóa.');
+
+  const photos = await photosFor(customerId);
+  const [originalFiles, assetFiles, exportFiles] = await Promise.all([
+    Promise.all(photos.map((photo) => storageFiles(ORIGINALS, `requests/${customerId}/${photo.id}/`))),
+    Promise.all(photos.map((photo) => storageFiles(ASSETS, `requests/${customerId}/${photo.id}/`))),
+    storageFiles(EXPORTS, `exports/${customerId}/`),
+  ]);
+
+  await Promise.all([
+    removeStorageFiles(ORIGINALS, originalFiles.flat()),
+    removeStorageFiles(ASSETS, assetFiles.flat()),
+    removeStorageFiles(EXPORTS, exportFiles),
+  ]);
+  await deleteDriveCustomer(customerId, customerRow.drive_folder_id, photos);
+  await supabase(`/rest/v1/photo_admin_audit?customer_id=eq.${customerId}`, { method: 'DELETE' });
+  await supabase(`/rest/v1/customers?id=eq.${customerId}`, { method: 'DELETE' });
+  return json({ ok: true });
 }
 
 function publicStudio(value: unknown) {
@@ -504,6 +557,7 @@ export default {
       if (action === 'demo') return await publicDemo(clean(body.token, 64));
       if (action === 'invitation') return await publicInvitation(body.slug);
       await requireAdmin(request);
+      if (action === 'delete-customer') return await deleteCustomer(body.customerId);
       if (action === 'publish-invitation') return await publishInvitation(body);
       if (action === 'templates') return json(await listCustomTemplates());
       const driveEnabled = flag('GOOGLE_DRIVE_ENABLED');
