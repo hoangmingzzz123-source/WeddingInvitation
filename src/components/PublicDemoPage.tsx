@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AlertCircle, Check, Clock3, LockKeyhole, Sparkles } from 'lucide-react';
 import { navigateTo } from '../Router';
 import { weddingTemplates } from '../data/templates';
+import { weddingMusicUrlForTrack } from '../data/weddingMusic';
 import { getPublicDemo } from '../lib/supabaseRest';
 import type { DemoPhoto, PublicInvitationDemo } from '../types/admin';
 import { resolveInvitationSide } from '../utils/invitationSide';
@@ -85,6 +86,9 @@ export function PublicDemoPage({ token }: { token: string }) {
     signatureText: studio?.signatureText,
     theme: studio?.theme,
     fontStyle: studio?.packageTier === '109k' ? 'editorial' : studio?.fontStyle,
+    musicUrl: studio?.packageTier === '109k'
+      ? undefined
+      : studio?.musicUrl ?? weddingMusicUrlForTrack(studio?.musicTrack, studio?.customMusicUrl),
     hero: cover?.url ?? payload?.coverUrl,
     heroPosition: cover ? photoPosition(cover) : undefined,
     mainPhoto: mainPhoto?.url,
@@ -126,6 +130,7 @@ export function PublicDemoPage({ token }: { token: string }) {
             customization={customization}
             rsvpQuestions={studio?.rsvpQuestions ?? []}
             embedded
+            showMusicPlayer
           />
         </div>}
 
@@ -152,4 +157,3 @@ export function PublicDemoPage({ token }: { token: string }) {
     </main>
   );
 }
-

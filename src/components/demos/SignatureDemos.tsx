@@ -79,6 +79,7 @@ interface SignatureDemoProps {
   id: SignatureDemoId;
   customization?: SignatureDemoCustomization;
   embedded?: boolean;
+  showMusicPlayer?: boolean;
   staticExport?: boolean;
   guestName?: string;
   guestGreeting?: 'formal' | 'friendly';
@@ -345,6 +346,7 @@ export function SignatureDemo({
   id,
   customization,
   embedded = false,
+  showMusicPlayer = false,
   staticExport = false,
   guestName,
   guestGreeting = 'formal',
@@ -432,7 +434,7 @@ export function SignatureDemo({
 
   return (
     <main className={appearanceClasses}>
-      {!embedded && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} musicUrl={premium ? customization?.musicUrl : undefined} />}
+      {(!embedded || showMusicPlayer) && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} musicUrl={premium ? customization?.musicUrl : undefined} />}
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
         <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${headerMonogramText || couple}`}>

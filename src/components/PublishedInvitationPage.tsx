@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { weddingTemplates } from '../data/templates';
+import { weddingMusicUrlForTrack } from '../data/weddingMusic';
 import { mediaRequest } from '../lib/customerPhotoUpload';
 import type { CustomInvitationTemplate, DemoPhoto, InvitationPayload, InvitationStudioConfig } from '../types/admin';
 import { resolveInvitationSide } from '../utils/invitationSide';
@@ -104,7 +105,9 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     signatureText: studio?.signatureText,
     theme: studio?.theme,
     fontStyle: studio?.packageTier === '109k' ? 'editorial' : studio?.fontStyle,
-    musicUrl: studio?.musicUrl,
+    musicUrl: studio?.packageTier === '109k'
+      ? undefined
+      : studio?.musicUrl ?? weddingMusicUrlForTrack(studio?.musicTrack, studio?.customMusicUrl),
     hero: cover?.url ?? payload.coverUrl,
     heroPosition: cover ? position(cover) : undefined,
     mainPhoto: mainPhoto?.url,

@@ -205,7 +205,7 @@ function AdminStudioEditor({
     ['Chọn gói thiệp', 'Xem đầy đủ quyền lợi và các phần sẽ xuất hiện theo gói.'],
     ['Ai là nhân vật chính?', 'Điền tên hai bạn để cá nhân hóa lời mời.'],
     ['Chọn ngày vui', 'Xác nhận ngày và giờ đón khách trên thiệp.'],
-    ['Hẹn nhau ở đâu?', 'Thêm địa điểm, địa chỉ và thành phố để khách tìm đường.'],
+    ['Hẹn nhau ở đâu?', 'Thiết lập địa chỉ riêng nhà trai và nhà gái; link ?side=groom hoặc ?side=bride sẽ mở bản đồ đúng địa chỉ.'],
     ['Gửi một lời thật riêng', 'Viết lời mời hoặc câu chuyện; các phần hiển thị được dựng theo mẫu và gói.'],
     ['Chọn ảnh cho thiệp', 'Chọn ảnh bìa, album, thứ tự và vị trí ảnh trong thư viện khách.'],
     [config.packageTier === '109k' ? 'Hồi đáp tham dự' : 'Cá nhân hóa khách mời', config.packageTier === '109k'
@@ -312,8 +312,16 @@ function AdminStudioEditor({
         </div>}
         {step === 4 && <div className="admin-form-grid">
           <label className="is-wide">Địa điểm<input value={customer.venue} onChange={(event) => onCustomerChange('venue', event.target.value)} /></label>
-          <label className="is-wide">Địa chỉ<input value={customer.address} onChange={(event) => onCustomerChange('address', event.target.value)} /></label>
+          <label className="is-wide">Địa chỉ chung<input value={customer.address} onChange={(event) => onCustomerChange('address', event.target.value)} /><small>Dùng làm địa chỉ dự phòng nếu chưa nhập địa chỉ riêng cho từng bên.</small></label>
           <label>Thành phố<input value={config.city} onChange={(event) => updateConfig('city', event.target.value)} /></label>
+          <fieldset className="admin-studio-family-fields"><legend>Nhà trai · ?side=groom</legend><div>
+            <label className="is-wide">Địa chỉ làm lễ<input value={config.groomAddress} onChange={(event) => updateConfig('groomAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
+            <label className="is-wide">Địa chỉ tiệc / reception<input value={config.groomReceptionAddress} onChange={(event) => updateConfig('groomReceptionAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ làm lễ nhà trai" /></label>
+          </div></fieldset>
+          <fieldset className="admin-studio-family-fields"><legend>Nhà gái · ?side=bride</legend><div>
+            <label className="is-wide">Địa chỉ làm lễ<input value={config.brideAddress} onChange={(event) => updateConfig('brideAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
+            <label className="is-wide">Địa chỉ tiệc / reception<input value={config.brideReceptionAddress} onChange={(event) => updateConfig('brideReceptionAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ làm lễ nhà gái" /></label>
+          </div></fieldset>
         </div>}
         {step === 5 && <div className="admin-form-grid">
           <label className="is-wide">Story / lời mời<textarea rows={5} value={customer.message} onChange={(event) => onCustomerChange('message', event.target.value)} /></label>
@@ -331,23 +339,19 @@ function AdminStudioEditor({
           <label className="is-wide">Chữ viết tắt trên header<input value={config.headerMonogramText} onChange={(event) => updateConfig('headerMonogramText', event.target.value)} placeholder="Để trống để dùng chữ cái đầu tên hai bạn" maxLength={40} /><small>Ví dụ: N &amp; M · N &lt;3 M · Nhàn &amp; Mai</small></label>
           <details className="admin-studio-copy-fields is-wide">
             <summary>Nội dung riêng cho nhà trai / nhà gái</summary>
-            <small>Link nhà trai thêm <code>?side=groom</code>; link nhà gái thêm <code>?side=bride</code>. Mỗi bên có giờ và địa chỉ riêng cho lễ và tiệc.</small>
+            <small>Link nhà trai thêm <code>?side=groom</code>; link nhà gái thêm <code>?side=bride</code>. Mỗi bên có giờ và nội dung riêng.</small>
             <div className="admin-form-grid">
               <fieldset className="admin-studio-family-fields"><legend>Nhà trai</legend><div>
                 <label>Tiêu đề lễ<input value={config.groomCeremonyTitle} onChange={(event) => updateConfig('groomCeremonyTitle', event.target.value)} /></label>
                 <label>Giờ làm lễ<input type="time" value={config.groomCeremonyTime} onChange={(event) => updateConfig('groomCeremonyTime', event.target.value)} /></label>
-                <label className="is-wide">Địa chỉ làm lễ<input value={config.groomAddress} onChange={(event) => updateConfig('groomAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
                 <label>Tiêu đề tiệc<input value={config.groomReceptionTitle} onChange={(event) => updateConfig('groomReceptionTitle', event.target.value)} /></label>
                 <label>Giờ đón khách<input type="time" value={config.groomReceptionTime} onChange={(event) => updateConfig('groomReceptionTime', event.target.value)} /></label>
-                <label className="is-wide">Địa chỉ tiệc / reception<input value={config.groomReceptionAddress} onChange={(event) => updateConfig('groomReceptionAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
               </div></fieldset>
               <fieldset className="admin-studio-family-fields"><legend>Nhà gái</legend><div>
                 <label>Tiêu đề lễ<input value={config.brideCeremonyTitle} onChange={(event) => updateConfig('brideCeremonyTitle', event.target.value)} /></label>
                 <label>Giờ làm lễ<input type="time" value={config.brideCeremonyTime} onChange={(event) => updateConfig('brideCeremonyTime', event.target.value)} /></label>
-                <label className="is-wide">Địa chỉ làm lễ<input value={config.brideAddress} onChange={(event) => updateConfig('brideAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
                 <label>Tiêu đề tiệc<input value={config.brideReceptionTitle} onChange={(event) => updateConfig('brideReceptionTitle', event.target.value)} /></label>
                 <label>Giờ đón khách<input type="time" value={config.brideReceptionTime} onChange={(event) => updateConfig('brideReceptionTime', event.target.value)} /></label>
-                <label className="is-wide">Địa chỉ tiệc / reception<input value={config.brideReceptionAddress} onChange={(event) => updateConfig('brideReceptionAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
               </div></fieldset>
               <label className="is-wide">Nhà trai · Chữ trên ảnh bìa<input value={config.groomHeroKicker} onChange={(event) => updateConfig('groomHeroKicker', event.target.value)} /></label>
               <label className="is-wide">Nhà gái · Chữ trên ảnh bìa<input value={config.brideHeroKicker} onChange={(event) => updateConfig('brideHeroKicker', event.target.value)} /></label>
@@ -874,6 +878,7 @@ export function AdminDashboardPage() {
       customization={studioPreviewCustomization}
       rsvpQuestions={studioConfig.rsvpQuestions}
       embedded
+      showMusicPlayer
     />
   </div>;
 
@@ -1075,7 +1080,7 @@ export function AdminDashboardPage() {
           message: editor.message,
           coverUrl: editor.coverUrl,
           ...(demoPhotos.length ? { photos: demoPhotos.map(({ url: _url, ...photo }) => photo) } : {}),
-          studio: studioConfig,
+          studio: { ...studioConfig, musicUrl: musicUrlForStudio(studioConfig) },
           customTemplateId: selectedCustomTemplate?.id ?? null,
         },
       };
