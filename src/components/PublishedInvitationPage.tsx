@@ -89,7 +89,7 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     ceremonyTime: familyVariant?.ceremonyTime || studio?.ceremonyTime || payload.weddingTime,
     receptionTime: familyVariant?.receptionTime || studio?.receptionTime || payload.weddingTime,
     hiddenSections: studio?.hiddenSections,
-    venue: payload.venue,
+    venue: familyVariant?.venue || payload.venue,
     address: familyVariant?.receptionAddress || payload.address,
     ceremonyAddress: familyVariant?.ceremonyAddress || payload.address,
     receptionAddress: familyVariant?.receptionAddress || payload.address,
@@ -108,6 +108,7 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     musicUrl: studio?.packageTier === '109k'
       ? undefined
       : studio?.musicUrl ?? weddingMusicUrlForTrack(studio?.musicTrack, studio?.customMusicUrl),
+    videoLink: studio?.videoLink,
     hero: cover?.url ?? payload.coverUrl,
     heroPosition: cover ? position(cover) : undefined,
     mainPhoto: mainPhoto?.url,

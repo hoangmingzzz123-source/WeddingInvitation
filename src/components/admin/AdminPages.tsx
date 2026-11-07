@@ -150,11 +150,14 @@ const defaultStudioConfig: InvitationStudioConfig = {
   albumTitle: 'Album kỷ niệm',
   timeLabel: 'Thời gian',
   venueLabel: 'Địa điểm',
+  brideVenue: '',
+  groomVenue: '',
   signatureText: 'Sự hiện diện của bạn là niềm vui của chúng mình',
   theme: 'template',
   fontStyle: 'editorial',
   musicTrack: 'default',
   customMusicUrl: '',
+  videoLink: '',
   guests: [],
   rsvpQuestions: [],
 };
@@ -315,10 +318,12 @@ function AdminStudioEditor({
           <label className="is-wide">Địa chỉ chung<input value={customer.address} onChange={(event) => onCustomerChange('address', event.target.value)} /><small>Dùng làm địa chỉ dự phòng nếu chưa nhập địa chỉ riêng cho từng bên.</small></label>
           <label>Thành phố<input value={config.city} onChange={(event) => updateConfig('city', event.target.value)} /></label>
           <fieldset className="admin-studio-family-fields"><legend>Nhà trai · ?side=groom</legend><div>
+            <label className="is-wide">Tên địa điểm<input value={config.groomVenue ?? ''} onChange={(event) => updateConfig('groomVenue', event.target.value)} placeholder="Để trống để dùng địa điểm chung" /></label>
             <label className="is-wide">Địa chỉ làm lễ<input value={config.groomAddress} onChange={(event) => updateConfig('groomAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
             <label className="is-wide">Địa chỉ tiệc / reception<input value={config.groomReceptionAddress} onChange={(event) => updateConfig('groomReceptionAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ làm lễ nhà trai" /></label>
           </div></fieldset>
           <fieldset className="admin-studio-family-fields"><legend>Nhà gái · ?side=bride</legend><div>
+            <label className="is-wide">Tên địa điểm<input value={config.brideVenue ?? ''} onChange={(event) => updateConfig('brideVenue', event.target.value)} placeholder="Để trống để dùng địa điểm chung" /></label>
             <label className="is-wide">Địa chỉ làm lễ<input value={config.brideAddress} onChange={(event) => updateConfig('brideAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ chung" /></label>
             <label className="is-wide">Địa chỉ tiệc / reception<input value={config.brideReceptionAddress} onChange={(event) => updateConfig('brideReceptionAddress', event.target.value)} placeholder="Để trống để dùng địa chỉ làm lễ nhà gái" /></label>
           </div></fieldset>
@@ -336,6 +341,8 @@ function AdminStudioEditor({
               <span>{label}{!available ? ' · Chưa có trong gói/mẫu này' : ''}</span>
             </label>)}
           </div></fieldset>
+          {config.packageTier === '199k' && !config.hiddenSections?.includes('video') && <label className="is-wide">Link video cưới<input type="url" value={config.videoLink ?? ''} onChange={(event) => updateConfig('videoLink', event.target.value)} placeholder="https://youtu.be/... hoặc link video MP4" />
+            <small>Nút phát trên thiệp sẽ mở video này. Hỗ trợ link YouTube hoặc video HTTPS.</small></label>}
           <label className="is-wide">Chữ viết tắt trên header<input value={config.headerMonogramText} onChange={(event) => updateConfig('headerMonogramText', event.target.value)} placeholder="Để trống để dùng chữ cái đầu tên hai bạn" maxLength={40} /><small>Ví dụ: N &amp; M · N &lt;3 M · Nhàn &amp; Mai</small></label>
           <details className="admin-studio-copy-fields is-wide">
             <summary>Nội dung riêng cho nhà trai / nhà gái</summary>
@@ -853,6 +860,7 @@ export function AdminDashboardPage() {
     theme: studioConfig.theme,
     fontStyle: studioConfig.packageTier === '109k' ? 'editorial' : studioConfig.fontStyle,
     musicUrl: musicUrlForStudio(studioConfig),
+    videoLink: studioConfig.videoLink,
     hero: (studioCover?.url ?? editor.coverUrl) || undefined,
     heroPosition: studioCover ? photoPosition(studioCover) : undefined,
     mainPhoto: studioMainPhoto?.url,
@@ -1132,7 +1140,7 @@ export function AdminDashboardPage() {
           message: editor.message,
           coverUrl: editor.coverUrl,
           photos,
-          studio: studioConfig,
+          studio: { ...studioConfig, musicUrl: musicUrlForStudio(studioConfig) },
         },
       });
       await loadData(selectedCustomer.id);
@@ -1173,7 +1181,7 @@ export function AdminDashboardPage() {
         message: editor.message,
         coverUrl: editor.coverUrl,
         photos,
-        studio: studioConfig,
+        studio: { ...studioConfig, musicUrl: musicUrlForStudio(studioConfig) },
         customTemplateId: selectedCustomTemplate?.id ?? null,
       },
     });

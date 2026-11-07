@@ -42,6 +42,8 @@ export interface InvitationStudioConfig {
   albumTitle: string;
   timeLabel: string;
   venueLabel: string;
+  brideVenue?: string;
+  groomVenue?: string;
   signatureText: string;
   hiddenSections?: InvitationHiddenSection[];
   theme: 'template' | 'champagne' | 'blush' | 'emerald';
@@ -49,6 +51,7 @@ export interface InvitationStudioConfig {
   musicTrack?: WeddingMusicTrackId;
   customMusicUrl?: string;
   musicUrl?: string;
+  videoLink?: string;
   guests: Array<{ id: string; name: string; greeting: 'formal' | 'friendly' }>;
   rsvpQuestions: Array<'transport' | 'meal'>;
 }
@@ -152,4 +155,3 @@ export const customerStatusLabels: Record<CustomerStatus, string> = {
   confirmed: 'Đã xác nhận',
   completed: 'Đã bàn giao',
 };
-

@@ -65,6 +65,15 @@
   gap: 1rem;
 }
 
+.signature-demo .signature-extras--single-feature {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.signature-demo .signature-extras--single-feature > :is(.signature-video-card, .signature-gift-card) {
+  width: min(100%, 40rem);
+  justify-self: center;
+}
+
 .signature-demo .signature-video-card,
 .signature-demo .signature-gift-card {
   min-width: 0;

@@ -3927,8 +3927,11 @@ body {
 .signature-video-card { display: grid; min-height: 22rem; align-content: end; color: #fff; }
 .signature-video-card > img { position: absolute; inset: 0; }
 .signature-video-card::after { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(13,13,17,.82), transparent 75%); content: ''; }
-.signature-video-card > button { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; width: 3.5rem; height: 3.5rem; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; color: white; background: rgba(255,255,255,.18); cursor: pointer; place-items: center; transform: translate(-50%,-50%); backdrop-filter: blur(12px); }
-.signature-video-card > button svg { width: 1rem; height: 1rem; }
+.signature-video-card > button,
+.signature-video-card > .signature-video-card__play { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; width: 3.5rem; height: 3.5rem; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; color: white; background: rgba(255,255,255,.18); cursor: pointer; place-items: center; transform: translate(-50%,-50%); backdrop-filter: blur(12px); }
+.signature-video-card > .signature-video-card__play { text-decoration: none; }
+.signature-video-card > button svg,
+.signature-video-card > .signature-video-card__play svg { width: 1rem; height: 1rem; }
 .signature-video-card > div { position: relative; z-index: 2; }
 .signature-video-card h2 { max-width: 14ch !important; margin-top: .65rem !important; color: white !important; font-size: 2.3rem !important; }
 .signature-gift-card h2 { margin-top: .8rem !important; font-size: 2rem !important; }
@@ -7383,8 +7386,6 @@ body {
 .signature-rsvp select { font-size: .9rem !important; }
 .signature-rsvp form > button { font-size: .85rem !important; }
 .signature-footer > p { font-size: .74rem; }
-.signature-extras--single { grid-template-columns: minmax(0, 1fr); }
-
 @media (min-width: 768px) {
   .demo-page-content .signature-demo { padding-top: 1rem; }
   .demo-page-content .signature-demo .signature-nav { top: calc(env(safe-area-inset-top, 0px) + .75rem); }

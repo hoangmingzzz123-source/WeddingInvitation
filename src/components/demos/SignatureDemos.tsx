@@ -51,6 +51,7 @@ export interface SignatureDemoCustomization {
   theme?: SignatureTheme;
   fontStyle?: SignatureFont;
   musicUrl?: string;
+  videoLink?: string;
   hero?: string;
   heroPosition?: string;
   mainPhoto?: string;
@@ -342,6 +343,16 @@ function timeAfter(timeValue: string, minutes: number) {
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
 }
 
+function safeHttpsUrl(value?: string) {
+  if (!value?.trim()) return undefined;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === 'https:' ? url.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function SignatureDemo({
   id,
   customization,
@@ -377,6 +388,7 @@ export function SignatureDemo({
   const [lightbox, setLightbox] = useState<number | null>(null);
   const mapAddress = customization?.receptionAddress || demo.address || demo.venue;
   const mapQuery = encodeURIComponent([mapAddress, demo.city].filter(Boolean).join(', '));
+  const videoLink = safeHttpsUrl(customization?.videoLink);
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
   const couple = `${demo.bride} & ${demo.groom}`;
@@ -387,6 +399,8 @@ export function SignatureDemo({
   const visibleExtraCount = Number(diamond && isSectionVisible('video'))
     + Number(diamond && isSectionVisible('qr'))
     + Number(diamond && isSectionVisible('guestbook'));
+  const visibleVideoQrCount = Number(diamond && isSectionVisible('video'))
+    + Number(diamond && isSectionVisible('qr'));
   const firstSectionTarget = premium && isSectionVisible('story') ? '#cau-chuyen'
     : isSectionVisible('events') ? '#su-kien'
       : isSectionVisible('album') ? '#album'
@@ -589,10 +603,12 @@ export function SignatureDemo({
       </section>}
 
       {diamond && visibleExtraCount > 0 && (
-        <section className={`signature-extras${visibleExtraCount === 1 ? ' signature-extras--single' : ''}`} aria-label="Tính năng cao cấp">
+        <section className={`signature-extras${visibleVideoQrCount === 1 ? ' signature-extras--single-feature' : ''}`} aria-label="Tính năng cao cấp">
           {isSectionVisible('video') && <div className="signature-video-card">
             <img src={customization?.videoBackground || demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
-            {isSectionVisible('album') && <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>}
+            {videoLink
+              ? <a className="signature-video-card__play" href={videoLink} target="_blank" rel="noopener noreferrer" aria-label="Phát video cưới"><Play fill="currentColor" aria-hidden="true" /></a>
+              : isSectionVisible('album') && <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>}
             <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
           </div>}
           {isSectionVisible('qr') && <div className="signature-gift-card">

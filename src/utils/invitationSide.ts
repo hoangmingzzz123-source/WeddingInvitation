@@ -1,6 +1,7 @@
 import type { InvitationStudioConfig } from '../types/admin';
 
 export interface InvitationSideDetails {
+  venue: string;
   ceremonyTitle: string;
   receptionTitle: string;
   heroKicker: string;
@@ -20,6 +21,7 @@ export function resolveInvitationSide(
   if (brideSides.has(sideValue)) {
     const ceremonyAddress = studio?.brideAddress || '';
     return {
+      venue: studio?.brideVenue || '',
       ceremonyTitle: studio?.brideCeremonyTitle || 'Lễ Vu Quy',
       receptionTitle: studio?.brideReceptionTitle || 'Đón khách nhà gái',
       heroKicker: studio?.brideHeroKicker || 'Lễ Vu Quy',
@@ -33,6 +35,7 @@ export function resolveInvitationSide(
   if (groomSides.has(sideValue)) {
     const ceremonyAddress = studio?.groomAddress || '';
     return {
+      venue: studio?.groomVenue || '',
       ceremonyTitle: studio?.groomCeremonyTitle || 'Lễ Thành Hôn',
       receptionTitle: studio?.groomReceptionTitle || 'Tiệc mừng thân mật',
       heroKicker: studio?.groomHeroKicker || 'Lễ Thành Hôn',
