@@ -88,6 +88,12 @@
   margin-top: .75rem !important;
 }
 
+.signature-demo .signature-extras .signature-video-card h2 {
+  max-width: 24ch !important;
+  font-size: clamp(1.55rem, 3vw, 2.35rem) !important;
+  line-height: 1.15 !important;
+}
+
 .signature-demo .signature-gift-card > p,
 .signature-demo .signature-guestbook__heading p,
 .signature-demo .signature-guestbook li {

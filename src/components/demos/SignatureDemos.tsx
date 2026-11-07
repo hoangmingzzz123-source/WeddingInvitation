@@ -353,6 +353,21 @@ function safeHttpsUrl(value?: string) {
   }
 }
 
+function youtubeVideoId(value: string) {
+  try {
+    const url = new URL(value);
+    if (url.hostname === 'youtu.be') return url.pathname.slice(1).split('/')[0] || undefined;
+    if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(url.hostname)) {
+      const videoId = url.searchParams.get('v')
+        ?? /^\/(?:embed|shorts)\/([^/]+)/.exec(url.pathname)?.[1];
+      return videoId && /^[\w-]{11}$/.test(videoId) ? videoId : undefined;
+    }
+    return undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function SignatureDemo({
   id,
   customization,
@@ -386,9 +401,11 @@ export function SignatureDemo({
   const [isSubmittingRsvp, setIsSubmittingRsvp] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const mapAddress = customization?.receptionAddress || demo.address || demo.venue;
   const mapQuery = encodeURIComponent([mapAddress, demo.city].filter(Boolean).join(', '));
   const videoLink = safeHttpsUrl(customization?.videoLink);
+  const youtubeId = videoLink ? youtubeVideoId(videoLink) : undefined;
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
   const couple = `${demo.bride} & ${demo.groom}`;
@@ -605,11 +622,17 @@ export function SignatureDemo({
       {diamond && visibleExtraCount > 0 && (
         <section className={`signature-extras${visibleVideoQrCount === 1 ? ' signature-extras--single-feature' : ''}`} aria-label="Tính năng cao cấp">
           {isSectionVisible('video') && <div className="signature-video-card">
-            <img src={customization?.videoBackground || demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
-            {videoLink
-              ? <a className="signature-video-card__play" href={videoLink} target="_blank" rel="noopener noreferrer" aria-label="Phát video cưới"><Play fill="currentColor" aria-hidden="true" /></a>
-              : isSectionVisible('album') && <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>}
-            <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
+            {videoPlaying && videoLink
+              ? youtubeId
+                ? <iframe className="signature-video-card__player" src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0`} title="Video cưới" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+                : <video className="signature-video-card__player" src={videoLink} controls autoPlay playsInline aria-label="Video cưới" />
+              : <>
+                <img src={customization?.videoBackground || demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
+                {videoLink
+                  ? <button className="signature-video-card__play" type="button" onClick={() => setVideoPlaying(true)} aria-label="Phát video cưới"><Play fill="currentColor" aria-hidden="true" /></button>
+                  : isSectionVisible('album') && <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>}
+                <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
+              </>}
           </div>}
           {isSectionVisible('qr') && <div className="signature-gift-card">
             <SmallLabel>A LITTLE WISH</SmallLabel>

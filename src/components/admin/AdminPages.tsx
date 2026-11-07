@@ -342,7 +342,7 @@ function AdminStudioEditor({
             </label>)}
           </div></fieldset>
           {config.packageTier === '199k' && !config.hiddenSections?.includes('video') && <label className="is-wide">Link video cưới<input type="url" value={config.videoLink ?? ''} onChange={(event) => updateConfig('videoLink', event.target.value)} placeholder="https://youtu.be/... hoặc link video MP4" />
-            <small>Nút phát trên thiệp sẽ mở video này. Hỗ trợ link YouTube hoặc video HTTPS.</small></label>}
+            <small>Nút phát video ngay trong khung. Dùng link YouTube hoặc link trực tiếp tới video qua HTTPS.</small></label>}
           <label className="is-wide">Chữ viết tắt trên header<input value={config.headerMonogramText} onChange={(event) => updateConfig('headerMonogramText', event.target.value)} placeholder="Để trống để dùng chữ cái đầu tên hai bạn" maxLength={40} /><small>Ví dụ: N &amp; M · N &lt;3 M · Nhàn &amp; Mai</small></label>
           <details className="admin-studio-copy-fields is-wide">
             <summary>Nội dung riêng cho nhà trai / nhà gái</summary>
