@@ -18,7 +18,7 @@ const uuid = (value: unknown) => {
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const flag = (name: string) => process.env[name] === 'true';
-const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTime', 'receptionTime', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideCeremonyTime', 'brideReceptionTime', 'brideHeroKicker', 'brideAddress', 'brideReceptionAddress', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomCeremonyTime', 'groomReceptionTime', 'groomHeroKicker', 'groomAddress', 'groomReceptionAddress', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
+const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTime', 'receptionTime', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideCeremonyTime', 'brideReceptionTime', 'brideHeroKicker', 'brideAddress', 'brideReceptionAddress', 'brideVenue', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomCeremonyTime', 'groomReceptionTime', 'groomHeroKicker', 'groomAddress', 'groomReceptionAddress', 'groomVenue', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
 const invitationSections = new Set(['story', 'events', 'timeline', 'album', 'video', 'qr', 'guestbook', 'venue', 'rsvp']);
 const templateMimeTypes: Record<string, string> = {
   html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'application/javascript; charset=utf-8',
@@ -676,13 +676,26 @@ function publicStudio(value: unknown) {
   const musicUrl = config.packageTier === '109k' ? ''
     : config.musicTrack === 'custom' ? safeMusicUrl(config.customMusicUrl)
       : safeMusicUrl(weddingMusicTracks.find((track) => track.id === config.musicTrack)?.url);
+  const videoLink = safeVideoUrl(config.videoLink);
   return {
     ...Object.fromEntries(publicStudioKeys.filter((key) => key in config).map((key) => [key, config[key]])),
     ...(musicUrl ? { musicUrl } : {}),
+    ...(videoLink ? { videoLink } : {}),
     ...(Array.isArray(config.hiddenSections)
       ? { hiddenSections: config.hiddenSections.filter((section): section is string => typeof section === 'string' && invitationSections.has(section)) }
       : {}),
   };
+}
+
+function safeVideoUrl(value: unknown) {
+  if (typeof value !== 'string' || value.length > 2048) return '';
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || url.username || url.password) return '';
+    return url.href;
+  } catch {
+    return '';
+  }
 }
 
 function safeMusicUrl(value: unknown) {
