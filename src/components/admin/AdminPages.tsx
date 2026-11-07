@@ -77,6 +77,10 @@ function publicInvitationUrl(slug: string) {
     : `${window.location.origin}/invite/${slug}`;
 }
 
+function shareLinkCacheKey(type: 'rsvp' | 'wishes', demoId: string) {
+  return `mp-admin-share-link:${type}:${demoId}`;
+}
+
 type CustomerEditor = Omit<CustomerRecord, 'id' | 'createdAt' | 'updatedAt' | 'confirmedAt' | 'exportedAt'>;
 
 const emptyCustomer: CustomerEditor = {
@@ -604,6 +608,15 @@ function AdminDemoRsvpPanel({ demoId, accessToken }: { demoId: string; accessTok
   const [deletingId, setDeletingId] = useState('');
   const [error, setError] = useState('');
   const [shareStatus, setShareStatus] = useState('');
+  const [shareLink, setShareLink] = useState('');
+
+  useEffect(() => {
+    try {
+      setShareLink(window.localStorage.getItem(shareLinkCacheKey('rsvp', demoId)) ?? '');
+    } catch (cacheError) {
+      setError(cacheError instanceof Error ? `Không tải được link RSVP đã lưu: ${cacheError.message}` : 'Không tải được link RSVP đã lưu.');
+    }
+  }, [demoId]);
 
   const loadResponses = async () => {
     setLoading(true);
@@ -644,15 +657,30 @@ function AdminDemoRsvpPanel({ demoId, accessToken }: { demoId: string; accessTok
     try {
       const { token } = await mediaRequest<{ token: string }>('create-invitation-rsvp-share', { demoId }, accessToken);
       const link = `${window.location.origin}/rsvp/${token}`;
+      setShareLink(link);
+      try {
+        window.localStorage.setItem(shareLinkCacheKey('rsvp', demoId), link);
+      } catch (cacheError) {
+        setError(cacheError instanceof Error ? `Không lưu được link RSVP vào bộ nhớ trình duyệt: ${cacheError.message}` : 'Không lưu được link RSVP vào bộ nhớ trình duyệt.');
+      }
       try {
         await navigator.clipboard.writeText(link);
         setShareStatus('Đã sao chép link xem chỉ đọc. Tạo link mới sẽ vô hiệu hóa link trước đó.');
       } catch {
-        window.prompt('Sao chép link xem RSVP chỉ đọc:', link);
-        setShareStatus('Link xem RSVP đã được tạo. Link cũ (nếu có) không còn hiệu lực.');
+        setShareStatus('Link RSVP đã được lưu bên dưới nhưng chưa sao chép. Bạn có thể sao chép lại bất cứ lúc nào.');
       }
     } catch (shareError) {
       setError(shareError instanceof Error ? shareError.message : 'Không tạo được link xem RSVP.');
+    }
+  };
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      setShareStatus('Đã sao chép link xem RSVP.');
+      setError('');
+    } catch (copyError) {
+      setError(copyError instanceof Error ? `Không thể sao chép link RSVP: ${copyError.message}` : 'Không thể sao chép link RSVP.');
     }
   };
 
@@ -667,6 +695,10 @@ function AdminDemoRsvpPanel({ demoId, accessToken }: { demoId: string; accessTok
       {open && <>
         {shareStatus && <p className="admin-demo-rsvp__status" role="status">{shareStatus}</p>}
         {error && <p className="admin-demo-rsvp__error" role="alert">{error}</p>}
+        {shareLink && <label className="admin-demo-rsvp__share-link">
+          <span>Link xem RSVP đã tạo</span>
+          <div><input readOnly value={shareLink} aria-label="Link xem RSVP đã tạo" /><button type="button" onClick={() => void copyShareLink()} aria-label="Sao chép link xem RSVP"><Clipboard aria-hidden="true" /></button><a href={shareLink} target="_blank" rel="noreferrer" aria-label="Mở link xem RSVP"><ExternalLink aria-hidden="true" /></a></div>
+        </label>}
         {loading ? <p className="admin-demo-rsvp__empty"><LoaderCircle className="is-spinning" /> Đang tải hồi đáp...</p>
           : responses.length ? <ul>
             {responses.map((response) => (
@@ -705,6 +737,15 @@ function AdminDemoWishesPanel({ demoId, accessToken }: { demoId: string; accessT
   const [deletingId, setDeletingId] = useState('');
   const [error, setError] = useState('');
   const [shareStatus, setShareStatus] = useState('');
+  const [shareLink, setShareLink] = useState('');
+
+  useEffect(() => {
+    try {
+      setShareLink(window.localStorage.getItem(shareLinkCacheKey('wishes', demoId)) ?? '');
+    } catch (cacheError) {
+      setError(cacheError instanceof Error ? `Không tải được link lời chúc đã lưu: ${cacheError.message}` : 'Không tải được link lời chúc đã lưu.');
+    }
+  }, [demoId]);
 
   const loadWishes = async () => {
     setLoading(true);
@@ -744,15 +785,30 @@ function AdminDemoWishesPanel({ demoId, accessToken }: { demoId: string; accessT
     try {
       const { token } = await mediaRequest<{ token: string }>('create-invitation-wishes-share', { demoId }, accessToken);
       const link = `${window.location.origin}/wishes/${token}`;
+      setShareLink(link);
+      try {
+        window.localStorage.setItem(shareLinkCacheKey('wishes', demoId), link);
+      } catch (cacheError) {
+        setError(cacheError instanceof Error ? `Không lưu được link lời chúc vào bộ nhớ trình duyệt: ${cacheError.message}` : 'Không lưu được link lời chúc vào bộ nhớ trình duyệt.');
+      }
       try {
         await navigator.clipboard.writeText(link);
         setShareStatus('Đã sao chép link xem sổ lưu bút. Link cũ sẽ mất hiệu lực khi tạo link mới.');
       } catch {
-        window.prompt('Sao chép link xem sổ lưu bút chỉ đọc:', link);
-        setShareStatus('Link xem sổ lưu bút đã được tạo.');
+        setShareStatus('Link lời chúc đã được lưu bên dưới nhưng chưa sao chép. Bạn có thể sao chép lại bất cứ lúc nào.');
       }
     } catch (shareError) {
       setError(shareError instanceof Error ? shareError.message : 'Không tạo được link xem sổ lưu bút.');
+    }
+  };
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      setShareStatus('Đã sao chép link xem lời chúc.');
+      setError('');
+    } catch (copyError) {
+      setError(copyError instanceof Error ? `Không thể sao chép link lời chúc: ${copyError.message}` : 'Không thể sao chép link lời chúc.');
     }
   };
 
@@ -767,6 +823,10 @@ function AdminDemoWishesPanel({ demoId, accessToken }: { demoId: string; accessT
       {open && <>
         {shareStatus && <p className="admin-demo-rsvp__status" role="status">{shareStatus}</p>}
         {error && <p className="admin-demo-rsvp__error" role="alert">{error}</p>}
+        {shareLink && <label className="admin-demo-rsvp__share-link">
+          <span>Link xem lời chúc đã tạo</span>
+          <div><input readOnly value={shareLink} aria-label="Link xem lời chúc đã tạo" /><button type="button" onClick={() => void copyShareLink()} aria-label="Sao chép link xem lời chúc"><Clipboard aria-hidden="true" /></button><a href={shareLink} target="_blank" rel="noreferrer" aria-label="Mở link xem lời chúc"><ExternalLink aria-hidden="true" /></a></div>
+        </label>}
         {loading ? <p className="admin-demo-rsvp__empty"><LoaderCircle className="is-spinning" /> Đang tải lời chúc...</p>
           : wishes.length ? <ul>
             {wishes.map((wish) => (

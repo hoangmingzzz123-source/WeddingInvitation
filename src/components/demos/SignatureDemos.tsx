@@ -556,7 +556,7 @@ export function SignatureDemo({
             <h3>{ceremonyTitle}</h3>
             <p>{demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {customization?.timeLabel ? `${customization.timeLabel}: ` : ''}{customization?.ceremonyTime || demo.time}</span>
-            <span><MapPin aria-hidden="true" /> {customization?.ceremonyAddress || demo.venue}</span>
+            <span><MapPin aria-hidden="true" /> {demo.venue}</span>
           </article>
           <article className="signature-event-card">
             <span className="signature-event-card__number">02 / RECEPTION</span>
@@ -564,7 +564,7 @@ export function SignatureDemo({
             <h3>{receptionTitle}</h3>
             <p>{demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {customization?.receptionTime || demo.time} · Đón khách</span>
-            <span><MapPin aria-hidden="true" /> {customization?.receptionAddress || demo.city}</span>
+            <span><MapPin aria-hidden="true" /> {demo.venue}</span>
           </article>
         </div>
       </section>}

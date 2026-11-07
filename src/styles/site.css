@@ -5625,6 +5625,11 @@ body {
 .admin-demo-rsvp button svg { width: .95rem; height: .95rem; }
 .admin-demo-rsvp button:disabled { opacity: .55; cursor: not-allowed; }
 .admin-demo-rsvp button.is-danger { min-width: 2.35rem; padding: .4rem; color: #9c4d45; border-color: #ead4d0; }
+.admin-demo-rsvp__share-link { display: grid; gap: .35rem; min-width: 0; color: #68766b; font-size: .68rem; }
+.admin-demo-rsvp__share-link > div { display: flex; min-width: 0; gap: .35rem; }
+.admin-demo-rsvp__share-link input { min-width: 0; flex: 1; padding: .5rem; border: 1px solid #d7ded4; border-radius: .4rem; color: #355542; background: #fff; font: 400 .68rem/1.3 "Poppins", sans-serif; }
+.admin-demo-rsvp__share-link a { display: inline-flex; min-width: 2.35rem; align-items: center; justify-content: center; border: 1px solid #d7ded4; border-radius: .4rem; color: #355542; background: #fff; }
+.admin-demo-rsvp__share-link a svg { width: .95rem; height: .95rem; }
 .admin-demo-rsvp ul { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
 .admin-demo-rsvp li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .7rem; align-items: start; padding: .7rem; border: 1px solid #e4e6df; border-radius: .45rem; background: #fff; }
 .admin-demo-rsvp__response { display: grid; gap: .2rem; min-width: 0; }
