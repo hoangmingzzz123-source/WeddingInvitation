@@ -5,7 +5,7 @@ import { weddingTemplates } from '../data/templates';
 import { weddingMusicUrlForTrack } from '../data/weddingMusic';
 import { getPublicDemo } from '../lib/supabaseRest';
 import type { DemoPhoto, PublicInvitationDemo } from '../types/admin';
-import { resolveInvitationSide } from '../utils/invitationSide';
+import { orderedInvitationNames, resolveInvitationSide } from '../utils/invitationSide';
 import { CustomTemplateRenderer } from './CustomTemplateRenderer';
 import { SignatureDemo, type SignatureDemoCustomization } from './demos/SignatureDemos';
 
@@ -38,9 +38,12 @@ export function PublicDemoPage({ token }: { token: string }) {
   }, [token]);
 
   useEffect(() => {
-    document.title = demo
-      ? `${demo.payload.brideName} & ${demo.payload.groomName} | Bản demo thiệp cưới`
-      : 'Đang mở bản demo | Wedding Invitation MP';
+    if (!demo) {
+      document.title = 'Đang mở bản demo | Wedding Invitation MP';
+      return;
+    }
+    const [first, second] = orderedInvitationNames(demo.payload.brideName, demo.payload.groomName);
+    document.title = `${first} & ${second} | Bản demo thiệp cưới`;
   }, [demo]);
 
   const acceptNotice = () => {

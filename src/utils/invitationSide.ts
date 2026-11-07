@@ -11,14 +11,30 @@ export interface InvitationSideDetails {
   receptionAddress: string;
 }
 
+const brideSides = new Set(['bride', 'gai', 'nha-gai', 'nhà-gái', 'female']);
+const groomSides = new Set(['groom', 'trai', 'nha-trai', 'nhà-trai', 'male']);
+
+function currentSideValue() {
+  return typeof window === 'undefined'
+    ? ''
+    : new URLSearchParams(window.location.search).get('side')?.trim().toLowerCase() ?? '';
+}
+
+export function isGroomInvitationSide(sideValue = currentSideValue()) {
+  return groomSides.has(sideValue.trim().toLowerCase());
+}
+
+export function orderedInvitationNames(bride: string, groom: string, sideValue = currentSideValue()): [string, string] {
+  return isGroomInvitationSide(sideValue) ? [groom, bride] : [bride, groom];
+}
+
 export function resolveInvitationSide(
   studio?: InvitationStudioConfig,
-  sideValue = new URLSearchParams(window.location.search).get('side')?.trim().toLowerCase() ?? '',
+  sideValue = currentSideValue(),
 ): InvitationSideDetails | null {
-  const brideSides = new Set(['bride', 'gai', 'nha-gai', 'nhà-gái', 'female']);
-  const groomSides = new Set(['groom', 'trai', 'nha-trai', 'nhà-trai', 'male']);
+  const normalizedSide = sideValue.trim().toLowerCase();
 
-  if (brideSides.has(sideValue)) {
+  if (brideSides.has(normalizedSide)) {
     const ceremonyAddress = studio?.brideAddress || '';
     return {
       venue: studio?.brideVenue || '',
@@ -32,7 +48,7 @@ export function resolveInvitationSide(
     };
   }
 
-  if (groomSides.has(sideValue)) {
+  if (groomSides.has(normalizedSide)) {
     const ceremonyAddress = studio?.groomAddress || '';
     return {
       venue: studio?.groomVenue || '',

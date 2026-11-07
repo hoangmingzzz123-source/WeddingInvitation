@@ -4,7 +4,7 @@ import { weddingTemplates } from '../data/templates';
 import { weddingMusicUrlForTrack } from '../data/weddingMusic';
 import { mediaRequest } from '../lib/customerPhotoUpload';
 import type { CustomInvitationTemplate, DemoPhoto, InvitationPayload, InvitationStudioConfig } from '../types/admin';
-import { resolveInvitationSide } from '../utils/invitationSide';
+import { orderedInvitationNames, resolveInvitationSide } from '../utils/invitationSide';
 import { SignatureDemo, type SignatureDemoCustomization, type SignatureRsvpPayload, type SignatureWishPayload } from './demos/SignatureDemos';
 import { CustomTemplateRenderer } from './CustomTemplateRenderer';
 
@@ -46,7 +46,8 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (!invitation) return;
-    document.title = `${invitation.payload.brideName} & ${invitation.payload.groomName} | Thiệp cưới`;
+    const [first, second] = orderedInvitationNames(invitation.payload.brideName, invitation.payload.groomName);
+    document.title = `${first} & ${second} | Thiệp cưới`;
   }, [invitation]);
 
   if (error) return (
@@ -66,7 +67,8 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
 
   const { payload, templateId } = invitation;
   if (invitation.customTemplate) {
-    return <CustomTemplateRenderer template={invitation.customTemplate} payload={payload} title={`Thiệp cưới ${payload.brideName} & ${payload.groomName}`} />;
+    const [first, second] = orderedInvitationNames(payload.brideName, payload.groomName);
+    return <CustomTemplateRenderer template={invitation.customTemplate} payload={payload} title={`Thiệp cưới ${first} & ${second}`} />;
   }
   const studio = payload.studio;
   const selectedPhotos = [...(payload.photos ?? [])].sort((a, b) => a.order - b.order);

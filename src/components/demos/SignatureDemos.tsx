@@ -14,6 +14,7 @@ import {
 import { MusicPlayer } from '../MusicPlayer';
 import { weddingTemplates, type TemplateTier } from '../../data/templates';
 import type { InvitationHiddenSection } from '../../types/admin';
+import { isGroomInvitationSide, orderedInvitationNames } from '../../utils/invitationSide';
 import {
   VIETNAM_WEDDING_THEMES,
   type VietnamWeddingTheme,
@@ -411,9 +412,7 @@ export function SignatureDemo({
   const youtubeId = videoLink ? youtubeVideoId(videoLink) : undefined;
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
-  const groomFirst = typeof window !== 'undefined'
-    && new URLSearchParams(window.location.search).get('side')?.trim().toLowerCase() === 'groom';
-  const coupleNames = groomFirst ? [demo.groom, demo.bride] : [demo.bride, demo.groom];
+  const coupleNames = orderedInvitationNames(demo.bride, demo.groom);
   const couple = `${coupleNames[0]} & ${coupleNames[1]}`;
   const locationLabel = demo.city.toLocaleLowerCase('vi') === 'việt nam' ? 'Việt Nam' : `${demo.city} · Việt Nam`;
   const premium = demo.tier !== '109k';
@@ -431,6 +430,12 @@ export function SignatureDemo({
   const ceremonyTitle = customization?.ceremonyTitle || 'Lễ thành hôn';
   const receptionTitle = customization?.receptionTitle || 'Tiệc mừng thân mật';
   const headerMonogramText = customization?.headerMonogramText?.trim();
+  const orderedHeaderMonogramText = headerMonogramText && isGroomInvitationSide() && headerMonogramText.includes('&')
+    ? (() => {
+      const [left, ...right] = headerMonogramText.split('&');
+      return `${right.join('&').trim()} & ${left.trim()}`;
+    })()
+    : headerMonogramText;
   const appearanceClasses = [
     `signature-demo signature-demo--${demo.id}`,
     demo.visualStyle ? `signature-demo--${demo.visualStyle}` : '',
@@ -475,9 +480,9 @@ export function SignatureDemo({
       {(!embedded || showMusicPlayer) && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} musicUrl={premium ? customization?.musicUrl : undefined} />}
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
-        <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${headerMonogramText || couple}`}>
-          {headerMonogramText
-            ? headerMonogramText.split(/(&)/g).map((part, index) => part === '&'
+        <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${orderedHeaderMonogramText || couple}`}>
+          {orderedHeaderMonogramText
+            ? orderedHeaderMonogramText.split(/(&)/g).map((part, index) => part === '&'
               ? <i key={`amp-${index}`}>&amp;</i>
               : <span className="signature-nav__monogram-text" key={`text-${index}`}>{part}</span>)
             : <><span className="signature-nav__monogram-text">{coupleNames[0].charAt(0)}</span><i>&amp;</i><span className="signature-nav__monogram-text">{coupleNames[1].charAt(0)}</span></>}
