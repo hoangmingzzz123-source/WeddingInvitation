@@ -356,10 +356,13 @@ function safeHttpsUrl(value?: string) {
 function youtubeVideoId(value: string) {
   try {
     const url = new URL(value);
-    if (url.hostname === 'youtu.be') return url.pathname.slice(1).split('/')[0] || undefined;
+    if (url.hostname === 'youtu.be') {
+      const videoId = url.pathname.slice(1).split('/')[0];
+      return /^[\w-]{11}$/.test(videoId) ? videoId : undefined;
+    }
     if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(url.hostname)) {
       const videoId = url.searchParams.get('v')
-        ?? /^\/(?:embed|shorts)\/([^/]+)/.exec(url.pathname)?.[1];
+        ?? /^\/(?:embed|shorts|live)\/([^/]+)/.exec(url.pathname)?.[1];
       return videoId && /^[\w-]{11}$/.test(videoId) ? videoId : undefined;
     }
     return undefined;
@@ -624,7 +627,14 @@ export function SignatureDemo({
           {isSectionVisible('video') && <div className="signature-video-card">
             {videoPlaying && videoLink
               ? youtubeId
-                ? <iframe className="signature-video-card__player" src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0`} title="Video cưới" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+                ? <iframe
+                  className="signature-video-card__player"
+                  src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&playsinline=1&rel=0`}
+                  title="Video cưới"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
                 : <video className="signature-video-card__player" src={videoLink} controls autoPlay playsInline aria-label="Video cưới" />
               : <>
                 <img src={customization?.videoBackground || demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
