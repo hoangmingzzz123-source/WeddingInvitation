@@ -50,6 +50,7 @@ export interface SignatureDemoCustomization {
   signatureText?: string;
   theme?: SignatureTheme;
   fontStyle?: SignatureFont;
+  musicUrl?: string;
   hero?: string;
   heroPosition?: string;
   mainPhoto?: string;
@@ -65,6 +66,13 @@ export interface SignatureRsvpPayload {
   attending: 'yes' | 'no';
   guestCount: number;
   answers: Partial<Record<SignatureRsvpQuestion, string>>;
+  email?: string;
+  message?: string;
+}
+
+export interface SignatureWishPayload {
+  name: string;
+  message: string;
 }
 
 interface SignatureDemoProps {
@@ -76,7 +84,8 @@ interface SignatureDemoProps {
   guestGreeting?: 'formal' | 'friendly';
   rsvpQuestions?: SignatureRsvpQuestion[];
   existingSubmitted?: boolean;
-  onRsvpSubmit?: (payload: SignatureRsvpPayload) => void;
+  onRsvpSubmit?: (payload: SignatureRsvpPayload) => void | Promise<void>;
+  onWishSubmit?: (payload: SignatureWishPayload) => void | Promise<void>;
 }
 
 interface SignatureDemoContent {
@@ -276,15 +285,29 @@ function SmallLabel({ children }: { children: string }) {
   return <p className="signature-eyebrow">{children}</p>;
 }
 
-function GuestBook({ couple }: { couple: string }) {
+function GuestBook({ couple, onSubmit }: { couple: string; onSubmit?: (payload: SignatureWishPayload) => void | Promise<void> }) {
+  const [name, setName] = useState('');
   const [note, setNote] = useState('');
-  const [notes, setNotes] = useState(['Chúc hai bạn mãi hạnh phúc nhé!']);
+  const [notes, setNotes] = useState<Array<SignatureWishPayload>>(() => onSubmit ? [] : [{ name: 'Bạn bè', message: 'Chúc hai bạn mãi hạnh phúc nhé!' }]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const addNote = (event: FormEvent<HTMLFormElement>) => {
+  const addNote = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!note.trim()) return;
-    setNotes((current) => [note.trim(), ...current].slice(0, 3));
-    setNote('');
+    if (!name.trim() || !note.trim() || submitting) return;
+    const wish = { name: name.trim(), message: note.trim() };
+    setSubmitting(true);
+    setError('');
+    try {
+      await onSubmit?.(wish);
+      setNotes((current) => [wish, ...current].slice(0, 3));
+      setName('');
+      setNote('');
+    } catch {
+      setError('Chưa gửi được lời chúc. Vui lòng thử lại.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -294,11 +317,14 @@ function GuestBook({ couple }: { couple: string }) {
         <div><h3>Sổ lưu bút</h3><p>Gửi một lời chúc đến {couple}</p></div>
       </div>
       <form onSubmit={addNote}>
+        <label className="visually-hidden" htmlFor="signature-guestbook-name">Tên của bạn</label>
+        <input id="signature-guestbook-name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Tên của bạn" maxLength={80} required />
         <label className="visually-hidden" htmlFor="signature-guestbook-note">Lời chúc</label>
-        <input id="signature-guestbook-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="Viết lời chúc của bạn..." maxLength={100} />
-        <button type="submit">Gửi</button>
+        <textarea id="signature-guestbook-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="Viết lời chúc của bạn..." maxLength={500} required />
+        <button type="submit" disabled={submitting}>{submitting ? '...' : 'Gửi'}</button>
       </form>
-      <ul>{notes.map((item, index) => <li key={`${item}-${index}`}><span aria-hidden="true">{['🤍', '✨', '🌿'][index]}</span>{item}</li>)}</ul>
+      {error && <p className="signature-guestbook__error" role="alert">{error}</p>}
+      <ul>{notes.map((item, index) => <li key={`${item.name}-${item.message}-${index}`}><span aria-hidden="true">{['🤍', '✨', '🌿'][index]}</span><span><strong>{item.name}</strong>{item.message}</span></li>)}</ul>
     </div>
   );
 }
@@ -325,6 +351,7 @@ export function SignatureDemo({
   rsvpQuestions = [],
   existingSubmitted = false,
   onRsvpSubmit,
+  onWishSubmit,
 }: SignatureDemoProps) {
   const baseDemo = demos[id] ?? fallbackDemo(id);
   const demo: SignatureDemoContent = {
@@ -343,6 +370,8 @@ export function SignatureDemo({
     gallery: customization?.gallery?.length ? customization.gallery : baseDemo.gallery,
   };
   const [submitted, setSubmitted] = useState(existingSubmitted);
+  const [isSubmittingRsvp, setIsSubmittingRsvp] = useState(false);
+  const [rsvpError, setRsvpError] = useState('');
   const [lightbox, setLightbox] = useState<number | null>(null);
   const mapQuery = encodeURIComponent(`${demo.venue}, ${customization?.receptionAddress || demo.address}, ${demo.city}`);
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
@@ -374,25 +403,36 @@ export function SignatureDemo({
     setSubmitted(existingSubmitted);
   }, [existingSubmitted]);
 
-  const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
+  const submitRsvp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSubmittingRsvp) return;
     const formData = new FormData(event.currentTarget);
     const attending = formData.get('attending') === 'no' ? 'no' : 'yes';
-    onRsvpSubmit?.({
-      name: guestName || String(formData.get('name') || '').trim(),
-      attending,
-      guestCount: attending === 'yes' ? Number(formData.get('guests') || 1) : 0,
-      answers: {
-        ...(rsvpQuestions.includes('transport') ? { transport: String(formData.get('transport') || '') } : {}),
-        ...(rsvpQuestions.includes('meal') ? { meal: String(formData.get('meal') || '') } : {}),
-      },
-    });
-    setSubmitted(true);
+    setIsSubmittingRsvp(true);
+    setRsvpError('');
+    try {
+      await onRsvpSubmit?.({
+        name: guestName || String(formData.get('name') || '').trim(),
+        attending,
+        guestCount: attending === 'yes' ? Number(formData.get('guests') || 1) : 0,
+        email: String(formData.get('email') || '').trim(),
+        message: String(formData.get('message') || '').trim(),
+        answers: {
+          ...(rsvpQuestions.includes('transport') ? { transport: String(formData.get('transport') || '') } : {}),
+          ...(rsvpQuestions.includes('meal') ? { meal: String(formData.get('meal') || '') } : {}),
+        },
+      });
+      setSubmitted(true);
+    } catch {
+      setRsvpError('Chưa gửi được lời hồi đáp. Vui lòng thử lại.');
+    } finally {
+      setIsSubmittingRsvp(false);
+    }
   };
 
   return (
     <main className={appearanceClasses}>
-      {!embedded && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} />}
+      {!embedded && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} musicUrl={premium ? customization?.musicUrl : undefined} />}
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
         <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${headerMonogramText || couple}`}>
@@ -565,7 +605,7 @@ export function SignatureDemo({
             </div>
             <span className="signature-demo-note">QR DEMO · KHÔNG DÙNG ĐỂ THANH TOÁN</span>
           </div>}
-          {isSectionVisible('guestbook') && <GuestBook couple={couple} />}
+          {isSectionVisible('guestbook') && <GuestBook couple={couple} onSubmit={onWishSubmit} />}
         </section>
       )}
 
@@ -616,7 +656,8 @@ export function SignatureDemo({
                 <label className="signature-rsvp__wide">Lời nhắn<textarea name="message" rows={3} placeholder="Gửi đôi bạn một lời chúc..." /></label>
               </div>
             )}
-            <button type="submit">Gửi lời hồi đáp</button>
+            {rsvpError && <p className="signature-rsvp__error" role="alert">{rsvpError}</p>}
+            <button type="submit" disabled={isSubmittingRsvp}>{isSubmittingRsvp ? 'Đang gửi...' : 'Gửi lời hồi đáp'}</button>
           </form>
         ) : (
           <div className="signature-rsvp__success" role="status">

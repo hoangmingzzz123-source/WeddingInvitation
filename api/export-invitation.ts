@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, MediaError, db, selectedPhotos, signAsset, supabase, type PhotoRef } from '../server/customerMedia.js';
 import { renderSignatureInvitation } from '../server/signatureExport.js';
 import { weddingTemplates } from '../src/data/templates.js';
+import { weddingMusicTracks } from '../src/data/weddingMusic.js';
 import type { SignatureDemoCustomization, SignatureRsvpQuestion } from '../src/components/demos/SignatureDemos.js';
 
 type JsonRecord = Record<string, unknown>;
@@ -169,6 +170,24 @@ async function loadBuiltInvitationStyles(origin: string) {
   return { css, fonts };
 }
 
+function safeMusicUrl(value: unknown) {
+  if (typeof value !== 'string' || value.length > 2048) return undefined;
+  const safe = safeUrl(value);
+  if (!safe) return undefined;
+  try {
+    const url = new URL(safe);
+    if (url.protocol !== 'https:' || url.username || url.password) return undefined;
+    if (/\.mp3$/i.test(url.pathname)) return url.href;
+    const videoId = '[a-zA-Z0-9_-]{11}';
+    const allowedHost = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(url.hostname);
+    return allowedHost && (new RegExp(`^/${videoId}$`).test(url.pathname)
+      || new RegExp(`^/embed/${videoId}$`).test(url.pathname)
+      || new RegExp(`^${videoId}$`).test(url.searchParams.get('v') ?? '')) ? url.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function buildSignatureTemplateFiles(customer: JsonRecord, demo: JsonRecord, assets: Array<PhotoRef & { src: string }>) {
   const payload = (demo.payload ?? {}) as JsonRecord;
   const studio = (payload.studio ?? {}) as Record<string, unknown>;
@@ -178,6 +197,10 @@ async function buildSignatureTemplateFiles(customer: JsonRecord, demo: JsonRecor
   const mainPhoto = assets.find((photo) => photo.role === 'main');
   const videoPhoto = assets.find((photo) => photo.role === 'video');
   const gallery = assets.filter((photo) => photo.role === 'gallery').sort((first, second) => first.order - second.order);
+  const musicUrl = studio.packageTier === '109k' ? undefined
+    : studio.musicTrack === 'custom' ? safeMusicUrl(studio.customMusicUrl)
+      : safeMusicUrl(weddingMusicTracks.find((track) => track.id === studio.musicTrack)?.url
+        .replace('/audio/Le_duong.mp3', `${publicAppOrigin()}/audio/Le_duong.mp3`));
   const repeatedGallery = gallery.length
     ? Array.from({ length: Math.max(4, gallery.length) }, (_, index) => gallery[index % gallery.length])
     : [];
@@ -214,6 +237,7 @@ async function buildSignatureTemplateFiles(customer: JsonRecord, demo: JsonRecor
     signatureText: typeof studio.signatureText === 'string' ? studio.signatureText : undefined,
     theme: ['template', 'champagne', 'blush', 'emerald'].includes(String(studio.theme)) ? studio.theme as SignatureDemoCustomization['theme'] : undefined,
     fontStyle: studio.packageTier === '109k' ? 'editorial' : ['editorial', 'modern', 'classic'].includes(String(studio.fontStyle)) ? studio.fontStyle as SignatureDemoCustomization['fontStyle'] : undefined,
+    musicUrl,
     hero: cover?.src ?? safeUrl(payload.coverUrl || customer.cover_url),
     heroPosition: cover ? position(cover) : undefined,
     mainPhoto: mainPhoto?.src,

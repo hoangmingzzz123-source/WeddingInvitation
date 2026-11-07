@@ -14,6 +14,7 @@ import {
   LockKeyhole,
   LogOut,
   Mail,
+  MessageCircleHeart,
   Plus,
   RefreshCw,
   Save,
@@ -29,6 +30,7 @@ import {
 import { navigateTo } from '../../Router';
 import { weddingTemplates } from '../../data/templates';
 import { weddingPackages } from '../../data/packages';
+import { weddingMusicTracks, weddingMusicUrlForTrack } from '../../data/weddingMusic';
 import {
   clearAdminSession,
   createCustomer,
@@ -151,9 +153,16 @@ const defaultStudioConfig: InvitationStudioConfig = {
   signatureText: 'Sự hiện diện của bạn là niềm vui của chúng mình',
   theme: 'template',
   fontStyle: 'editorial',
+  musicTrack: 'default',
+  customMusicUrl: '',
   guests: [],
   rsvpQuestions: [],
 };
+
+function musicUrlForStudio(config: InvitationStudioConfig) {
+  if (config.packageTier === '109k') return undefined;
+  return weddingMusicUrlForTrack(config.musicTrack, config.customMusicUrl);
+}
 
 function AdminStudioEditor({
   customer,
@@ -189,7 +198,7 @@ function AdminStudioEditor({
   const [templateError, setTemplateError] = useState('');
   const studioSteps = [
     'Chọn mẫu', 'Chọn gói', 'Đôi bạn', 'Thời gian', 'Địa điểm', 'Nội dung', 'Ảnh & album',
-    config.packageTier === '109k' ? 'RSVP cơ bản' : 'Khách mời & RSVP', 'Phong cách', 'Xem lại',
+    config.packageTier === '109k' ? 'RSVP cơ bản' : 'Khách mời & RSVP', 'Phong cách', 'Nhạc nền', 'Xem lại',
   ];
   const studioStepDetails = [
     ['Chọn mẫu thiệp', 'Chọn thiết kế trước; mẫu sẽ đề xuất gói phù hợp để bạn bắt đầu.'],
@@ -203,6 +212,7 @@ function AdminStudioEditor({
       ? 'Gói Cơ bản có RSVP Có / Không và không bật câu hỏi nâng cao.'
       : 'Thêm khách để tạo lời mời riêng và chọn thông tin cần hỏi trong RSVP.'],
     ['Hoàn thiện phong cách', 'Tùy chỉnh bảng màu và kiểu chữ theo quyền lợi của gói.'],
+    ['Chọn nhạc nền', config.packageTier === '109k' ? 'Gói Basic sử dụng nhạc nền mặc định.' : 'Chọn nhạc mẫu có sẵn hoặc thêm link YouTube / MP3 riêng.'],
     ['Rà soát cấu hình', 'Kiểm tra nội dung, ảnh, các phần theo mẫu và quyền lợi gói trước khi lưu.'],
   ] as const;
   const selectedTemplate = weddingTemplates.find((template) => template.id === customer.selectedTemplateId);
@@ -372,11 +382,25 @@ function AdminStudioEditor({
             <option value="editorial">Editorial</option><option value="modern">Hiện đại</option><option value="classic">Cổ điển</option>
           </select></label>}
         </div>}
-        {step === 9 && <dl className="admin-studio-review">
+        {step === 9 && (config.packageTier === '109k' ? <div className="admin-studio-guests-locked">
+          <strong>Nhạc nền theo gói Basic</strong>
+          <span>Gói Basic dùng nhạc mẫu mặc định. Chọn nhạc riêng có trong gói Premium và Diamond.</span>
+        </div> : <div className="admin-form-grid admin-studio-music">
+          <label className="is-wide">Nguồn nhạc<select value={config.musicTrack ?? 'default'} onChange={(event) => updateConfig('musicTrack', event.target.value as InvitationStudioConfig['musicTrack'])}>
+            <option value="default">Nhạc nền mặc định</option>
+            {weddingMusicTracks.map((track) => <option key={track.id} value={track.id}>{track.label}</option>)}
+            <option value="custom">Link nhạc riêng</option>
+          </select></label>
+          {config.musicTrack === 'custom' && <label className="is-wide">Link YouTube hoặc MP3<input type="url" value={config.customMusicUrl ?? ''} onChange={(event) => updateConfig('customMusicUrl', event.target.value)} placeholder="https://youtu.be/... hoặc link MP3" />
+            <small>Dùng URL YouTube hoặc link trực tiếp đến file MP3 qua HTTPS.</small></label>}
+          <p className="admin-studio-editor__hint is-wide">Nhạc được lưu vào cấu hình và phát trên thiệp đã xuất bản. Trình duyệt có thể yêu cầu khách bấm nút phát.</p>
+        </div>)}
+        {step === 10 && <dl className="admin-studio-review">
           <div><dt>Đôi bạn</dt><dd>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</dd></div>
           <div><dt>Thời gian</dt><dd>{customer.weddingDate || 'Chưa chọn ngày'} · Lễ {config.ceremonyTime || customer.weddingTime || '18:00'} · Đón khách {config.receptionTime || customer.weddingTime || '18:00'}</dd></div>
           <div><dt>Địa điểm</dt><dd>{customer.venue || 'Chưa thêm địa điểm'} · {customer.address}</dd></div>
           <div><dt>Thiết kế</dt><dd>{selectedTemplateName} · {selectedPackage.name} · {config.theme}{config.packageTier !== '109k' ? ` · ${config.fontStyle}` : ''}</dd></div>
+          <div><dt>Nhạc nền</dt><dd>{config.packageTier === '109k' || config.musicTrack === 'default' ? 'Mặc định' : config.musicTrack === 'custom' ? config.customMusicUrl || 'Link riêng chưa nhập' : weddingMusicTracks.find((track) => track.id === config.musicTrack)?.label ?? 'Mặc định'}</dd></div>
           <div><dt>Các phần trong gói</dt><dd>{selectedPackage.features.join(' · ')}</dd></div>
           <div><dt>Ảnh</dt><dd>{mediaCount} ảnh đã chọn</dd></div>
           <div><dt>Khách mời &amp; RSVP</dt><dd>{config.packageTier === '109k' ? 'RSVP Có / Không' : `${config.guests.length} khách · ${config.rsvpQuestions.length} câu hỏi thêm`}</dd></div>
@@ -551,6 +575,207 @@ export function AdminSetPasswordPage() {
   );
 }
 
+interface AdminRsvpRecord {
+  id: string;
+  name: string;
+  attending: 'yes' | 'no';
+  guestCount: number;
+  email?: string | null;
+  message?: string | null;
+  answers: Record<string, string>;
+  submittedAt: string;
+}
+
+function AdminDemoRsvpPanel({ demoId, accessToken }: { demoId: string; accessToken: string }) {
+  const [open, setOpen] = useState(false);
+  const [responses, setResponses] = useState<AdminRsvpRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState('');
+  const [error, setError] = useState('');
+  const [shareStatus, setShareStatus] = useState('');
+
+  const loadResponses = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const rows = await mediaRequest<AdminRsvpRecord[]>('invitation-rsvps-admin', { demoId }, accessToken);
+      setResponses(rows);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : 'Không tải được RSVP.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleOpen = () => {
+    const nextOpen = !open;
+    setOpen(nextOpen);
+    if (nextOpen) void loadResponses();
+  };
+
+  const deleteResponse = async (response: AdminRsvpRecord) => {
+    if (!window.confirm(`Xóa lời hồi đáp của ${response.name}? Thao tác này không thể hoàn tác.`)) return;
+    setDeletingId(response.id);
+    setError('');
+    try {
+      await mediaRequest<{ ok: boolean }>('delete-invitation-rsvp', { demoId, rsvpId: response.id }, accessToken);
+      setResponses((current) => current.filter((item) => item.id !== response.id));
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Không xóa được RSVP.');
+    } finally {
+      setDeletingId('');
+    }
+  };
+
+  const createShareLink = async () => {
+    setShareStatus('');
+    setError('');
+    try {
+      const { token } = await mediaRequest<{ token: string }>('create-invitation-rsvp-share', { demoId }, accessToken);
+      const link = `${window.location.origin}/rsvp/${token}`;
+      try {
+        await navigator.clipboard.writeText(link);
+        setShareStatus('Đã sao chép link xem chỉ đọc. Tạo link mới sẽ vô hiệu hóa link trước đó.');
+      } catch {
+        window.prompt('Sao chép link xem RSVP chỉ đọc:', link);
+        setShareStatus('Link xem RSVP đã được tạo. Link cũ (nếu có) không còn hiệu lực.');
+      }
+    } catch (shareError) {
+      setError(shareError instanceof Error ? shareError.message : 'Không tạo được link xem RSVP.');
+    }
+  };
+
+  return (
+    <section className="admin-demo-rsvp" aria-label="Quản lý RSVP của thiệp">
+      <header>
+        <button type="button" onClick={toggleOpen} aria-expanded={open}>
+          <Users aria-hidden="true" /> {open ? 'Ẩn RSVP' : 'Xem RSVP'}
+        </button>
+        {open && <button type="button" onClick={() => void createShareLink()}><Link2 aria-hidden="true" /> Tạo link xem</button>}
+      </header>
+      {open && <>
+        {shareStatus && <p className="admin-demo-rsvp__status" role="status">{shareStatus}</p>}
+        {error && <p className="admin-demo-rsvp__error" role="alert">{error}</p>}
+        {loading ? <p className="admin-demo-rsvp__empty"><LoaderCircle className="is-spinning" /> Đang tải hồi đáp...</p>
+          : responses.length ? <ul>
+            {responses.map((response) => (
+              <li key={response.id}>
+                <div className="admin-demo-rsvp__response">
+                  <strong>{response.name}</strong>
+                  <span>{response.attending === 'yes' ? `Sẽ tham dự · ${response.guestCount} khách` : 'Không thể tham dự'}</span>
+                  <small>{new Date(response.submittedAt).toLocaleString('vi-VN')}{response.email ? ` · ${response.email}` : ''}</small>
+                  {Object.entries(response.answers ?? {}).map(([key, value]) => (
+                    <small key={key}>{key === 'transport' ? 'Xe đưa đón' : key === 'meal' ? 'Chế độ ăn' : key}: {value}</small>
+                  ))}
+                  {response.message && <p>{response.message}</p>}
+                </div>
+                <button type="button" className="is-danger" disabled={Boolean(deletingId)} onClick={() => void deleteResponse(response)} aria-label={`Xóa hồi đáp của ${response.name}`}>
+                  {deletingId === response.id ? <LoaderCircle className="is-spinning" /> : <Trash2 aria-hidden="true" />}
+                </button>
+              </li>
+            ))}
+          </ul> : <p className="admin-demo-rsvp__empty">Chưa có lời hồi đáp nào.</p>}
+      </>}
+    </section>
+  );
+}
+
+interface AdminWishRecord {
+  id: string;
+  name: string;
+  message: string;
+  submittedAt: string;
+}
+
+function AdminDemoWishesPanel({ demoId, accessToken }: { demoId: string; accessToken: string }) {
+  const [open, setOpen] = useState(false);
+  const [wishes, setWishes] = useState<AdminWishRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState('');
+  const [error, setError] = useState('');
+  const [shareStatus, setShareStatus] = useState('');
+
+  const loadWishes = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      setWishes(await mediaRequest<AdminWishRecord[]>('invitation-wishes-admin', { demoId }, accessToken));
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : 'Không tải được lời chúc.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleOpen = () => {
+    const nextOpen = !open;
+    setOpen(nextOpen);
+    if (nextOpen) void loadWishes();
+  };
+
+  const deleteWish = async (wish: AdminWishRecord) => {
+    if (!window.confirm(`Xóa lời chúc của ${wish.name}? Thao tác này không thể hoàn tác.`)) return;
+    setDeletingId(wish.id);
+    setError('');
+    try {
+      await mediaRequest<{ ok: boolean }>('delete-invitation-wish', { demoId, wishId: wish.id }, accessToken);
+      setWishes((current) => current.filter((item) => item.id !== wish.id));
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Không xóa được lời chúc.');
+    } finally {
+      setDeletingId('');
+    }
+  };
+
+  const createShareLink = async () => {
+    setShareStatus('');
+    setError('');
+    try {
+      const { token } = await mediaRequest<{ token: string }>('create-invitation-wishes-share', { demoId }, accessToken);
+      const link = `${window.location.origin}/wishes/${token}`;
+      try {
+        await navigator.clipboard.writeText(link);
+        setShareStatus('Đã sao chép link xem sổ lưu bút. Link cũ sẽ mất hiệu lực khi tạo link mới.');
+      } catch {
+        window.prompt('Sao chép link xem sổ lưu bút chỉ đọc:', link);
+        setShareStatus('Link xem sổ lưu bút đã được tạo.');
+      }
+    } catch (shareError) {
+      setError(shareError instanceof Error ? shareError.message : 'Không tạo được link xem sổ lưu bút.');
+    }
+  };
+
+  return (
+    <section className="admin-demo-rsvp admin-demo-wishes" aria-label="Quản lý lời chúc của thiệp">
+      <header>
+        <button type="button" onClick={toggleOpen} aria-expanded={open}>
+          <MessageCircleHeart aria-hidden="true" /> {open ? 'Ẩn lời chúc' : 'Xem lời chúc'}
+        </button>
+        {open && <button type="button" onClick={() => void createShareLink()}><Link2 aria-hidden="true" /> Tạo link xem</button>}
+      </header>
+      {open && <>
+        {shareStatus && <p className="admin-demo-rsvp__status" role="status">{shareStatus}</p>}
+        {error && <p className="admin-demo-rsvp__error" role="alert">{error}</p>}
+        {loading ? <p className="admin-demo-rsvp__empty"><LoaderCircle className="is-spinning" /> Đang tải lời chúc...</p>
+          : wishes.length ? <ul>
+            {wishes.map((wish) => (
+              <li key={wish.id}>
+                <div className="admin-demo-rsvp__response">
+                  <strong>{wish.name}</strong>
+                  <small>{new Date(wish.submittedAt).toLocaleString('vi-VN')}</small>
+                  <p>{wish.message}</p>
+                </div>
+                <button type="button" className="is-danger" disabled={Boolean(deletingId)} onClick={() => void deleteWish(wish)} aria-label={`Xóa lời chúc của ${wish.name}`}>
+                  {deletingId === wish.id ? <LoaderCircle className="is-spinning" /> : <Trash2 aria-hidden="true" />}
+                </button>
+              </li>
+            ))}
+          </ul> : <p className="admin-demo-rsvp__empty">Chưa có lời chúc nào.</p>}
+      </>}
+    </section>
+  );
+}
+
 export function AdminDashboardPage() {
   const [session, setSession] = useState<AdminSession | null>(readAdminSession);
   const [profile, setProfile] = useState<AdminProfile | null>(null);
@@ -623,6 +848,7 @@ export function AdminDashboardPage() {
     signatureText: studioConfig.signatureText,
     theme: studioConfig.theme,
     fontStyle: studioConfig.packageTier === '109k' ? 'editorial' : studioConfig.fontStyle,
+    musicUrl: musicUrlForStudio(studioConfig),
     hero: (studioCover?.url ?? editor.coverUrl) || undefined,
     heroPosition: studioCover ? photoPosition(studioCover) : undefined,
     mainPhoto: studioMainPhoto?.url,
@@ -1341,6 +1567,8 @@ export function AdminDashboardPage() {
                         {actionLoading === `delete:${demo.id}` ? <LoaderCircle className="is-spinning" /> : <Trash2 />} Xóa demo
                       </button>
                     </div>
+                    {session && <AdminDemoRsvpPanel demoId={demo.id} accessToken={session.accessToken} />}
+                    {session && <AdminDemoWishesPanel demoId={demo.id} accessToken={session.accessToken} />}
                   </article>
                 );
               })}

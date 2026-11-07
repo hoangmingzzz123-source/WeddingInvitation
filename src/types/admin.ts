@@ -1,3 +1,5 @@
+import type { WeddingMusicTrackId } from '../data/weddingMusic';
+
 export type CustomerStatus = 'new' | 'contacted' | 'demo_ready' | 'confirmed' | 'completed';
 
 export type DemoStatus = 'draft' | 'published' | 'expired';
@@ -44,6 +46,9 @@ export interface InvitationStudioConfig {
   hiddenSections?: InvitationHiddenSection[];
   theme: 'template' | 'champagne' | 'blush' | 'emerald';
   fontStyle: 'editorial' | 'modern' | 'classic';
+  musicTrack?: WeddingMusicTrackId;
+  customMusicUrl?: string;
+  musicUrl?: string;
   guests: Array<{ id: string; name: string; greeting: 'formal' | 'friendly' }>;
   rsvpQuestions: Array<'transport' | 'meal'>;
 }

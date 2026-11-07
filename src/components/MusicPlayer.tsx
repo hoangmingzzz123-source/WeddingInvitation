@@ -3,30 +3,20 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Music, Volume2, VolumeX, Settings, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-const Le_duong = '/audio/Le_duong.mp3';
+import { defaultWeddingMusicUrl, weddingMusicTracks } from '../data/weddingMusic';
 
 interface MusicPlayerProps {
   autoPlay?: boolean;
   showVolumeControl?: boolean; // For 199k package
   allowCustomMusic?: boolean; // For 159k and 199k packages
+  musicUrl?: string;
 }
-
-const listMusic = [
-  "https://www.youtube.com/watch?v=AfNbehFKJ7o&list=RDAfNbehFKJ7o&start_radio=1",
-  "https://www.youtube.com/watch?v=IOe0tNoUGv8&list=RDIOe0tNoUGv8&start_radio=1",
-  "https://www.youtube.com/watch?v=jgW4C528hHs&list=RDjgW4C528hHs&start_radio=1",
-  "https://www.youtube.com/watch?v=_8ldAdQd9WU&list=RD_8ldAdQd9WU&start_radio=1",
-  "https://www.youtube.com/watch?v=BnfaIDwb-y0&list=RD_8ldAdQd9WU&index=5",
-  "https://www.youtube.com/watch?v=WCm2elbTEZQ&list=RD_8ldAdQd9WU&index=13",
-  "https://www.youtube.com/watch?v=jdzj6tYAnjY&list=RD_8ldAdQd9WU&index=19",
-  "https://www.youtube.com/watch?v=JgTZvDbaTtg&list=RDJgTZvDbaTtg&start_radio=1",
-  Le_duong, // Local MP3 file
-];
 
 export function MusicPlayer({ 
   autoPlay = true, 
   showVolumeControl = false,
-  allowCustomMusic = false 
+  allowCustomMusic = false,
+  musicUrl: selectedMusicUrl,
 }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
@@ -42,12 +32,12 @@ export function MusicPlayer({
 
   // Random select music on mount
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * listMusic.length);
-    setRandomMusic(listMusic[randomIndex]);
+    const randomIndex = Math.floor(Math.random() * weddingMusicTracks.length);
+    setRandomMusic(weddingMusicTracks[randomIndex].url);
   }, []);
 
   // Default wedding music
-  const defaultMusicUrl = randomMusic || Le_duong;
+  const defaultMusicUrl = selectedMusicUrl?.trim() || randomMusic || defaultWeddingMusicUrl;
 
   // Helper function to extract YouTube video ID
   const getYouTubeId = (url: string): string | null => {

@@ -4,7 +4,7 @@ import { weddingTemplates } from '../data/templates';
 import { mediaRequest } from '../lib/customerPhotoUpload';
 import type { CustomInvitationTemplate, DemoPhoto, InvitationPayload, InvitationStudioConfig } from '../types/admin';
 import { resolveInvitationSide } from '../utils/invitationSide';
-import { SignatureDemo, type SignatureDemoCustomization } from './demos/SignatureDemos';
+import { SignatureDemo, type SignatureDemoCustomization, type SignatureRsvpPayload, type SignatureWishPayload } from './demos/SignatureDemos';
 import { CustomTemplateRenderer } from './CustomTemplateRenderer';
 
 interface PublishedPayload extends InvitationPayload {
@@ -104,6 +104,7 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     signatureText: studio?.signatureText,
     theme: studio?.theme,
     fontStyle: studio?.packageTier === '109k' ? 'editorial' : studio?.fontStyle,
+    musicUrl: studio?.musicUrl,
     hero: cover?.url ?? payload.coverUrl,
     heroPosition: cover ? position(cover) : undefined,
     mainPhoto: mainPhoto?.url,
@@ -114,5 +115,12 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     galleryPositions: repeatedGallery.map((photo) => position(photo)),
   };
 
-  return <SignatureDemo id={templateId} customization={customization} rsvpQuestions={studio?.rsvpQuestions ?? []} />;
+  const submitRsvp = async (payload: SignatureRsvpPayload) => {
+    await mediaRequest<{ ok: boolean }>('submit-invitation-rsvp', { slug, ...payload });
+  };
+  const submitWish = async (payload: SignatureWishPayload) => {
+    await mediaRequest<{ ok: boolean }>('submit-invitation-wish', { slug, ...payload });
+  };
+
+  return <SignatureDemo id={templateId} customization={customization} rsvpQuestions={studio?.rsvpQuestions ?? []} onRsvpSubmit={submitRsvp} onWishSubmit={submitWish} />;
 }

@@ -2,6 +2,7 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
 import { unzipSync } from 'fflate';
 import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
 import { checkDrive, syncDrive, cleanupUploads, deleteDriveCustomer } from '../server/driveSync.js';
+import { weddingMusicTracks } from '../src/data/weddingMusic.js';
 
 const MiB = 1024 * 1024;
 const formats: Record<string, [string, string]> = {
@@ -505,15 +506,200 @@ async function deleteCustomerDemo(body: Record<string, unknown>) {
   return json({ ok: true });
 }
 
+async function submitInvitationRsvp(body: Record<string, unknown>) {
+  const slug = invitationSlug(body.slug);
+  const [published] = await db<Array<{ demo_id: string }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=demo_id&limit=1`,
+  );
+  if (!published) throw new MediaError(404, 'Thiệp không tồn tại hoặc chưa được xuất bản.');
+  const name = clean(body.name, 120);
+  if (!name) throw new MediaError(400, 'Vui lòng nhập họ tên.');
+  const attending = body.attending === 'no' ? 'no' : body.attending === 'yes' ? 'yes' : '';
+  if (!attending) throw new MediaError(400, 'Trạng thái tham dự không hợp lệ.');
+  const guestCount = attending === 'yes' ? Number(body.guestCount) : 0;
+  if (!Number.isInteger(guestCount) || guestCount < 0 || guestCount > 20 || (attending === 'yes' && guestCount < 1)) {
+    throw new MediaError(400, 'Số khách không hợp lệ.');
+  }
+  const rawAnswers = body.answers && typeof body.answers === 'object' && !Array.isArray(body.answers)
+    ? body.answers as Record<string, unknown> : {};
+  const answers = Object.fromEntries(['transport', 'meal'].flatMap((key) => {
+    const value = clean(rawAnswers[key], 40);
+    return value ? [[key, value]] : [];
+  }));
+  await db('invitation_rsvps', {
+    demo_id: published.demo_id,
+    guest_name: name,
+    attending,
+    guest_count: guestCount,
+    email: clean(body.email, 254) || null,
+    message: clean(body.message, 1000) || null,
+    answers,
+  });
+  return json({ ok: true });
+}
+
+async function adminInvitationRsvps(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  const [demo] = await db<Array<{ id: string }>>(`invitation_demos?id=eq.${demoId}&select=id&limit=1`);
+  if (!demo) throw new MediaError(404, 'Không tìm thấy thiệp.');
+  const responses = await db<Array<Record<string, unknown>>>(
+    `invitation_rsvps?demo_id=eq.${demoId}&select=id,guest_name,attending,guest_count,email,message,answers,created_at&order=created_at.desc`,
+  );
+  return json(responses.map((row) => ({
+    id: row.id, name: row.guest_name, attending: row.attending, guestCount: row.guest_count,
+    email: row.email, message: row.message, answers: row.answers, submittedAt: row.created_at,
+  })));
+}
+
+async function deleteInvitationRsvp(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  const rsvpId = uuid(body.rsvpId);
+  const [response] = await db<Array<{ id: string }>>(
+    `invitation_rsvps?id=eq.${rsvpId}&demo_id=eq.${demoId}&select=id&limit=1`,
+  );
+  if (!response) throw new MediaError(404, 'Không tìm thấy lời hồi đáp.');
+  await supabase(`/rest/v1/invitation_rsvps?id=eq.${rsvpId}&demo_id=eq.${demoId}`, { method: 'DELETE' });
+  return json({ ok: true });
+}
+
+async function createInvitationRsvpShare(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  const [demo] = await db<Array<{ id: string }>>(`invitation_demos?id=eq.${demoId}&select=id&limit=1`);
+  if (!demo) throw new MediaError(404, 'Không tìm thấy thiệp.');
+  const token = randomUUID();
+  const response = await supabase('/rest/v1/invitation_rsvp_shares?on_conflict=demo_id', {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ demo_id: demoId, token }),
+  });
+  return json({ token });
+}
+
+async function publicInvitationRsvps(tokenValue: unknown) {
+  if (typeof tokenValue !== 'string' || !/^[a-f0-9-]{36}$/i.test(tokenValue)) {
+    throw new MediaError(404, 'Link xem RSVP không hợp lệ.');
+  }
+  const token = tokenValue.toLowerCase();
+  const [share] = await db<Array<{ demo_id: string }>>(
+    `invitation_rsvp_shares?token=eq.${encodeURIComponent(token)}&select=demo_id&limit=1`,
+  );
+  if (!share) throw new MediaError(404, 'Link xem RSVP không tồn tại hoặc đã được thay mới.');
+  const [[demo], responses] = await Promise.all([
+    db<Array<{ payload: Record<string, unknown> }>>(`invitation_demos?id=eq.${share.demo_id}&select=payload&limit=1`),
+    db<Array<Record<string, unknown>>>(
+      `invitation_rsvps?demo_id=eq.${share.demo_id}&select=id,guest_name,attending,guest_count,answers,created_at&order=created_at.desc`,
+    ),
+  ]);
+  return json({
+    couple: `${String(demo?.payload?.brideName ?? 'Cô dâu')} & ${String(demo?.payload?.groomName ?? 'Chú rể')}`,
+    responses: responses.map((row) => ({
+      id: row.id, name: row.guest_name, attending: row.attending, guestCount: row.guest_count,
+      answers: row.answers, submittedAt: row.created_at,
+    })),
+  });
+}
+
+async function submitInvitationWish(body: Record<string, unknown>) {
+  const slug = invitationSlug(body.slug);
+  const [published] = await db<Array<{ demo_id: string }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=demo_id&limit=1`,
+  );
+  if (!published) throw new MediaError(404, 'Thiệp không tồn tại hoặc chưa được xuất bản.');
+  const name = clean(body.name, 80);
+  const message = clean(body.message, 500);
+  if (!name || !message) throw new MediaError(400, 'Vui lòng nhập tên và lời chúc.');
+  await db('invitation_wishes', { demo_id: published.demo_id, guest_name: name, message });
+  return json({ ok: true });
+}
+
+async function adminInvitationWishes(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  const [demo] = await db<Array<{ id: string }>>(`invitation_demos?id=eq.${demoId}&select=id&limit=1`);
+  if (!demo) throw new MediaError(404, 'Không tìm thấy thiệp.');
+  const wishes = await db<Array<Record<string, unknown>>>(
+    `invitation_wishes?demo_id=eq.${demoId}&select=id,guest_name,message,created_at&order=created_at.desc`,
+  );
+  return json(wishes.map((row) => ({
+    id: row.id, name: row.guest_name, message: row.message, submittedAt: row.created_at,
+  })));
+}
+
+async function deleteInvitationWish(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  const wishId = uuid(body.wishId);
+  const [wish] = await db<Array<{ id: string }>>(
+    `invitation_wishes?id=eq.${wishId}&demo_id=eq.${demoId}&select=id&limit=1`,
+  );
+  if (!wish) throw new MediaError(404, 'Không tìm thấy lời chúc.');
+  await supabase(`/rest/v1/invitation_wishes?id=eq.${wishId}&demo_id=eq.${demoId}`, { method: 'DELETE' });
+  return json({ ok: true });
+}
+
+async function createInvitationWishesShare(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  const [demo] = await db<Array<{ id: string }>>(`invitation_demos?id=eq.${demoId}&select=id&limit=1`);
+  if (!demo) throw new MediaError(404, 'Không tìm thấy thiệp.');
+  const token = randomUUID();
+  await supabase('/rest/v1/invitation_wish_shares?on_conflict=demo_id', {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ demo_id: demoId, token }),
+  });
+  return json({ token });
+}
+
+async function publicInvitationWishes(tokenValue: unknown) {
+  if (typeof tokenValue !== 'string' || !/^[a-f0-9-]{36}$/i.test(tokenValue)) {
+    throw new MediaError(404, 'Link xem lời chúc không hợp lệ.');
+  }
+  const [share] = await db<Array<{ demo_id: string }>>(
+    `invitation_wish_shares?token=eq.${encodeURIComponent(tokenValue.toLowerCase())}&select=demo_id&limit=1`,
+  );
+  if (!share) throw new MediaError(404, 'Link xem lời chúc không tồn tại hoặc đã được thay mới.');
+  const [[demo], wishes] = await Promise.all([
+    db<Array<{ payload: Record<string, unknown> }>>(`invitation_demos?id=eq.${share.demo_id}&select=payload&limit=1`),
+    db<Array<Record<string, unknown>>>(
+      `invitation_wishes?demo_id=eq.${share.demo_id}&select=id,guest_name,message,created_at&order=created_at.desc`,
+    ),
+  ]);
+  return json({
+    couple: `${String(demo?.payload?.brideName ?? 'Cô dâu')} & ${String(demo?.payload?.groomName ?? 'Chú rể')}`,
+    wishes: wishes.map((row) => ({
+      id: row.id, name: row.guest_name, message: row.message, submittedAt: row.created_at,
+    })),
+  });
+}
+
 function publicStudio(value: unknown) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   const config = value as Record<string, unknown>;
+  const musicUrl = config.packageTier === '109k' ? ''
+    : config.musicTrack === 'custom' ? safeMusicUrl(config.customMusicUrl)
+      : safeMusicUrl(weddingMusicTracks.find((track) => track.id === config.musicTrack)?.url);
   return {
     ...Object.fromEntries(publicStudioKeys.filter((key) => key in config).map((key) => [key, config[key]])),
+    ...(musicUrl ? { musicUrl } : {}),
     ...(Array.isArray(config.hiddenSections)
       ? { hiddenSections: config.hiddenSections.filter((section): section is string => typeof section === 'string' && invitationSections.has(section)) }
       : {}),
   };
+}
+
+function safeMusicUrl(value: unknown) {
+  if (typeof value !== 'string' || value.length > 2048) return '';
+  if (value === '/audio/Le_duong.mp3') return value;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || url.username || url.password) return '';
+    if (/\.mp3$/i.test(url.pathname)) return url.href;
+    const videoId = '[a-zA-Z0-9_-]{11}';
+    if (url.hostname === 'youtu.be' && new RegExp(`^/${videoId}$`).test(url.pathname)) return url.href;
+    if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(url.hostname)
+      && (new RegExp(`^/embed/${videoId}$`).test(url.pathname) || new RegExp(`^${videoId}$`).test(url.searchParams.get('v') ?? ''))) return url.href;
+    return '';
+  } catch {
+    return '';
+  }
 }
 
 const challengeDelay = 1500;
@@ -839,6 +1025,14 @@ export default {
         const url = new URL(request.url);
         return await publicInvitationPhoto(url.searchParams.get('slug'), url.searchParams.get('photoId'));
       }
+      if (request.method === 'GET' && action === 'invitation-rsvps-share') {
+        const url = new URL(request.url);
+        return await publicInvitationRsvps(url.searchParams.get('token'));
+      }
+      if (request.method === 'GET' && action === 'invitation-wishes-share') {
+        const url = new URL(request.url);
+        return await publicInvitationWishes(url.searchParams.get('token'));
+      }
       if (request.method !== 'POST') throw new MediaError(405, 'Phương thức không hợp lệ.');
       if (['challenge', 'init', 'complete', 'status'].includes(action ?? '')) checkUploadRequest(request);
       if (action === 'contact') throw new MediaError(403, 'Vui lòng gửi yêu cầu kèm ảnh.');
@@ -867,7 +1061,15 @@ export default {
       }
       if (action === 'demo') return await publicDemo(clean(body.token, 64));
       if (action === 'invitation') return await publicInvitation(body.slug);
+      if (action === 'submit-invitation-rsvp') return await submitInvitationRsvp(body);
+      if (action === 'submit-invitation-wish') return await submitInvitationWish(body);
       await requireAdmin(request);
+      if (action === 'invitation-rsvps-admin') return await adminInvitationRsvps(body);
+      if (action === 'delete-invitation-rsvp') return await deleteInvitationRsvp(body);
+      if (action === 'create-invitation-rsvp-share') return await createInvitationRsvpShare(body);
+      if (action === 'invitation-wishes-admin') return await adminInvitationWishes(body);
+      if (action === 'delete-invitation-wish') return await deleteInvitationWish(body);
+      if (action === 'create-invitation-wishes-share') return await createInvitationWishesShare(body);
       if (action === 'admin-photo-init') return await initAdminPhotoUpload(body);
       if (action === 'admin-photo-complete') return await completeAdminPhotoUpload(body);
       if (action === 'init-invitation-zip-update') return await initInvitationZipUpdate(body);
