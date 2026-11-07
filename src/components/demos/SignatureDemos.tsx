@@ -14,7 +14,8 @@ import {
 import { MusicPlayer } from '../MusicPlayer';
 import { weddingTemplates, type TemplateTier } from '../../data/templates';
 import type { InvitationHiddenSection } from '../../types/admin';
-import { isGroomInvitationSide, orderedInvitationNames } from '../../utils/invitationSide';
+import { isGroomInvitationSide, orderedInvitationNames, currentInvitationSide } from '../../utils/invitationSide';
+import { buildVietQrUrl, isValidWeddingQrAccount, type WeddingQrAccount, type WeddingQrAccounts } from '../../data/vietQr';
 import {
   VIETNAM_WEDDING_THEMES,
   type VietnamWeddingTheme,
@@ -53,6 +54,8 @@ export interface SignatureDemoCustomization {
   fontStyle?: SignatureFont;
   musicUrl?: string;
   videoLink?: string;
+  qrSeparateSides?: boolean;
+  qrAccounts?: WeddingQrAccounts;
   hero?: string;
   heroPosition?: string;
   mainPhoto?: string;
@@ -82,6 +85,7 @@ interface SignatureDemoProps {
   customization?: SignatureDemoCustomization;
   embedded?: boolean;
   showMusicPlayer?: boolean;
+  startMusicOnFirstInteraction?: boolean;
   staticExport?: boolean;
   guestName?: string;
   guestGreeting?: 'formal' | 'friendly';
@@ -332,6 +336,53 @@ function GuestBook({ couple, onSubmit }: { couple: string; onSubmit?: (payload: 
   );
 }
 
+function DemoQrImage({ account }: { account?: WeddingQrAccount }) {
+  const qrUrl = isValidWeddingQrAccount(account) ? buildVietQrUrl(account) : '';
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => setFailed(false), [qrUrl]);
+
+  return (
+    <div className="signature-qr" aria-label={qrUrl && !failed ? 'Mã QR chuyển khoản' : 'Mã QR minh họa'}>
+      {qrUrl && !failed
+        ? <img src={qrUrl} alt="Mã QR chuyển khoản qua VietQR" loading="lazy" onError={() => setFailed(true)} />
+        : <svg viewBox="0 0 100 100" role="img" aria-hidden="true">
+          <rect width="100" height="100" rx="5" fill="white" />
+          <path d="M6 6h30v30H6zM12 12v18h18V12zM64 6h30v30H64zM70 12v18h18V12zM6 64h30v30H6zM12 70v18h18V70z" fill="currentColor" fillRule="evenodd" />
+          <path d="M44 8h8v8h-8zM48 22h12v8H48zM42 40h8v8h-8zM56 40h8v8h-8zM72 42h8v8h-8zM40 56h10v8H40zM56 54h8v12h-8zM70 58h10v8H70zM88 46h8v8h-8zM42 74h8v8h-8zM56 72h8v8h-8zM70 72h8v8h-8zM84 82h12v10H84zM54 88h10v8H54z" fill="currentColor" />
+        </svg>}
+    </div>
+  );
+}
+
+function SignatureGiftCard({ account, title }: { account?: WeddingQrAccount; title: string }) {
+  const hasAccountDetails = Boolean(account && (account.bankName || account.accountNumber || account.accountName));
+  const isConfigured = isValidWeddingQrAccount(account);
+  const amountLabel = account?.amount
+    ? new Intl.NumberFormat('vi-VN').format(account.amount)
+    : '';
+  return (
+    <div className="signature-gift-card">
+      <SmallLabel>A LITTLE WISH</SmallLabel>
+      <h2>Gửi lời chúc &amp; mừng cưới</h2>
+      <p>{title}</p>
+      <DemoQrImage account={account} />
+      {hasAccountDetails && <dl className="signature-gift-card__account">
+        {account?.bankName && <div><dt>Ngân hàng</dt><dd>{account.bankName}</dd></div>}
+        {account?.accountNumber && <div><dt>Số tài khoản</dt><dd>{account.accountNumber}</dd></div>}
+        {account?.accountName && <div><dt>Chủ tài khoản</dt><dd>{account.accountName}</dd></div>}
+        {account?.memo && <div><dt>Nội dung</dt><dd>{account.memo}</dd></div>}
+        {amountLabel && <div><dt>Số tiền</dt><dd>{amountLabel} ₫</dd></div>}
+      </dl>}
+      <span className="signature-demo-note">{isConfigured
+        ? 'VietQR · Kiểm tra thông tin trước khi chuyển khoản'
+        : hasAccountDetails
+          ? 'QR demo không quét được · vui lòng dùng thông tin tài khoản'
+          : 'QR DEMO · KHÔNG DÙNG ĐỂ CHUYỂN KHOẢN'}</span>
+    </div>
+  );
+}
+
 function replyDeadline(dateValue: string) {
   const deadline = new Date(`${dateValue}T00:00:00`);
   deadline.setDate(deadline.getDate() - 14);
@@ -377,6 +428,7 @@ export function SignatureDemo({
   customization,
   embedded = false,
   showMusicPlayer = false,
+  startMusicOnFirstInteraction = false,
   staticExport = false,
   guestName,
   guestGreeting = 'formal',
@@ -418,6 +470,16 @@ export function SignatureDemo({
   const premium = demo.tier !== '109k';
   const diamond = demo.tier === '199k';
   const isSectionVisible = (section: InvitationHiddenSection) => !customization?.hiddenSections?.includes(section);
+  const qrSide = currentInvitationSide();
+  const giftCards: Array<{ key: 'shared' | 'groom' | 'bride'; title: string; account?: WeddingQrAccount }> =
+    customization?.qrSeparateSides
+      ? qrSide
+        ? [{ key: qrSide, title: qrSide === 'groom' ? 'Mã mừng cưới nhà trai' : 'Mã mừng cưới nhà gái', account: customization.qrAccounts?.[qrSide] }]
+        : [
+          { key: 'groom', title: 'Mã mừng cưới nhà trai', account: customization.qrAccounts?.groom },
+          { key: 'bride', title: 'Mã mừng cưới nhà gái', account: customization.qrAccounts?.bride },
+        ]
+      : [{ key: 'shared', title: 'Mã mừng cưới dùng chung', account: customization?.qrAccounts?.shared }];
   const visibleExtraCount = Number(diamond && isSectionVisible('video'))
     + Number(diamond && isSectionVisible('qr'))
     + Number(diamond && isSectionVisible('guestbook'));
@@ -477,7 +539,7 @@ export function SignatureDemo({
 
   return (
     <main className={appearanceClasses}>
-      {(!embedded || showMusicPlayer) && <MusicPlayer autoPlay={false} showVolumeControl={diamond} allowCustomMusic={premium} musicUrl={premium ? customization?.musicUrl : undefined} />}
+      {(!embedded || showMusicPlayer) && <MusicPlayer autoPlay={false} startOnFirstInteraction={startMusicOnFirstInteraction} showVolumeControl={diamond} allowCustomMusic={premium} musicUrl={premium ? customization?.musicUrl : undefined} />}
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
         <a className="signature-nav__monogram" href="#trang-chu" aria-label={`Đầu thiệp ${orderedHeaderMonogramText || couple}`}>
@@ -652,19 +714,7 @@ export function SignatureDemo({
                 <div><SmallLabel>OUR MOMENTS</SmallLabel><h2>Một câu chuyện bằng những khung hình</h2></div>
               </>}
           </div>}
-          {isSectionVisible('qr') && <div className="signature-gift-card">
-            <SmallLabel>A LITTLE WISH</SmallLabel>
-            <h2>Gửi lời chúc &amp; mừng cưới</h2>
-            <p>Nếu muốn gửi lời chúc, bạn có thể dùng mã QR mô phỏng trong bản demo này.</p>
-            <div className="signature-qr" aria-label="Mã QR minh họa, không dùng để thanh toán">
-              <svg viewBox="0 0 100 100" role="img" aria-hidden="true">
-                <rect width="100" height="100" rx="5" fill="white" />
-                <path d="M6 6h30v30H6zM12 12v18h18V12zM64 6h30v30H64zM70 12v18h18V12zM6 64h30v30H6zM12 70v18h18V70z" fill="currentColor" fillRule="evenodd" />
-                <path d="M44 8h8v8h-8zM48 22h12v8H48zM42 40h8v8h-8zM56 40h8v8h-8zM72 42h8v8h-8zM40 56h10v8H40zM56 54h8v12h-8zM70 58h10v8H70zM88 46h8v8h-8zM42 74h8v8h-8zM56 72h8v8h-8zM70 72h8v8h-8zM84 82h12v10H84zM54 88h10v8H54z" fill="currentColor" />
-              </svg>
-            </div>
-            <span className="signature-demo-note">QR DEMO · KHÔNG DÙNG ĐỂ THANH TOÁN</span>
-          </div>}
+          {isSectionVisible('qr') && giftCards.map((card) => <SignatureGiftCard key={card.key} account={card.account} title={card.title} />)}
           {isSectionVisible('guestbook') && <GuestBook couple={couple} onSubmit={onWishSubmit} />}
         </section>
       )}

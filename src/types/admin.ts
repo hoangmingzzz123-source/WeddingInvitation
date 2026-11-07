@@ -1,4 +1,5 @@
 import type { WeddingMusicTrackId } from '../data/weddingMusic';
+import type { WeddingQrAccounts } from '../data/vietQr';
 
 export type CustomerStatus = 'new' | 'contacted' | 'demo_ready' | 'confirmed' | 'completed';
 
@@ -52,6 +53,8 @@ export interface InvitationStudioConfig {
   customMusicUrl?: string;
   musicUrl?: string;
   videoLink?: string;
+  qrSeparateSides?: boolean;
+  qrAccounts?: WeddingQrAccounts;
   guests: Array<{ id: string; name: string; greeting: 'formal' | 'friendly' }>;
   rsvpQuestions: Array<'transport' | 'meal'>;
 }

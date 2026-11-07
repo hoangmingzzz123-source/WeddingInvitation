@@ -111,6 +111,8 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
       ? undefined
       : studio?.musicUrl ?? weddingMusicUrlForTrack(studio?.musicTrack, studio?.customMusicUrl),
     videoLink: studio?.videoLink,
+    qrSeparateSides: studio?.qrSeparateSides,
+    qrAccounts: studio?.qrAccounts,
     hero: cover?.url ?? payload.coverUrl,
     heroPosition: cover ? position(cover) : undefined,
     mainPhoto: mainPhoto?.url,

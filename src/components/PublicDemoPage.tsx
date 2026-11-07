@@ -93,6 +93,8 @@ export function PublicDemoPage({ token }: { token: string }) {
       ? undefined
       : studio?.musicUrl ?? weddingMusicUrlForTrack(studio?.musicTrack, studio?.customMusicUrl),
     videoLink: studio?.videoLink,
+    qrSeparateSides: studio?.qrSeparateSides,
+    qrAccounts: studio?.qrAccounts,
     hero: cover?.url ?? payload?.coverUrl,
     heroPosition: cover ? photoPosition(cover) : undefined,
     mainPhoto: mainPhoto?.url,
@@ -135,6 +137,7 @@ export function PublicDemoPage({ token }: { token: string }) {
             rsvpQuestions={studio?.rsvpQuestions ?? []}
             embedded
             showMusicPlayer
+            startMusicOnFirstInteraction
           />
         </div>}
 

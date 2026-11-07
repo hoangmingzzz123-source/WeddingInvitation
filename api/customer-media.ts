@@ -3,6 +3,7 @@ import { unzipSync } from 'fflate';
 import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
 import { checkDrive, syncDrive, cleanupUploads, deleteDriveCustomer } from '../server/driveSync.js';
 import { isSupportedWeddingMusicUrl, weddingMusicTracks } from '../src/data/weddingMusic.js';
+import { sanitizeWeddingQrAccounts } from '../src/data/vietQr.js';
 
 const MiB = 1024 * 1024;
 const formats: Record<string, [string, string]> = {
@@ -18,7 +19,7 @@ const uuid = (value: unknown) => {
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const flag = (name: string) => process.env[name] === 'true';
-const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTime', 'receptionTime', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideCeremonyTime', 'brideReceptionTime', 'brideHeroKicker', 'brideAddress', 'brideReceptionAddress', 'brideVenue', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomCeremonyTime', 'groomReceptionTime', 'groomHeroKicker', 'groomAddress', 'groomReceptionAddress', 'groomVenue', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions'];
+const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTime', 'receptionTime', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideCeremonyTime', 'brideReceptionTime', 'brideHeroKicker', 'brideAddress', 'brideReceptionAddress', 'brideVenue', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomCeremonyTime', 'groomReceptionTime', 'groomHeroKicker', 'groomAddress', 'groomReceptionAddress', 'groomVenue', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions', 'qrSeparateSides'];
 const invitationSections = new Set(['story', 'events', 'timeline', 'album', 'video', 'qr', 'guestbook', 'venue', 'rsvp']);
 const templateMimeTypes: Record<string, string> = {
   html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'application/javascript; charset=utf-8',
@@ -677,8 +678,10 @@ function publicStudio(value: unknown) {
     : config.musicTrack === 'custom' ? safeMusicUrl(config.customMusicUrl)
       : safeMusicUrl(weddingMusicTracks.find((track) => track.id === config.musicTrack)?.url);
   const videoLink = safeVideoUrl(config.videoLink);
+  const qrAccounts = sanitizeWeddingQrAccounts(config.qrAccounts);
   return {
     ...Object.fromEntries(publicStudioKeys.filter((key) => key in config).map((key) => [key, config[key]])),
+    ...(qrAccounts ? { qrAccounts } : {}),
     ...(musicUrl ? { musicUrl } : {}),
     ...(videoLink ? { videoLink } : {}),
     ...(Array.isArray(config.hiddenSections)

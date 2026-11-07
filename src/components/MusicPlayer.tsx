@@ -7,6 +7,7 @@ import { defaultWeddingMusicUrl, isSupportedWeddingMusicUrl, weddingMusicTracks 
 
 interface MusicPlayerProps {
   autoPlay?: boolean;
+  startOnFirstInteraction?: boolean;
   showVolumeControl?: boolean; // For 199k package
   allowCustomMusic?: boolean; // For 159k and 199k packages
   musicUrl?: string;
@@ -14,6 +15,7 @@ interface MusicPlayerProps {
 
 export function MusicPlayer({ 
   autoPlay = true, 
+  startOnFirstInteraction = false,
   showVolumeControl = false,
   allowCustomMusic = false,
   musicUrl: selectedMusicUrl,
@@ -78,6 +80,26 @@ export function MusicPlayer({
       if (audioRef.current === audio) audioRef.current = null;
     };
   }, [customMusicUrl, defaultMusicUrl]);
+
+  useEffect(() => {
+    if (!startOnFirstInteraction || autoPlay) return;
+    const startPlayback = () => {
+      document.removeEventListener('click', startPlayback, true);
+      const audio = audioRef.current;
+      if (!audio || !audio.paused) return;
+      void audio.play()
+        .then(() => {
+          setIsPlaying(true);
+          setPlaybackMessage('');
+        })
+        .catch((error: unknown) => {
+          setIsPlaying(false);
+          setPlaybackMessage(error instanceof Error ? `Không phát được nhạc: ${error.message}` : 'Không phát được nhạc đã chọn.');
+        });
+    };
+    document.addEventListener('click', startPlayback, true);
+    return () => document.removeEventListener('click', startPlayback, true);
+  }, [autoPlay, startOnFirstInteraction, defaultMusicUrl, customMusicUrl]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;

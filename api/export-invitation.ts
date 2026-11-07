@@ -3,6 +3,7 @@ import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, MediaError, db, selectedPhotos, sign
 import { renderSignatureInvitation } from '../server/signatureExport.js';
 import { weddingTemplates } from '../src/data/templates.js';
 import { weddingMusicTracks } from '../src/data/weddingMusic.js';
+import { sanitizeWeddingQrAccounts } from '../src/data/vietQr.js';
 import type { SignatureDemoCustomization, SignatureRsvpQuestion } from '../src/components/demos/SignatureDemos.js';
 
 type JsonRecord = Record<string, unknown>;
@@ -239,6 +240,8 @@ async function buildSignatureTemplateFiles(customer: JsonRecord, demo: JsonRecor
     fontStyle: studio.packageTier === '109k' ? 'editorial' : ['editorial', 'modern', 'classic'].includes(String(studio.fontStyle)) ? studio.fontStyle as SignatureDemoCustomization['fontStyle'] : undefined,
     musicUrl,
     videoLink: safeUrl(studio.videoLink),
+    qrSeparateSides: studio.qrSeparateSides === true,
+    qrAccounts: sanitizeWeddingQrAccounts(studio.qrAccounts),
     hero: cover?.src ?? safeUrl(payload.coverUrl || customer.cover_url),
     heroPosition: cover ? position(cover) : undefined,
     mainPhoto: mainPhoto?.src,

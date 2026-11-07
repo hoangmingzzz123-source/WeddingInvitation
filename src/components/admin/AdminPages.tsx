@@ -32,6 +32,13 @@ import { weddingTemplates } from '../../data/templates';
 import { weddingPackages } from '../../data/packages';
 import { isSupportedWeddingMusicUrl, weddingMusicTracks, weddingMusicUrlForTrack } from '../../data/weddingMusic';
 import {
+  emptyWeddingQrAccount,
+  isValidWeddingQrAccount,
+  vietQrBanks,
+  weddingQrAccountHasDetails,
+  type WeddingQrAccount,
+} from '../../data/vietQr';
+import {
   clearAdminSession,
   createCustomer,
   createDemo,
@@ -162,6 +169,12 @@ const defaultStudioConfig: InvitationStudioConfig = {
   musicTrack: 'default',
   customMusicUrl: '',
   videoLink: '',
+  qrSeparateSides: false,
+  qrAccounts: {
+    shared: emptyWeddingQrAccount(),
+    groom: emptyWeddingQrAccount(),
+    bride: emptyWeddingQrAccount(),
+  },
   guests: [],
   rsvpQuestions: [],
 };
@@ -169,6 +182,80 @@ const defaultStudioConfig: InvitationStudioConfig = {
 function musicUrlForStudio(config: InvitationStudioConfig) {
   if (config.packageTier === '109k') return undefined;
   return weddingMusicUrlForTrack(config.musicTrack, config.customMusicUrl);
+}
+
+function weddingQrAccountError(account: WeddingQrAccount) {
+  if (!weddingQrAccountHasDetails(account)) return '';
+  if (!vietQrBanks.some((bank) => bank.bankName === account.bankName && bank.bankBin === account.bankBin)) {
+    return 'Hãy chọn ngân hàng trong danh sách để tự điền BIN.';
+  }
+  if (!/^\d{1,19}$/.test(account.accountNumber)) return 'Số tài khoản cần có từ 1 đến 19 chữ số.';
+  if (!account.accountName || account.accountName.length > 70 || !/^[\x20-\x7E]+$/.test(account.accountName)) {
+    return 'Tên chủ tài khoản cần có ký tự ASCII, không dấu (tối đa 70 ký tự).';
+  }
+  if (!account.memo.trim()) return 'Nội dung chuyển khoản không được để trống.';
+  if (account.memo.length > 25) return 'Nội dung chuyển khoản tối đa 25 ký tự.';
+  if (account.amount !== undefined && (!Number.isSafeInteger(account.amount) || account.amount <= 0)) {
+    return 'Số tiền phải là số nguyên dương.';
+  }
+  return isValidWeddingQrAccount(account) ? '' : 'Thông tin tài khoản chưa hợp lệ.';
+}
+
+function normalizeWeddingQrAccount(value?: Partial<WeddingQrAccount>): WeddingQrAccount {
+  const defaults = emptyWeddingQrAccount();
+  return {
+    bankName: typeof value?.bankName === 'string' ? value.bankName : defaults.bankName,
+    bankBin: typeof value?.bankBin === 'string' ? value.bankBin : defaults.bankBin,
+    accountNumber: typeof value?.accountNumber === 'string' ? value.accountNumber : defaults.accountNumber,
+    accountName: typeof value?.accountName === 'string' ? value.accountName : defaults.accountName,
+    memo: typeof value?.memo === 'string' ? value.memo : defaults.memo,
+    ...(typeof value?.amount === 'number' ? { amount: value.amount } : {}),
+  };
+}
+
+function WeddingQrAccountFields({
+  idPrefix,
+  title,
+  account,
+  onChange,
+}: {
+  idPrefix: string;
+  title: string;
+  account: WeddingQrAccount;
+  onChange: (account: WeddingQrAccount) => void;
+}) {
+  const bank = vietQrBanks.find((item) => item.bankName === account.bankName);
+  const update = (key: keyof WeddingQrAccount, value: string | number | undefined) => {
+    onChange({ ...account, [key]: value });
+  };
+  const updateBank = (value: string) => {
+    const selected = vietQrBanks.find((item) => item.bankName.toLocaleLowerCase() === value.trim().toLocaleLowerCase());
+    onChange({ ...account, bankName: selected?.bankName ?? value, bankBin: selected?.bankBin ?? '' });
+  };
+  const error = weddingQrAccountError(account);
+
+  return (
+    <fieldset className="admin-studio-family-fields admin-studio-qr-account">
+      <legend>{title}</legend>
+      <div>
+        <label>Ngân hàng
+          <input list={`${idPrefix}-bank-list`} value={account.bankName} onChange={(event) => updateBank(event.target.value)} placeholder="Tìm hoặc chọn ngân hàng" autoComplete="off" />
+          <datalist id={`${idPrefix}-bank-list`}>
+            {vietQrBanks.map((item) => <option key={item.bankBin} value={item.bankName}>{item.bankBin}</option>)}
+          </datalist>
+        </label>
+        <label>Bank BIN<input value={bank?.bankBin ?? ''} readOnly placeholder="Tự điền theo ngân hàng" /></label>
+        <label>Số tài khoản<input inputMode="numeric" autoComplete="off" value={account.accountNumber} maxLength={19}
+          onChange={(event) => update('accountNumber', event.target.value.replace(/\D/g, '').slice(0, 19))} /></label>
+        <label>Tên chủ tài khoản<input value={account.accountName} maxLength={70} onChange={(event) => update('accountName', event.target.value)} placeholder="Ví dụ: NGUYEN VAN A" />
+          <small>Dùng ký tự ASCII, không dấu theo yêu cầu của VietQR.</small></label>
+        <label className="is-wide">Nội dung chuyển khoản<input value={account.memo} maxLength={25} onChange={(event) => update('memo', event.target.value)} placeholder="Mung cuoi" /></label>
+        <label>Số tiền (tùy chọn)<input type="number" min={1} step={1} value={account.amount ?? ''}
+          onChange={(event) => update('amount', event.target.value ? Number(event.target.value) : undefined)} /></label>
+        {error && <small className="admin-studio-editor__error is-wide" role="alert">{error}</small>}
+      </div>
+    </fieldset>
+  );
 }
 
 function AdminStudioEditor({
@@ -203,9 +290,10 @@ function AdminStudioEditor({
   const [step, setStep] = useState(0);
   const [guestName, setGuestName] = useState('');
   const [templateError, setTemplateError] = useState('');
+  const [qrError, setQrError] = useState('');
   const studioSteps = [
     'Chọn mẫu', 'Chọn gói', 'Đôi bạn', 'Thời gian', 'Địa điểm', 'Nội dung', 'Ảnh & album',
-    config.packageTier === '109k' ? 'RSVP cơ bản' : 'Khách mời & RSVP', 'Phong cách', 'Nhạc nền', 'Xem lại',
+    config.packageTier === '109k' ? 'RSVP cơ bản' : 'Khách mời & RSVP', 'Phong cách', 'Nhạc nền', 'QR mừng cưới', 'Xem lại',
   ];
   const studioStepDetails = [
     ['Chọn mẫu thiệp', 'Chọn thiết kế trước; mẫu sẽ đề xuất gói phù hợp để bạn bắt đầu.'],
@@ -220,6 +308,7 @@ function AdminStudioEditor({
       : 'Thêm khách để tạo lời mời riêng và chọn thông tin cần hỏi trong RSVP.'],
     ['Hoàn thiện phong cách', 'Tùy chỉnh bảng màu và kiểu chữ theo quyền lợi của gói.'],
     ['Chọn nhạc nền', config.packageTier === '109k' ? 'Gói Basic sử dụng nhạc nền mặc định.' : 'Chọn nhạc MP3 có sẵn hoặc thêm link MP3 riêng.'],
+    ['Thiết lập QR mừng cưới', 'Chọn một tài khoản dùng chung hoặc điền riêng tài khoản nhà trai và nhà gái. QR chỉ hiển thị trong gói Diamond.'],
     ['Rà soát cấu hình', 'Kiểm tra nội dung, ảnh, các phần theo mẫu và quyền lợi gói trước khi lưu.'],
   ] as const;
   const selectedTemplate = weddingTemplates.find((template) => template.id === customer.selectedTemplateId);
@@ -248,6 +337,25 @@ function AdminStudioEditor({
       id: crypto.randomUUID(), name, greeting: 'friendly',
     }]);
     setGuestName('');
+  };
+  const updateQrAccount = (key: 'shared' | 'groom' | 'bride', account: WeddingQrAccount) => {
+    setQrError('');
+    updateConfig('qrAccounts', { ...config.qrAccounts, [key]: account });
+  };
+  const handleSave = () => {
+    if (config.packageTier === '199k' && !config.hiddenSections?.includes('qr')) {
+      const accounts = config.qrSeparateSides
+        ? [config.qrAccounts.groom, config.qrAccounts.bride]
+        : [config.qrAccounts.shared];
+      const invalid = accounts.map(weddingQrAccountError).find(Boolean);
+      if (invalid) {
+        setQrError(invalid);
+        setStep(10);
+        return;
+      }
+    }
+    setQrError('');
+    onSave();
   };
 
   return (
@@ -411,12 +519,30 @@ function AdminStudioEditor({
             {config.customMusicUrl?.trim() && !isSupportedWeddingMusicUrl(config.customMusicUrl) && <small role="alert" className="admin-studio-editor__error">Link chưa được hỗ trợ. Hãy dùng URL file .mp3 HTTPS.</small>}</label>}
           <p className="admin-studio-editor__hint is-wide">Nhạc được lưu vào cấu hình và phát trên thiệp đã xuất bản. Trình duyệt có thể yêu cầu khách bấm nút phát.</p>
         </div>)}
-        {step === 10 && <dl className="admin-studio-review">
+        {step === 10 && <div className="admin-form-grid admin-studio-qr">
+          {config.packageTier !== '199k' && <p className="admin-studio-editor__hint is-wide">Phần QR mừng cưới chỉ hiển thị trên thiệp thuộc gói Diamond (199k). Cấu hình có thể lưu trước và sẽ được dùng khi chọn gói này.</p>}
+          <fieldset className="admin-studio-sections is-wide"><legend>Chia thiệp theo hai bên</legend><div>
+            <label><input type="checkbox" checked={config.qrSeparateSides}
+              onChange={(event) => { updateConfig('qrSeparateSides', event.target.checked); setQrError(''); }} />
+              <span>2 thiệp · dùng tài khoản QR riêng cho nhà trai và nhà gái</span></label>
+          </div></fieldset>
+          {config.qrSeparateSides ? <>
+            <WeddingQrAccountFields idPrefix="groom-qr" title="Tài khoản QR nhà trai" account={config.qrAccounts.groom}
+              onChange={(account) => updateQrAccount('groom', account)} />
+            <WeddingQrAccountFields idPrefix="bride-qr" title="Tài khoản QR nhà gái" account={config.qrAccounts.bride}
+              onChange={(account) => updateQrAccount('bride', account)} />
+          </> : <WeddingQrAccountFields idPrefix="shared-qr" title="Tài khoản QR dùng chung" account={config.qrAccounts.shared}
+            onChange={(account) => updateQrAccount('shared', account)} />}
+          <p className="admin-studio-editor__hint is-wide">Chưa nhập tài khoản thì thiệp dùng QR demo như hiện tại. Nếu VietQR không tải được, ảnh demo sẽ thay thế và thông tin tài khoản vẫn hiển thị.</p>
+          {qrError && <p className="admin-studio-editor__error is-wide" role="alert">{qrError}</p>}
+        </div>}
+        {step === 11 && <dl className="admin-studio-review">
           <div><dt>Đôi bạn</dt><dd>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</dd></div>
           <div><dt>Thời gian</dt><dd>{customer.weddingDate || 'Chưa chọn ngày'} · Lễ {config.ceremonyTime || customer.weddingTime || '18:00'} · Đón khách {config.receptionTime || customer.weddingTime || '18:00'}</dd></div>
           <div><dt>Địa điểm</dt><dd>{customer.venue || 'Chưa thêm địa điểm'} · {customer.address}</dd></div>
           <div><dt>Thiết kế</dt><dd>{selectedTemplateName} · {selectedPackage.name} · {config.theme}{config.packageTier !== '109k' ? ` · ${config.fontStyle}` : ''}</dd></div>
           <div><dt>Nhạc nền</dt><dd>{config.packageTier === '109k' || config.musicTrack === 'default' ? 'Mặc định' : config.musicTrack === 'custom' ? config.customMusicUrl || 'Link riêng chưa nhập' : weddingMusicTracks.find((track) => track.id === config.musicTrack)?.label ?? 'Mặc định'}</dd></div>
+          <div><dt>QR mừng cưới</dt><dd>{config.packageTier !== '199k' || config.hiddenSections?.includes('qr') ? 'Không hiển thị theo gói/cấu hình' : config.qrSeparateSides ? 'Tài khoản riêng nhà trai và nhà gái' : weddingQrAccountHasDetails(config.qrAccounts.shared) ? 'Một tài khoản dùng chung' : 'QR demo'}</dd></div>
           <div><dt>Các phần trong gói</dt><dd>{selectedPackage.features.join(' · ')}</dd></div>
           <div><dt>Ảnh</dt><dd>{mediaCount} ảnh đã chọn</dd></div>
           <div><dt>Khách mời &amp; RSVP</dt><dd>{config.packageTier === '109k' ? 'RSVP Có / Không' : `${config.guests.length} khách · ${config.rsvpQuestions.length} câu hỏi thêm`}</dd></div>
@@ -431,7 +557,7 @@ function AdminStudioEditor({
         <button type="button" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}><ArrowLeft aria-hidden="true" /> Trước</button>
         {step < studioSteps.length - 1
           ? <button type="button" className="is-primary" onClick={() => setStep((current) => Math.min(studioSteps.length - 1, current + 1))}>Tiếp theo <ArrowRight aria-hidden="true" /></button>
-          : <button type="button" className="is-primary" onClick={onSave} disabled={saving}><Save aria-hidden="true" /> {saving ? 'Đang lưu...' : 'Lưu cấu hình vào demo'}</button>}
+          : <button type="button" className="is-primary" onClick={handleSave} disabled={saving}><Save aria-hidden="true" /> {saving ? 'Đang lưu...' : 'Lưu cấu hình vào demo'}</button>}
       </footer>
     </section>
   );
@@ -922,6 +1048,8 @@ export function AdminDashboardPage() {
     fontStyle: studioConfig.packageTier === '109k' ? 'editorial' : studioConfig.fontStyle,
     musicUrl: musicUrlForStudio(studioConfig),
     videoLink: studioConfig.videoLink,
+    qrSeparateSides: studioConfig.qrSeparateSides,
+    qrAccounts: studioConfig.qrAccounts,
     hero: (studioCover?.url ?? editor.coverUrl) || undefined,
     heroPosition: studioCover ? photoPosition(studioCover) : undefined,
     mainPhoto: studioMainPhoto?.url,
@@ -1034,6 +1162,12 @@ export function AdminDashboardPage() {
       signatureText: savedConfig.signatureText || defaultStudioConfig.signatureText,
       guests: Array.isArray(savedConfig.guests) ? savedConfig.guests : [],
       rsvpQuestions: Array.isArray(savedConfig.rsvpQuestions) ? savedConfig.rsvpQuestions : [],
+      qrSeparateSides: savedConfig.qrSeparateSides === true,
+      qrAccounts: {
+        shared: normalizeWeddingQrAccount(savedConfig.qrAccounts?.shared),
+        groom: normalizeWeddingQrAccount(savedConfig.qrAccounts?.groom),
+        bride: normalizeWeddingQrAccount(savedConfig.qrAccounts?.bride),
+      },
       ceremonyTime: savedConfig.ceremonyTime || selectedCustomer.weddingTime || '',
       receptionTime: savedConfig.receptionTime || selectedCustomer.weddingTime || '',
     } : {
@@ -1110,8 +1244,18 @@ export function AdminDashboardPage() {
     }
   };
 
+  const activeQrConfigurationError = () => {
+    if (studioConfig.packageTier !== '199k' || studioConfig.hiddenSections?.includes('qr')) return '';
+    const accounts = studioConfig.qrSeparateSides
+      ? [studioConfig.qrAccounts.groom, studioConfig.qrAccounts.bride]
+      : [studioConfig.qrAccounts.shared];
+    return accounts.map(weddingQrAccountError).find(Boolean) ?? '';
+  };
+
   const publishDemo = async () => {
     if (!session || !selectedCustomer || mediaSelection?.customerId !== selectedCustomer.id || publishing.current) return;
+    const qrError = activeQrConfigurationError();
+    if (qrError) { setError(qrError); return; }
     if (!editor.selectedTemplateId) {
       setError('Hãy chọn mẫu thiệp trước khi tạo demo.');
       return;
@@ -1175,6 +1319,8 @@ export function AdminDashboardPage() {
 
   const saveStudioConfig = async () => {
     if (!session || !selectedCustomer || actionLoading) return;
+    const qrError = activeQrConfigurationError();
+    if (qrError) { setError(qrError); return; }
     const demo = customerDemos[0];
     if (!demo) {
       await publishDemo();
@@ -1226,6 +1372,8 @@ export function AdminDashboardPage() {
 
   const saveCurrentDemoSettings = async (activeSession: AdminSession, demo: InvitationDemoRecord) => {
     if (!selectedCustomer) return;
+    const qrError = activeQrConfigurationError();
+    if (qrError) throw new Error(qrError);
     const photos = mediaSelection?.customerId === selectedCustomer.id
       ? demoPhotos.map(({ url: _url, ...photo }) => photo)
       : demo.payload.photos ?? [];

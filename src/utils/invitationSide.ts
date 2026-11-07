@@ -24,8 +24,15 @@ export function isGroomInvitationSide(sideValue = currentSideValue()) {
   return groomSides.has(sideValue.trim().toLowerCase());
 }
 
+export function currentInvitationSide(sideValue = currentSideValue()): 'groom' | 'bride' | null {
+  const normalizedSide = sideValue.trim().toLowerCase();
+  if (groomSides.has(normalizedSide)) return 'groom';
+  if (brideSides.has(normalizedSide)) return 'bride';
+  return null;
+}
+
 export function orderedInvitationNames(bride: string, groom: string, sideValue = currentSideValue()): [string, string] {
-  return isGroomInvitationSide(sideValue) ? [groom, bride] : [bride, groom];
+  return currentInvitationSide(sideValue) === 'groom' ? [groom, bride] : [bride, groom];
 }
 
 export function resolveInvitationSide(
