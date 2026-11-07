@@ -375,7 +375,8 @@ export function SignatureDemo({
   const [isSubmittingRsvp, setIsSubmittingRsvp] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const [lightbox, setLightbox] = useState<number | null>(null);
-  const mapQuery = encodeURIComponent(`${demo.venue}, ${customization?.receptionAddress || demo.address}, ${demo.city}`);
+  const mapAddress = customization?.receptionAddress || demo.address || demo.venue;
+  const mapQuery = encodeURIComponent([mapAddress, demo.city].filter(Boolean).join(', '));
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
   const couple = `${demo.bride} & ${demo.groom}`;
@@ -623,7 +624,7 @@ export function SignatureDemo({
           </div>
         </div>
         <div className="signature-venue__map">
-          <iframe title={`Bản đồ đến ${demo.venue}`} src={`https://www.google.com/maps?q=${mapQuery}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+          <iframe title={`Bản đồ đến ${mapAddress}`} src={`https://www.google.com/maps?q=${mapQuery}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
           <span><MapPin aria-hidden="true" /> {demo.city}</span>
         </div>
       </section>}
