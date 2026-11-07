@@ -30,6 +30,7 @@ export function MusicPlayer({
   const [randomMusic, setRandomMusic] = useState<string>('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const youtubeCommandTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Random select music on mount
   useEffect(() => {
@@ -62,17 +63,17 @@ export function MusicPlayer({
     // Check if it's a YouTube link
     const ytId = youtubeVideoIdFromUrl(musicUrl);
     if (ytId) {
+      audioRef.current?.pause();
+      audioRef.current = null;
       setIsYouTube(true);
       setYoutubeEmbedId(ytId);
-      // Auto play YouTube after iframe loads
-      if (autoPlay) {
-        setTimeout(() => setIsPlaying(true), 1000);
-      }
+      setIsPlaying(false);
       return;
     }
 
     // For regular audio files
     setIsYouTube(false);
+    setYoutubeEmbedId('');
     
     // Create audio element
     audioRef.current = new Audio();
@@ -97,15 +98,26 @@ export function MusicPlayer({
     };
   }, [customMusicUrl, defaultMusicUrl]);
 
+  useEffect(() => () => {
+    if (youtubeCommandTimeoutRef.current) clearTimeout(youtubeCommandTimeoutRef.current);
+  }, [youtubeEmbedId]);
+
   const togglePlay = () => {
     // For YouTube player
     if (isYouTube && iframeRef.current) {
       const iframe = iframeRef.current;
       if (isPlaying) {
+        if (youtubeCommandTimeoutRef.current) clearTimeout(youtubeCommandTimeoutRef.current);
         iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
         setIsPlaying(false);
       } else {
-        iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        let attempts = 0;
+        const sendPlayCommand = () => {
+          iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+          attempts += 1;
+          if (attempts < 10) youtubeCommandTimeoutRef.current = setTimeout(sendPlayCommand, 300);
+        };
+        sendPlayCommand();
         setIsPlaying(true);
       }
       return;
@@ -326,9 +338,10 @@ export function MusicPlayer({
       {isYouTube && youtubeEmbedId && (
         <iframe
           ref={iframeRef}
-          style={{ display: 'none' }}
-          src={`https://www.youtube.com/embed/${youtubeEmbedId}?enablejsapi=1&autoplay=${autoPlay ? 1 : 0}&loop=1&playlist=${youtubeEmbedId}`}
-          allow="autoplay; encrypted-media"
+          title="Nhạc nền YouTube"
+          style={{ position: 'fixed', right: 0, bottom: 0, width: 200, height: 113, border: 0, opacity: 0.01, pointerEvents: 'none', zIndex: -1 }}
+          src={`https://www.youtube.com/embed/${youtubeEmbedId}?enablejsapi=1&autoplay=0&loop=1&playlist=${youtubeEmbedId}&origin=${encodeURIComponent(window.location.origin)}`}
+          allow="autoplay; encrypted-media; picture-in-picture"
         />
       )}
     </div>
