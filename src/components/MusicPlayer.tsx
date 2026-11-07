@@ -33,6 +33,14 @@ interface YouTubeIframeApi {
   ) => YouTubePlayer;
 }
 
+function isMobileSafari() {
+  const userAgent = navigator.userAgent;
+  const isAppleMobile = /iPad|iPhone|iPod/.test(userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isOtherIOSBrowser = /CriOS|FxiOS|EdgiOS|OPiOS/.test(userAgent);
+  return isAppleMobile && !isOtherIOSBrowser;
+}
+
 declare global {
   interface Window {
     YT?: YouTubeIframeApi;
@@ -106,6 +114,12 @@ export function MusicPlayer({
 
   // Default wedding music
   const defaultMusicUrl = selectedMusicUrl?.trim() || randomMusic || defaultWeddingMusicUrl;
+
+  useEffect(() => {
+    setCustomMusicUrl('');
+    setIsPlaying(false);
+    setPlaybackMessage('');
+  }, [selectedMusicUrl]);
 
   // Check if URL is a Spotify link
   const isSpotifyUrl = (url: string): boolean => {
@@ -181,7 +195,7 @@ export function MusicPlayer({
           videoId: youtubeEmbedId,
           playerVars: {
             autoplay: 0,
-            controls: 0,
+            controls: isMobileSafari() ? 1 : 0,
             loop: 1,
             playlist: youtubeEmbedId,
             playsinline: 1,
@@ -197,7 +211,11 @@ export function MusicPlayer({
               event.target.setLoop(true);
               const iframe = event.target.getIframe();
               iframe.title = 'Nhạc nền YouTube';
-              iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:200px;height:113px;border:0;opacity:.01;pointer-events:none;z-index:-1';
+              iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+              iframe.setAttribute('playsinline', 'true');
+              iframe.style.cssText = isMobileSafari()
+                ? 'position:fixed;right:12px;bottom:76px;width:200px;height:200px;border:0;opacity:1;pointer-events:auto;z-index:60;background:#000'
+                : 'position:fixed;right:0;bottom:0;width:200px;height:200px;border:0;opacity:.01;pointer-events:none;z-index:-1';
               setYoutubePlayerReady(true);
             },
             onStateChange: (event) => {
@@ -262,7 +280,15 @@ export function MusicPlayer({
     } else {
       // Fade in
       audioRef.current.volume = 0;
-      audioRef.current.play();
+      void audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setPlaybackMessage('');
+        })
+        .catch((error: unknown) => {
+          setIsPlaying(false);
+          setPlaybackMessage(error instanceof Error ? `Không phát được nhạc: ${error.message}` : 'Không phát được nhạc đã chọn.');
+        });
       const fadeIn = setInterval(() => {
         if (audioRef.current && audioRef.current.volume < volume - 0.05) {
           audioRef.current.volume += 0.05;
@@ -273,7 +299,6 @@ export function MusicPlayer({
           }
         }
       }, 30);
-      setIsPlaying(true);
     }
   };
 
@@ -454,7 +479,13 @@ export function MusicPlayer({
         )}
       </AnimatePresence>
 
-      {isYouTube && youtubeEmbedId && <div ref={youtubeContainerRef} aria-hidden="true" />}
+      {isYouTube && youtubeEmbedId && <div
+        ref={youtubeContainerRef}
+        aria-hidden={!isMobileSafari()}
+        style={isMobileSafari()
+          ? { position: 'fixed', right: 12, bottom: 76, width: 200, height: 200, zIndex: 60, background: '#000' }
+          : { position: 'fixed', right: 0, bottom: 0, width: 200, height: 200, opacity: 0.01, pointerEvents: 'none', zIndex: -1 }}
+      />}
     </div>
   );
 }
