@@ -221,6 +221,16 @@
   background: #356b58;
 }
 
+@media (min-width: 761px) {
+  html body .signature-demo .signature-hero .signature-hero__content h1 {
+    font-size: clamp(3.3rem, 6.6vw, 6.9rem) !important;
+  }
+}
+
+.admin-studio-editor__body label > small[role="alert"] {
+  color: #a44c42;
+}
+
 .admin-studio-sections input[type="checkbox"]:checked::before {
   width: .32rem;
   height: .58rem;

@@ -30,7 +30,7 @@ import {
 import { navigateTo } from '../../Router';
 import { weddingTemplates } from '../../data/templates';
 import { weddingPackages } from '../../data/packages';
-import { weddingMusicTracks, weddingMusicUrlForTrack } from '../../data/weddingMusic';
+import { isSupportedWeddingMusicUrl, weddingMusicTracks, weddingMusicUrlForTrack } from '../../data/weddingMusic';
 import {
   clearAdminSession,
   createCustomer,
@@ -406,8 +406,9 @@ function AdminStudioEditor({
             {weddingMusicTracks.map((track) => <option key={track.id} value={track.id}>{track.label}</option>)}
             <option value="custom">Link nhạc riêng</option>
           </select></label>
-          {config.musicTrack === 'custom' && <label className="is-wide">Link YouTube hoặc MP3<input type="url" value={config.customMusicUrl ?? ''} onChange={(event) => updateConfig('customMusicUrl', event.target.value)} placeholder="https://youtu.be/... hoặc link MP3" />
-            <small>Dùng URL YouTube hoặc link trực tiếp đến file MP3 qua HTTPS.</small></label>}
+          {config.musicTrack === 'custom' && <label className="is-wide">Link YouTube hoặc MP3<input type="text" inputMode="url" value={config.customMusicUrl ?? ''} onChange={(event) => updateConfig('customMusicUrl', event.target.value)} placeholder="https://youtu.be/... hoặc link MP3" />
+            <small>Dán link YouTube (watch, youtu.be, shorts, live) hoặc link trực tiếp đến file MP3 qua HTTPS.</small>
+            {config.customMusicUrl?.trim() && !isSupportedWeddingMusicUrl(config.customMusicUrl) && <small role="alert" className="admin-studio-editor__error">Link chưa được hỗ trợ. Hãy dùng link video YouTube hoặc URL file .mp3 HTTPS.</small>}</label>}
           <p className="admin-studio-editor__hint is-wide">Nhạc được lưu vào cấu hình và phát trên thiệp đã xuất bản. Trình duyệt có thể yêu cầu khách bấm nút phát.</p>
         </div>)}
         {step === 10 && <dl className="admin-studio-review">

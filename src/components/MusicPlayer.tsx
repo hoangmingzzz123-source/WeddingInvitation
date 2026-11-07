@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Music, Volume2, VolumeX, Settings, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { defaultWeddingMusicUrl, weddingMusicTracks } from '../data/weddingMusic';
+import { defaultWeddingMusicUrl, isSupportedWeddingMusicUrl, weddingMusicTracks, youtubeVideoIdFromUrl } from '../data/weddingMusic';
 
 interface MusicPlayerProps {
   autoPlay?: boolean;
@@ -24,6 +24,7 @@ export function MusicPlayer({
   const [showSettings, setShowSettings] = useState(false);
   const [customMusicUrl, setCustomMusicUrl] = useState('');
   const [tempMusicUrl, setTempMusicUrl] = useState('');
+  const [customMusicError, setCustomMusicError] = useState('');
   const [isYouTube, setIsYouTube] = useState(false);
   const [youtubeEmbedId, setYoutubeEmbedId] = useState('');
   const [randomMusic, setRandomMusic] = useState<string>('');
@@ -38,20 +39,6 @@ export function MusicPlayer({
 
   // Default wedding music
   const defaultMusicUrl = selectedMusicUrl?.trim() || randomMusic || defaultWeddingMusicUrl;
-
-  // Helper function to extract YouTube video ID
-  const getYouTubeId = (url: string): string | null => {
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-      /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
-    ];
-    
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match) return match[1];
-    }
-    return null;
-  };
 
   // Check if URL is a Spotify link
   const isSpotifyUrl = (url: string): boolean => {
@@ -73,7 +60,7 @@ export function MusicPlayer({
     const musicUrl = customMusicUrl || defaultMusicUrl;
     
     // Check if it's a YouTube link
-    const ytId = getYouTubeId(musicUrl);
+    const ytId = youtubeVideoIdFromUrl(musicUrl);
     if (ytId) {
       setIsYouTube(true);
       setYoutubeEmbedId(ytId);
@@ -168,8 +155,14 @@ export function MusicPlayer({
   };
 
   const handleApplyCustomMusic = () => {
-    if (tempMusicUrl) {
-      setCustomMusicUrl(tempMusicUrl);
+    const url = tempMusicUrl.trim();
+    if (!isSupportedWeddingMusicUrl(url)) {
+      setCustomMusicError('Dùng link video YouTube hoặc URL file MP3 HTTPS.');
+      return;
+    }
+    if (url) {
+      setCustomMusicUrl(url);
+      setCustomMusicError('');
       setShowSettings(false);
       setIsPlaying(false);
     }
@@ -293,14 +286,15 @@ export function MusicPlayer({
                 </label>
                 <Input
                   type="text"
-                  placeholder="YouTube, Spotify, hoặc link MP3"
+                  placeholder="Link YouTube hoặc MP3 HTTPS"
                   value={tempMusicUrl}
-                  onChange={(e) => setTempMusicUrl(e.target.value)}
+                  onChange={(e) => { setTempMusicUrl(e.target.value); setCustomMusicError(''); }}
                   className="w-full"
                 />
                 <p className="text-xs text-[#999] mt-2">
-                  💡 Hỗ trợ: YouTube, Spotify, MP3, Google Drive, Dropbox
+                  💡 Hỗ trợ link YouTube (watch, youtu.be, shorts, live) hoặc MP3 HTTPS
                 </p>
+                {customMusicError && <p className="text-xs text-red-600" role="alert">{customMusicError}</p>}
               </div>
 
               <div className="space-y-2">

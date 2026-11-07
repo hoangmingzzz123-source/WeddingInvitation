@@ -2,7 +2,7 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
 import { unzipSync } from 'fflate';
 import { ASSETS, CUSTOM_TEMPLATES, EXPORTS, ORIGINALS, MediaError, db, photosFor, requireAdmin, selectedPhotos, signAsset, supabase, supabaseUrl, type PhotoRef } from '../server/customerMedia.js';
 import { checkDrive, syncDrive, cleanupUploads, deleteDriveCustomer } from '../server/driveSync.js';
-import { weddingMusicTracks } from '../src/data/weddingMusic.js';
+import { isSupportedWeddingMusicUrl, weddingMusicTracks } from '../src/data/weddingMusic.js';
 
 const MiB = 1024 * 1024;
 const formats: Record<string, [string, string]> = {
@@ -704,11 +704,7 @@ function safeMusicUrl(value: unknown) {
   try {
     const url = new URL(value);
     if (url.protocol !== 'https:' || url.username || url.password) return '';
-    if (/\.mp3$/i.test(url.pathname)) return url.href;
-    const videoId = '[a-zA-Z0-9_-]{11}';
-    if (url.hostname === 'youtu.be' && new RegExp(`^/${videoId}$`).test(url.pathname)) return url.href;
-    if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(url.hostname)
-      && (new RegExp(`^/embed/${videoId}$`).test(url.pathname) || new RegExp(`^${videoId}$`).test(url.searchParams.get('v') ?? ''))) return url.href;
+    if (isSupportedWeddingMusicUrl(url.href)) return url.href;
     return '';
   } catch {
     return '';

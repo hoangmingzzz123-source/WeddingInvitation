@@ -14,6 +14,39 @@ export const weddingMusicTracks = [
   { id: 'le-duong', label: 'Lễ đường · MP3', url: defaultWeddingMusicUrl },
 ] as const;
 
+export function youtubeVideoIdFromUrl(value: string) {
+  const trimmed = value.trim();
+  if (/^[\w-]{11}$/.test(trimmed)) return trimmed;
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol !== 'https:' || url.username || url.password) return undefined;
+    if (url.hostname === 'youtu.be') {
+      const id = url.pathname.split('/').filter(Boolean)[0];
+      return id && /^[\w-]{11}$/.test(id) ? id : undefined;
+    }
+    if (!['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(url.hostname)) return undefined;
+    const id = url.searchParams.get('v')
+      ?? /^\/(?:embed|shorts|live)\/([\w-]{11})(?:\/|$)/.exec(url.pathname)?.[1];
+    return id && /^[\w-]{11}$/.test(id) ? id : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function isSupportedWeddingMusicUrl(value: string) {
+  const trimmed = value.trim();
+  if (youtubeVideoIdFromUrl(trimmed)) return true;
+  try {
+    const url = new URL(trimmed);
+    return url.protocol === 'https:'
+      && !url.username
+      && !url.password
+      && /\.mp3$/i.test(url.pathname);
+  } catch {
+    return false;
+  }
+}
+
 export function weddingMusicUrlForTrack(track: WeddingMusicTrackId | undefined, customUrl?: string) {
   if (!track || track === 'default') return undefined;
   if (track === 'custom') return customUrl?.trim() || undefined;
