@@ -29,18 +29,6 @@ const templateDetails: TemplateDetails[] = [
   { id: 'pho-hoi', name: 'Thương Nhau Phố Hội', style: 'Hoi An Nostalgia', description: 'Sắc vàng phố cổ, ảnh cưới hoài niệm và bố cục bưu thiếp thân tình.', route: '/demo/pho-hoi', thumbnailId: 'pho-hoi', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
 
   {
-    id: REAL_WEDDING_TEMPLATE_ID,
-    name: 'Hà Phương & Hoàng Minh 2026',
-    style: 'Cinematic Vietnamese',
-    description: 'Website cưới thực tế của Hà Phương & Hoàng Minh, với trải nghiệm mở thiệp, album, RSVP và âm nhạc.',
-    externalUrl: REAL_WEDDING_URL,
-    tier: '199k',
-    features: ['Mở thiệp tương tác', 'Album', 'RSVP', 'Âm nhạc'],
-    featured: true,
-    homepageFeatured: true,
-    realWedding: true,
-  },
-  {
     id: 'verdant-veil',
     name: 'Verdant Veil',
     style: 'Verdant Veil Editorial',

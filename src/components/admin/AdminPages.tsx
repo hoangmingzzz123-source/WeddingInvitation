@@ -193,11 +193,6 @@ function weddingQrAccountError(account: WeddingQrAccount) {
   if (!account.accountName || account.accountName.length > 70 || !/^[\x20-\x7E]+$/.test(account.accountName)) {
     return 'Tên chủ tài khoản cần có ký tự ASCII, không dấu (tối đa 70 ký tự).';
   }
-  if (!account.memo.trim()) return 'Nội dung chuyển khoản không được để trống.';
-  if (account.memo.length > 25) return 'Nội dung chuyển khoản tối đa 25 ký tự.';
-  if (account.amount !== undefined && (!Number.isSafeInteger(account.amount) || account.amount <= 0)) {
-    return 'Số tiền phải là số nguyên dương.';
-  }
   return isValidWeddingQrAccount(account) ? '' : 'Thông tin tài khoản chưa hợp lệ.';
 }
 
@@ -208,8 +203,6 @@ function normalizeWeddingQrAccount(value?: Partial<WeddingQrAccount>): WeddingQr
     bankBin: typeof value?.bankBin === 'string' ? value.bankBin : defaults.bankBin,
     accountNumber: typeof value?.accountNumber === 'string' ? value.accountNumber : defaults.accountNumber,
     accountName: typeof value?.accountName === 'string' ? value.accountName : defaults.accountName,
-    memo: typeof value?.memo === 'string' ? value.memo : defaults.memo,
-    ...(typeof value?.amount === 'number' ? { amount: value.amount } : {}),
   };
 }
 
@@ -225,7 +218,7 @@ function WeddingQrAccountFields({
   onChange: (account: WeddingQrAccount) => void;
 }) {
   const bank = vietQrBanks.find((item) => item.bankName === account.bankName);
-  const update = (key: keyof WeddingQrAccount, value: string | number | undefined) => {
+  const update = (key: keyof WeddingQrAccount, value: string) => {
     onChange({ ...account, [key]: value });
   };
   const updateBank = (value: string) => {
@@ -249,9 +242,6 @@ function WeddingQrAccountFields({
           onChange={(event) => update('accountNumber', event.target.value.replace(/\D/g, '').slice(0, 19))} /></label>
         <label>Tên chủ tài khoản<input value={account.accountName} maxLength={70} onChange={(event) => update('accountName', event.target.value)} placeholder="Ví dụ: NGUYEN VAN A" />
           <small>Dùng ký tự ASCII, không dấu theo yêu cầu của VietQR.</small></label>
-        <label className="is-wide">Nội dung chuyển khoản<input value={account.memo} maxLength={25} onChange={(event) => update('memo', event.target.value)} placeholder="Mung cuoi" /></label>
-        <label>Số tiền (tùy chọn)<input type="number" min={1} step={1} value={account.amount ?? ''}
-          onChange={(event) => update('amount', event.target.value ? Number(event.target.value) : undefined)} /></label>
         {error && <small className="admin-studio-editor__error is-wide" role="alert">{error}</small>}
       </div>
     </fieldset>

@@ -102,7 +102,7 @@ Liên kết ngoài tự mở trong tab mới với `noopener noreferrer`.
 
 ## Mẫu thực tế Hà Phương & Hoàng Minh 2026
 
-- Card ở trang chủ và thư viện mở https://mp-wedding-2026.vercel.app/.
+- Website này không còn xuất hiện trong card trang chủ hoặc thư viện mẫu.
 - Đường dẫn cũ `/demo/ha-phuong-hoang-minh-2026` và link tạo mẫu cũ chuyển về website thật.
 - Thiết kế vườn xanh đã dựng trong Studio có tên riêng **Verdant Veil**, tại `/demo/verdant-veil`. Các bản nháp cũ của thiết kế này được chuyển sang ID `verdant-veil` để giữ nội dung.
 - Mã nguồn tham chiếu do chủ dự án cung cấp: https://github.com/weddinginvitationmp-art/mp, nhánh `master`, commit đã kiểm tra `8d2689b0466698531138c4d9725aee10163eec2a`.

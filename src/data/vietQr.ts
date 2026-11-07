@@ -8,8 +8,6 @@ export interface WeddingQrAccount {
   bankBin: string;
   accountNumber: string;
   accountName: string;
-  memo: string;
-  amount?: number;
 }
 
 export interface WeddingQrAccounts {
@@ -68,7 +66,6 @@ export function emptyWeddingQrAccount(): WeddingQrAccount {
     bankBin: '',
     accountNumber: '',
     accountName: '',
-    memo: 'Mung cuoi',
   };
 }
 
@@ -80,11 +77,7 @@ export function isValidWeddingQrAccount(account?: Partial<WeddingQrAccount>): ac
     && /^\d{1,19}$/.test(account.accountNumber)
     && typeof account.accountName === 'string'
     && account.accountName.length <= 70
-    && /^[\x20-\x7E]+$/.test(account.accountName)
-    && typeof account.memo === 'string'
-    && account.memo.trim().length > 0
-    && account.memo.length <= 25
-    && (account.amount === undefined || (Number.isSafeInteger(account.amount) && account.amount > 0));
+    && /^[\x20-\x7E]+$/.test(account.accountName);
 }
 
 export function sanitizeWeddingQrAccounts(value: unknown): WeddingQrAccounts | undefined {
@@ -99,8 +92,6 @@ export function sanitizeWeddingQrAccounts(value: unknown): WeddingQrAccounts | u
       bankBin: bank?.bankBin ?? '',
       accountNumber: typeof account.accountNumber === 'string' ? account.accountNumber.slice(0, 19) : '',
       accountName: typeof account.accountName === 'string' ? account.accountName.slice(0, 70) : '',
-      memo: typeof account.memo === 'string' ? account.memo.slice(0, 25) : 'Mung cuoi',
-      ...(typeof account.amount === 'number' ? { amount: account.amount } : {}),
     };
     return isValidWeddingQrAccount(sanitized) ? sanitized : emptyWeddingQrAccount();
   };
@@ -111,12 +102,11 @@ export function sanitizeWeddingQrAccounts(value: unknown): WeddingQrAccounts | u
   };
 }
 
-export function buildVietQrUrl(account: WeddingQrAccount, { memo = account.memo }: { memo?: string } = {}) {
-  if (!isValidWeddingQrAccount({ ...account, memo })) {
+export function buildVietQrUrl(account: WeddingQrAccount) {
+  if (!isValidWeddingQrAccount(account)) {
     throw new Error('Thông tin tài khoản chưa hợp lệ để tạo mã QR.');
   }
-  const params = new URLSearchParams({ addInfo: memo, accountName: account.accountName });
-  if (account.amount !== undefined) params.set('amount', String(account.amount));
+  const params = new URLSearchParams({ accountName: account.accountName });
   return `https://img.vietqr.io/image/${account.bankBin}-${account.accountNumber}-compact2.svg?${params}`;
 }
 

@@ -336,16 +336,13 @@ function GuestBook({ couple, onSubmit }: { couple: string; onSubmit?: (payload: 
   );
 }
 
-function DemoQrImage({ account }: { account?: WeddingQrAccount }) {
+function DemoQrImage({ account, failed, onError }: { account?: WeddingQrAccount; failed: boolean; onError: () => void }) {
   const qrUrl = isValidWeddingQrAccount(account) ? buildVietQrUrl(account) : '';
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => setFailed(false), [qrUrl]);
 
   return (
     <div className="signature-qr" aria-label={qrUrl && !failed ? 'Mã QR chuyển khoản' : 'Mã QR minh họa'}>
       {qrUrl && !failed
-        ? <img src={qrUrl} alt="Mã QR chuyển khoản qua VietQR" loading="lazy" onError={() => setFailed(true)} />
+        ? <img src={qrUrl} alt="Mã QR chuyển khoản qua VietQR" loading="lazy" onError={onError} />
         : <svg viewBox="0 0 100 100" role="img" aria-hidden="true">
           <rect width="100" height="100" rx="5" fill="white" />
           <path d="M6 6h30v30H6zM12 12v18h18V12zM64 6h30v30H64zM70 12v18h18V12zM6 64h30v30H6zM12 70v18h18V70z" fill="currentColor" fillRule="evenodd" />
@@ -358,21 +355,19 @@ function DemoQrImage({ account }: { account?: WeddingQrAccount }) {
 function SignatureGiftCard({ account, title }: { account?: WeddingQrAccount; title: string }) {
   const hasAccountDetails = Boolean(account && (account.bankName || account.accountNumber || account.accountName));
   const isConfigured = isValidWeddingQrAccount(account);
-  const amountLabel = account?.amount
-    ? new Intl.NumberFormat('vi-VN').format(account.amount)
-    : '';
+  const [qrFailed, setQrFailed] = useState(false);
+  const qrUrl = isConfigured ? buildVietQrUrl(account) : '';
+  useEffect(() => setQrFailed(false), [qrUrl]);
   return (
     <div className="signature-gift-card">
       <SmallLabel>A LITTLE WISH</SmallLabel>
       <h2>Gửi lời chúc &amp; mừng cưới</h2>
       <p>{title}</p>
-      <DemoQrImage account={account} />
-      {hasAccountDetails && <dl className="signature-gift-card__account">
+      <DemoQrImage account={account} failed={qrFailed} onError={() => setQrFailed(true)} />
+      {hasAccountDetails && (!isConfigured || qrFailed) && <dl className="signature-gift-card__account">
         {account?.bankName && <div><dt>Ngân hàng</dt><dd>{account.bankName}</dd></div>}
         {account?.accountNumber && <div><dt>Số tài khoản</dt><dd>{account.accountNumber}</dd></div>}
         {account?.accountName && <div><dt>Chủ tài khoản</dt><dd>{account.accountName}</dd></div>}
-        {account?.memo && <div><dt>Nội dung</dt><dd>{account.memo}</dd></div>}
-        {amountLabel && <div><dt>Số tiền</dt><dd>{amountLabel} ₫</dd></div>}
       </dl>}
       <span className="signature-demo-note">{isConfigured
         ? 'VietQR · Kiểm tra thông tin trước khi chuyển khoản'
