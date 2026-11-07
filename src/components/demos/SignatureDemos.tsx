@@ -411,7 +411,10 @@ export function SignatureDemo({
   const youtubeId = videoLink ? youtubeVideoId(videoLink) : undefined;
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
-  const couple = `${demo.bride} & ${demo.groom}`;
+  const groomFirst = typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('side')?.trim().toLowerCase() === 'groom';
+  const coupleNames = groomFirst ? [demo.groom, demo.bride] : [demo.bride, demo.groom];
+  const couple = `${coupleNames[0]} & ${coupleNames[1]}`;
   const locationLabel = demo.city.toLocaleLowerCase('vi') === 'việt nam' ? 'Việt Nam' : `${demo.city} · Việt Nam`;
   const premium = demo.tier !== '109k';
   const diamond = demo.tier === '199k';
@@ -477,7 +480,7 @@ export function SignatureDemo({
             ? headerMonogramText.split(/(&)/g).map((part, index) => part === '&'
               ? <i key={`amp-${index}`}>&amp;</i>
               : <span className="signature-nav__monogram-text" key={`text-${index}`}>{part}</span>)
-            : <><span className="signature-nav__monogram-text">{demo.bride.charAt(0)}</span><i>&amp;</i><span className="signature-nav__monogram-text">{demo.groom.charAt(0)}</span></>}
+            : <><span className="signature-nav__monogram-text">{coupleNames[0].charAt(0)}</span><i>&amp;</i><span className="signature-nav__monogram-text">{coupleNames[1].charAt(0)}</span></>}
         </a>
         <div className="signature-nav__links">
           {premium && isSectionVisible('story') && <a href="#cau-chuyen">Câu chuyện</a>}
@@ -502,7 +505,7 @@ export function SignatureDemo({
             transition={staticExport ? undefined : { duration: 0.7 }}
           >
             <SmallLabel>{customization?.heroKicker || demo.label}</SmallLabel>
-            <h1><span>{demo.bride}</span><i>&amp;</i><span>{demo.groom}</span></h1>
+            <h1><span>{coupleNames[0]}</span><i>&amp;</i><span>{coupleNames[1]}</span></h1>
             <p className="signature-hero__invitation">
               {guestName
                 ? `${guestGreeting === 'friendly' ? 'Thân mời' : 'Trân trọng kính mời'} ${guestName} đến chung vui`
@@ -538,7 +541,7 @@ export function SignatureDemo({
           </div>
           <figure className="signature-story__photo">
             <img src={customization?.mainPhoto || demo.gallery[1]} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" style={customization?.mainPhotoPosition ? { objectPosition: customization.mainPhotoPosition } : customization?.galleryPositions?.[1] ? { objectPosition: customization.galleryPositions[1] } : undefined} />
-            <figcaption>{demo.bride} <i>&amp;</i> {demo.groom}</figcaption>
+            <figcaption>{coupleNames[0]} <i>&amp;</i> {coupleNames[1]}</figcaption>
           </figure>
         </section>
       )}
@@ -722,7 +725,7 @@ export function SignatureDemo({
       </section>}
 
       <footer className="signature-footer">
-        <span>{demo.bride} <i>&amp;</i> {demo.groom}</span>
+        <span>{coupleNames[0]} <i>&amp;</i> {coupleNames[1]}</span>
         <p>{customization?.signatureText || `Made with love · ${demo.dateLabel}`}</p>
         <a href="#trang-chu">Về đầu thiệp</a>
       </footer>
