@@ -219,7 +219,7 @@ function AdminStudioEditor({
       ? 'Gói Cơ bản có RSVP Có / Không và không bật câu hỏi nâng cao.'
       : 'Thêm khách để tạo lời mời riêng và chọn thông tin cần hỏi trong RSVP.'],
     ['Hoàn thiện phong cách', 'Tùy chỉnh bảng màu và kiểu chữ theo quyền lợi của gói.'],
-    ['Chọn nhạc nền', config.packageTier === '109k' ? 'Gói Basic sử dụng nhạc nền mặc định.' : 'Chọn nhạc mẫu có sẵn hoặc thêm link YouTube / MP3 riêng.'],
+    ['Chọn nhạc nền', config.packageTier === '109k' ? 'Gói Basic sử dụng nhạc nền mặc định.' : 'Chọn nhạc MP3 có sẵn hoặc thêm link MP3 riêng.'],
     ['Rà soát cấu hình', 'Kiểm tra nội dung, ảnh, các phần theo mẫu và quyền lợi gói trước khi lưu.'],
   ] as const;
   const selectedTemplate = weddingTemplates.find((template) => template.id === customer.selectedTemplateId);
@@ -406,9 +406,9 @@ function AdminStudioEditor({
             {weddingMusicTracks.map((track) => <option key={track.id} value={track.id}>{track.label}</option>)}
             <option value="custom">Link nhạc riêng</option>
           </select></label>
-          {config.musicTrack === 'custom' && <label className="is-wide">Link YouTube hoặc MP3<input type="text" inputMode="url" value={config.customMusicUrl ?? ''} onChange={(event) => updateConfig('customMusicUrl', event.target.value)} placeholder="https://youtu.be/... hoặc link MP3" />
-            <small>Dán link YouTube (watch, youtu.be, shorts, live) hoặc link trực tiếp đến file MP3 qua HTTPS.</small>
-            {config.customMusicUrl?.trim() && !isSupportedWeddingMusicUrl(config.customMusicUrl) && <small role="alert" className="admin-studio-editor__error">Link chưa được hỗ trợ. Hãy dùng link video YouTube hoặc URL file .mp3 HTTPS.</small>}</label>}
+          {config.musicTrack === 'custom' && <label className="is-wide">Link MP3 riêng<input type="text" inputMode="url" value={config.customMusicUrl ?? ''} onChange={(event) => updateConfig('customMusicUrl', event.target.value)} placeholder="https://example.com/music.mp3" />
+            <small>Dán link trực tiếp đến file MP3 qua HTTPS. Link trang nghe nhạc hoặc video không được hỗ trợ.</small>
+            {config.customMusicUrl?.trim() && !isSupportedWeddingMusicUrl(config.customMusicUrl) && <small role="alert" className="admin-studio-editor__error">Link chưa được hỗ trợ. Hãy dùng URL file .mp3 HTTPS.</small>}</label>}
           <p className="admin-studio-editor__hint is-wide">Nhạc được lưu vào cấu hình và phát trên thiệp đã xuất bản. Trình duyệt có thể yêu cầu khách bấm nút phát.</p>
         </div>)}
         {step === 10 && <dl className="admin-studio-review">

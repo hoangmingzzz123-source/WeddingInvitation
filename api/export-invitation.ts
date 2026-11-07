@@ -179,12 +179,7 @@ function safeMusicUrl(value: unknown) {
   try {
     const url = new URL(safe);
     if (url.protocol !== 'https:' || url.username || url.password) return undefined;
-    if (/\.mp3$/i.test(url.pathname)) return url.href;
-    const videoId = '[a-zA-Z0-9_-]{11}';
-    const allowedHost = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(url.hostname);
-    return allowedHost && (new RegExp(`^/${videoId}$`).test(url.pathname)
-      || new RegExp(`^/embed/${videoId}$`).test(url.pathname)
-      || new RegExp(`^${videoId}$`).test(url.searchParams.get('v') ?? '')) ? url.href : undefined;
+    return /\.mp3$/i.test(url.pathname) ? url.href : undefined;
   } catch {
     return undefined;
   }

@@ -3,79 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Music, Volume2, VolumeX, Settings, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { defaultWeddingMusicUrl, isSupportedWeddingMusicUrl, weddingMusicTracks, youtubeVideoIdFromUrl } from '../data/weddingMusic';
-
-interface YouTubePlayer {
-  playVideo(): void;
-  pauseVideo(): void;
-  destroy(): void;
-  setLoop(loop: boolean): void;
-  getIframe(): HTMLIFrameElement;
-}
-
-interface YouTubePlayerEvent {
-  target: YouTubePlayer;
-  data: number;
-}
-
-interface YouTubeIframeApi {
-  Player: new (
-    element: HTMLElement,
-    options: {
-      videoId: string;
-      playerVars: Record<string, number | string>;
-      events: {
-        onReady: (event: YouTubePlayerEvent) => void;
-        onStateChange: (event: YouTubePlayerEvent) => void;
-        onError: () => void;
-      };
-    },
-  ) => YouTubePlayer;
-}
-
-function isMobileSafari() {
-  const userAgent = navigator.userAgent;
-  const isAppleMobile = /iPad|iPhone|iPod/.test(userAgent)
-    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isOtherIOSBrowser = /CriOS|FxiOS|EdgiOS|OPiOS/.test(userAgent);
-  return isAppleMobile && !isOtherIOSBrowser;
-}
-
-declare global {
-  interface Window {
-    YT?: YouTubeIframeApi;
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
-
-let youtubeApiPromise: Promise<void> | null = null;
-
-function loadYouTubeIframeApi() {
-  if (window.YT?.Player) return Promise.resolve();
-  if (youtubeApiPromise) return youtubeApiPromise;
-
-  youtubeApiPromise = new Promise<void>((resolve, reject) => {
-    const previousReady = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = () => {
-      previousReady?.();
-      resolve();
-    };
-
-    let script = document.querySelector<HTMLScriptElement>('script[src="https://www.youtube.com/iframe_api"]');
-    if (!script) {
-      script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      script.async = true;
-      document.head.appendChild(script);
-    }
-    script.addEventListener('error', () => reject(new Error('Không tải được trình phát YouTube.')), { once: true });
-  }).catch((error: unknown) => {
-    youtubeApiPromise = null;
-    throw error;
-  });
-
-  return youtubeApiPromise;
-}
+import { defaultWeddingMusicUrl, isSupportedWeddingMusicUrl, weddingMusicTracks } from '../data/weddingMusic';
 
 interface MusicPlayerProps {
   autoPlay?: boolean;
@@ -97,14 +25,9 @@ export function MusicPlayer({
   const [customMusicUrl, setCustomMusicUrl] = useState('');
   const [tempMusicUrl, setTempMusicUrl] = useState('');
   const [customMusicError, setCustomMusicError] = useState('');
-  const [isYouTube, setIsYouTube] = useState(false);
-  const [youtubeEmbedId, setYoutubeEmbedId] = useState('');
-  const [youtubePlayerReady, setYoutubePlayerReady] = useState(false);
   const [playbackMessage, setPlaybackMessage] = useState('');
   const [randomMusic, setRandomMusic] = useState<string>('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const youtubeContainerRef = useRef<HTMLDivElement | null>(null);
-  const youtubePlayerRef = useRef<YouTubePlayer | null>(null);
 
   // Random select music on mount
   useEffect(() => {
@@ -116,151 +39,47 @@ export function MusicPlayer({
   const defaultMusicUrl = selectedMusicUrl?.trim() || randomMusic || defaultWeddingMusicUrl;
 
   useEffect(() => {
+    audioRef.current?.pause();
     setCustomMusicUrl('');
     setIsPlaying(false);
     setPlaybackMessage('');
   }, [selectedMusicUrl]);
 
-  // Check if URL is a Spotify link
-  const isSpotifyUrl = (url: string): boolean => {
-    return url.includes('spotify.com');
-  };
-
-  // Convert Spotify URL to embed format
-  const getSpotifyEmbedUrl = (url: string): string | null => {
-    const trackMatch = url.match(/track\/([a-zA-Z0-9]+)/);
-    if (trackMatch) {
-      return `https://open.spotify.com/embed/track/${trackMatch[1]}`;
-    }
-    return null;
-  };
-
   useEffect(() => {
     if (!defaultMusicUrl) return; // Wait for random music to be selected
-    
+
     const musicUrl = customMusicUrl || defaultMusicUrl;
-    
-    // Check if it's a YouTube link
-    const ytId = youtubeVideoIdFromUrl(musicUrl);
-    if (ytId) {
+    const isSystemTrack = weddingMusicTracks.some((track) => track.url === musicUrl);
+    if (!isSystemTrack && !isSupportedWeddingMusicUrl(musicUrl)) {
       audioRef.current?.pause();
       audioRef.current = null;
-      setIsYouTube(true);
-      setYoutubeEmbedId(ytId);
-      setYoutubePlayerReady(false);
-      setPlaybackMessage('');
       setIsPlaying(false);
+      setPlaybackMessage('Chỉ hỗ trợ nhạc có sẵn trong hệ thống hoặc link trực tiếp đến file MP3 HTTPS.');
       return;
     }
 
-    // For regular audio files
-    setIsYouTube(false);
-    setYoutubeEmbedId('');
-    setYoutubePlayerReady(false);
     setPlaybackMessage('');
     
-    // Create audio element
-    audioRef.current = new Audio();
-    audioRef.current.src = musicUrl;
-    audioRef.current.loop = true;
-    audioRef.current.volume = volume;
+    const audio = new Audio(musicUrl);
+    audioRef.current = audio;
+    audio.loop = true;
+    audio.volume = volume;
 
-    // Try to autoplay if allowed
     if (autoPlay) {
-      audioRef.current.play()
+      audio.play()
         .then(() => setIsPlaying(true))
         .catch(() => {
-          console.log('Autoplay blocked');
+          setIsPlaying(false);
         });
     }
 
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      audio.pause();
+      if (audioRef.current === audio) audioRef.current = null;
     };
   }, [customMusicUrl, defaultMusicUrl]);
 
-  useEffect(() => {
-    if (!youtubeEmbedId || !youtubeContainerRef.current) return;
-    let active = true;
-    setYoutubePlayerReady(false);
-    setPlaybackMessage('');
-
-    loadYouTubeIframeApi()
-      .then(() => {
-        if (!active || !youtubeContainerRef.current || !window.YT?.Player) return;
-        const player = new window.YT.Player(youtubeContainerRef.current, {
-          videoId: youtubeEmbedId,
-          playerVars: {
-            autoplay: 0,
-            controls: isMobileSafari() ? 1 : 0,
-            loop: 1,
-            playlist: youtubeEmbedId,
-            playsinline: 1,
-            origin: window.location.origin,
-          },
-          events: {
-            onReady: (event) => {
-              if (!active) {
-                event.target.destroy();
-                return;
-              }
-              youtubePlayerRef.current = event.target;
-              event.target.setLoop(true);
-              const iframe = event.target.getIframe();
-              iframe.title = 'Nhạc nền YouTube';
-              iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
-              iframe.setAttribute('playsinline', 'true');
-              iframe.style.cssText = isMobileSafari()
-                ? 'position:fixed;right:12px;bottom:76px;width:200px;height:200px;border:0;opacity:1;pointer-events:auto;z-index:60;background:#000'
-                : 'position:fixed;right:0;bottom:0;width:200px;height:200px;border:0;opacity:.01;pointer-events:none;z-index:-1';
-              setYoutubePlayerReady(true);
-            },
-            onStateChange: (event) => {
-              setIsPlaying(event.data === 1);
-            },
-            onError: () => {
-              setIsPlaying(false);
-              setPlaybackMessage('YouTube không cho phép phát video này trong khung nhúng. Hãy chọn bài khác hoặc dùng MP3.');
-            },
-          },
-        });
-        youtubePlayerRef.current = player;
-      })
-      .catch((error: unknown) => {
-        if (active) {
-          setPlaybackMessage(error instanceof Error ? error.message : 'Không tải được trình phát YouTube.');
-        }
-      });
-
-    return () => {
-      active = false;
-      youtubePlayerRef.current?.destroy();
-      youtubePlayerRef.current = null;
-      setYoutubePlayerReady(false);
-      setIsPlaying(false);
-    };
-  }, [youtubeEmbedId]);
-
   const togglePlay = () => {
-    if (isYouTube) {
-      if (!youtubePlayerReady || !youtubePlayerRef.current) {
-        setPlaybackMessage('Đang tải trình phát YouTube. Vui lòng thử lại sau giây lát.');
-        return;
-      }
-      if (isPlaying) {
-        youtubePlayerRef.current.pauseVideo();
-        setIsPlaying(false);
-      } else {
-        setPlaybackMessage('');
-        youtubePlayerRef.current.playVideo();
-      }
-      return;
-    }
-
-    // For regular audio
     if (!audioRef.current) return;
 
     if (isPlaying) {
@@ -307,13 +126,12 @@ export function MusicPlayer({
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
-    // Note: YouTube iframe API doesn't support volume control via postMessage in embed mode
   };
 
   const handleApplyCustomMusic = () => {
     const url = tempMusicUrl.trim();
     if (!isSupportedWeddingMusicUrl(url)) {
-      setCustomMusicError('Dùng link video YouTube hoặc URL file MP3 HTTPS.');
+      setCustomMusicError('Dùng link trực tiếp đến file MP3 qua HTTPS.');
       return;
     }
     if (url) {
@@ -443,13 +261,13 @@ export function MusicPlayer({
                 </label>
                 <Input
                   type="text"
-                  placeholder="Link YouTube hoặc MP3 HTTPS"
+                  placeholder="Link trực tiếp đến file MP3 HTTPS"
                   value={tempMusicUrl}
                   onChange={(e) => { setTempMusicUrl(e.target.value); setCustomMusicError(''); }}
                   className="w-full"
                 />
                 <p className="text-xs text-[#999] mt-2">
-                  💡 Hỗ trợ link YouTube (watch, youtu.be, shorts, live) hoặc MP3 HTTPS
+                  💡 Hỗ trợ link trực tiếp đến file MP3 qua HTTPS
                 </p>
                 {customMusicError && <p className="text-xs text-red-600" role="alert">{customMusicError}</p>}
               </div>
@@ -479,13 +297,6 @@ export function MusicPlayer({
         )}
       </AnimatePresence>
 
-      {isYouTube && youtubeEmbedId && <div
-        ref={youtubeContainerRef}
-        aria-hidden={!isMobileSafari()}
-        style={isMobileSafari()
-          ? { position: 'fixed', right: 12, bottom: 76, width: 200, height: 200, zIndex: 60, background: '#000' }
-          : { position: 'fixed', right: 0, bottom: 0, width: 200, height: 200, opacity: 0.01, pointerEvents: 'none', zIndex: -1 }}
-      />}
     </div>
   );
 }
