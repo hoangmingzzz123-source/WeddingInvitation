@@ -222,8 +222,20 @@
 }
 
 @media (min-width: 761px) {
+  html body .signature-demo .signature-hero .signature-hero__content {
+    width: 100%;
+    max-width: none;
+  }
+
   html body .signature-demo .signature-hero .signature-hero__content h1 {
+    width: 100%;
     font-size: clamp(3.3rem, 6.6vw, 6.9rem) !important;
+  }
+
+  html body .signature-demo .signature-hero .signature-hero__content h1 span {
+    font-size: .64em;
+    white-space: nowrap;
+    overflow-wrap: normal;
   }
 }
 

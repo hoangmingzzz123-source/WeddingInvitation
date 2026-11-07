@@ -700,7 +700,7 @@ function safeVideoUrl(value: unknown) {
 
 function safeMusicUrl(value: unknown) {
   if (typeof value !== 'string' || value.length > 2048) return '';
-  if (value === '/audio/Le_duong.mp3') return value;
+  if (['/audio/Le_duong.mp3', '/audio/goi_con_tim_lam_qua.mp3'].includes(value)) return value;
   try {
     const url = new URL(value);
     if (url.protocol !== 'https:' || url.username || url.password) return '';

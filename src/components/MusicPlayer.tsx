@@ -5,6 +5,70 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { defaultWeddingMusicUrl, isSupportedWeddingMusicUrl, weddingMusicTracks, youtubeVideoIdFromUrl } from '../data/weddingMusic';
 
+interface YouTubePlayer {
+  playVideo(): void;
+  pauseVideo(): void;
+  destroy(): void;
+  setLoop(loop: boolean): void;
+  getIframe(): HTMLIFrameElement;
+}
+
+interface YouTubePlayerEvent {
+  target: YouTubePlayer;
+  data: number;
+}
+
+interface YouTubeIframeApi {
+  Player: new (
+    element: HTMLElement,
+    options: {
+      videoId: string;
+      playerVars: Record<string, number | string>;
+      events: {
+        onReady: (event: YouTubePlayerEvent) => void;
+        onStateChange: (event: YouTubePlayerEvent) => void;
+        onError: () => void;
+      };
+    },
+  ) => YouTubePlayer;
+}
+
+declare global {
+  interface Window {
+    YT?: YouTubeIframeApi;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
+let youtubeApiPromise: Promise<void> | null = null;
+
+function loadYouTubeIframeApi() {
+  if (window.YT?.Player) return Promise.resolve();
+  if (youtubeApiPromise) return youtubeApiPromise;
+
+  youtubeApiPromise = new Promise<void>((resolve, reject) => {
+    const previousReady = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      previousReady?.();
+      resolve();
+    };
+
+    let script = document.querySelector<HTMLScriptElement>('script[src="https://www.youtube.com/iframe_api"]');
+    if (!script) {
+      script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.async = true;
+      document.head.appendChild(script);
+    }
+    script.addEventListener('error', () => reject(new Error('Không tải được trình phát YouTube.')), { once: true });
+  }).catch((error: unknown) => {
+    youtubeApiPromise = null;
+    throw error;
+  });
+
+  return youtubeApiPromise;
+}
+
 interface MusicPlayerProps {
   autoPlay?: boolean;
   showVolumeControl?: boolean; // For 199k package
@@ -27,10 +91,12 @@ export function MusicPlayer({
   const [customMusicError, setCustomMusicError] = useState('');
   const [isYouTube, setIsYouTube] = useState(false);
   const [youtubeEmbedId, setYoutubeEmbedId] = useState('');
+  const [youtubePlayerReady, setYoutubePlayerReady] = useState(false);
+  const [playbackMessage, setPlaybackMessage] = useState('');
   const [randomMusic, setRandomMusic] = useState<string>('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const youtubeCommandTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const youtubeContainerRef = useRef<HTMLDivElement | null>(null);
+  const youtubePlayerRef = useRef<YouTubePlayer | null>(null);
 
   // Random select music on mount
   useEffect(() => {
@@ -67,6 +133,8 @@ export function MusicPlayer({
       audioRef.current = null;
       setIsYouTube(true);
       setYoutubeEmbedId(ytId);
+      setYoutubePlayerReady(false);
+      setPlaybackMessage('');
       setIsPlaying(false);
       return;
     }
@@ -74,6 +142,8 @@ export function MusicPlayer({
     // For regular audio files
     setIsYouTube(false);
     setYoutubeEmbedId('');
+    setYoutubePlayerReady(false);
+    setPlaybackMessage('');
     
     // Create audio element
     audioRef.current = new Audio();
@@ -98,27 +168,76 @@ export function MusicPlayer({
     };
   }, [customMusicUrl, defaultMusicUrl]);
 
-  useEffect(() => () => {
-    if (youtubeCommandTimeoutRef.current) clearTimeout(youtubeCommandTimeoutRef.current);
+  useEffect(() => {
+    if (!youtubeEmbedId || !youtubeContainerRef.current) return;
+    let active = true;
+    setYoutubePlayerReady(false);
+    setPlaybackMessage('');
+
+    loadYouTubeIframeApi()
+      .then(() => {
+        if (!active || !youtubeContainerRef.current || !window.YT?.Player) return;
+        const player = new window.YT.Player(youtubeContainerRef.current, {
+          videoId: youtubeEmbedId,
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            loop: 1,
+            playlist: youtubeEmbedId,
+            playsinline: 1,
+            origin: window.location.origin,
+          },
+          events: {
+            onReady: (event) => {
+              if (!active) {
+                event.target.destroy();
+                return;
+              }
+              youtubePlayerRef.current = event.target;
+              event.target.setLoop(true);
+              const iframe = event.target.getIframe();
+              iframe.title = 'Nhạc nền YouTube';
+              iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:200px;height:113px;border:0;opacity:.01;pointer-events:none;z-index:-1';
+              setYoutubePlayerReady(true);
+            },
+            onStateChange: (event) => {
+              setIsPlaying(event.data === 1);
+            },
+            onError: () => {
+              setIsPlaying(false);
+              setPlaybackMessage('YouTube không cho phép phát video này trong khung nhúng. Hãy chọn bài khác hoặc dùng MP3.');
+            },
+          },
+        });
+        youtubePlayerRef.current = player;
+      })
+      .catch((error: unknown) => {
+        if (active) {
+          setPlaybackMessage(error instanceof Error ? error.message : 'Không tải được trình phát YouTube.');
+        }
+      });
+
+    return () => {
+      active = false;
+      youtubePlayerRef.current?.destroy();
+      youtubePlayerRef.current = null;
+      setYoutubePlayerReady(false);
+      setIsPlaying(false);
+    };
   }, [youtubeEmbedId]);
 
   const togglePlay = () => {
-    // For YouTube player
-    if (isYouTube && iframeRef.current) {
-      const iframe = iframeRef.current;
+    if (isYouTube) {
+      if (!youtubePlayerReady || !youtubePlayerRef.current) {
+        setPlaybackMessage('Đang tải trình phát YouTube. Vui lòng thử lại sau giây lát.');
+        return;
+      }
       if (isPlaying) {
-        if (youtubeCommandTimeoutRef.current) clearTimeout(youtubeCommandTimeoutRef.current);
-        iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        youtubePlayerRef.current.pauseVideo();
         setIsPlaying(false);
       } else {
-        let attempts = 0;
-        const sendPlayCommand = () => {
-          iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-          attempts += 1;
-          if (attempts < 10) youtubeCommandTimeoutRef.current = setTimeout(sendPlayCommand, 300);
-        };
-        sendPlayCommand();
-        setIsPlaying(true);
+        setPlaybackMessage('');
+        youtubePlayerRef.current.playVideo();
       }
       return;
     }
@@ -183,6 +302,7 @@ export function MusicPlayer({
   return (
     <div className="demo-music-control fixed top-20 right-4 z-50">
       <div className="flex items-center gap-2">
+        {playbackMessage && <p role="status" className="absolute right-0 top-14 w-64 rounded-lg bg-white p-3 text-xs text-[#8b3e35] shadow-lg">{playbackMessage}</p>}
         {/* Volume Control */}
         {showVolumeControl && (
           <AnimatePresence>
@@ -334,16 +454,7 @@ export function MusicPlayer({
         )}
       </AnimatePresence>
 
-      {/* Hidden YouTube Player */}
-      {isYouTube && youtubeEmbedId && (
-        <iframe
-          ref={iframeRef}
-          title="Nhạc nền YouTube"
-          style={{ position: 'fixed', right: 0, bottom: 0, width: 200, height: 113, border: 0, opacity: 0.01, pointerEvents: 'none', zIndex: -1 }}
-          src={`https://www.youtube.com/embed/${youtubeEmbedId}?enablejsapi=1&autoplay=0&loop=1&playlist=${youtubeEmbedId}&origin=${encodeURIComponent(window.location.origin)}`}
-          allow="autoplay; encrypted-media; picture-in-picture"
-        />
-      )}
+      {isYouTube && youtubeEmbedId && <div ref={youtubeContainerRef} aria-hidden="true" />}
     </div>
   );
 }

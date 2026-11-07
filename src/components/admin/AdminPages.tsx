@@ -402,7 +402,7 @@ function AdminStudioEditor({
           <span>Gói Basic dùng nhạc mẫu mặc định. Chọn nhạc riêng có trong gói Premium và Diamond.</span>
         </div> : <div className="admin-form-grid admin-studio-music">
           <label className="is-wide">Nguồn nhạc<select value={config.musicTrack ?? 'default'} onChange={(event) => updateConfig('musicTrack', event.target.value as InvitationStudioConfig['musicTrack'])}>
-            <option value="default">Nhạc nền mặc định</option>
+            <option value="default">Phát ngẫu nhiên trong thư viện</option>
             {weddingMusicTracks.map((track) => <option key={track.id} value={track.id}>{track.label}</option>)}
             <option value="custom">Link nhạc riêng</option>
           </select></label>

@@ -199,10 +199,13 @@ async function buildSignatureTemplateFiles(customer: JsonRecord, demo: JsonRecor
   const mainPhoto = assets.find((photo) => photo.role === 'main');
   const videoPhoto = assets.find((photo) => photo.role === 'video');
   const gallery = assets.filter((photo) => photo.role === 'gallery').sort((first, second) => first.order - second.order);
+  const selectedTrackUrl = weddingMusicTracks.find((track) => track.id === studio.musicTrack)?.url;
+  const resolvedTrackUrl = selectedTrackUrl?.startsWith('/audio/')
+    ? `${publicAppOrigin()}${selectedTrackUrl}`
+    : selectedTrackUrl;
   const musicUrl = studio.packageTier === '109k' ? undefined
     : studio.musicTrack === 'custom' ? safeMusicUrl(studio.customMusicUrl)
-      : safeMusicUrl(weddingMusicTracks.find((track) => track.id === studio.musicTrack)?.url
-        .replace('/audio/Le_duong.mp3', `${publicAppOrigin()}/audio/Le_duong.mp3`));
+      : safeMusicUrl(resolvedTrackUrl);
   const repeatedGallery = gallery.length
     ? Array.from({ length: Math.max(4, gallery.length) }, (_, index) => gallery[index % gallery.length])
     : [];

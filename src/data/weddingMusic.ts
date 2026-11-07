@@ -1,17 +1,18 @@
-export type WeddingMusicTrackId = 'default' | 'library-1' | 'library-2' | 'library-3' | 'library-4' | 'library-5' | 'library-6' | 'library-7' | 'library-8' | 'le-duong' | 'custom';
+export type WeddingMusicTrackId = 'default' | 'library-1' | 'library-2' | 'library-3' | 'library-4' | 'library-5' | 'library-6' | 'library-7' | 'library-8' | 'le-duong' | 'goi-con-tim' | 'custom';
 
 export const defaultWeddingMusicUrl = '/audio/Le_duong.mp3';
 
 export const weddingMusicTracks = [
-  { id: 'library-1', label: 'Khúc nhạc 01', url: 'https://www.youtube.com/watch?v=AfNbehFKJ7o&list=RDAfNbehFKJ7o&start_radio=1' },
-  { id: 'library-2', label: 'Khúc nhạc 02', url: 'https://www.youtube.com/watch?v=IOe0tNoUGv8&list=RDIOe0tNoUGv8&start_radio=1' },
-  { id: 'library-3', label: 'Khúc nhạc 03', url: 'https://www.youtube.com/watch?v=jgW4C528hHs&list=RDjgW4C528hHs&start_radio=1' },
-  { id: 'library-4', label: 'Khúc nhạc 04', url: 'https://www.youtube.com/watch?v=_8ldAdQd9WU&list=RD_8ldAdQd9WU&start_radio=1' },
-  { id: 'library-5', label: 'Khúc nhạc 05', url: 'https://www.youtube.com/watch?v=BnfaIDwb-y0&list=RD_8ldAdQd9WU&index=5' },
-  { id: 'library-6', label: 'Khúc nhạc 06', url: 'https://www.youtube.com/watch?v=WCm2elbTEZQ&list=RD_8ldAdQd9WU&index=13' },
-  { id: 'library-7', label: 'Khúc nhạc 07', url: 'https://www.youtube.com/watch?v=jdzj6tYAnjY&list=RD_8ldAdQd9WU&index=19' },
-  { id: 'library-8', label: 'Khúc nhạc 08', url: 'https://www.youtube.com/watch?v=JgTZvDbaTtg&list=RDJgTZvDbaTtg&start_radio=1' },
+  { id: 'library-1', label: 'Ngày Đầu Tiên · Đức Phúc', url: 'https://www.youtube.com/watch?v=AfNbehFKJ7o' },
+  { id: 'library-2', label: 'Em Đồng Ý (I Do) · Đức Phúc, 911 & Khắc Hưng', url: 'https://www.youtube.com/watch?v=IOe0tNoUGv8' },
+  { id: 'library-3', label: 'Bài Này Không Để Đi Diễn · Anh Tú Atus', url: 'https://www.youtube.com/watch?v=jgW4C528hHs' },
+  { id: 'library-4', label: 'Cưới Thôi · Masew, Masiu, B Ray & TAP', url: 'https://www.youtube.com/watch?v=_8ldAdQd9WU' },
+  { id: 'library-5', label: 'Xứng Đôi Cưới Thôi · Lê Thiện Hiếu', url: 'https://www.youtube.com/watch?v=BnfaIDwb-y0' },
+  { id: 'library-6', label: 'Chăm Hoa · MONO', url: 'https://www.youtube.com/watch?v=WCm2elbTEZQ' },
+  { id: 'library-7', label: 'Cưới Đi · 2T & Changg', url: 'https://www.youtube.com/watch?v=jdzj6tYAnjY' },
+  { id: 'library-8', label: 'Một Đời · 14 Casper & Bon Nghiêm', url: 'https://www.youtube.com/watch?v=JgTZvDbaTtg' },
   { id: 'le-duong', label: 'Lễ đường · MP3', url: defaultWeddingMusicUrl },
+  { id: 'goi-con-tim', label: 'Gói Con Tim Làm Quà · MP3', url: '/audio/goi_con_tim_lam_qua.mp3' },
 ] as const;
 
 export function youtubeVideoIdFromUrl(value: string) {
