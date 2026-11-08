@@ -27,6 +27,7 @@ import {
   UserRound,
   Users,
   WandSparkles,
+  X,
 } from 'lucide-react';
 import { navigateTo } from '../../Router';
 import { weddingTemplates } from '../../data/templates';
@@ -1029,6 +1030,99 @@ function AdminDemoTrackingPanel({ demoId, accessToken }: { demoId: string; acces
   );
 }
 
+function AdminDemoHandover({ demoId, brideName, groomName, weddingDate, slug }: {
+  demoId: string;
+  brideName: string;
+  groomName: string;
+  weddingDate: string;
+  slug: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [trackingLink, setTrackingLink] = useState('');
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [open]);
+
+  const showHandover = () => {
+    setMessage('');
+    try {
+      const savedLink = window.localStorage.getItem(shareLinkCacheKey(demoId)) ?? '';
+      setTrackingLink(savedLink);
+      if (!savedLink) {
+        setMessage('Hãy tạo link theo dõi bằng nút “Tạo link xem chung” trước khi bàn giao.');
+        return;
+      }
+      setOpen(true);
+    } catch (storageError) {
+      setMessage(storageError instanceof Error
+        ? `Không thể đọc link theo dõi đã lưu: ${storageError.message}`
+        : 'Không thể đọc link theo dõi đã lưu.');
+    }
+  };
+
+  const invitationUrl = publicInvitationUrl(slug);
+  const titleNames = [brideName, groomName].filter(Boolean).join(' - ');
+  const titleDate = dateDots(weddingDate);
+
+  return (
+    <>
+      <button type="button" className="is-primary" onClick={showHandover}>
+        <Mail aria-hidden="true" /> Bàn giao
+      </button>
+      {message && <small className="admin-form-actions__notice" role="status">{message}</small>}
+      {open && (
+        <div className="demo-consent admin-handover" onClick={() => setOpen(false)}>
+          <section role="dialog" aria-modal="true" aria-labelledby={`handover-title-${demoId}`} onClick={(event) => event.stopPropagation()}>
+            <button className="admin-handover__close" type="button" aria-label="Đóng thông báo bàn giao" onClick={() => setOpen(false)}>
+              <X aria-hidden="true" />
+            </button>
+            <h2 id={`handover-title-${demoId}`} className="admin-handover__title">💌 BÀN GIAO WEBSITE THIỆP CƯỚI ONLINE</h2>
+            <p className="admin-handover__couple">{titleNames}{titleNames && titleDate ? ' - ' : ''}{titleDate}</p>
+            <div className="admin-handover__message">
+              <p>Chào bạn! ❤️</p>
+              <p>
+                Website thiệp cưới online của bạn đã hoàn thiện. Mình gửi bạn các đường link để xem, kiểm tra và chia sẻ thiệp đến người thân, bạn bè nhé!
+              </p>
+              <p>🌸 <strong>1. Thiệp cưới nhà gái (Cô dâu):</strong><br />
+                <a href={`${invitationUrl}?side=bride`} target="_blank" rel="noreferrer">{`${invitationUrl}?side=bride`}</a>
+              </p>
+              <p>🤵 <strong>2. Thiệp cưới nhà trai (Chú rể):</strong><br />
+                <a href={`${invitationUrl}?side=groom`} target="_blank" rel="noreferrer">{`${invitationUrl}?side=groom`}</a>
+              </p>
+              <p>📊 <strong>3. Link theo dõi phản hồi khách mời:</strong><br />
+                <a href={trackingLink} target="_blank" rel="noreferrer">{trackingLink}</a>
+              </p>
+              <p>Thông qua link theo dõi, bạn có thể:</p>
+              <ul>
+                <li>Quản lý danh sách khách mời.</li>
+                <li>Theo dõi số lượng khách xác nhận tham dự.</li>
+                <li>Xem phản hồi và thông tin xác nhận từ khách mời.</li>
+              </ul>
+              <p><strong>Một chút lưu ý:</strong></p>
+              <ul>
+                <li>Bạn có thể chia sẻ link thiệp tương ứng cho khách mời để mọi người xem thông tin và xác nhận tham dự.</li>
+                <li>Hãy lưu lại link theo dõi để thuận tiện quản lý phản hồi.</li>
+                <li>Bạn nhớ kiểm tra lại toàn bộ thông tin trên thiệp trước khi gửi đến khách mời nhé!</li>
+              </ul>
+              <p>
+                ✨ Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của mình. Hy vọng chiếc thiệp online này sẽ góp phần lưu giữ những khoảnh khắc đẹp và giúp ngày trọng đại của hai bạn thêm trọn vẹn.
+              </p>
+              <p>Chúc hai bạn có một hành trình hôn nhân thật hạnh phúc, viên mãn và mãi mãi yêu thương nhau! 💕</p>
+            </div>
+          </section>
+        </div>
+      )}
+    </>
+  );
+}
+
 export function AdminDashboardPage() {
   const [session, setSession] = useState<AdminSession | null>(readAdminSession);
   const [profile, setProfile] = useState<AdminProfile | null>(null);
@@ -1871,6 +1965,13 @@ export function AdminDashboardPage() {
                       onSaved={(expiresAt) => setPublishedInvitations((current) => current.map((item) => (
                         item.demoId === demo.id ? { ...item, expiresAt } : item
                       )))}
+                    />}
+                    {publishedSlug && selectedCustomer.status === 'completed' && <AdminDemoHandover
+                      demoId={demo.id}
+                      brideName={demo.payload.brideName}
+                      groomName={demo.payload.groomName}
+                      weddingDate={demo.payload.weddingDate}
+                      slug={publishedSlug}
                     />}
                     <small className="admin-demo-zip-hint">Tải ZIP mới nhất, sửa index.html hoặc styles.css, rồi nạp lại vào đúng demo để cập nhật preview và link thiệp.</small>
                     <div className="admin-demo-list__actions">

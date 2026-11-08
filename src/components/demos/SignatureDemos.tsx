@@ -94,6 +94,7 @@ interface SignatureDemoProps {
   customization?: SignatureDemoCustomization;
   embedded?: boolean;
   showMusicPlayer?: boolean;
+  showPhotoDisclaimer?: boolean;
   startMusicOnFirstInteraction?: boolean;
   staticExport?: boolean;
   guestName?: string;
@@ -453,6 +454,7 @@ export function SignatureDemo({
   customization,
   embedded = false,
   showMusicPlayer = false,
+  showPhotoDisclaimer = true,
   startMusicOnFirstInteraction = false,
   staticExport = false,
   guestName,
@@ -612,11 +614,11 @@ export function SignatureDemo({
             </div>
           </motion.div>
         </div>
-        <span className="signature-photo-disclaimer">
+        {showPhotoDisclaimer && <span className="signature-photo-disclaimer">
           {customization
             ? 'Bản thiệp cá nhân hóa · Hình ảnh có thể thay đổi trước khi xuất bản'
             : 'Ảnh minh họa · Tên và thông tin trong demo là hư cấu'}
-        </span>
+        </span>}
         <span className="signature-hero__side-note" aria-hidden="true">A day made for us · {demo.dateLabel}</span>
       </section>
 

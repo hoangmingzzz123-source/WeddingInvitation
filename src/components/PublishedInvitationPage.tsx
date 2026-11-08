@@ -135,6 +135,7 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
 
   return <div className="demo-page-content demo-page-content--signature" data-template={templateId}>
     <SignatureDemo id={templateId} customization={customization} rsvpQuestions={studio?.rsvpQuestions ?? []}
-      initialWishes={payload.wishes ?? []} onRsvpSubmit={submitRsvp} onWishSubmit={submitWish} />
+      showPhotoDisclaimer={false} initialWishes={payload.wishes ?? []}
+      onRsvpSubmit={submitRsvp} onWishSubmit={submitWish} />
   </div>;
 }

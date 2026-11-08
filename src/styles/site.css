@@ -4307,6 +4307,70 @@ body {
   width: 0.95rem;
 }
 
+.admin-handover section {
+  position: relative;
+  width: min(100%, 48rem);
+  max-height: min(88svh, 52rem);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  overflow-y: auto;
+  text-align: left;
+}
+
+.admin-handover__title {
+  padding-right: 2rem;
+  margin: 0;
+  color: #2f2823;
+  font: 700 clamp(1.15rem, 3vw, 1.55rem)/1.35 "Playfair Display", serif;
+}
+
+.admin-handover__couple {
+  margin: 0.65rem 0 1.25rem;
+  color: #8c651f;
+  font-weight: 700;
+}
+
+.admin-handover__message {
+  color: #514840;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.admin-handover__message p {
+  margin: 1rem 0;
+}
+
+.admin-handover__message ul {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.admin-handover__message a {
+  color: #8c651f;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.admin-handover__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-height: 2.5rem;
+  margin: 0 !important;
+  padding: 0;
+  color: #514840;
+  background: #f5e9d3;
+  place-items: center;
+  cursor: pointer;
+}
+
+.admin-handover__close svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
 .demo-consent {
   position: fixed;
   z-index: 50;
