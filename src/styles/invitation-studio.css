@@ -489,7 +489,7 @@
 }
 .demo-page-content .signature-demo--verdant-veil .signature-hero__layout { z-index: auto; width: min(100%, 74rem); grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); }
 .demo-page-content .signature-demo--verdant-veil .signature-hero__image { position: absolute; inset: 0; z-index: 0; min-height: 100%; border-radius: 0; }
-.demo-page-content .signature-demo--verdant-veil .signature-hero__image img { filter: brightness(.55) saturate(.66) hue-rotate(9deg); }
+.demo-page-content .signature-demo--verdant-veil .signature-hero__image img { filter: brightness(.72) saturate(.92) contrast(1.03); }
 .demo-page-content .signature-demo--verdant-veil .signature-hero__image-note { display: none; }
 .demo-page-content .signature-demo--verdant-veil .signature-hero__content { grid-column: 2; align-self: center; padding: 4rem 1rem; text-align: center; }
 .demo-page-content .signature-demo--verdant-veil .signature-hero__content h1 { color: #faf8ef !important; font-size: clamp(4.3rem, 8.8vw, 8rem) !important; line-height: .82 !important; }
@@ -562,4 +562,715 @@
   .demo-page-content .signature-demo--playful-handdrawn .signature-hero__image { min-height: min(92vw, 28rem); }
   .signature-playful-guide__timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; }
   .signature-playful-guide__cards { grid-template-columns: 1fr; }
+}
+
+.signature-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  overflow: hidden;
+  padding: clamp(1.25rem, 5vw, 4rem);
+  place-items: center;
+  background: #211a18;
+}
+.signature-opening button,
+.signature-hero--eternelle a,
+.signature-hero--jardin-amour a,
+.signature-hero--grand-premiere a,
+.signature-hero--love-out-loud a {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  padding: .8rem 1.35rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: inherit;
+  background: transparent;
+  text-decoration: none;
+  font: 600 .68rem/1 "Poppins", sans-serif;
+  letter-spacing: .1em;
+  cursor: pointer;
+  transition: color .25s ease, background .25s ease, transform .25s ease;
+}
+.signature-opening button:hover,
+.signature-hero--eternelle a:hover,
+.signature-hero--jardin-amour a:hover,
+.signature-hero--grand-premiere a:hover,
+.signature-hero--love-out-loud a:hover { transform: translateY(-2px); }
+.signature-opening__skip {
+  position: absolute;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: 2;
+  min-height: auto !important;
+  padding: .6rem .8rem !important;
+  border: 0 !important;
+  color: rgba(255,255,255,.78) !important;
+  font-size: .62rem !important;
+}
+.signature-opening--jardin-amour .signature-opening__skip {
+  color: #35473a !important;
+  background: rgba(255,255,255,.82);
+}
+.signature-opening--love-out-loud .signature-opening__skip {
+  color: #542722 !important;
+  background: rgba(255,229,185,.92);
+}
+.signature-opening__envelope,
+.signature-opening__editorial,
+.signature-opening__garden,
+.signature-opening__premiere,
+.signature-opening__retro { width: min(100%, 54rem); text-align: center; }
+
+.signature-opening--hy-sac-dong-phuong {
+  color: #f9e7bd;
+  background: radial-gradient(ellipse at center, #8e1e25 0, #62121b 60%, #300c12 100%);
+}
+.signature-opening--hy-sac-dong-phuong::before,
+.signature-opening--hy-sac-dong-phuong::after {
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid rgba(232, 194, 117, .55);
+  content: '';
+  pointer-events: none;
+}
+.signature-opening--hy-sac-dong-phuong::after { inset: 1.45rem; border-color: rgba(232, 194, 117, .25); }
+.signature-opening__envelope { animation: opening-rise .8s cubic-bezier(.2,.8,.2,1) both; }
+.signature-opening__envelope > p,
+.signature-opening__envelope > span:last-of-type { color: #e7cd99; font: 500 .65rem/1.6 "Poppins",sans-serif; letter-spacing: .28em; }
+.signature-opening__envelope h1 { margin: 1.1rem 0 1.5rem; color: #fff1d2; font: 400 clamp(2.5rem,8vw,5.8rem)/.95 "Playfair Display",Georgia,serif; }
+.signature-opening__seal {
+  display: grid;
+  width: 5.3rem;
+  height: 5.3rem;
+  margin: 0 auto 2rem;
+  border: 1px solid #e8c275;
+  border-radius: 50%;
+  color: #f7dfac;
+  background: linear-gradient(145deg,#9b262a,#5f111a);
+  box-shadow: 0 0 0 .45rem rgba(227,189,111,.12), inset 0 0 0 4px rgba(227,189,111,.16);
+  font: 2.2rem/1 serif;
+  place-items: center;
+}
+.signature-opening__envelope button { margin-top: 2.2rem; border-color: #e6c27b; background: linear-gradient(120deg,rgba(230,194,123,.12),rgba(230,194,123,.02)); }
+
+.signature-opening--eternelle { color: #fff; background: #111; }
+.signature-opening__editorial { position: relative; display: grid; min-height: min(76svh, 52rem); padding: 3rem; align-content: end; justify-items: start; text-align: left; }
+.signature-opening__editorial::after { position: absolute; inset: 0; background: linear-gradient(90deg,rgba(16,12,10,.64),rgba(16,12,10,.12) 76%),linear-gradient(0deg,rgba(16,12,10,.76),transparent 82%); content: ''; }
+.signature-opening__editorial img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(1.22) contrast(1.04) brightness(.9); }
+.signature-opening__editorial > :not(img) { position: relative; z-index: 1; }
+.signature-opening__editorial > span:first-of-type { font: 500 .62rem/1 "Poppins",sans-serif; letter-spacing: .3em; }
+.signature-opening__editorial h1 { max-width: 17ch; margin: 1.2rem 0; color: #fff; font: 300 clamp(3rem,9vw,7.5rem)/.85 "Playfair Display",Georgia,serif; text-shadow: 0 2px 14px rgba(0,0,0,.38); }
+.signature-opening__editorial p { margin: 0 0 1.5rem; font: 500 .7rem/1 "Poppins",sans-serif; letter-spacing: .2em; }
+.signature-opening__editorial button { color: #fff; }
+
+.signature-opening--jardin-amour { color: #405244; background: #f2f0e7; }
+.signature-opening__garden-frame { position: relative; width: min(50vw,18rem); height: min(55vh,23rem); margin: 0 auto 1.5rem; border: .7rem solid #fff; border-radius: 50% 50% .4rem .4rem; box-shadow: 0 1.2rem 3rem rgba(56,76,58,.15); }
+.signature-opening__garden-frame::before { position: absolute; inset: .4rem; z-index: 1; border: 1px solid rgba(123,143,111,.5); border-radius: inherit; content: ''; pointer-events: none; }
+.signature-opening__garden-frame img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+.signature-opening__garden-sprig { position: absolute; z-index: 2; color: #728668; font: 4rem/1 Georgia,serif; }
+.signature-opening__garden-sprig--left { bottom: 1rem; left: -1.6rem; transform: rotate(-35deg); }
+.signature-opening__garden-sprig--right { top: 1rem; right: -1.6rem; transform: rotate(140deg); }
+.signature-opening__garden > p { color: #718268; font: 600 .58rem/1 "Poppins",sans-serif; letter-spacing: .22em; }
+.signature-opening__garden h1 { margin: .8rem 0; color: #35473a; font: 400 clamp(2.5rem,7vw,5.5rem)/.94 "Playfair Display",Georgia,serif; }
+.signature-opening__garden > span { color: #718268; font: 500 .68rem/1 "Poppins",sans-serif; letter-spacing: .16em; }
+.signature-opening__garden button { display: flex; margin: 1.5rem auto 0; border-color: #718268; color: #3e5544; }
+
+.signature-opening--grand-premiere { color: #f6e8d0; background: #140f12; }
+.signature-opening--grand-premiere::before,
+.signature-opening--grand-premiere::after { position: absolute; top: 0; bottom: 0; z-index: 1; width: 13%; background: repeating-linear-gradient(90deg,#4d101c 0,#721c29 22%,#360d16 48%,#631621 72%); box-shadow: inset -1rem 0 1.5rem rgba(0,0,0,.45); content: ''; }
+.signature-opening--grand-premiere::before { left: 0; }
+.signature-opening--grand-premiere::after { right: 0; transform: scaleX(-1); }
+.signature-opening__premiere { position: relative; width: min(70%,42rem); }
+.signature-opening__premiere img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .58; object-fit: cover; filter: saturate(1.38) contrast(1.08) brightness(.82); }
+.signature-opening__premiere > :not(img) { position: relative; }
+.signature-opening__premiere-kicker { color: #dabd88; font: 500 .55rem/1.4 "Poppins",sans-serif; letter-spacing: .24em; }
+.signature-opening__premiere > p:not(.signature-opening__premiere-kicker) { margin: 2rem 0 .3rem; font: 500 .65rem/1 "Poppins",sans-serif; letter-spacing: .3em; }
+.signature-opening__premiere h1 { margin: .5rem 0 1.2rem; color: #fff6e8; font: 400 clamp(2.7rem,8vw,6.7rem)/.85 "Playfair Display",Georgia,serif; }
+.signature-opening__premiere > span:last-of-type { display: block; margin: 1.2rem 0; color: #d7c5aa; font: 500 .62rem/1.6 "Poppins",sans-serif; letter-spacing: .15em; }
+.signature-opening__premiere button { border-color: #a67d4c; color: #f4e3c4; }
+
+.signature-opening--love-out-loud { color: #542722; background: #f7a58d; }
+.signature-opening__retro { position: relative; width: min(100%,48rem); padding: clamp(2rem,7vw,5rem); border: 3px solid #542722; background: #ffe5b9; box-shadow: .9rem .9rem 0 #d84c3b; transform: rotate(-1deg); }
+.signature-opening__retro > img { position: absolute; top: 18%; right: 7%; width: 30%; height: 46%; border: .35rem solid #fff8e7; object-fit: cover; transform: rotate(5deg); }
+.signature-opening__retro > p,
+.signature-opening__retro > h1,
+.signature-opening__retro > span:not(.signature-opening__retro-sticker) { position: relative; z-index: 1; width: 75%; text-align: left; }
+.signature-opening__retro > p { margin: 0 0 1rem; font: 800 .66rem/1 "Poppins",sans-serif; letter-spacing: .15em; }
+.signature-opening__retro h1 { margin: 0 0 1rem; color: #d74737; font: 900 clamp(2.8rem,9vw,7.3rem)/.82 "Poppins",sans-serif; letter-spacing: -.08em; text-transform: uppercase; }
+.signature-opening__retro > span:not(.signature-opening__retro-sticker) { display: block; font: 700 .68rem/1 "Poppins",sans-serif; letter-spacing: .12em; }
+.signature-opening__retro button { display: flex; margin-top: 1.5rem; border: 0; color: #fff5db; background: #d74737; }
+.signature-opening__retro-sticker { position: absolute; z-index: 2; display: grid; width: 5rem; height: 5rem; border: 2px solid #542722; border-radius: 50%; color: #542722; background: #f9c84e; font: 900 .58rem/1 "Poppins",sans-serif; place-items: center; transform: rotate(12deg); }
+.signature-opening__retro-sticker--top { top: -1.5rem; left: -1.4rem; }
+.signature-opening__retro-sticker--side { right: 2%; bottom: -1.2rem; color: #fff0d3; background: #d74737; transform: rotate(-12deg); }
+
+.signature-hero--hy-sac-dong-phuong {
+  display: grid;
+  min-height: min(92svh, 58rem);
+  padding: clamp(2rem,7vw,6rem);
+  grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr);
+  align-items: center;
+  gap: clamp(2rem,6vw,6rem);
+  color: #f6e9cb;
+  background: radial-gradient(circle at 50% 30%,rgba(154,34,41,.5),transparent 32rem),#55131b;
+}
+.signature-hero--hy-sac-dong-phuong .signature-hero__image { position: relative; min-height: clamp(25rem,55vw,43rem); border: 1px solid #d5b370; padding: .6rem; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__image::after { position: absolute; inset: 1rem; border: 1px solid rgba(228,199,139,.55); content: ''; pointer-events: none; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.78); }
+.signature-hero--hy-sac-dong-phuong .signature-hero__image > span { position: absolute; right: 1rem; bottom: 1rem; z-index: 1; font: 500 .55rem/1 "Poppins",sans-serif; letter-spacing: .14em; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__content { text-align: center; }
+.signature-hero--hy-sac-dong-phuong .signature-eyebrow,
+.signature-hero--hy-sac-dong-phuong .signature-hero__invitation { justify-content: center; color: #e7d2a7; }
+.signature-hero__heritage-mark { display: grid; width: 4rem; height: 4rem; margin: 2rem auto 1rem; border: 1px solid #d7b86f; color: #ebd69e; font: 2rem/1 serif; place-items: center; }
+.signature-hero__heritage-kicker { color: #d7b86f; font: 500 .62rem/1 "Poppins",sans-serif; letter-spacing: .24em; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__content h1 { color: #fff2d6; font: 400 clamp(3.2rem,6vw,5.5rem)/.95 "Playfair Display",Georgia,serif !important; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__content h1 i { display: block; margin: .35rem; color: #d7b86f; font-size: .55em; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__date { color: #d7b86f; letter-spacing: .22em; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__actions { justify-content: center; }
+.signature-hero--hy-sac-dong-phuong .signature-hero__actions a { border-color: #d7b86f; color: #f6e9cb; }
+.signature-hero__heritage-border { position: absolute; inset: 1.2rem; border: 1px solid rgba(215,184,111,.28); pointer-events: none; }
+
+.signature-hero--eternelle { position: relative; display: grid; min-height: min(92svh,62rem); overflow: hidden; color: #fff; background: #181715; place-items: end start; }
+.signature-hero__editorial-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 38%; filter: saturate(1.2) contrast(1.04) brightness(.9); transition: filter 1s ease, transform 1.4s ease; }
+.signature-hero--eternelle:hover .signature-hero__editorial-photo { filter: saturate(1.3) contrast(1.06) brightness(.98); transform: scale(1.025); }
+.signature-hero--eternelle::after { position: absolute; inset: 0; background: linear-gradient(90deg,rgba(14,14,13,.56),rgba(14,14,13,.08) 80%),linear-gradient(0deg,rgba(14,14,13,.72),transparent 78%); content: ''; }
+.signature-hero__editorial-caption { position: relative; z-index: 1; width: min(100%,60rem); padding: clamp(2rem,8vw,7rem); }
+.signature-hero__editorial-caption .signature-eyebrow { color: rgba(255,255,255,.78); }
+.signature-hero__editorial-caption h1 { margin: 1.5rem 0; color: white; font: 300 clamp(4.5rem,12vw,11rem)/.78 "Playfair Display",Georgia,serif !important; letter-spacing: -.06em; }
+.signature-hero__editorial-caption h1 i { display: inline-block; margin: 0 .12em; font-size: .42em; }
+.signature-hero__editorial-caption > p { color: #fff; font: 500 .65rem/1.5 "Poppins",sans-serif; letter-spacing: .17em; text-shadow: 0 1px 5px rgba(0,0,0,.6); }
+.signature-hero__editorial-caption > p span { padding: 0 .7rem; }
+.signature-hero__editorial-caption > .signature-hero__editorial-guest { max-width: 34rem; margin-top: .8rem; color: rgba(255,255,255,.82); font-size: .68rem; letter-spacing: .06em; }
+.signature-hero--eternelle a { margin-top: 1.2rem; border-color: rgba(255,255,255,.62); font-size: .58rem; }
+.signature-hero__editorial-index { position: absolute; top: 50%; right: 1.5rem; z-index: 1; color: rgba(255,255,255,.76); font: 500 .52rem/1 "Poppins",sans-serif; letter-spacing: .2em; writing-mode: vertical-rl; }
+
+.signature-hero--jardin-amour { position: relative; display: grid; min-height: min(92svh,62rem); padding: clamp(2rem,8vw,7rem); grid-template-columns: minmax(0,1fr) minmax(15rem,.82fr); align-items: center; gap: clamp(2rem,8vw,8rem); color: #35473a; background: radial-gradient(ellipse at 10% 12%,rgba(176,190,157,.25),transparent 25rem),#f4f1e8; }
+.signature-hero__jardin-copy { position: relative; z-index: 1; }
+.signature-hero__jardin-copy .signature-eyebrow { color: #75876c; }
+.signature-hero__jardin-copy h1 { margin: 2rem 0 1.5rem; color: #384b3d; font: 400 clamp(4rem,8vw,8rem)/.78 "Playfair Display",Georgia,serif !important; }
+.signature-hero__jardin-copy h1 i { display: block; margin: .2rem 0; color: #879979; font-size: .5em; }
+.signature-hero__jardin-copy > p { font: 600 .68rem/1 "Poppins",sans-serif; letter-spacing: .16em; }
+.signature-hero__jardin-copy > .signature-hero__jardin-guest { max-width: 28rem; margin-top: 1.2rem; color: #647568; font-size: .72rem; line-height: 1.6; letter-spacing: .02em; }
+.signature-hero--jardin-amour a { margin-top: 2rem; border-color: #84957a; color: #455d4a; font-size: .6rem; }
+.signature-hero__jardin-frame { position: relative; width: 100%; height: clamp(27rem,55vw,43rem); margin: 0; padding: .65rem; border: 1px solid #c8c9b9; border-radius: 50% 50% .45rem .45rem; background: rgba(255,255,255,.55); box-shadow: 0 1.2rem 3.8rem rgba(63,83,66,.13); }
+.signature-hero__jardin-frame::after { position: absolute; inset: 1.15rem; border: 1px solid rgba(128,148,116,.55); border-radius: inherit; content: ''; pointer-events: none; }
+.signature-hero__jardin-frame img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+.signature-hero__jardin-frame figcaption { position: absolute; right: 1rem; bottom: 1.6rem; left: 1rem; z-index: 1; color: #fff; font: 500 .54rem/1 "Poppins",sans-serif; letter-spacing: .16em; text-align: center; text-shadow: 0 1px 5px #222; }
+.signature-hero__jardin-ornament { position: absolute; top: 9%; right: 43%; color: rgba(111,139,104,.45); font: 9rem/1 Georgia,serif; transform: rotate(25deg); }
+
+.signature-hero--grand-premiere { position: relative; display: grid; min-height: min(95svh,66rem); overflow: hidden; padding: clamp(2rem,6vw,5rem); color: #f3e7d0; background: #130f12; place-items: center; }
+.signature-hero--grand-premiere > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.78) saturate(1.35) contrast(1.08); }
+.signature-hero--grand-premiere::before,
+.signature-hero--grand-premiere::after { position: absolute; top: 0; bottom: 0; z-index: 1; width: clamp(1.5rem,8vw,8rem); background: repeating-linear-gradient(90deg,#3b0d17 0,#741927 35%,#3e0c16 67%,#641522 100%); box-shadow: inset -1rem 0 1.5rem rgba(0,0,0,.5); content: ''; }
+.signature-hero--grand-premiere::before { left: 0; }
+.signature-hero--grand-premiere::after { right: 0; transform: scaleX(-1); }
+.signature-hero__premiere-frame { position: relative; z-index: 2; display: grid; width: min(100%,54rem); min-height: 40rem; padding: clamp(2rem,5vw,4rem); align-content: center; justify-items: center; border: 1px solid rgba(207,169,109,.82); outline: 1px solid rgba(207,169,109,.4); outline-offset: .55rem; background: rgba(17,12,14,.68); text-align: center; }
+.signature-hero__premiere-frame .signature-eyebrow { justify-content: center; color: #dfc395; }
+.signature-hero__premiere-title { margin: 2.5rem 0 .5rem; color: #d3b27e; font: 500 clamp(.68rem,1.5vw,1.1rem)/1.4 "Poppins",sans-serif; letter-spacing: .38em; }
+.signature-hero__premiere-frame h1 { margin: 1rem 0; color: #fff6e7; font: 400 clamp(3.2rem,8vw,7rem)/.9 "Playfair Display",Georgia,serif !important; }
+.signature-hero__premiere-frame h1 i { color: #d3b27e; }
+.signature-hero__premiere-tagline { color: rgba(248,238,220,.8); font: italic 1rem/1.6 "Playfair Display",Georgia,serif; }
+.signature-hero__premiere-frame > span { margin-top: 1rem; font: 500 .62rem/1.5 "Poppins",sans-serif; letter-spacing: .18em; }
+.signature-hero__premiere-frame > .signature-hero__premiere-guest { max-width: 28rem; color: rgba(248,238,220,.82); font-size: .62rem; letter-spacing: .04em; }
+.signature-hero__premiere-frame > span:not(.signature-hero__premiere-guest) { color: #f0dfc2; }
+.signature-hero--grand-premiere a { margin-top: 2rem; border-color: #bf9a61; color: #f3e7d0; font-size: .58rem; }
+.signature-hero__premiere-rating { position: absolute; right: 2rem; bottom: 1.6rem; z-index: 2; color: #e2c796; font: 500 .48rem/1.6 "Poppins",sans-serif; letter-spacing: .14em; text-align: right; }
+.signature-hero__premiere-rating b { font-size: .55rem; }
+
+.signature-hero--love-out-loud { position: relative; display: grid; min-height: min(92svh,62rem); overflow: hidden; padding: clamp(2rem,8vw,7rem); grid-template-columns: 1.1fr .9fr; align-items: center; color: #542722; background: #f8b09a; }
+.signature-hero__retro-copy { position: relative; z-index: 2; }
+.signature-hero__retro-copy .signature-eyebrow { color: #6a342c; font-weight: 800; }
+.signature-hero__retro-copy h1 { max-width: 10ch; margin: 1.5rem 0; color: #d94838; font: 900 clamp(4rem,10vw,9rem)/.78 "Poppins",sans-serif !important; letter-spacing: -.095em; text-transform: uppercase; text-shadow: .08em .06em 0 #ffd35d; }
+.signature-hero__retro-copy h1 i { display: inline-block; margin: 0 .1em; color: #60312a; font-size: .4em; text-shadow: none; }
+.signature-hero__retro-copy > p { font: 900 clamp(.72rem,1.8vw,1.05rem)/1 "Poppins",sans-serif; letter-spacing: .14em; }
+.signature-hero__retro-copy > span { display: block; margin-top: 1rem; font: 700 .66rem/1.4 "Poppins",sans-serif; letter-spacing: .1em; }
+.signature-hero__retro-copy > .signature-hero__retro-guest { max-width: 28rem; font-size: .65rem; letter-spacing: .02em; }
+.signature-hero--love-out-loud a { margin-top: 2rem; border-color: #5c3029; color: #5c3029; font-weight: 800; }
+.signature-hero__retro-photo { position: relative; width: min(100%,30rem); height: clamp(25rem,50vw,39rem); margin: 0; padding: .7rem .7rem 2.9rem; border: 2px solid #57302a; background: #fff4d8; box-shadow: .8rem .8rem 0 #d64c3c; transform: rotate(3deg); }
+.signature-hero__retro-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.82); }
+.signature-hero__retro-photo figcaption { position: absolute; right: .7rem; bottom: 1rem; left: .7rem; font: 800 .55rem/1 "Poppins",sans-serif; letter-spacing: .16em; text-align: center; }
+.signature-hero__retro-heart,
+.signature-hero__retro-star { position: absolute; z-index: 2; color: #d64c3c; font-size: clamp(3rem,8vw,7rem); }
+.signature-hero__retro-heart { top: 12%; right: 12%; transform: rotate(15deg); }
+.signature-hero__retro-star { right: 43%; bottom: 12%; color: #f7cc47; -webkit-text-stroke: 1px #59302a; }
+
+.signature-demo--hy-sac-dong-phuong { --sig-ink:#42171b; --sig-paper:#fff7e8; --sig-accent:#a77b32; --sig-muted:#92796a; --sig-line:rgba(116,66,34,.24); }
+.signature-demo--eternelle { --sig-ink:#262522; --sig-paper:#faf9f5; --sig-accent:#887b68; --sig-muted:#77746e; --sig-line:rgba(53,52,48,.15); }
+.signature-demo--jardin-amour { --sig-ink:#37483a; --sig-paper:#f4f1e8; --sig-accent:#758a6d; --sig-muted:#7a8275; --sig-line:rgba(68,92,69,.2); }
+.signature-demo--grand-premiere { --sig-ink:#f2e7d3; --sig-paper:#171114; --sig-accent:#b58d57; --sig-muted:#b8a891; --sig-line:rgba(190,151,92,.36); }
+.signature-demo--love-out-loud { --sig-ink:#532b25; --sig-paper:#fff0d1; --sig-accent:#bd4033; --sig-muted:#754940; --sig-line:rgba(85,44,37,.28); }
+
+.signature-heritage-rites { padding: clamp(3rem,8vw,7rem) 1.25rem; color: #f1e5c9; background: #48121a; text-align: center; }
+.signature-heritage-rites > .signature-eyebrow { justify-content: center; color: #d7b86f; }
+.signature-heritage-rites__row { display: flex; width: min(100%,65rem); margin: 2rem auto 0; align-items: center; justify-content: space-between; gap: 1rem; }
+.signature-heritage-rites__row article { flex: 1; padding: 1.5rem .75rem; border-block: 1px solid rgba(215,184,111,.5); }
+.signature-heritage-rites__row article > span { color: #c9a860; font: 500 .7rem/1 "Poppins",sans-serif; }
+.signature-heritage-rites__row article p { margin: .75rem 0; color: #d7b86f; font: 600 .6rem/1 "Poppins",sans-serif; letter-spacing: .15em; }
+.signature-heritage-rites__row article h3 { margin: 0 0 .5rem !important; color: #fff1d2; font: 400 1.8rem/1.1 "Playfair Display",Georgia,serif !important; }
+.signature-heritage-rites__row article time { color: #cfbea0; font: 500 .62rem/1.5 "Poppins",sans-serif; }
+.signature-heritage-rites__row > i { color: #d7b86f; font-style: normal; }
+.signature-demo--hy-sac-dong-phuong .signature-event-card { border: 1px solid rgba(180,140,69,.5); color: #f7edd8; background: #5c1720; }
+.signature-demo--hy-sac-dong-phuong .signature-event-card__number,
+.signature-demo--hy-sac-dong-phuong .signature-event-card p { color: #e4c47f; }
+.signature-demo--hy-sac-dong-phuong .signature-event-card > span:not(.signature-event-card__number) { color: rgba(255,242,217,.86); }
+.signature-demo--hy-sac-dong-phuong .signature-event-card h3 { color: #fff0d0; }
+.signature-demo--hy-sac-dong-phuong .signature-gallery { background: #f8f2e5; }
+.signature-demo--hy-sac-dong-phuong .signature-rsvp form > button { color: #381319; background: #e3c47b; }
+
+.signature-eternelle-quote { padding: clamp(5rem,12vw,11rem) 1.5rem; color: #35332f; background: #f7f6f1; text-align: center; }
+.signature-eternelle-quote > span { display: block; height: 4rem; color: #b7aa94; font: 5rem/.9 "Playfair Display",Georgia,serif; }
+.signature-eternelle-quote > p { width: min(100%,52rem); margin: 1rem auto 2rem; font: 300 clamp(1.8rem,4vw,3.8rem)/1.15 "Playfair Display",Georgia,serif; }
+.signature-eternelle-quote > small { color: #77746e; font: 500 .58rem/1 "Poppins",sans-serif; letter-spacing: .18em; }
+.signature-demo--eternelle .signature-story { grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr); }
+.signature-demo--eternelle .signature-story__photo img { filter: saturate(1.18) contrast(1.03); }
+.signature-demo--eternelle .signature-gallery__grid button { border-radius: 0; }
+.signature-demo--eternelle .signature-gallery__grid img { filter: saturate(1.16) contrast(1.03); transition: filter .35s ease, transform 500ms cubic-bezier(.2,.7,.2,1); }
+.signature-demo--eternelle .signature-gallery__grid button:hover img { filter: saturate(1.3) contrast(1.05); }
+.signature-demo--eternelle .signature-event-card { border-radius: 0; box-shadow: none; }
+.signature-demo--eternelle .signature-rsvp form > button { color: #211f1a; background: #d7c6a8; }
+
+.signature-jardin-growth { position: relative; overflow: hidden; padding: clamp(4rem,9vw,8rem) 1.25rem; color: #405143; background: #e9eee2; text-align: center; }
+.signature-jardin-growth__vine { color: #809478; font: 2rem/1 Georgia,serif; letter-spacing: .1em; }
+.signature-jardin-growth > .signature-eyebrow { justify-content: center; margin-top: 1.5rem; color: #52684e; }
+.signature-jardin-growth h2 { margin: 1rem 0 .6rem !important; color: #3e5544; font: 400 clamp(2rem,5vw,4rem)/1.05 "Playfair Display",Georgia,serif !important; }
+.signature-jardin-growth > p:not(.signature-eyebrow) { color: #657365; font-size: .76rem; }
+.signature-jardin-growth__flowers { display: flex; width: min(100%,40rem); min-height: 9rem; margin: 1rem auto; align-items: center; justify-content: space-around; color: #819478; font-size: 2.5rem; }
+.signature-jardin-growth__flowers span { opacity: .35; transform: scale(.65) translateY(1.3rem); transition: opacity .65s ease, transform .65s cubic-bezier(.2,.8,.2,1); }
+.signature-jardin-growth.is-bloomed .signature-jardin-growth__flowers span { opacity: 1; transform: scale(1) translateY(0); }
+.signature-jardin-growth__flowers span:nth-child(2n) { transition-delay: .12s; color: #bd8f8a; }
+.signature-jardin-growth__flowers span:nth-child(3n) { transition-delay: .24s; color: #d5b56d; }
+.signature-jardin-growth button { min-height: 2.8rem; padding: .7rem 1.1rem; border: 1px solid #82947b; border-radius: 999px; color: #405745; background: transparent; font: 600 .65rem/1 "Poppins",sans-serif; cursor: pointer; }
+.signature-demo--jardin-amour .signature-story__photo img { border-radius: 50% 50% .5rem .5rem; }
+.signature-demo--jardin-amour .signature-event-card { border-radius: 48% 48% .7rem .7rem; background: #eef0e7; }
+.signature-demo--jardin-amour .signature-gallery__grid button { border: .35rem solid #fff; border-radius: 44% 44% .8rem .8rem; box-shadow: 0 .5rem 1.5rem rgba(58,78,59,.12); }
+.signature-demo--jardin-amour .signature-rsvp form > button { color: #29392c; background: #d6dfc9; }
+
+.signature-premiere-chapters { padding: clamp(4rem,9vw,8rem) 1.25rem; color: #f3e7d0; background: #191316; text-align: center; }
+.signature-premiere-chapters > .signature-eyebrow { justify-content: center; color: #c9a76e; }
+.signature-premiere-chapters__list { display: grid; width: min(100%,74rem); margin: 2rem auto 0; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+.signature-premiere-chapters__list a { display: grid; min-height: 12rem; padding: 1.5rem; align-content: center; gap: .7rem; border: 1px solid rgba(190,151,92,.42); color: #f3e7d0; background: linear-gradient(145deg,rgba(113,28,40,.28),transparent); text-align: left; text-decoration: none; transition: background .25s ease,transform .25s ease; }
+.signature-premiere-chapters__list a:hover { background: rgba(113,28,40,.4); transform: translateY(-4px); }
+.signature-premiere-chapters__list span { color: #c9a76e; font: 500 .55rem/1 "Poppins",sans-serif; letter-spacing: .16em; }
+.signature-premiere-chapters__list strong { font: 400 clamp(1.5rem,3vw,2.4rem)/1 "Playfair Display",Georgia,serif; }
+.signature-premiere-chapters__list small { color: #b5a895; font: 500 .62rem/1.5 "Poppins",sans-serif; }
+.signature-demo--grand-premiere .signature-event-card { border: 1px solid rgba(190,151,92,.45); border-radius: .2rem; color: #f1e6d3; background: #21191d; }
+.signature-demo--grand-premiere .signature-event-card h3 { color: #f3e7d0; }
+.signature-demo--grand-premiere .signature-rsvp { background: radial-gradient(ellipse at center,#3b1720,#171114); }
+.signature-demo--grand-premiere .signature-rsvp form { border: 1px solid rgba(190,151,92,.55); outline: 1px dashed rgba(190,151,92,.35); outline-offset: .4rem; }
+.signature-demo--grand-premiere .signature-rsvp form > button { color: #201719; background: #d0ad73; }
+
+.signature-love-quiz { position: relative; overflow: hidden; padding: clamp(4rem,9vw,8rem) 1.25rem; color: #542d27; background: #ffd9a7; text-align: center; }
+.signature-love-quiz > .signature-eyebrow { justify-content: center; color: #b54638; font-weight: 800; }
+.signature-love-quiz h2 { margin: 1rem 0 1.5rem !important; color: #d64c3c; font: 900 clamp(2.5rem,7vw,5.5rem)/.9 "Poppins",sans-serif !important; letter-spacing: -.07em; text-transform: uppercase; }
+.signature-love-quiz__answers { display: flex; width: min(100%,58rem); margin: 0 auto; justify-content: center; flex-wrap: wrap; gap: .7rem; }
+.signature-love-quiz__answers button,
+.signature-love-quiz__stickers button { min-height: 2.8rem; padding: .65rem 1rem; border: 2px solid #542d27; border-radius: 999px; color: #542d27; background: #fff0d2; font: 700 .68rem/1 "Poppins",sans-serif; cursor: pointer; transition: transform .18s ease,background .18s ease; }
+.signature-love-quiz__answers button:hover,
+.signature-love-quiz__stickers button:hover { transform: rotate(-2deg) scale(1.04); }
+.signature-love-quiz__answers button.is-selected { color: #fff5db; background: #d64c3c; }
+.signature-love-quiz__reveal { margin: 1.2rem auto; font: 700 .8rem/1.5 "Poppins",sans-serif; }
+.signature-love-quiz__stickers { display: flex; margin: 2rem auto 0; align-items: center; justify-content: center; gap: .6rem; font: 700 .62rem/1 "Poppins",sans-serif; }
+.signature-love-quiz__stickers button { min-width: 2.8rem; padding: .4rem; background: #f6c849; font-size: 1.1rem; }
+.signature-love-quiz__stickers output { min-width: 1.5rem; }
+.signature-love-quiz__sticker { position: absolute; top: 1.8rem; right: 8%; color: #d64c3c; font-size: 3rem; transform: rotate(16deg); }
+.signature-demo--love-out-loud .signature-event-card { border: 2px solid #542d27; border-radius: .8rem; background: #ffe8c8; box-shadow: .35rem .35rem 0 #e17458; }
+.signature-demo--love-out-loud .signature-gallery__grid button { border: .35rem solid #fff2d4; border-radius: .3rem; box-shadow: .35rem .35rem 0 #d64c3c; transform: rotate(-1deg); }
+.signature-demo--love-out-loud .signature-gallery__grid button:nth-child(2n) { transform: rotate(1.2deg); }
+.signature-demo--love-out-loud .signature-rsvp { color: #502a24; background: #f4a58c; }
+.signature-demo--love-out-loud .signature-rsvp form { padding: clamp(1rem,4vw,2.5rem); border: 2px solid #542d27; border-radius: 1rem; background: #ffe8c8; }
+.signature-demo--love-out-loud .signature-rsvp form button[type="submit"] { color: #fff4d9; background: #a83329; }
+.signature-demo--love-out-loud .signature-event-card--primary { color: #542d27; border-color: #542d27; background: #ffe8c8; }
+.signature-demo--love-out-loud .signature-event-card--primary h3 { color: #542d27; }
+.signature-demo--love-out-loud .signature-event-card--primary .signature-event-card__number,
+.signature-demo--love-out-loud .signature-event-card--primary > svg { color: #a83329; }
+.signature-demo--love-out-loud .signature-event-card--primary p { color: #a83329; }
+.signature-demo--love-out-loud .signature-event-card--primary > span:not(.signature-event-card__number) { color: #754940; }
+.signature-demo--love-out-loud .signature-rsvp form { color: #542d27; }
+.signature-demo--love-out-loud .signature-rsvp h2 { color: #542d27 !important; }
+.signature-demo--love-out-loud .signature-rsvp form > p:not(.signature-eyebrow),
+.signature-demo--love-out-loud .signature-rsvp__success > p { color: #754940; }
+.signature-demo--love-out-loud .signature-rsvp label { color: #542d27; }
+.signature-demo--love-out-loud .signature-rsvp input,
+.signature-demo--love-out-loud .signature-rsvp select,
+.signature-demo--love-out-loud .signature-rsvp textarea {
+  border-color: rgba(84,45,39,.4);
+  color: #542d27;
+  background: #fff4df;
+  color-scheme: light;
+}
+.signature-demo--love-out-loud .signature-rsvp :is(input, textarea)::placeholder { color: #80645c; opacity: 1; }
+
+.signature-demo--jardin-amour .signature-event-card--primary {
+  border-color: #37483a;
+  color: #f4f1e8;
+  background: #37483a;
+}
+.signature-demo--jardin-amour .signature-event-card--primary h3 { color: #f4f1e8; }
+.signature-demo--jardin-amour .signature-event-card--primary .signature-event-card__number,
+.signature-demo--jardin-amour .signature-event-card--primary p,
+.signature-demo--jardin-amour .signature-event-card--primary > svg { color: #d6dfc9; }
+.signature-demo--jardin-amour .signature-event-card--primary > span:not(.signature-event-card__number) { color: #e4e6d9; }
+
+.signature-demo--grand-premiere .signature-rsvp { color: #f3e7d0; }
+.signature-demo--grand-premiere .signature-rsvp h2 { color: #f3e7d0 !important; }
+.signature-demo--grand-premiere .signature-rsvp form > p:not(.signature-eyebrow),
+.signature-demo--grand-premiere .signature-rsvp__success > p { color: rgba(243,231,208,.82); }
+.signature-demo--grand-premiere .signature-rsvp label { color: #e8dcc7; }
+.signature-demo--grand-premiere .signature-rsvp input,
+.signature-demo--grand-premiere .signature-rsvp select,
+.signature-demo--grand-premiere .signature-rsvp textarea {
+  border-color: rgba(243,231,208,.42);
+  color: #f3e7d0;
+  background: rgba(255,255,255,.07);
+  color-scheme: dark;
+}
+.signature-demo--grand-premiere .signature-rsvp :is(input, textarea)::placeholder { color: #c5b7a3; opacity: 1; }
+
+@keyframes opening-rise {
+  from { opacity: 0; transform: translateY(1.5rem) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 760px) {
+  .signature-hero--hy-sac-dong-phuong,
+  .signature-hero--jardin-amour,
+  .signature-hero--love-out-loud { grid-template-columns: 1fr; text-align: center; }
+  .signature-hero--hy-sac-dong-phuong { gap: 2rem; }
+  .signature-hero--hy-sac-dong-phuong .signature-hero__image { order: 2; min-height: 72vw; }
+  .signature-hero__heritage-border { inset: .5rem; }
+  .signature-hero--eternelle { min-height: 82svh; }
+  .signature-hero__editorial-caption { padding: 2rem 1.25rem 4rem; }
+  .signature-hero__editorial-caption h1 { font-size: clamp(4rem,15vw,6rem) !important; }
+  .signature-hero__editorial-index { right: .6rem; }
+  .signature-hero--jardin-amour { gap: 2rem; }
+  .signature-hero__jardin-frame { width: min(78%,25rem); height: min(105vw,32rem); margin-inline: auto; }
+  .signature-hero__jardin-ornament { top: 39%; right: 4%; font-size: 6rem; }
+  .signature-hero__premiere-frame { min-height: min(72svh,42rem); padding: 1.25rem; }
+  .signature-hero__premiere-title { letter-spacing: .18em; }
+  .signature-hero__premiere-rating { right: .6rem; bottom: .7rem; }
+  .signature-hero__retro-copy h1 { margin-inline: auto; }
+  .signature-hero__retro-photo { width: min(74%,24rem); height: min(100vw,29rem); margin: 1rem auto 0; }
+  .signature-hero__retro-heart { top: 41%; right: 8%; }
+  .signature-hero__retro-star { right: 72%; bottom: 4%; }
+  .signature-heritage-rites__row { flex-direction: column; }
+  .signature-heritage-rites__row article { width: min(100%,24rem); }
+  .signature-heritage-rites__row > i { transform: rotate(90deg); }
+  .signature-premiere-chapters__list { grid-template-columns: 1fr; }
+  .signature-premiere-chapters__list a { min-height: 8rem; }
+  .signature-love-quiz__stickers { flex-wrap: wrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signature-opening *,
+  .signature-hero--eternelle .signature-hero__editorial-photo,
+  .signature-jardin-growth__flowers span,
+  .signature-premiere-chapters__list a,
+  .signature-love-quiz button { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+.demo-page-content .signature-demo section.signature-opening {
+  display: grid;
+  min-height: 100svh !important;
+  padding: clamp(1.25rem, 4vw, 3.5rem) !important;
+  scroll-margin: 0;
+  place-items: center;
+}
+
+.demo-page-content .signature-demo .signature-opening__envelope,
+.demo-page-content .signature-demo .signature-opening__garden,
+.demo-page-content .signature-demo .signature-opening__premiere,
+.demo-page-content .signature-demo .signature-opening__retro {
+  display: grid;
+  width: min(100%, 52rem);
+  justify-items: center;
+  align-content: center;
+  gap: .85rem;
+  text-align: center;
+}
+
+.demo-page-content .signature-demo .signature-opening__envelope > p,
+.demo-page-content .signature-demo .signature-opening__garden > p,
+.demo-page-content .signature-demo .signature-opening__premiere > p,
+.demo-page-content .signature-demo .signature-opening__retro > p {
+  width: auto;
+  margin: 0;
+}
+
+.demo-page-content .signature-demo .signature-opening__envelope h1,
+.demo-page-content .signature-demo .signature-opening__garden h1,
+.demo-page-content .signature-demo .signature-opening__premiere h1,
+.demo-page-content .signature-demo .signature-opening__retro h1 {
+  width: 100%;
+  max-width: 16ch;
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-wrap: balance;
+  font-size: clamp(2.35rem, 7.3vw, 5.6rem) !important;
+  line-height: .98 !important;
+  letter-spacing: -.035em;
+}
+
+.demo-page-content .signature-demo .signature-opening__envelope > span:not(.signature-opening__seal),
+.demo-page-content .signature-demo .signature-opening__garden > span:not(.signature-opening__garden-sprig),
+.demo-page-content .signature-demo .signature-opening__premiere > span:not(.signature-opening__premiere-kicker),
+.demo-page-content .signature-demo .signature-opening__retro > span:not(.signature-opening__retro-sticker) {
+  display: block;
+  width: auto;
+  margin: 0;
+  text-align: center;
+}
+
+.demo-page-content .signature-demo .signature-opening__envelope button,
+.demo-page-content .signature-demo .signature-opening__editorial button,
+.demo-page-content .signature-demo .signature-opening__garden button,
+.demo-page-content .signature-demo .signature-opening__premiere button,
+.demo-page-content .signature-demo .signature-opening__retro button {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 3rem;
+  margin: .55rem auto 0;
+  padding: .8rem 1.35rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: inherit;
+  background-color: transparent;
+  font: 600 .68rem/1 "Poppins", sans-serif !important;
+  letter-spacing: .08em;
+  text-align: center;
+  white-space: normal;
+}
+
+.demo-page-content .signature-demo .signature-opening__envelope {
+  gap: 1rem;
+}
+.demo-page-content .signature-demo .signature-opening__envelope .signature-opening__seal {
+  margin: 0 0 .4rem;
+}
+.demo-page-content .signature-demo .signature-opening__envelope h1 {
+  max-width: 18ch;
+  font-size: clamp(2.3rem, 7.2vw, 5.5rem) !important;
+}
+.demo-page-content .signature-demo .signature-opening__envelope > span:last-of-type {
+  font-size: .72rem;
+  line-height: 1.5;
+}
+.demo-page-content .signature-demo .signature-opening__envelope button {
+  margin-top: .55rem;
+  color: #fff0cf;
+  background: rgba(136, 31, 39, .48);
+  box-shadow: inset 0 0 0 1px rgba(232,194,117,.28);
+}
+
+.demo-page-content .signature-demo .signature-opening__editorial {
+  width: min(100%, 58rem);
+  min-height: min(76svh, 52rem);
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  align-content: end;
+  justify-items: start;
+  text-align: left;
+}
+.demo-page-content .signature-demo .signature-opening__editorial h1 {
+  max-width: 13ch;
+  text-align: left;
+  font-size: clamp(2.8rem, 8.5vw, 6.5rem) !important;
+  line-height: .98 !important;
+}
+.demo-page-content .signature-demo .signature-opening__editorial > span:first-of-type {
+  font-size: .62rem;
+  line-height: 1.5;
+}
+.demo-page-content .signature-demo .signature-opening__editorial p {
+  margin: .15rem 0 .5rem;
+  font-size: .7rem;
+  line-height: 1.5;
+}
+.demo-page-content .signature-demo .signature-opening__editorial button {
+  margin: .25rem 0 0;
+  color: #fff;
+  background: rgba(20,16,13,.4);
+}
+
+.demo-page-content .signature-demo .signature-opening__garden {
+  gap: .7rem;
+}
+.demo-page-content .signature-demo .signature-opening__garden-frame {
+  width: min(42vw, 16rem);
+  height: min(34svh, 20rem);
+  min-height: 12rem;
+  margin: 0 0 .5rem;
+}
+.demo-page-content .signature-demo .signature-opening__garden h1 {
+  max-width: 15ch;
+  font-size: clamp(2.15rem, 6.5vw, 4.8rem) !important;
+}
+.demo-page-content .signature-demo .signature-opening__garden > span:not(.signature-opening__garden-sprig) {
+  color: #52684e;
+  font-size: .7rem;
+  line-height: 1.5;
+}
+.demo-page-content .signature-demo .signature-opening__garden button {
+  color: #304b38;
+  background: rgba(255,255,255,.62);
+}
+
+.demo-page-content .signature-demo .signature-opening__premiere {
+  width: min(100%, 44rem);
+  min-height: min(68svh, 42rem);
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  gap: .8rem;
+  border: 1px solid rgba(207,169,109,.72);
+  background: rgba(17,12,14,.62);
+}
+.demo-page-content .signature-demo .signature-opening__premiere img {
+  z-index: -1;
+  opacity: .58;
+}
+.demo-page-content .signature-demo .signature-opening__premiere > p:not(.signature-opening__premiere-kicker) {
+  margin: .75rem 0 0;
+  font-size: .65rem;
+  line-height: 1.5;
+}
+.demo-page-content .signature-demo .signature-opening__premiere h1 {
+  max-width: 13ch;
+  font-size: clamp(2.25rem, 6.5vw, 5.3rem) !important;
+}
+.demo-page-content .signature-demo .signature-opening__premiere > span:last-of-type {
+  font-size: .68rem;
+  line-height: 1.5;
+}
+.demo-page-content .signature-demo .signature-opening__premiere button {
+  color: #fff0d6;
+  background: rgba(68,22,29,.7);
+}
+
+.demo-page-content .signature-demo .signature-opening__retro {
+  width: min(100%, 52rem);
+  min-height: min(66svh, 38rem);
+  padding: clamp(1.4rem, 5vw, 3.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(9rem, .68fr);
+  grid-template-areas:
+    "kicker photo"
+    "title photo"
+    "date photo"
+    "button photo";
+  justify-items: start;
+  align-content: center;
+  gap: .85rem 1.5rem;
+  text-align: left;
+  transform: none;
+}
+.demo-page-content .signature-demo .signature-opening__retro > img {
+  position: relative;
+  inset: auto;
+  grid-area: photo;
+  width: 100%;
+  height: min(48svh, 21rem);
+  border: .4rem solid #fff8e7;
+  box-shadow: .35rem .35rem 0 #d84c3b;
+  transform: rotate(2deg);
+}
+.demo-page-content .signature-demo .signature-opening__retro > .signature-opening__retro-sticker {
+  position: absolute;
+  z-index: 2;
+  width: 4.3rem;
+  height: 4.3rem;
+  font-size: .5rem;
+}
+.demo-page-content .signature-demo .signature-opening__retro-sticker--top { top: .7rem; left: .7rem; }
+.demo-page-content .signature-demo .signature-opening__retro-sticker--side { right: .6rem; bottom: .7rem; }
+.demo-page-content .signature-demo .signature-opening__retro > p {
+  grid-area: kicker;
+  justify-self: start;
+  font-size: .66rem;
+  line-height: 1.5;
+  letter-spacing: .1em;
+  text-align: left;
+}
+.demo-page-content .signature-demo .signature-opening__retro h1 {
+  grid-area: title;
+  justify-self: start;
+  max-width: 8ch;
+  color: #b83227;
+  font-size: clamp(2.3rem, 6vw, 5.2rem) !important;
+  line-height: .94 !important;
+  letter-spacing: -.06em;
+  text-align: left;
+}
+.demo-page-content .signature-demo .signature-opening__retro > span:not(.signature-opening__retro-sticker) {
+  grid-area: date;
+  justify-self: start;
+  font-size: .66rem;
+  line-height: 1.5;
+  letter-spacing: .08em;
+  text-align: left;
+}
+.demo-page-content .signature-demo .signature-opening__retro button {
+  grid-area: button;
+  justify-self: start;
+  color: #fff8e7;
+  background: #a83329;
+}
+
+@media (max-width: 600px) {
+  .demo-page-content .signature-demo section.signature-opening {
+    min-height: 100svh !important;
+    padding: max(1.25rem, env(safe-area-inset-top)) 1.1rem max(1.25rem, env(safe-area-inset-bottom)) !important;
+  }
+  .demo-page-content .signature-demo .signature-opening__envelope h1,
+  .demo-page-content .signature-demo .signature-opening__garden h1 {
+    font-size: clamp(2rem, 10vw, 3.2rem) !important;
+  }
+  .demo-page-content .signature-demo .signature-opening__editorial {
+    min-height: min(70svh, 42rem);
+    padding: 1.5rem 1rem;
+  }
+  .demo-page-content .signature-demo .signature-opening__editorial h1 {
+    max-width: 10ch;
+    font-size: clamp(2.5rem, 12vw, 4rem) !important;
+  }
+  .demo-page-content .signature-demo .signature-opening__garden-frame {
+    width: min(56vw, 13rem);
+    height: min(30svh, 16rem);
+    min-height: 10rem;
+  }
+  .demo-page-content .signature-demo .signature-opening__premiere {
+    min-height: min(67svh, 36rem);
+    padding: 1.4rem 1rem;
+  }
+  .demo-page-content .signature-demo .signature-opening__premiere h1 {
+    font-size: clamp(2rem, 9.5vw, 3.2rem) !important;
+  }
+  .demo-page-content .signature-demo .signature-opening__retro {
+    min-height: 0;
+    padding: 3.3rem 1rem 1.5rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "kicker" "title" "date" "button" "photo";
+    justify-items: center;
+    gap: .65rem;
+    text-align: center;
+  }
+  .demo-page-content .signature-demo .signature-opening__retro > img {
+    width: min(68%, 16rem);
+    height: min(31svh, 15rem);
+    margin: .75rem auto .3rem;
+    justify-self: center;
+  }
+  .demo-page-content .signature-demo .signature-opening__retro > p,
+  .demo-page-content .signature-demo .signature-opening__retro h1,
+  .demo-page-content .signature-demo .signature-opening__retro > span:not(.signature-opening__retro-sticker) {
+    width: 100%;
+    max-width: none;
+    justify-self: center;
+    text-align: center;
+  }
+  .demo-page-content .signature-demo .signature-opening__retro h1 {
+    font-size: clamp(2rem, 10vw, 3.25rem) !important;
+  }
+  .demo-page-content .signature-demo .signature-opening__retro button { justify-self: center; }
+  .demo-page-content .signature-demo .signature-opening__retro-sticker--top { top: .55rem; left: .55rem; }
+  .demo-page-content .signature-demo .signature-opening__retro-sticker--side { right: .55rem; bottom: .55rem; }
 }

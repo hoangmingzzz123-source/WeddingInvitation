@@ -77,9 +77,6 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
   const mainPhoto = selectedPhotos.find((photo) => photo.role === 'main');
   const videoPhoto = selectedPhotos.find((photo) => photo.role === 'video');
   const galleryPhotos = selectedPhotos.filter((photo) => photo.role === 'gallery');
-  const repeatedGallery = galleryPhotos.length
-    ? Array.from({ length: Math.max(4, galleryPhotos.length) }, (_, index) => galleryPhotos[index % galleryPhotos.length])
-    : [];
   const templateTier = weddingTemplates.find((item) => item.id === templateId)?.tier ?? '109k';
   const familyVariant = resolveInvitationSide(studio);
   const customization: SignatureDemoCustomization = {
@@ -122,8 +119,8 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     mainPhotoPosition: mainPhoto ? position(mainPhoto) : undefined,
     videoBackground: videoPhoto?.url,
     videoBackgroundPosition: videoPhoto ? position(videoPhoto) : undefined,
-    gallery: repeatedGallery.map((photo) => photo.url),
-    galleryPositions: repeatedGallery.map((photo) => position(photo)),
+    gallery: galleryPhotos.map((photo) => photo.url),
+    galleryPositions: galleryPhotos.map((photo) => position(photo)),
   };
 
   const submitRsvp = async (payload: SignatureRsvpPayload) => {

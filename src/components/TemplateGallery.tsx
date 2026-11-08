@@ -54,8 +54,8 @@ export function TemplateGallery() {
           <p><Sparkles aria-hidden="true" /> Tuyển chọn đặc sắc</p>
           <h2 id="home-gallery-title">Mỗi mẫu là một thế giới riêng</h2>
           <span>
-            Những thiết kế nổi bật nhất được chọn từ thư viện: điện ảnh, truyền thống Việt,
-            màu nước và cả nét vẽ tay. Xem thiệp thực tế hoặc cá nhân hóa các mẫu demo ngay trong Studio.
+            Khám phá 5 concept mới với trải nghiệm mở thiệp riêng: Hỷ Sắc Đông Phương, Éternelle,
+            Jardin d'Amour, The Grand Premiere và Love Out Loud. Mỗi thiết kế kể câu chuyện theo một cách khác nhau.
           </span>
         </motion.div>
 

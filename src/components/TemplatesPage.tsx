@@ -3,17 +3,22 @@ import { ArrowLeft, ArrowUp, Filter, Heart, Search, Sparkles } from 'lucide-reac
 import { motion } from 'motion/react';
 import { navigateTo } from '../Router';
 import {
+  templateStyleCategories,
+  templateStyleCategoryIds,
   templateTierLabels,
   weddingTemplates,
   type TemplateTier,
+  type TemplateStyleCategory,
 } from '../data/templates';
 import { TemplateCard } from './TemplateCard';
 import { InvitationCreationLauncher } from './InvitationCreationDialog';
 import { readTemplateFavorites, TEMPLATE_FAVORITES_EVENT } from '../utils/templateFavorites';
 
 type TierFilter = 'all' | TemplateTier;
+type StyleFilter = 'all' | TemplateStyleCategory;
 
 const tierOrder: TierFilter[] = ['all', '109k', '159k', '199k'];
+const styleOrder: StyleFilter[] = ['all', ...templateStyleCategories.map((category) => category.id)];
 
 function readInitialTier(): TierFilter {
   const tier = new URLSearchParams(window.location.search).get('filter');
@@ -22,6 +27,7 @@ function readInitialTier(): TierFilter {
 
 export function TemplatesPage() {
   const [selectedTier, setSelectedTier] = useState<TierFilter>(readInitialTier);
+  const [selectedStyle, setSelectedStyle] = useState<StyleFilter>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -47,6 +53,7 @@ export function TemplatesPage() {
 
     return weddingTemplates.filter((template) => {
       const matchesTier = selectedTier === 'all' || template.tier === selectedTier;
+      const matchesStyle = selectedStyle === 'all' || templateStyleCategoryIds(template).includes(selectedStyle);
       const matchesFavorite = !favoritesOnly || favoriteIds.includes(template.id);
       const matchesSearch =
         !normalizedSearch ||
@@ -55,9 +62,9 @@ export function TemplatesPage() {
           .toLocaleLowerCase('vi')
           .includes(normalizedSearch);
 
-      return matchesTier && matchesFavorite && matchesSearch;
+      return matchesTier && matchesStyle && matchesFavorite && matchesSearch;
     });
-  }, [favoriteIds, favoritesOnly, searchTerm, selectedTier]);
+  }, [favoriteIds, favoritesOnly, searchTerm, selectedStyle, selectedTier]);
 
   const selectTier = (tier: TierFilter) => {
     setSelectedTier(tier);
@@ -175,11 +182,33 @@ export function TemplatesPage() {
           </div>
         </div>
 
+        <div className="templates-style-filters" role="group" aria-label="Lọc theo phong cách">
+          {styleOrder.map((style) => {
+            const category = templateStyleCategories.find((item) => item.id === style);
+            const count = style === 'all'
+              ? weddingTemplates.length
+              : weddingTemplates.filter((template) => templateStyleCategoryIds(template).includes(style)).length;
+            const label = category?.label ?? 'Mọi phong cách';
+            return (
+              <button
+                key={style}
+                type="button"
+                className={selectedStyle === style ? 'is-active' : ''}
+                aria-pressed={selectedStyle === style}
+                onClick={() => setSelectedStyle(style)}
+              >
+                {label}<span>{count}</span>
+              </button>
+            );
+          })}
+        </div>
+
         <div className="templates-results" aria-live="polite">
           <p>
             Hiển thị <strong>{filteredTemplates.length}</strong> mẫu
             {searchTerm && <> cho “{searchTerm.trim()}”</>}
             {favoritesOnly && <> trong danh sách đã lưu</>}
+            {selectedStyle !== 'all' && <> · {templateStyleCategories.find((category) => category.id === selectedStyle)?.label}</>}
           </p>
         </div>
 
@@ -207,6 +236,7 @@ export function TemplatesPage() {
               onClick={() => {
                 setSearchTerm('');
                 setFavoritesOnly(false);
+                setSelectedStyle('all');
                 selectTier('all');
               }}
             >

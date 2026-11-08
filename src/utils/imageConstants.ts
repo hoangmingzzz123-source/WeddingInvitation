@@ -2,7 +2,7 @@
  * Image URLs Constants
  * Centralized image URLs for the wedding invitation website
  */
-import videoCover from '../asset/videoCover.png';
+import videoCover from '../asset/videoCover-optimized.jpg';
 import { VIETNAM_WEDDING_THEMES } from '../data/vietnamWeddingPhotos';
 
 const {

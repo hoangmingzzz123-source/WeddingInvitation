@@ -1038,8 +1038,14 @@ function AdminDemoHandover({ demoId, brideName, groomName, weddingDate, slug }: 
   slug: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [trackingLink, setTrackingLink] = useState('');
   const [message, setMessage] = useState('');
+  const [handoverText, setHandoverText] = useState('');
+  const [copyStatus, setCopyStatus] = useState('');
+
+  const invitationUrl = publicInvitationUrl(slug);
+  const titleNames = [brideName, groomName].filter(Boolean).join(' - ');
+  const titleDate = dateDots(weddingDate);
+  const coupleAndDate = `${titleNames}${titleNames && titleDate ? ' - ' : ''}${titleDate}`;
 
   useEffect(() => {
     if (!open) return;
@@ -1054,11 +1060,45 @@ function AdminDemoHandover({ demoId, brideName, groomName, weddingDate, slug }: 
     setMessage('');
     try {
       const savedLink = window.localStorage.getItem(shareLinkCacheKey(demoId)) ?? '';
-      setTrackingLink(savedLink);
       if (!savedLink) {
         setMessage('Hãy tạo link theo dõi bằng nút “Tạo link xem chung” trước khi bàn giao.');
         return;
       }
+      const brideUrl = `${invitationUrl}?side=bride`;
+      const groomUrl = `${invitationUrl}?side=groom`;
+      setHandoverText(`💌 **BÀN GIAO WEBSITE THIỆP CƯỚI ONLINE**
+
+**${coupleAndDate}**
+
+Chào bạn! ❤️
+
+Website thiệp cưới online của bạn đã hoàn thiện. Mình gửi bạn các đường link để xem, kiểm tra và chia sẻ thiệp đến người thân, bạn bè nhé!
+
+🌸 **1. Thiệp cưới nhà gái (Cô dâu):**
+[${brideUrl}](${brideUrl})
+
+🤵 **2. Thiệp cưới nhà trai (Chú rể):**
+[${groomUrl}](${groomUrl})
+
+📊 **3. Link theo dõi phản hồi khách mời:**
+[${savedLink}](${savedLink})
+
+Thông qua link theo dõi, bạn có thể:
+
+- Quản lý danh sách khách mời.
+- Theo dõi số lượng khách xác nhận tham dự.
+- Xem phản hồi và thông tin xác nhận từ khách mời.
+
+**Một chút lưu ý:**
+
+- Bạn có thể chia sẻ link thiệp tương ứng cho khách mời để mọi người xem thông tin và xác nhận tham dự.
+- Hãy lưu lại link theo dõi để thuận tiện quản lý phản hồi.
+- Bạn nhớ kiểm tra lại toàn bộ thông tin trên thiệp trước khi gửi đến khách mời nhé!
+
+✨ Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của mình. Hy vọng chiếc thiệp online này sẽ góp phần lưu giữ những khoảnh khắc đẹp và giúp ngày trọng đại của hai bạn thêm trọn vẹn.
+
+Chúc hai bạn có một hành trình hôn nhân thật hạnh phúc, viên mãn và mãi mãi yêu thương nhau! 💕`);
+      setCopyStatus('');
       setOpen(true);
     } catch (storageError) {
       setMessage(storageError instanceof Error
@@ -1067,54 +1107,48 @@ function AdminDemoHandover({ demoId, brideName, groomName, weddingDate, slug }: 
     }
   };
 
-  const invitationUrl = publicInvitationUrl(slug);
-  const titleNames = [brideName, groomName].filter(Boolean).join(' - ');
-  const titleDate = dateDots(weddingDate);
+  const copyHandover = async () => {
+    try {
+      await navigator.clipboard.writeText(handoverText);
+      setCopyStatus('Đã sao chép nội dung bàn giao.');
+    } catch (copyError) {
+      window.prompt('Trình duyệt không thể sao chép tự động. Hãy sao chép nội dung bàn giao:', handoverText);
+      setCopyStatus(copyError instanceof Error
+        ? `Không thể sao chép tự động: ${copyError.message}. Nội dung đã mở để sao chép thủ công.`
+        : 'Không thể sao chép tự động. Nội dung đã mở để sao chép thủ công.');
+    }
+  };
 
   return (
     <>
-      <button type="button" className="is-primary" onClick={showHandover}>
+      <button type="button" className="admin-handover-trigger" onClick={showHandover}>
         <Mail aria-hidden="true" /> Bàn giao
       </button>
-      {message && <small className="admin-form-actions__notice" role="status">{message}</small>}
+      {message && <small className="admin-handover-notice" role="status">{message}</small>}
       {open && (
         <div className="demo-consent admin-handover" onClick={() => setOpen(false)}>
           <section role="dialog" aria-modal="true" aria-labelledby={`handover-title-${demoId}`} onClick={(event) => event.stopPropagation()}>
             <button className="admin-handover__close" type="button" aria-label="Đóng thông báo bàn giao" onClick={() => setOpen(false)}>
               <X aria-hidden="true" />
             </button>
-            <h2 id={`handover-title-${demoId}`} className="admin-handover__title">💌 BÀN GIAO WEBSITE THIỆP CƯỚI ONLINE</h2>
-            <p className="admin-handover__couple">{titleNames}{titleNames && titleDate ? ' - ' : ''}{titleDate}</p>
-            <div className="admin-handover__message">
-              <p>Chào bạn! ❤️</p>
-              <p>
-                Website thiệp cưới online của bạn đã hoàn thiện. Mình gửi bạn các đường link để xem, kiểm tra và chia sẻ thiệp đến người thân, bạn bè nhé!
-              </p>
-              <p>🌸 <strong>1. Thiệp cưới nhà gái (Cô dâu):</strong><br />
-                <a href={`${invitationUrl}?side=bride`} target="_blank" rel="noreferrer">{`${invitationUrl}?side=bride`}</a>
-              </p>
-              <p>🤵 <strong>2. Thiệp cưới nhà trai (Chú rể):</strong><br />
-                <a href={`${invitationUrl}?side=groom`} target="_blank" rel="noreferrer">{`${invitationUrl}?side=groom`}</a>
-              </p>
-              <p>📊 <strong>3. Link theo dõi phản hồi khách mời:</strong><br />
-                <a href={trackingLink} target="_blank" rel="noreferrer">{trackingLink}</a>
-              </p>
-              <p>Thông qua link theo dõi, bạn có thể:</p>
-              <ul>
-                <li>Quản lý danh sách khách mời.</li>
-                <li>Theo dõi số lượng khách xác nhận tham dự.</li>
-                <li>Xem phản hồi và thông tin xác nhận từ khách mời.</li>
-              </ul>
-              <p><strong>Một chút lưu ý:</strong></p>
-              <ul>
-                <li>Bạn có thể chia sẻ link thiệp tương ứng cho khách mời để mọi người xem thông tin và xác nhận tham dự.</li>
-                <li>Hãy lưu lại link theo dõi để thuận tiện quản lý phản hồi.</li>
-                <li>Bạn nhớ kiểm tra lại toàn bộ thông tin trên thiệp trước khi gửi đến khách mời nhé!</li>
-              </ul>
-              <p>
-                ✨ Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của mình. Hy vọng chiếc thiệp online này sẽ góp phần lưu giữ những khoảnh khắc đẹp và giúp ngày trọng đại của hai bạn thêm trọn vẹn.
-              </p>
-              <p>Chúc hai bạn có một hành trình hôn nhân thật hạnh phúc, viên mãn và mãi mãi yêu thương nhau! 💕</p>
+            <h2 id={`handover-title-${demoId}`} className="admin-handover__title">
+              <span>💌 BÀN GIAO WEBSITE THIỆP CƯỚI ONLINE</span>
+              <strong>{coupleAndDate}</strong>
+            </h2>
+            <label className="admin-handover__editor">
+              <span>Nội dung bàn giao · Có thể chỉnh sửa trước khi sao chép</span>
+              <textarea
+                value={handoverText}
+                onChange={(event) => setHandoverText(event.target.value)}
+                aria-label="Nội dung tin nhắn bàn giao"
+                spellCheck
+              />
+            </label>
+            <div className="admin-handover__actions">
+              <button type="button" className="is-primary" onClick={() => void copyHandover()}>
+                <Clipboard aria-hidden="true" /> Sao chép nội dung
+              </button>
+              {copyStatus && <span role="status" aria-live="polite">{copyStatus}</span>}
             </div>
           </section>
         </div>

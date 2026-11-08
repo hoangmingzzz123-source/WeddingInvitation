@@ -57,9 +57,7 @@ export function PublicDemoPage({ token }: { token: string }) {
   const mainPhoto = photos.find((photo) => photo.role === 'main');
   const videoPhoto = photos.find((photo) => photo.role === 'video');
   const galleryPhotos = photos.filter((photo) => photo.role === 'gallery');
-  const repeatedGallery = galleryPhotos.length
-    ? Array.from({ length: Math.max(4, galleryPhotos.length) }, (_, index) => galleryPhotos[index % galleryPhotos.length])
-    : [];
+  const selectedGallery = galleryPhotos.filter((photo) => Boolean(photo.url));
   const studio = payload?.studio;
   const templateTier = weddingTemplates.find((template) => template.id === demo?.templateId)?.tier ?? '109k';
   const familyVariant = resolveInvitationSide(studio);
@@ -103,8 +101,8 @@ export function PublicDemoPage({ token }: { token: string }) {
     mainPhotoPosition: mainPhoto ? photoPosition(mainPhoto) : undefined,
     videoBackground: videoPhoto?.url,
     videoBackgroundPosition: videoPhoto ? photoPosition(videoPhoto) : undefined,
-    gallery: repeatedGallery.map((photo) => photo.url ?? '').filter(Boolean),
-    galleryPositions: repeatedGallery.map((photo) => photoPosition(photo)),
+    gallery: selectedGallery.map((photo) => photo.url!),
+    galleryPositions: selectedGallery.map((photo) => photoPosition(photo)),
   };
 
   if (error) {

@@ -1,5 +1,5 @@
-import { useEffect, useState, type FormEvent } from 'react';
-import { motion } from 'motion/react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   ArrowUpRight,
   CalendarDays,
@@ -153,6 +153,41 @@ const demos: Record<string, SignatureDemoContent> = {
     story: 'Từ một lời chào thân quen, chúng mình đã cùng đi qua những mùa thương nhớ. Nay xin gửi thiệp hồng, kính mời gia đình và bạn bè cùng nâng chén trà, chia sẻ niềm vui trong ngày hai nhà sum họp.',
     ...photoStory('hoiAn'),
   },
+  'hy-sac-dong-phuong': {
+    id: 'hy-sac-dong-phuong', visualStyle: 'hy-sac-dong-phuong', tier: '199k', label: 'HỶ SẮC ĐÔNG PHƯƠNG · TRĂM NĂM VIÊN MÃN',
+    bride: 'Minh Châu', groom: 'Đình Phúc', date: '2027-10-24', dateLabel: '24 · 10 · 2027', time: '17:30',
+    venue: 'Trung tâm tiệc cưới Hỷ Viên', address: 'Hoàn Kiếm, Hà Nội', city: 'Hà Nội',
+    story: 'Từ nghi lễ Vu Quy ấm cúng đến ngày Thành Hôn rộn ràng, hai gia đình cùng trao gửi lời chúc phúc cho hành trình mới của chúng mình.',
+    ...photoStory('songHy', 1),
+  },
+  eternelle: {
+    id: 'eternelle', visualStyle: 'eternelle', tier: '199k', label: 'ÉTERNELLE · TÌNH YÊU VĨNH CỬU',
+    bride: 'Thảo Vy', groom: 'Gia Bảo', date: '2027-05-22', dateLabel: '22 · 05 · 2027', time: '17:30',
+    venue: 'The Atelier Garden', address: 'Tây Hồ, Hà Nội', city: 'Hà Nội',
+    story: 'Không cần điều gì quá lớn lao. Chỉ cần một mái nhà, những bữa cơm dài và người mình muốn kể nghe mọi chuyện. Chúng mình mong bạn hiện diện trong ngày đặc biệt này.',
+    ...photoStory('hanoiStudio', 3),
+  },
+  'jardin-amour': {
+    id: 'jardin-amour', visualStyle: 'jardin-amour', tier: '159k', label: "JARDIN D'AMOUR · KHU VƯỜN TÌNH YÊU",
+    bride: 'Thùy Dương', groom: 'Hoàng Nam', date: '2027-04-10', dateLabel: '10 · 04 · 2027', time: '17:00',
+    venue: 'Mộc Garden House', address: 'Ba Đình, Hà Nội', city: 'Hà Nội',
+    story: 'Tình yêu của chúng mình nở ra từ những điều mộc mạc: một khu vườn sau mưa, bữa tối kéo dài và câu chuyện chẳng cần vội kết thúc.',
+    ...photoStory('garden', 1),
+  },
+  'grand-premiere': {
+    id: 'grand-premiere', visualStyle: 'grand-premiere', tier: '199k', label: 'THE GRAND PREMIERE · THƯỚC PHIM ĐỊNH MỆNH',
+    bride: 'Bảo Ngọc', groom: 'Trung Kiên', date: '2027-12-04', dateLabel: '04 · 12 · 2027', time: '18:30',
+    venue: 'The Grand Ballroom', address: 'Quận 1, TP. Hồ Chí Minh', city: 'TP. Hồ Chí Minh',
+    story: 'Một chuyện tình, một lời hẹn, một đời bên nhau. Từ chương đầu tiên đến khoảnh khắc hôm nay, bộ phim đẹp nhất là hành trình có bạn bè và gia đình bên cạnh.',
+    ...photoStory('modernCeremony', 1),
+  },
+  'love-out-loud': {
+    id: 'love-out-loud', visualStyle: 'love-out-loud', tier: '199k', label: 'LOVE OUT LOUD · YÊU LÀ PHẢI CHẤT',
+    bride: 'Ngọc Mai', groom: 'Anh Khoa', date: '2027-08-08', dateLabel: '08 · 08 · 2027', time: '17:00',
+    venue: 'The Coast Retreat', address: 'Nha Trang, Khánh Hòa', city: 'Khánh Hòa',
+    story: 'Chúng mình gặp nhau, cười thật nhiều, rồi nhận ra người kia chính là đồng đội mình muốn giữ bên cạnh. Hãy đến ăn mừng, chụp photobooth và quậy hết mình nhé!',
+    ...photoStory('coastal', 2),
+  },
   'verdant-veil': {
     id: 'verdant-veil', visualStyle: 'verdant-veil', tier: '199k', label: 'VERDANT VEIL · OUR MEMORIES',
     bride: 'Minh Thư', groom: 'Quang Anh', date: '2027-12-20', dateLabel: '20 · 12 · 2027', time: '17:30',
@@ -248,13 +283,22 @@ const demos: Record<string, SignatureDemoContent> = {
 };
 
 function fallbackTheme(id: string): VietnamWeddingTheme {
-  if (/(traditional|song-hy|hy-su|sen-ngoc|pho-hoi)/.test(id)) return 'songHy';
+  if (/(traditional|song-hy|hy-su|sen-ngoc|pho-hoi|hy-sac)/.test(id)) return 'songHy';
+  if (/jardin/.test(id)) return 'garden';
+  if (/love-out-loud/.test(id)) return 'coastal';
+  if (/grand-premiere/.test(id)) return 'modernCeremony';
+  if (/eternelle/.test(id)) return 'hanoiStudio';
   if (/(riviera|summer|tropical)/.test(id)) return 'coastal';
   if (/(cinema|cinematic|dark|gold|vintage)/.test(id)) return 'modernCeremony';
   return 'hanoiStudio';
 }
 
 function fallbackStyle(id: string) {
+  if (/hy-sac-dong-phuong/.test(id)) return 'hy-sac-dong-phuong';
+  if (/eternelle/.test(id)) return 'eternelle';
+  if (/jardin-amour/.test(id)) return 'jardin-amour';
+  if (/grand-premiere/.test(id)) return 'grand-premiere';
+  if (/love-out-loud/.test(id)) return 'love-out-loud';
   if (/verdant/.test(id)) return 'verdant-veil';
   if (/tui-minh|handdrawn|playful/.test(id)) return 'playful-handdrawn';
   if (/(traditional|song-hy|hy-su|sen-ngoc)/.test(id)) return 'song-hy-contemporary';
@@ -299,8 +343,128 @@ function fallbackDemo(id: string): SignatureDemoContent {
   };
 }
 
-function SmallLabel({ children }: { children: string }) {
+function SmallLabel({ children }: { children: React.ReactNode }) {
   return <p className="signature-eyebrow">{children}</p>;
+}
+
+function SignatureOpening({
+  demo,
+  couple,
+  dateLabel,
+  reduceMotion,
+  onOpen,
+}: {
+  demo: SignatureDemoContent;
+  couple: string;
+  dateLabel: string;
+  reduceMotion: boolean;
+  onOpen: () => void;
+}) {
+  const openingRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    openingRef.current?.querySelector<HTMLButtonElement>('button:not(.signature-opening__skip)')?.focus();
+  }, []);
+
+  const containFocus = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Escape') {
+      onOpen();
+      return;
+    }
+    if (event.key !== 'Tab' || !openingRef.current) return;
+    const buttons = [...openingRef.current.querySelectorAll<HTMLButtonElement>('button')];
+    const first = buttons[0];
+    const last = buttons[buttons.length - 1];
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  return (
+    <motion.section
+      ref={openingRef}
+      className={`signature-opening signature-opening--${demo.visualStyle}`}
+      aria-label="Màn mở đầu thiệp cưới"
+      role="dialog"
+      aria-modal="true"
+      tabIndex={-1}
+      onKeyDown={containFocus}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={reduceMotion
+        ? { opacity: 0 }
+        : {
+          opacity: 0,
+          clipPath: demo.visualStyle === 'hy-sac-dong-phuong'
+            ? 'inset(50% 0 50%)'
+            : demo.visualStyle === 'grand-premiere'
+              ? 'inset(0 50%)'
+              : undefined,
+          scale: demo.visualStyle === 'jardin-amour' ? 1.08 : undefined,
+          rotate: demo.visualStyle === 'love-out-loud' ? -2 : undefined,
+        }}
+      transition={{ duration: reduceMotion ? 0 : 0.55 }}
+    >
+      {demo.visualStyle === 'hy-sac-dong-phuong' && (
+        <div className="signature-opening__envelope">
+          <span className="signature-opening__seal" aria-hidden="true">囍</span>
+          <p>Trân trọng kính mời</p>
+          <h1>{couple}</h1>
+          <span>{dateLabel}</span>
+          <button type="button" onClick={onOpen}>Mở thiệp hồng</button>
+        </div>
+      )}
+      {demo.visualStyle === 'eternelle' && (
+        <div className="signature-opening__editorial">
+          <img src={demo.hero} alt="" />
+          <span>THE WEDDING OF</span>
+          <h1>{couple}</h1>
+          <p>{dateLabel}</p>
+          <button type="button" onClick={onOpen}>Enter our story <span aria-hidden="true">↗</span></button>
+        </div>
+      )}
+      {demo.visualStyle === 'jardin-amour' && (
+        <div className="signature-opening__garden">
+          <div className="signature-opening__garden-frame">
+            <img src={demo.hero} alt="" />
+            <span className="signature-opening__garden-sprig signature-opening__garden-sprig--left" aria-hidden="true">❧</span>
+            <span className="signature-opening__garden-sprig signature-opening__garden-sprig--right" aria-hidden="true">❧</span>
+          </div>
+          <p>A GARDEN GATHERING</p>
+          <h1>{couple}</h1>
+          <span>{dateLabel}</span>
+          <button type="button" onClick={onOpen}>Bước vào khu vườn</button>
+        </div>
+      )}
+      {demo.visualStyle === 'grand-premiere' && (
+        <div className="signature-opening__premiere">
+          <img src={demo.hero} alt="" />
+          <span className="signature-opening__premiere-kicker">ONE NIGHT ONLY · WORLD PREMIERE</span>
+          <p>THE LOVE STORY</p>
+          <h1>{couple}</h1>
+          <span>{dateLabel} · {demo.city}</span>
+          <button type="button" onClick={onOpen}>Suất chiếu bắt đầu <span aria-hidden="true">▶</span></button>
+        </div>
+      )}
+      {demo.visualStyle === 'love-out-loud' && (
+        <div className="signature-opening__retro">
+          <img src={demo.hero} alt="" />
+          <span className="signature-opening__retro-sticker signature-opening__retro-sticker--top">THE BIG DAY!</span>
+          <span className="signature-opening__retro-sticker signature-opening__retro-sticker--side">LOVE<br />LOUD</span>
+          <p>HEY, SAVE THE DATE!</p>
+          <h1>{couple}</h1>
+          <span>{dateLabel}</span>
+          <button type="button" onClick={onOpen}>Let's celebrate <span aria-hidden="true">✦</span></button>
+        </div>
+      )}
+      <button className="signature-opening__skip" type="button" onClick={onOpen}>Bỏ qua <span aria-hidden="true">→</span></button>
+    </motion.section>
+  );
 }
 
 function GuestBook({
@@ -481,11 +645,19 @@ export function SignatureDemo({
     hero: customization?.hero || baseDemo.hero,
     gallery: customization?.gallery?.length ? customization.gallery : baseDemo.gallery,
   };
+  const storyPhoto = customization?.mainPhoto || demo.gallery[1] || demo.gallery[0] || demo.hero;
+  const videoCover = customization?.videoBackground || demo.gallery[2] || demo.gallery[0] || demo.hero;
   const [submitted, setSubmitted] = useState(existingSubmitted);
   const [isSubmittingRsvp, setIsSubmittingRsvp] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [gardenBloomed, setGardenBloomed] = useState(false);
+  const [loveQuizAnswer, setLoveQuizAnswer] = useState<number | null>(null);
+  const [loveStickerCount, setLoveStickerCount] = useState(0);
+  const reduceMotion = useReducedMotion() ?? false;
+  const hasCustomOpening = ['hy-sac-dong-phuong', 'eternelle', 'jardin-amour', 'grand-premiere', 'love-out-loud'].includes(demo.visualStyle ?? '');
+  const [invitationOpened, setInvitationOpened] = useState(!hasCustomOpening || embedded || staticExport);
   const mapAddress = customization?.receptionAddress || demo.address || demo.venue;
   const mapQuery = encodeURIComponent([mapAddress, demo.city].filter(Boolean).join(', '));
   const videoLink = safeHttpsUrl(customization?.videoLink);
@@ -494,6 +666,9 @@ export function SignatureDemo({
   const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
   const coupleNames = orderedInvitationNames(demo.bride, demo.groom);
   const couple = `${coupleNames[0]} & ${coupleNames[1]}`;
+  const guestInvitationText = guestName
+    ? `${guestGreeting === 'friendly' ? 'Thân mời' : 'Trân trọng kính mời'} ${guestName} đến chung vui`
+    : 'Trân trọng kính mời bạn đến chung vui';
   const locationLabel = demo.city.toLocaleLowerCase('vi') === 'việt nam' ? 'Việt Nam' : `${demo.city} · Việt Nam`;
   const premium = demo.tier !== '109k';
   const diamond = demo.tier === '199k';
@@ -538,6 +713,15 @@ export function SignatureDemo({
     setSubmitted(existingSubmitted);
   }, [existingSubmitted]);
 
+  useEffect(() => {
+    if (!hasCustomOpening || invitationOpened || embedded || staticExport) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [embedded, hasCustomOpening, invitationOpened, staticExport]);
+
   const submitRsvp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isSubmittingRsvp) return;
@@ -566,8 +750,113 @@ export function SignatureDemo({
     }
   };
 
+  const renderHero = () => {
+    if (demo.visualStyle === 'hy-sac-dong-phuong') {
+      return (
+        <section className="signature-hero signature-hero--hy-sac-dong-phuong" id="trang-chu" aria-label="Thiệp Hỷ Sắc Đông Phương">
+          <div className="signature-hero__image"><img src={demo.hero} alt={`Ảnh cưới của ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} /><span>{locationLabel}</span></div>
+          <div className="signature-hero__content">
+            <SmallLabel>HÔN LỄ · {demo.dateLabel}</SmallLabel>
+            <p className="signature-hero__heritage-mark" aria-hidden="true">囍</p>
+            <p className="signature-hero__heritage-kicker">LỄ THÀNH HÔN</p>
+            <h1>{coupleNames[0]} <i>&amp;</i> {coupleNames[1]}</h1>
+            <p className="signature-hero__invitation">{guestInvitationText} và cùng chứng kiến ngày vui của hai gia đình.</p>
+            <p className="signature-hero__date">{demo.dateLabel}</p>
+            <div className="signature-hero__actions"><a href="#su-kien">Xem nghi lễ hai nhà</a><a href="#xac-nhan">Hồi đáp</a></div>
+          </div>
+          <span className="signature-hero__heritage-border" aria-hidden="true" />
+        </section>
+      );
+    }
+
+    if (demo.visualStyle === 'eternelle') {
+      return (
+        <section className="signature-hero signature-hero--eternelle" id="trang-chu" aria-label="Thiệp Éternelle editorial">
+          <img className="signature-hero__editorial-photo" src={demo.hero} alt={`Chân dung cưới của ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} />
+          <div className="signature-hero__editorial-caption"><SmallLabel>THE WEDDING OF</SmallLabel><h1>{coupleNames[0]}<i>&amp;</i>{coupleNames[1]}</h1><p>{demo.dateLabel} <span>—</span> {demo.city}</p><p className="signature-hero__editorial-guest">{guestInvitationText}</p><a href={firstSectionTarget}>Discover our story <span aria-hidden="true">↘</span></a></div>
+          <span className="signature-hero__editorial-index">VOL. 01 · A LOVE STORY</span>
+        </section>
+      );
+    }
+
+    if (demo.visualStyle === 'jardin-amour') {
+      return (
+        <section className="signature-hero signature-hero--jardin-amour" id="trang-chu" aria-label="Thiệp Jardin d'Amour">
+          <div className="signature-hero__jardin-copy"><SmallLabel>INVITATION À NOTRE MARIAGE</SmallLabel><h1>{coupleNames[0]}<i>&amp;</i>{coupleNames[1]}</h1><p>{demo.dateLabel} <span>·</span> {demo.city}</p><p className="signature-hero__jardin-guest">{guestInvitationText}</p><a href="#cau-chuyen">Dạo bước cùng chúng mình <span aria-hidden="true">↓</span></a></div>
+          <figure className="signature-hero__jardin-frame"><img src={demo.hero} alt={`Ảnh cưới trong khu vườn của ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} /><figcaption>UNE HISTOIRE QUI FLEURIT</figcaption></figure>
+          <span className="signature-hero__jardin-ornament" aria-hidden="true">❧</span>
+        </section>
+      );
+    }
+
+    if (demo.visualStyle === 'grand-premiere') {
+      return (
+        <section className="signature-hero signature-hero--grand-premiere" id="trang-chu" aria-label="Poster The Grand Premiere">
+          <img src={demo.hero} alt={`Poster cưới của ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} />
+          <div className="signature-hero__premiere-frame"><SmallLabel>A MP PICTURE · PRESENTS</SmallLabel><p className="signature-hero__premiere-title">THE GRAND<br />PREMIERE</p><h1>{coupleNames[0]} <i>&amp;</i> {coupleNames[1]}</h1><p className="signature-hero__premiere-tagline">Một chuyện tình, một lời hẹn, một đời bên nhau.</p><span className="signature-hero__premiere-guest">{guestInvitationText}</span><span>{demo.dateLabel} · {demo.city}</span><a href={firstSectionTarget}>Khám phá câu chuyện <span aria-hidden="true">▶</span></a></div>
+          <span className="signature-hero__premiere-rating">A LOVE STORY<br /><b>★ ★ ★ ★ ★</b></span>
+        </section>
+      );
+    }
+
+    if (demo.visualStyle === 'love-out-loud') {
+      return (
+        <section className="signature-hero signature-hero--love-out-loud" id="trang-chu" aria-label="Thiệp Love Out Loud">
+          <div className="signature-hero__retro-copy"><SmallLabel>GOOD TIMES · GREAT LOVE</SmallLabel><h1>{coupleNames[0]}<i>&amp;</i>{coupleNames[1]}</h1><p>WE'RE GETTING MARRIED!</p><span>{demo.dateLabel} · {demo.city}</span><span className="signature-hero__retro-guest">{guestInvitationText}</span><a href="#love-quiz">Chơi một chút nhé <span aria-hidden="true">✦</span></a></div>
+          <figure className="signature-hero__retro-photo"><img src={demo.hero} alt={`Photobooth cưới của ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} /><figcaption>OUR FAVORITE PEOPLE</figcaption></figure>
+          <span className="signature-hero__retro-heart" aria-hidden="true">♥</span><span className="signature-hero__retro-star" aria-hidden="true">✳</span>
+        </section>
+      );
+    }
+
+    return (
+      <section className={`signature-hero signature-hero--${demo.visualStyle ?? demo.id}`} id="trang-chu" aria-label="Thiệp mời cưới">
+        <div className="signature-hero__ornament" aria-hidden="true" />
+        <div className="signature-hero__layout">
+          <div className="signature-hero__image">
+            <img src={demo.hero} alt={`Ảnh cưới Việt Nam minh họa cho ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} />
+            <span className="signature-hero__image-note">{locationLabel}</span>
+          </div>
+          <motion.div
+            className="signature-hero__content"
+            initial={staticExport ? false : { opacity: 0, y: 20 }}
+            animate={staticExport ? false : { opacity: 1, y: 0 }}
+            transition={staticExport ? undefined : { duration: 0.7 }}
+          >
+            <SmallLabel>{customization?.heroKicker || demo.label}</SmallLabel>
+            <h1><span>{coupleNames[0]}</span><i>&amp;</i><span>{coupleNames[1]}</span></h1>
+            <p className="signature-hero__invitation">{guestInvitationText}</p>
+            <p className="signature-hero__date">{demo.dateLabel}</p>
+            <div className="signature-hero__actions">
+              <a href={firstSectionTarget}>Khám phá thiệp</a>
+              {isSectionVisible('rsvp') && <a href="#xac-nhan">Gửi lời hồi đáp</a>}
+            </div>
+          </motion.div>
+        </div>
+        {showPhotoDisclaimer && <span className="signature-photo-disclaimer">
+          {customization
+            ? 'Bản thiệp cá nhân hóa · Hình ảnh có thể thay đổi trước khi xuất bản'
+            : 'Ảnh minh họa · Tên và thông tin trong demo là hư cấu'}
+        </span>}
+        <span className="signature-hero__side-note" aria-hidden="true">A day made for us · {demo.dateLabel}</span>
+      </section>
+    );
+  };
+
   return (
     <main className={appearanceClasses}>
+      <AnimatePresence>
+        {hasCustomOpening && !invitationOpened && !embedded && !staticExport && (
+          <SignatureOpening
+            key={demo.id}
+            demo={demo}
+            couple={couple}
+            dateLabel={demo.dateLabel}
+            reduceMotion={reduceMotion}
+            onOpen={() => setInvitationOpened(true)}
+          />
+        )}
+      </AnimatePresence>
       {(!embedded || showMusicPlayer) && <MusicPlayer autoPlay={false} startOnFirstInteraction={startMusicOnFirstInteraction} showVolumeControl={diamond} allowCustomMusic={premium} musicUrl={premium ? customization?.musicUrl : undefined} />}
 
       <nav className="signature-nav" aria-label="Điều hướng thiệp cưới">
@@ -587,40 +876,7 @@ export function SignatureDemo({
         {isSectionVisible('rsvp') && <a className="signature-nav__rsvp" href="#xac-nhan" aria-label="Hồi âm tham dự">Hồi âm</a>}
       </nav>
 
-      <section className={`signature-hero signature-hero--${demo.visualStyle ?? demo.id}`} id="trang-chu" aria-label="Thiệp mời cưới">
-        <div className="signature-hero__ornament" aria-hidden="true" />
-        <div className="signature-hero__layout">
-          <div className="signature-hero__image">
-            <img src={demo.hero} alt={`Ảnh cưới Việt Nam minh họa cho ${couple}`} fetchPriority="high" style={customization?.heroPosition ? { objectPosition: customization.heroPosition } : undefined} />
-            <span className="signature-hero__image-note">{locationLabel}</span>
-          </div>
-          <motion.div
-            className="signature-hero__content"
-            initial={staticExport ? false : { opacity: 0, y: 20 }}
-            animate={staticExport ? false : { opacity: 1, y: 0 }}
-            transition={staticExport ? undefined : { duration: 0.7 }}
-          >
-            <SmallLabel>{customization?.heroKicker || demo.label}</SmallLabel>
-            <h1><span>{coupleNames[0]}</span><i>&amp;</i><span>{coupleNames[1]}</span></h1>
-            <p className="signature-hero__invitation">
-              {guestName
-                ? `${guestGreeting === 'friendly' ? 'Thân mời' : 'Trân trọng kính mời'} ${guestName} đến chung vui`
-                : 'Trân trọng kính mời bạn đến chung vui'}
-            </p>
-            <p className="signature-hero__date">{demo.dateLabel}</p>
-            <div className="signature-hero__actions">
-              <a href={firstSectionTarget}>Khám phá thiệp</a>
-              {isSectionVisible('rsvp') && <a href="#xac-nhan">Gửi lời hồi đáp</a>}
-            </div>
-          </motion.div>
-        </div>
-        {showPhotoDisclaimer && <span className="signature-photo-disclaimer">
-          {customization
-            ? 'Bản thiệp cá nhân hóa · Hình ảnh có thể thay đổi trước khi xuất bản'
-            : 'Ảnh minh họa · Tên và thông tin trong demo là hư cấu'}
-        </span>}
-        <span className="signature-hero__side-note" aria-hidden="true">A day made for us · {demo.dateLabel}</span>
-      </section>
+      {renderHero()}
 
       {!premium && customization?.mainPhoto && (
         <section className="signature-main-photo" aria-label="Ảnh chính">
@@ -636,7 +892,7 @@ export function SignatureDemo({
             <p>{demo.story}</p>
           </div>
           <figure className="signature-story__photo">
-            <img src={customization?.mainPhoto || demo.gallery[1]} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" style={customization?.mainPhotoPosition ? { objectPosition: customization.mainPhotoPosition } : customization?.galleryPositions?.[1] ? { objectPosition: customization.galleryPositions[1] } : undefined} />
+            <img src={storyPhoto} alt={`${couple} trong buổi chụp ảnh cưới`} loading="lazy" style={customization?.mainPhotoPosition ? { objectPosition: customization.mainPhotoPosition } : customization?.galleryPositions?.[1] ? { objectPosition: customization.galleryPositions[1] } : undefined} />
             <figcaption>{coupleNames[0]} <i>&amp;</i> {coupleNames[1]}</figcaption>
           </figure>
         </section>
@@ -667,6 +923,81 @@ export function SignatureDemo({
           </article>
         </div>
       </section>}
+
+      {demo.visualStyle === 'hy-sac-dong-phuong' && isSectionVisible('events') && (
+        <section className="signature-heritage-rites" aria-label="Nghi lễ hai gia đình">
+          <SmallLabel>NGHI LỄ HAI GIA ĐÌNH</SmallLabel>
+          <div className="signature-heritage-rites__row">
+            <article><span>01</span><p>LỄ VU QUY</p><h3>Nhà gái</h3><time>{demo.dateLabel} · {customization?.ceremonyTime || demo.time}</time></article>
+            <i aria-hidden="true">✦</i>
+            <article><span>02</span><p>LỄ THÀNH HÔN</p><h3>Hai gia đình</h3><time>{demo.dateLabel} · {customization?.ceremonyTime || demo.time}</time></article>
+            <i aria-hidden="true">✦</i>
+            <article><span>03</span><p>TIỆC MỪNG</p><h3>Chung vui</h3><time>{demo.dateLabel} · {customization?.receptionTime || demo.time}</time></article>
+          </div>
+        </section>
+      )}
+
+      {demo.visualStyle === 'eternelle' && premium && isSectionVisible('story') && (
+        <section className="signature-eternelle-quote">
+          <span>“</span>
+          <p>Yêu là tìm thấy sự bình yên trong một người, và chọn người ấy qua mọi mùa của cuộc đời.</p>
+          <small>{coupleNames[0]} &amp; {coupleNames[1]} · {demo.dateLabel}</small>
+        </section>
+      )}
+
+      {demo.visualStyle === 'jardin-amour' && premium && isSectionVisible('story') && (
+        <section className={`signature-jardin-growth${gardenBloomed ? ' is-bloomed' : ''}`} aria-labelledby="signature-jardin-growth-title">
+          <div className="signature-jardin-growth__vine" aria-hidden="true">❧ ─── ❧ ─── ❧</div>
+          <SmallLabel>NOTRE PETIT JARDIN</SmallLabel>
+          <h2 id="signature-jardin-growth-title">Mỗi kỷ niệm, một đóa hoa</h2>
+          <p>Hãy cùng mở những trang ký ức và để khu vườn tình yêu nở rộ.</p>
+          <div className="signature-jardin-growth__flowers" aria-hidden="true">
+            {['✿', '❀', '✽', '❋', '✿'].map((flower, index) => <span key={index}>{flower}</span>)}
+          </div>
+          <button type="button" aria-pressed={gardenBloomed} onClick={() => setGardenBloomed((bloomed) => !bloomed)}>
+            {gardenBloomed ? 'Khu vườn đang nở hoa' : 'Giúp khu vườn nở hoa'}
+          </button>
+        </section>
+      )}
+
+      {demo.visualStyle === 'grand-premiere' && isSectionVisible('timeline') && (
+        <section className="signature-premiere-chapters" aria-label="Các chương của chuyện tình">
+          <SmallLabel>NOW SHOWING · OUR STORY</SmallLabel>
+          <div className="signature-premiere-chapters__list">
+            {[
+              ['CHƯƠNG I', 'The Beginning', 'Ngày đầu gặp gỡ'],
+              ['CHƯƠNG II', 'Our Journey', 'Những năm tháng bên nhau'],
+              ['CHƯƠNG III', 'The Wedding Day', 'Ngày mình chung đôi'],
+            ].map(([chapter, title, caption], index) => (
+              <a key={chapter} href={index === 2 ? '#su-kien' : '#cau-chuyen'}>
+                <span>{chapter} · 0{index + 1}</span><strong>{title}</strong><small>{caption}</small>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {demo.visualStyle === 'love-out-loud' && (
+        <section className="signature-love-quiz" id="love-quiz" aria-labelledby="signature-love-quiz-title">
+          <span className="signature-love-quiz__sticker" aria-hidden="true">♥</span>
+          <SmallLabel>GET TO KNOW THE COUPLE</SmallLabel>
+          <h2 id="signature-love-quiz-title">Ai nhắn tin trước?</h2>
+          <div className="signature-love-quiz__answers">
+            {['Cô dâu', 'Chú rể', 'Cả hai giả vờ tình cờ'].map((answer, index) => (
+              <button key={answer} type="button" className={loveQuizAnswer === index ? 'is-selected' : ''} aria-pressed={loveQuizAnswer === index} onClick={() => setLoveQuizAnswer(index)}>
+                {answer}
+              </button>
+            ))}
+          </div>
+          {loveQuizAnswer !== null && <p className="signature-love-quiz__reveal" role="status">Đáp án chính xác là: cả hai đều đang chờ người kia nhắn trước! ✦</p>}
+          <div className="signature-love-quiz__stickers" aria-label={`Đã thả ${loveStickerCount} sticker`}>
+            <span>Thả chút yêu thương</span>
+            <button type="button" onClick={() => setLoveStickerCount((count) => count + 1)} aria-label="Thả sticker trái tim">♥</button>
+            <button type="button" onClick={() => setLoveStickerCount((count) => count + 1)} aria-label="Thả sticker ngôi sao">✦</button>
+            <output>{loveStickerCount}</output>
+          </div>
+        </section>
+      )}
 
       {demo.visualStyle === 'playful-handdrawn' && isSectionVisible('timeline') && (
         <section className="signature-playful-guide" aria-labelledby="signature-playful-guide-title">
@@ -711,7 +1042,7 @@ export function SignatureDemo({
           <h2 id="signature-gallery-title">{customization?.albumTitle || 'Những khoảnh khắc thương'}</h2>
           <p>{diamond ? 'Một album mở rộng để lưu giữ trọn vẹn câu chuyện của chúng mình.' : 'Một vài khung hình yêu thích trước ngày chung đôi.'}</p>
         </header>
-        <div className="signature-gallery__grid">
+        <div className={`signature-gallery__grid signature-gallery__grid--${Math.min(demo.gallery.length, 4)}`}>
           {demo.gallery.map((src, index) => (
             <button key={src} type="button" onClick={() => setLightbox(index)} aria-label={`Phóng to ảnh ${index + 1}`}>
               <img src={src} alt={`Khoảnh khắc ${index + 1} của ${couple}`} loading="lazy" style={customization?.galleryPositions?.[index] ? { objectPosition: customization.galleryPositions[index] } : undefined} />
@@ -736,7 +1067,7 @@ export function SignatureDemo({
                 />
                 : <video className="signature-video-card__player" src={videoLink} controls autoPlay playsInline aria-label="Video cưới" />
               : <>
-                <img src={customization?.videoBackground || demo.gallery[2]} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
+                <img src={videoCover} alt="Ảnh bìa video cưới" loading="lazy" style={customization?.videoBackgroundPosition ? { objectPosition: customization.videoBackgroundPosition } : customization?.galleryPositions?.[2] ? { objectPosition: customization.galleryPositions[2] } : undefined} />
                 {videoLink
                   ? <button className="signature-video-card__play" type="button" onClick={() => setVideoPlaying(true)} aria-label="Phát video cưới"><Play fill="currentColor" aria-hidden="true" /></button>
                   : isSectionVisible('album') && <button type="button" onClick={() => document.getElementById('album')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Xem album cưới"><Play fill="currentColor" aria-hidden="true" /></button>}

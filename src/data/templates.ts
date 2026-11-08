@@ -1,5 +1,16 @@
 export type TemplateTier = '109k' | '159k' | '199k';
 
+export const templateStyleCategories = [
+  { id: 'vietnamese', label: 'Truyền thống Việt', pattern: /sen-ngoc|hy-su|hy-sac|pho-hoi|song-hy|vietnamese|lotus|traditional|heritage|hoi an/i },
+  { id: 'minimal', label: 'Tối giản', pattern: /minimal|clean|eternelle|editorial/i },
+  { id: 'garden', label: 'Sân vườn & hoa lá', pattern: /verdant|botanical|garden|floral|green|bloom|olive|sen-ngoc|jardin/i },
+  { id: 'cinematic', label: 'Điện ảnh & vintage', pattern: /cinema|cinematic|film|vintage|dark|luxury gold|premiere/i },
+  { id: 'destination', label: 'Destination', pattern: /riviera|postcard|tropical|summer|coast|azur/i },
+  { id: 'illustrated', label: 'Màu nước & minh họa', pattern: /watercolor|storybook|handdrawn|playful|crystal|soft fade|love-out-loud|retro/i },
+] as const;
+
+export type TemplateStyleCategory = typeof templateStyleCategories[number]['id'];
+
 export const REAL_WEDDING_TEMPLATE_ID = 'ha-phuong-hoang-minh-2026';
 export const REAL_WEDDING_URL = 'https://mp-wedding-2026.vercel.app/';
 
@@ -27,6 +38,11 @@ const templateDetails: TemplateDetails[] = [
   { id: 'sen-ngoc', name: 'Sen Ngọc', style: 'Vietnamese Lotus', description: 'Sắc ngọc bích, nét sen thanh nhã và ảnh cưới áo dài trên nền giấy ngà.', route: '/demo/sen-ngoc', thumbnailId: 'sen-ngoc', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
   { id: 'hy-su-do-son', name: 'Hỷ Sự Đỏ Son', style: 'Vietnamese Ceremony', description: 'Thiệp hồng đỏ son, khung thiếp truyền thống và lời mời hai nhà sum họp.', route: '/demo/hy-su-do-son', thumbnailId: 'hy-su-do-son', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
   { id: 'pho-hoi', name: 'Thương Nhau Phố Hội', style: 'Hoi An Nostalgia', description: 'Sắc vàng phố cổ, ảnh cưới hoài niệm và bố cục bưu thiếp thân tình.', route: '/demo/pho-hoi', thumbnailId: 'pho-hoi', tier: '159k', features: ['Ảnh cưới Việt Nam', 'Câu chuyện', 'Album', 'RSVP'], featured: true },
+  { id: 'hy-sac-dong-phuong', name: 'Hỷ Sắc Đông Phương', style: 'Vietnamese Heritage Luxury', description: 'Phong thư đỏ son, triện Song Hỷ ánh champagne và các nghi lễ hai nhà được trình bày trang trọng.', route: '/demo/hy-sac-dong-phuong', tier: '199k', features: ['Mở phong thư tương tác', 'Lễ nghi hai nhà', 'Album', 'RSVP'], featured: true, homepageFeatured: true },
+  { id: 'eternelle', name: 'Éternelle — Tình Yêu Vĩnh Cửu', style: 'Timeless Editorial', description: 'Một tạp chí cưới tối giản với ảnh đen trắng toàn khung, typography thanh mảnh và chuyển cảnh dịu nhẹ.', route: '/demo/eternelle', tier: '199k', features: ['Ảnh editorial', 'Album toàn màn hình', 'Câu chuyện', 'RSVP'], featured: true, homepageFeatured: true },
+  { id: 'jardin-amour', name: "Jardin d'Amour — Khu Vườn Tình Yêu", style: 'Botanical Romance', description: 'Khu vườn vòm ivory với nhánh hoa, timeline dây leo và câu chuyện ảnh kiểu scrapbook.', route: '/demo/jardin-amour', tier: '159k', features: ['Vườn hoa tương tác', 'Timeline tình yêu', 'Album scrapbook', 'RSVP'], featured: true, homepageFeatured: true },
+  { id: 'grand-premiere', name: 'The Grand Premiere', style: 'Cinematic Black Tie', description: 'Lời mời như buổi công chiếu: poster điện ảnh, các chương tình yêu và RSVP dạng vé VIP.', route: '/demo/grand-premiere', tier: '199k', features: ['Mở màn sân khấu', 'Các chương phim', 'Video', 'Vé RSVP'], featured: true, homepageFeatured: true },
+  { id: 'love-out-loud', name: 'Love Out Loud — Yêu Là Phải Chất', style: 'Playful Retro Modern', description: 'Poster retro-pop sắc coral, photobooth, sticker tương tác và trò vui dành cho cặp đôi cá tính.', route: '/demo/love-out-loud', tier: '199k', features: ['Collage photobooth', 'Quiz về cặp đôi', 'Sticker tương tác', 'Vé RSVP'], featured: true, homepageFeatured: true },
 
   {
     id: 'verdant-veil',
@@ -313,19 +329,47 @@ const templateDetails: TemplateDetails[] = [
 
 function modernPreviewFor(template: TemplateDetails) {
   const normalized = template.id.toLocaleLowerCase('vi');
-  const story = /(traditional|song-hy|hy-su|sen-ngoc|pho-hoi)/.test(normalized)
+  const showcasePreviews: Record<string, string> = {
+    'hy-sac-dong-phuong': 'ao-dai-00',
+    eternelle: 'atelier-01',
+    'jardin-amour': 'coast-02',
+    'grand-premiere': 'city-03',
+    'love-out-loud': 'coast-00',
+  };
+  if (showcasePreviews[normalized]) {
+    return `/images/vietnam-modern/${showcasePreviews[normalized]}.webp`;
+  }
+  const story = /(traditional|song-hy|hy-su|sen-ngoc|pho-hoi|hy-sac)/.test(normalized)
     ? 'ao-dai'
-    : /(riviera|summer|tropical)/.test(normalized)
+    : /(riviera|summer|tropical|azur|jardin)/.test(normalized)
       ? 'coast'
-      : /(cinema|cinematic|dark|gold|vintage)/.test(normalized)
+      : /(cinema|cinematic|dark|gold|vintage|premiere)/.test(normalized)
         ? 'city'
         : 'atelier';
   const index = [...template.id].reduce((total, character) => total + character.charCodeAt(0), 0) % 4;
   return `/images/vietnam-modern/${story}-${String(index).padStart(2, '0')}.webp`;
 }
 
+const dedicatedTemplateThumbnailIds = new Set([
+  'art-deco-royal', 'art-deco-royal-basic', 'bloom-crystal-3d', 'bloom-crystal-3d-basic',
+  'blush-floral', 'burgundy-cinema-219k', 'cinematic-love-story', 'classic-minimalist',
+  'green-elegance', 'ha-phuong-hoang-minh-2026', 'hoa-moc-editorial', 'hy-su-do-son',
+  'luxury-gold-cinematic', 'luxury-gold-frame', 'minimal-elegant', 'minimal-elegant-basic',
+  'minimal-slide-clean', 'modern-dark-blue', 'pho-hoi', 'riviera-blue', 'romantic-watercolor',
+  'rose-storybook-219k', 'sen-ngoc', 'soft-fade-floral', 'song-hy-contemporary',
+  'summer-postcard', 'tropical-sunset', 'vietnamese-traditional', 'vietnamese-traditional-219k',
+  'vintage-film', 'vintage-grain',
+]);
+
 export const weddingTemplates: WeddingTemplate[] = templateDetails.map((template) => {
   const { thumbnailId = template.id, ...details } = template;
+  if (template.route && dedicatedTemplateThumbnailIds.has(thumbnailId)) {
+    return {
+      ...details,
+      thumbnail: `/images/templates/${thumbnailId}-800.webp`,
+      thumbnailSrcSet: `/images/templates/${thumbnailId}-480.webp 480w, /images/templates/${thumbnailId}-800.webp 800w`,
+    };
+  }
   if (template.route) {
     return {
       ...details,
@@ -344,5 +388,12 @@ export const templateTierLabels: Record<TemplateTier, string> = {
   '159k': 'Gói 159K',
   '199k': 'Gói 199K',
 };
+
+export function templateStyleCategoryIds(template: WeddingTemplate): TemplateStyleCategory[] {
+  const searchText = [template.id, template.name, template.style, template.description, ...template.features].join(' ');
+  return templateStyleCategories
+    .filter((category) => category.pattern.test(searchText))
+    .map((category) => category.id);
+}
 
 export const isExternalTemplate = (template: WeddingTemplate) => Boolean(template.externalUrl);
