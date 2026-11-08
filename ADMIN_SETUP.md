@@ -38,10 +38,10 @@ Thêm các biến môi trường cho Production và Preview:
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
 - `SUPABASE_SECRET_KEY`
-- `VITE_PUBLIC_INVITATION_DOMAIN` (tùy chọn, domain gốc do bạn sở hữu và có wildcard DNS để dùng link dạng `ten-co-dau-ten-chu-re.domain`)
+- `VITE_PUBLIC_INVITATION_DOMAIN` (tùy chọn, domain gốc do bạn sở hữu và có wildcard DNS để truy cập thiệp bằng subdomain)
 
 `SUPABASE_SECRET_KEY` chỉ được dùng ở server Vercel và tuyệt đối không được thêm tiền tố `VITE_`.
-Để dùng subdomain riêng cho từng khách, cần domain do bạn quản lý, thêm domain gốc và wildcard `*.domain` vào Vercel, đồng thời cấu hình DNS theo hướng dẫn Vercel. Không thể tự tạo wildcard con dưới domain hệ thống `wedding-invitation-mp.vercel.app`; nếu chưa cấu hình, hãy để `VITE_PUBLIC_INVITATION_DOMAIN` trống để hệ thống tạo link hoạt động dạng `/invite/slug` trên domain hiện tại.
+Nút tạo link thiệp thực tế luôn tạo URL dạng `/invite/slug` trên domain ứng dụng hiện tại. Nếu cần truy cập bằng subdomain riêng, chỉ dùng domain do bạn quản lý: thêm domain gốc và wildcard `*.domain` vào Vercel, đồng thời cấu hình DNS theo hướng dẫn Vercel. Không thể tự tạo wildcard con dưới domain hệ thống `wedding-invitation-mp.vercel.app`.
 
 ## 4. Luồng vận hành
 
@@ -86,4 +86,3 @@ $job$);
 ```
 
 Worker lấy một hồ sơ mỗi lượt, sử dụng lease và ID Drive được giữ trong DB khi retry. Ảnh gốc đã nhận được giữ nguyên để đối chiếu. Phiên bỏ dở hết hạn sau 24 giờ. Tệp đã tải một phần chỉ được thu gom khi worker chạy, sau thời gian chờ để token upload hết hạn. Với yêu cầu xóa dữ liệu, xác minh mã yêu cầu, thu hồi link demo, xóa bản gốc, bản web và ZIP theo tiền tố UUID trong ba bucket, xóa folder Drive theo ID, rồi xóa hồ sơ theo quy trình của chủ website. Link ảnh đã ký chỉ có hiệu lực ngắn và hết hạn theo thời hạn của demo.
-

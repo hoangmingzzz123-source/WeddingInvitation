@@ -76,12 +76,9 @@ import { SignatureDemo, type SignatureDemoCustomization } from '../demos/Signatu
 import { CustomerPhotoLibrary } from './CustomerPhotoLibrary';
 
 const customerStatuses = Object.keys(customerStatusLabels) as CustomerStatus[];
-const publicInvitationDomain = (import.meta.env.VITE_PUBLIC_INVITATION_DOMAIN ?? '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
 
 function publicInvitationUrl(slug: string) {
-  return publicInvitationDomain
-    ? `https://${slug}.${publicInvitationDomain}`
-    : `${window.location.origin}/invite/${slug}`;
+  return `${window.location.origin}/invite/${slug}`;
 }
 
 function shareLinkCacheKey(demoId: string) {

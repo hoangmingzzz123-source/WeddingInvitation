@@ -63,10 +63,10 @@ From the admin demo row, export a fresh ZIP, edit `index.html`, `styles.css`, or
 
 ## Vercel domain setting
 
-`VITE_PUBLIC_INVITATION_DOMAIN` is optional. Leave it empty to use `https://your-site-domain/invite/slug`. To use `https://slug.your-domain`, set it to the domain you own, without a scheme or trailing slash, for example:
+The admin publish action always creates a path-based URL such as `https://your-site-domain/invite/slug`. `VITE_PUBLIC_INVITATION_DOMAIN` is optional and enables routing published invitations from a custom wildcard domain you own, without a scheme or trailing slash, for example:
 
 ```env
 VITE_PUBLIC_INVITATION_DOMAIN=wedding-invitation-mp.vn
 ```
 
-Add both the root domain and `*.wedding-invitation-mp.vn` to the Vercel project and configure the wildcard DNS record as Vercel instructs. The built-in `wedding-invitation-mp.vercel.app` hostname cannot be used as a customer wildcard domain.
+Add both the root domain and `*.wedding-invitation-mp.vn` to the Vercel project and configure the wildcard DNS record as Vercel instructs. The built-in `wedding-invitation-mp.vercel.app` hostname cannot be used as a customer wildcard domain. The admin-generated path URL remains available regardless of this setting.
