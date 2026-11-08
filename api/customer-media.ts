@@ -527,8 +527,10 @@ async function submitInvitationRsvp(body: Record<string, unknown>) {
     const value = clean(rawAnswers[key], 40);
     return value ? [[key, value]] : [];
   }));
+  const side = body.side === 'groom' || body.side === 'bride' ? body.side : null;
   await db('invitation_rsvps', {
     demo_id: published.demo_id,
+    side,
     guest_name: name,
     attending,
     guest_count: guestCount,
@@ -544,11 +546,11 @@ async function adminInvitationRsvps(body: Record<string, unknown>) {
   const [demo] = await db<Array<{ id: string }>>(`invitation_demos?id=eq.${demoId}&select=id&limit=1`);
   if (!demo) throw new MediaError(404, 'Không tìm thấy thiệp.');
   const responses = await db<Array<Record<string, unknown>>>(
-    `invitation_rsvps?demo_id=eq.${demoId}&select=id,guest_name,attending,guest_count,email,message,answers,created_at&order=created_at.desc`,
+    `invitation_rsvps?demo_id=eq.${demoId}&select=id,guest_name,attending,guest_count,email,message,answers,side,created_at&order=created_at.desc`,
   );
   return json(responses.map((row) => ({
     id: row.id, name: row.guest_name, attending: row.attending, guestCount: row.guest_count,
-    email: row.email, message: row.message, answers: row.answers, submittedAt: row.created_at,
+    email: row.email, message: row.message, answers: row.answers, side: row.side, submittedAt: row.created_at,
   })));
 }
 
@@ -588,14 +590,14 @@ async function publicInvitationRsvps(tokenValue: unknown) {
   const [[demo], responses] = await Promise.all([
     db<Array<{ payload: Record<string, unknown> }>>(`invitation_demos?id=eq.${share.demo_id}&select=payload&limit=1`),
     db<Array<Record<string, unknown>>>(
-      `invitation_rsvps?demo_id=eq.${share.demo_id}&select=id,guest_name,attending,guest_count,answers,created_at&order=created_at.desc`,
+    `invitation_rsvps?demo_id=eq.${share.demo_id}&select=id,guest_name,attending,guest_count,answers,side,created_at&order=created_at.desc`,
     ),
   ]);
   return json({
     couple: `${String(demo?.payload?.brideName ?? 'Cô dâu')} & ${String(demo?.payload?.groomName ?? 'Chú rể')}`,
     responses: responses.map((row) => ({
       id: row.id, name: row.guest_name, attending: row.attending, guestCount: row.guest_count,
-      answers: row.answers, submittedAt: row.created_at,
+      answers: row.answers, side: row.side, submittedAt: row.created_at,
     })),
   });
 }
@@ -609,7 +611,8 @@ async function submitInvitationWish(body: Record<string, unknown>) {
   const name = clean(body.name, 80);
   const message = clean(body.message, 500);
   if (!name || !message) throw new MediaError(400, 'Vui lòng nhập tên và lời chúc.');
-  await db('invitation_wishes', { demo_id: published.demo_id, guest_name: name, message });
+  const side = body.side === 'groom' || body.side === 'bride' ? body.side : null;
+  await db('invitation_wishes', { demo_id: published.demo_id, guest_name: name, message, side });
   return json({ ok: true });
 }
 
@@ -618,10 +621,10 @@ async function adminInvitationWishes(body: Record<string, unknown>) {
   const [demo] = await db<Array<{ id: string }>>(`invitation_demos?id=eq.${demoId}&select=id&limit=1`);
   if (!demo) throw new MediaError(404, 'Không tìm thấy thiệp.');
   const wishes = await db<Array<Record<string, unknown>>>(
-    `invitation_wishes?demo_id=eq.${demoId}&select=id,guest_name,message,created_at&order=created_at.desc`,
+    `invitation_wishes?demo_id=eq.${demoId}&select=id,guest_name,message,side,created_at&order=created_at.desc`,
   );
   return json(wishes.map((row) => ({
-    id: row.id, name: row.guest_name, message: row.message, submittedAt: row.created_at,
+    id: row.id, name: row.guest_name, message: row.message, side: row.side, submittedAt: row.created_at,
   })));
 }
 
@@ -647,6 +650,49 @@ async function createInvitationWishesShare(body: Record<string, unknown>) {
     body: JSON.stringify({ demo_id: demoId, token }),
   });
   return json({ token });
+}
+
+async function createInvitationTrackingShare(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  const [demo] = await db<Array<{ id: string }>>(`invitation_demos?id=eq.${demoId}&select=id&limit=1`);
+  if (!demo) throw new MediaError(404, 'Không tìm thấy thiệp.');
+  const token = randomUUID();
+  await supabase('/rest/v1/invitation_rsvp_shares?on_conflict=demo_id', {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ demo_id: demoId, token }),
+  });
+  return json({ token });
+}
+
+async function publicInvitationTracking(tokenValue: unknown) {
+  if (typeof tokenValue !== 'string' || !/^[a-f0-9-]{36}$/i.test(tokenValue)) {
+    throw new MediaError(404, 'Link theo dõi không hợp lệ.');
+  }
+  const token = tokenValue.toLowerCase();
+  const [share] = await db<Array<{ demo_id: string }>>(
+    `invitation_rsvp_shares?token=eq.${encodeURIComponent(token)}&select=demo_id&limit=1`,
+  );
+  if (!share) throw new MediaError(404, 'Link theo dõi không tồn tại hoặc đã được thay mới.');
+  const [[demo], responses, wishes] = await Promise.all([
+    db<Array<{ payload: Record<string, unknown> }>>(`invitation_demos?id=eq.${share.demo_id}&select=payload&limit=1`),
+    db<Array<Record<string, unknown>>>(
+      `invitation_rsvps?demo_id=eq.${share.demo_id}&select=id,guest_name,attending,guest_count,answers,side,created_at&order=created_at.desc`,
+    ),
+    db<Array<Record<string, unknown>>>(
+      `invitation_wishes?demo_id=eq.${share.demo_id}&select=id,guest_name,message,side,created_at&order=created_at.desc`,
+    ),
+  ]);
+  return json({
+    couple: `${String(demo?.payload?.brideName ?? 'Cô dâu')} & ${String(demo?.payload?.groomName ?? 'Chú rể')}`,
+    responses: responses.map((row) => ({
+      id: row.id, name: row.guest_name, attending: row.attending, guestCount: row.guest_count,
+      answers: row.answers, side: row.side, submittedAt: row.created_at,
+    })),
+    wishes: wishes.map((row) => ({
+      id: row.id, name: row.guest_name, message: row.message, side: row.side, submittedAt: row.created_at,
+    })),
+  });
 }
 
 async function publicInvitationWishes(tokenValue: unknown) {
@@ -993,10 +1039,16 @@ async function publicInvitation(slugValue: unknown) {
     ...ref,
     url: `/api/customer-media?action=invitation-photo&slug=${encodeURIComponent(slug)}&photoId=${encodeURIComponent(ref.photoId)}`,
   }));
+  const wishes = await db<Array<Record<string, unknown>>>(
+    `invitation_wishes?demo_id=eq.${published.demo_id}&select=id,guest_name,message,side,created_at&order=created_at.desc&limit=100`,
+  );
+  const publicWishes = wishes.map((row) => ({
+    id: row.id, name: row.guest_name, message: row.message, side: row.side, submittedAt: row.created_at,
+  }));
   const publicFields = ['brideName', 'groomName', 'weddingDate', 'weddingTime', 'venue', 'address', 'message', 'coverUrl'];
   const invitation = Object.fromEntries(publicFields.map((key) => [key, String(payload[key] ?? (key === 'weddingTime' ? '18:00' : ''))]));
   const studio = publicStudio(payload.studio);
-  return json({ templateId: demo.template_id, customTemplate: await customTemplateForPayload(payload), payload: { ...invitation, studio, photos, customTemplateId: payload.customTemplateId } });
+  return json({ templateId: demo.template_id, customTemplate: await customTemplateForPayload(payload), payload: { ...invitation, studio, photos, wishes: publicWishes, customTemplateId: payload.customTemplateId } });
 }
 
 async function publicInvitationPhoto(slugValue: unknown, photoIdValue: unknown) {
@@ -1045,6 +1097,10 @@ export default {
         const url = new URL(request.url);
         return await publicInvitationWishes(url.searchParams.get('token'));
       }
+      if (request.method === 'GET' && action === 'invitation-tracking-share') {
+        const url = new URL(request.url);
+        return await publicInvitationTracking(url.searchParams.get('token'));
+      }
       if (request.method !== 'POST') throw new MediaError(405, 'Phương thức không hợp lệ.');
       if (['challenge', 'init', 'complete', 'status'].includes(action ?? '')) checkUploadRequest(request);
       if (action === 'contact') throw new MediaError(403, 'Vui lòng gửi yêu cầu kèm ảnh.');
@@ -1079,6 +1135,7 @@ export default {
       if (action === 'invitation-rsvps-admin') return await adminInvitationRsvps(body);
       if (action === 'delete-invitation-rsvp') return await deleteInvitationRsvp(body);
       if (action === 'create-invitation-rsvp-share') return await createInvitationRsvpShare(body);
+      if (action === 'create-invitation-tracking-share') return await createInvitationTrackingShare(body);
       if (action === 'invitation-wishes-admin') return await adminInvitationWishes(body);
       if (action === 'delete-invitation-wish') return await deleteInvitationWish(body);
       if (action === 'create-invitation-wishes-share') return await createInvitationWishesShare(body);

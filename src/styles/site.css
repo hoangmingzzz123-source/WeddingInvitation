@@ -3957,9 +3957,10 @@ body {
 .signature-guestbook form button { min-width: 3.2rem; border: 0; color: #fff; background: var(--sig-ink); font: inherit; font-size: .7rem; cursor: pointer; }
 .signature-guestbook form button:disabled { opacity: .6; cursor: wait; }
 .signature-guestbook form button svg { width: 1rem; height: 1rem; }
-.signature-guestbook ul { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.signature-guestbook ul { display: grid; max-height: 18rem; gap: .5rem; margin: 1rem 0 0; padding: 0 .35rem 0 0; overflow-y: auto; overscroll-behavior: contain; list-style: none; }
 .signature-guestbook li { display: flex; align-items: flex-start; gap: .45rem; max-width: min(100%, 30rem); padding: .6rem .75rem; border: 1px solid var(--sig-line); color: var(--sig-muted); background: color-mix(in srgb, var(--sig-paper) 83%, white); font-size: .62rem; line-height: 1.5; }
 .signature-guestbook li > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.signature-guestbook li > span:last-child > :is(small, time) { display: block; margin-top: .2rem; color: var(--sig-accent); font-size: .55rem; }
 .signature-guestbook li strong { display: block; margin-bottom: .15rem; color: var(--sig-ink); }
 .signature-guestbook__error { margin: .45rem 0 0; color: #9c4d45; font-size: .68rem; }
 
@@ -3975,7 +3976,6 @@ body {
 .signature-venue__map > span svg { width: .9rem; height: .9rem; color: var(--sig-accent); }
 
 .signature-rsvp { position: relative; display: grid; min-height: 38rem !important; overflow: hidden; color: var(--sig-paper); background: var(--sig-ink); place-items: center; }
-.signature-rsvp__ornament { position: absolute; top: -4rem; right: 7%; color: var(--sig-accent); font: 400 25rem/.8 "Cormorant Garamond", Georgia, serif; opacity: .12; }
 .signature-rsvp form,
 .signature-rsvp__success { position: relative; z-index: 1; width: min(100%, 37rem); }
 .signature-rsvp .signature-eyebrow { color: var(--sig-accent); }
@@ -4525,6 +4525,35 @@ body {
 .public-wishes-share__empty { padding: 1.5rem 0; color: #77786e; font-size: .82rem; }
 .public-wishes-share footer { padding-top: 1.2rem; color: #858579; font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
 
+.public-tracking-share {
+  --rsvp-ink: #263d32;
+  --rsvp-muted: #727d73;
+  min-height: 100svh;
+  padding: clamp(2rem, 6vw, 5rem) max(1.1rem, calc((100% - 58rem) / 2));
+  color: var(--rsvp-ink);
+  background: repeating-linear-gradient(0deg, #f8f8f3 0, #f8f8f3 39px, #f0f2eb 40px), #f8f8f3;
+  font-family: "Poppins", sans-serif;
+}
+.public-tracking-share__header { padding-bottom: 1.5rem; border-bottom: 1px solid #d9e0d7; }
+.public-tracking-share__header > p { display: flex; align-items: center; gap: .4rem; margin: 0 0 .6rem; color: #65816e; font-size: .66rem; font-weight: 800; letter-spacing: .15em; }
+.public-tracking-share__header > p svg { width: 1rem; height: 1rem; }
+.public-tracking-share__header h1 { margin: 0; font: 500 clamp(2rem, 7vw, 3.5rem)/1.08 "Playfair Display", Georgia, serif; }
+.public-tracking-share__tabs { display: flex; gap: .5rem; padding: 1rem 0; border-bottom: 1px solid #d9e0d7; }
+.public-tracking-share__tabs button { display: inline-flex; min-height: 2.7rem; align-items: center; gap: .5rem; padding: 0 .95rem; border: 1px solid #d9e0d7; border-radius: 999px; color: #526457; background: rgba(255,255,255,.55); font: 600 .72rem/1 "Poppins", sans-serif; cursor: pointer; }
+.public-tracking-share__tabs button[aria-selected="true"] { border-color: #547b61; color: #fff; background: #547b61; }
+.public-tracking-share__tabs button span { opacity: .78; }
+.public-tracking-share__panel { max-height: min(68vh, 48rem); min-height: 8rem; overflow-y: auto; overscroll-behavior: contain; }
+.public-tracking-share__wishes,
+.public-tracking-share__rsvps { margin: 0; padding: 0; list-style: none; }
+.public-tracking-share__wishes li { display: grid; grid-template-columns: 1.2rem minmax(0, 1fr); gap: .8rem; padding: 1.15rem 0; border-bottom: 1px solid #e8e4da; }
+.public-tracking-share__wishes li > svg { width: 1rem; height: 1rem; margin-top: .1rem; color: #ae8264; }
+.public-tracking-share__wishes li strong { color: #343c35; font-size: .78rem; }
+.public-tracking-share__wishes li p { margin: .3rem 0 .45rem; color: #5f665e; font-size: .78rem; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.public-tracking-share__wishes li time { color: #929188; font-size: .63rem; }
+.public-tracking-share__rsvps li { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid #e0e5dc; }
+.public-tracking-share__side { display: inline-block; width: fit-content; padding: .18rem .45rem; border-radius: 999px; color: #587363 !important; background: #e8efe7; font-size: .61rem !important; font-weight: 600; }
+.public-tracking-share > footer { padding-top: 1.2rem; color: #778477; font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
+
 @media (max-width: 600px) {
   .signature-guestbook form { grid-template-columns: 1fr auto; }
   .signature-guestbook textarea { grid-column: 1 / -1; grid-row: 2; }
@@ -4533,6 +4562,7 @@ body {
 
 @media (max-width: 600px) {
   .public-rsvp-share li { grid-template-columns: 1fr; gap: .6rem; }
+  .public-tracking-share__rsvps li { grid-template-columns: 1fr; gap: .6rem; }
 }
 
 /* Customer request form */

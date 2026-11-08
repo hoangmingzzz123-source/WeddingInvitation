@@ -73,11 +73,18 @@ export interface SignatureRsvpPayload {
   answers: Partial<Record<SignatureRsvpQuestion, string>>;
   email?: string;
   message?: string;
+  side?: 'groom' | 'bride' | null;
 }
 
 export interface SignatureWishPayload {
   name: string;
   message: string;
+  side?: 'groom' | 'bride' | null;
+}
+
+export interface SignatureWishEntry extends SignatureWishPayload {
+  id: string;
+  submittedAt: string;
 }
 
 interface SignatureDemoProps {
@@ -91,6 +98,7 @@ interface SignatureDemoProps {
   guestGreeting?: 'formal' | 'friendly';
   rsvpQuestions?: SignatureRsvpQuestion[];
   existingSubmitted?: boolean;
+  initialWishes?: SignatureWishEntry[];
   onRsvpSubmit?: (payload: SignatureRsvpPayload) => void | Promise<void>;
   onWishSubmit?: (payload: SignatureWishPayload) => void | Promise<void>;
 }
@@ -292,22 +300,32 @@ function SmallLabel({ children }: { children: string }) {
   return <p className="signature-eyebrow">{children}</p>;
 }
 
-function GuestBook({ couple, onSubmit }: { couple: string; onSubmit?: (payload: SignatureWishPayload) => void | Promise<void> }) {
+function GuestBook({
+  couple,
+  initialWishes = [],
+  onSubmit,
+}: {
+  couple: string;
+  initialWishes?: SignatureWishEntry[];
+  onSubmit?: (payload: SignatureWishPayload) => void | Promise<void>;
+}) {
   const [name, setName] = useState('');
   const [note, setNote] = useState('');
-  const [notes, setNotes] = useState<Array<SignatureWishPayload>>(() => onSubmit ? [] : [{ name: 'Bạn bè', message: 'Chúc hai bạn mãi hạnh phúc nhé!' }]);
+  const [notes, setNotes] = useState<Array<SignatureWishEntry | SignatureWishPayload>>(() => initialWishes.length
+    ? initialWishes
+    : onSubmit ? [] : [{ name: 'Bạn bè', message: 'Chúc hai bạn mãi hạnh phúc nhé!' }]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const addNote = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!name.trim() || !note.trim() || submitting) return;
-    const wish = { name: name.trim(), message: note.trim() };
+    const wish = { name: name.trim(), message: note.trim(), side: currentInvitationSide() };
     setSubmitting(true);
     setError('');
     try {
       await onSubmit?.(wish);
-      setNotes((current) => [wish, ...current].slice(0, 3));
+      setNotes((current) => [{ ...wish, id: crypto.randomUUID(), submittedAt: new Date().toISOString() }, ...current]);
       setName('');
       setNote('');
     } catch {
@@ -331,7 +349,17 @@ function GuestBook({ couple, onSubmit }: { couple: string; onSubmit?: (payload: 
         <button type="submit" disabled={submitting}>{submitting ? '...' : 'Gửi'}</button>
       </form>
       {error && <p className="signature-guestbook__error" role="alert">{error}</p>}
-      <ul>{notes.map((item, index) => <li key={`${item.name}-${item.message}-${index}`}><span aria-hidden="true">{['🤍', '✨', '🌿'][index]}</span><span><strong>{item.name}</strong>{item.message}</span></li>)}</ul>
+      <ul aria-label="Danh sách lời chúc">{notes.map((item, index) => (
+        <li key={'id' in item ? item.id : `${item.name}-${item.message}-${index}`}>
+          <span aria-hidden="true">{['🤍', '✨', '🌿'][index % 3]}</span>
+          <span>
+            <strong>{item.name}</strong>
+            {item.message}
+            {item.side && <small>{item.side === 'groom' ? 'Nhà trai' : 'Nhà gái'}</small>}
+            {'submittedAt' in item && <time>{new Date(item.submittedAt).toLocaleString('vi-VN')}</time>}
+          </span>
+        </li>
+      ))}</ul>
     </div>
   );
 }
@@ -429,6 +457,7 @@ export function SignatureDemo({
   guestGreeting = 'formal',
   rsvpQuestions = [],
   existingSubmitted = false,
+  initialWishes = [],
   onRsvpSubmit,
   onWishSubmit,
 }: SignatureDemoProps) {
@@ -523,6 +552,7 @@ export function SignatureDemo({
           ...(rsvpQuestions.includes('transport') ? { transport: String(formData.get('transport') || '') } : {}),
           ...(rsvpQuestions.includes('meal') ? { meal: String(formData.get('meal') || '') } : {}),
         },
+        side: currentInvitationSide(),
       });
       setSubmitted(true);
     } catch {
@@ -710,7 +740,7 @@ export function SignatureDemo({
               </>}
           </div>}
           {isSectionVisible('qr') && giftCards.map((card) => <SignatureGiftCard key={card.key} account={card.account} title={card.title} />)}
-          {isSectionVisible('guestbook') && <GuestBook couple={couple} onSubmit={onWishSubmit} />}
+          {isSectionVisible('guestbook') && <GuestBook couple={couple} initialWishes={initialWishes} onSubmit={onWishSubmit} />}
         </section>
       )}
 
@@ -732,7 +762,6 @@ export function SignatureDemo({
       </section>}
 
       {isSectionVisible('rsvp') && <section className="signature-rsvp" id="xac-nhan" aria-labelledby="signature-rsvp-title">
-        <div className="signature-rsvp__ornament" aria-hidden="true">✳</div>
         {!submitted ? (
           <form onSubmit={submitRsvp}>
             <SmallLabel>PLEASE REPLY</SmallLabel>

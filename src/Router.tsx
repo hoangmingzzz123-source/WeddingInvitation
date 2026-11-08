@@ -31,6 +31,7 @@ const AdminSetPasswordPage = lazy(() => import('./components/admin/AdminPages').
 const AdminDashboardPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminDashboardPage })));
 const PublicRsvpSharePage = lazy(() => import('./components/PublicRsvpSharePage').then((module) => ({ default: module.PublicRsvpSharePage })));
 const PublicWishesSharePage = lazy(() => import('./components/PublicWishesSharePage').then((module) => ({ default: module.PublicWishesSharePage })));
+const PublicInvitationTrackingPage = lazy(() => import('./components/PublicInvitationTrackingPage').then((module) => ({ default: module.PublicInvitationTrackingPage })));
 const DemoShell = lazy(() => import('./components/DemoShell').then((module) => ({ default: module.DemoShell })));
 const SignatureDemo = lazy(() => import('./components/demos/SignatureDemos').then((module) => ({ default: module.SignatureDemo })));
 
@@ -169,9 +170,11 @@ export function Router() {
   const publishedSlug = /^\/invite\/([a-z0-9-]+)$/i.exec(currentRoute)?.[1];
   const rsvpShareToken = /^\/rsvp\/([a-f0-9-]{36})$/i.exec(currentRoute)?.[1];
   const wishesShareToken = /^\/wishes\/([a-f0-9-]{36})$/i.exec(currentRoute)?.[1];
+  const trackingShareToken = /^\/tracking\/([a-f0-9-]{36})$/i.exec(currentRoute)?.[1];
   const page = previewToken
     ? <PublicDemoPage key={previewToken} token={previewToken} />
-    : rsvpShareToken ? <PublicRsvpSharePage key={rsvpShareToken} token={rsvpShareToken} />
+    : trackingShareToken ? <PublicInvitationTrackingPage key={trackingShareToken} token={trackingShareToken} />
+      : rsvpShareToken ? <PublicRsvpSharePage key={rsvpShareToken} token={rsvpShareToken} />
       : wishesShareToken ? <PublicWishesSharePage key={wishesShareToken} token={wishesShareToken} />
         : publishedSlug ? <PublishedInvitationPage key={publishedSlug} slug={publishedSlug} />
       : Object.hasOwn(routes, currentRoute) ? routes[currentRoute] : <NotFoundPage />;

@@ -5,11 +5,12 @@ import { weddingMusicUrlForTrack } from '../data/weddingMusic';
 import { mediaRequest } from '../lib/customerPhotoUpload';
 import type { CustomInvitationTemplate, DemoPhoto, InvitationPayload, InvitationStudioConfig } from '../types/admin';
 import { orderedInvitationNames, resolveInvitationSide } from '../utils/invitationSide';
-import { SignatureDemo, type SignatureDemoCustomization, type SignatureRsvpPayload, type SignatureWishPayload } from './demos/SignatureDemos';
+import { SignatureDemo, type SignatureDemoCustomization, type SignatureRsvpPayload, type SignatureWishEntry, type SignatureWishPayload } from './demos/SignatureDemos';
 import { CustomTemplateRenderer } from './CustomTemplateRenderer';
 
 interface PublishedPayload extends InvitationPayload {
   photos: Array<DemoPhoto & { url: string }>;
+  wishes: SignatureWishEntry[];
   studio?: InvitationStudioConfig;
 }
 
@@ -130,5 +131,6 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     await mediaRequest<{ ok: boolean }>('submit-invitation-wish', { slug, ...payload });
   };
 
-  return <SignatureDemo id={templateId} customization={customization} rsvpQuestions={studio?.rsvpQuestions ?? []} onRsvpSubmit={submitRsvp} onWishSubmit={submitWish} />;
+  return <SignatureDemo id={templateId} customization={customization} rsvpQuestions={studio?.rsvpQuestions ?? []}
+    initialWishes={payload.wishes ?? []} onRsvpSubmit={submitRsvp} onWishSubmit={submitWish} />;
 }
