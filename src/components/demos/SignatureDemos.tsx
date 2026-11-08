@@ -32,6 +32,8 @@ export interface SignatureDemoCustomization {
   groom?: string;
   date?: string;
   dateLabel?: string;
+  ceremonyDateLabel?: string;
+  receptionDateLabel?: string;
   time?: string;
   ceremonyTime?: string;
   receptionTime?: string;
@@ -649,7 +651,7 @@ export function SignatureDemo({
             <span className="signature-event-card__number">01 / CEREMONY</span>
             <CalendarDays aria-hidden="true" />
             <h3>{ceremonyTitle}</h3>
-            <p>{demo.dateLabel}</p>
+            <p>{customization?.ceremonyDateLabel || demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {customization?.timeLabel ? `${customization.timeLabel}: ` : ''}{customization?.ceremonyTime || demo.time}</span>
             <span><MapPin aria-hidden="true" /> {demo.venue}</span>
           </article>
@@ -657,7 +659,7 @@ export function SignatureDemo({
             <span className="signature-event-card__number">02 / RECEPTION</span>
             <Heart aria-hidden="true" />
             <h3>{receptionTitle}</h3>
-            <p>{demo.dateLabel}</p>
+            <p>{customization?.receptionDateLabel || demo.dateLabel}</p>
             <span><Clock3 aria-hidden="true" /> {customization?.receptionTime || demo.time} · Đón khách</span>
             <span><MapPin aria-hidden="true" /> {demo.venue}</span>
           </article>

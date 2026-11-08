@@ -132,7 +132,8 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
   };
   const gallerySelection = selection.filter((item) => item.role === 'gallery').sort((first, second) => first.order - second.order);
   return (
-    <fieldset className="customer-media" disabled={disabled || uploading}>
+    <fieldset className="customer-media" disabled={disabled || uploading}
+      title={disabled ? 'Đang xử lý thao tác khác trong Studio; vui lòng đợi hoàn tất.' : uploading ? 'Đang tải ảnh lên; vui lòng đợi hoàn tất.' : undefined}>
       <legend>Ảnh khách hàng ({library?.photos.length ?? 0}/30)</legend>
       <p aria-live="polite">{library?.requestCode} · {labels[library?.status ?? ''] ?? 'Đang tải'}</p>
       {(error || library?.error) && <p role="alert">{error || library?.error}</p>}
@@ -146,23 +147,28 @@ export function CustomerPhotoLibrary({ customerId, accessToken, selection, onSel
         {library?.folderId && /^[\w-]+$/.test(library.folderId) && (
           <a href={`https://drive.google.com/drive/folders/${library.folderId}`} target="_blank" rel="noopener noreferrer">Mở thư mục Google Drive</a>
         )}
-        {library?.driveEnabled && <button type="button" disabled={busy} onClick={() => void run('drive-health')}>Kiểm tra kết nối Drive</button>}
-        {library?.driveEnabled && ['failed','retrying'].includes(library?.status ?? '') && <button type="button" disabled={busy} onClick={() => void run('retry')}>Đồng bộ lại</button>}
-        {!!library?.photos.length && <button type="button" onClick={() => onSelect(defaultSelection(library.photos))}>Dùng tối đa 7 ảnh cho demo</button>}
-        {error && <button type="button" onClick={() => setVersion((value) => value + 1)}>Tải lại ảnh</button>}
-        {!!selection.length && <button type="button" onClick={() => onSelect([])}>Bỏ lựa chọn</button>}
+        {library?.driveEnabled && (busy
+          ? <span className="admin-studio-tooltip" title="Đang xử lý thao tác khác trong thư viện ảnh." aria-label="Đang xử lý thao tác khác trong thư viện ảnh." tabIndex={0}><button type="button" disabled>Kiểm tra kết nối Drive</button></span>
+          : <button type="button" title="Kiểm tra trạng thái kết nối Google Drive." onClick={() => void run('drive-health')}>Kiểm tra kết nối Drive</button>)}
+        {library?.driveEnabled && ['failed','retrying'].includes(library?.status ?? '') && (busy
+          ? <span className="admin-studio-tooltip" title="Đang xử lý thao tác khác trong thư viện ảnh." aria-label="Đang xử lý thao tác khác trong thư viện ảnh." tabIndex={0}><button type="button" disabled>Đồng bộ lại</button></span>
+          : <button type="button" title="Thử đồng bộ lại ảnh lên Google Drive." onClick={() => void run('retry')}>Đồng bộ lại</button>)}
+        {!!library?.photos.length && <button type="button" title="Chọn tối đa 7 ảnh, gồm ảnh bìa và album." onClick={() => onSelect(defaultSelection(library.photos))}>Dùng tối đa 7 ảnh cho demo</button>}
+        {error && <button type="button" title="Tải lại danh sách ảnh khách hàng." onClick={() => setVersion((value) => value + 1)}>Tải lại ảnh</button>}
+        {!!selection.length && <button type="button" title="Xóa toàn bộ lựa chọn ảnh cho demo." onClick={() => onSelect([])}>Bỏ lựa chọn</button>}
       </div>
       <div className="customer-media__grid">
         {library?.photos.map((photo, index) => {
           const selected = selection.find((item) => item.photoId === photo.id);
           return <div className="customer-media__card" key={photo.id}>
-            <button type="button" className="customer-media__image-button" onClick={() => setViewing(photo.url)} aria-label={`Xem ảnh ${index + 1}`}>
+            <button type="button" className="customer-media__image-button" title={`Mở ảnh ${index + 1} để xem kích thước lớn.`} onClick={() => setViewing(photo.url)} aria-label={`Xem ảnh ${index + 1}`}>
               <img src={photo.url} alt={`Ảnh khách ${index + 1}`} loading="lazy" />
             </button>
             <strong title={photo.name}>{photo.name}</strong>
             <label>Vị trí ảnh
               <select aria-label={`Vị trí ảnh ${photo.name}`} value={selected?.role ?? ''}
                 disabled={!selected && selection.length >= 7}
+                title={!selected && selection.length >= 7 ? 'Đã chọn đủ 7 ảnh. Hãy bỏ một ảnh trước khi thêm ảnh này.' : 'Chọn vai trò của ảnh trong thiệp.'}
                 onChange={(event) => choose(photo.id, event.target.value as DemoPhoto['role'] | '')}>
                 <option value="">Không sử dụng</option>
                 <option value="cover">Ảnh bìa</option>

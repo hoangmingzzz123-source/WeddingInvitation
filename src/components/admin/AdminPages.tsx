@@ -3,6 +3,7 @@ import {
   Archive,
   ArrowLeft,
   ArrowRight,
+  BookOpen,
   Check,
   Clipboard,
   Download,
@@ -73,6 +74,7 @@ import type { AuthCallbackSession } from '../../lib/supabaseRest';
 import { mediaRequest, uploadCustomTemplate, uploadEditedInvitationZip } from '../../lib/customerPhotoUpload';
 import { CustomTemplateRenderer } from '../CustomTemplateRenderer';
 import { SignatureDemo, type SignatureDemoCustomization } from '../demos/SignatureDemos';
+import { resolveInvitationSide } from '../../utils/invitationSide';
 import { CustomerPhotoLibrary } from './CustomerPhotoLibrary';
 
 const customerStatuses = Object.keys(customerStatusLabels) as CustomerStatus[];
@@ -123,6 +125,20 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat('vi-VN', { dateStyle: 'medium' }).format(new Date(value));
 }
 
+function dateInputValue(value: string | null) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function endOfLocalDate(value: string) {
+  if (!value) return null;
+  const date = new Date(`${value}T23:59:59.999`);
+  if (Number.isNaN(date.getTime())) throw new Error('Ngày hết hạn không hợp lệ.');
+  return date.toISOString();
+}
+
 function dateDots(value: string) {
   return value ? value.split('-').reverse().join(' · ') : '';
 }
@@ -144,6 +160,9 @@ const defaultStudioConfig: InvitationStudioConfig = {
   brideReceptionTitle: 'Đón khách nhà gái',
   brideCeremonyTime: '',
   brideReceptionTime: '',
+  brideWeddingDate: '',
+  brideCeremonyDate: '',
+  brideReceptionDate: '',
   brideHeroKicker: 'Lễ Vu Quy',
   brideAddress: '',
   brideReceptionAddress: '',
@@ -151,6 +170,9 @@ const defaultStudioConfig: InvitationStudioConfig = {
   groomReceptionTitle: 'Tiệc mừng thân mật',
   groomCeremonyTime: '',
   groomReceptionTime: '',
+  groomWeddingDate: '',
+  groomCeremonyDate: '',
+  groomReceptionDate: '',
   groomHeroKicker: 'Lễ Thành Hôn',
   groomAddress: '',
   groomReceptionAddress: '',
@@ -355,7 +377,7 @@ function AdminStudioEditor({
         <i style={{ width: `${((step + 1) / studioSteps.length) * 100}%` }} />
       </div>
       <nav className="admin-studio-editor__steps" aria-label="Các bước Studio">
-        {studioSteps.map((label, index) => <button type="button" key={label} className={`${index === step ? 'is-current' : ''}${index < step ? ' is-complete' : ''}`}
+        {studioSteps.map((label, index) => <button type="button" key={label} title={`${studioStepDetails[index][0]}: ${studioStepDetails[index][1]}`} className={`${index === step ? 'is-current' : ''}${index < step ? ' is-complete' : ''}`}
           aria-current={index === step ? 'step' : undefined} onClick={() => setStep(index)}><i>{String(index + 1).padStart(2, '0')}</i><span>{label}</span></button>)}
       </nav>
       <div className="admin-studio-editor__workspace">
@@ -411,6 +433,17 @@ function AdminStudioEditor({
           <label>Ngày cưới<input type="date" value={customer.weddingDate} onChange={(event) => onCustomerChange('weddingDate', event.target.value)} /></label>
           <label>Giờ làm lễ<input type="time" value={config.ceremonyTime} onChange={(event) => updateConfig('ceremonyTime', event.target.value)} /></label>
           <label>Giờ đón khách<input type="time" value={config.receptionTime} onChange={(event) => updateConfig('receptionTime', event.target.value)} /></label>
+          <p className="admin-studio-editor__hint is-wide">Ngày chung là ngày dự phòng. Có thể đặt ngày riêng cho từng bên; ngày lễ/tiệc sẽ dùng ngày tương ứng, còn ngày trên đầu thiệp dùng ngày cưới của bên đó.</p>
+          <fieldset className="admin-studio-family-fields is-wide"><legend>Ngày thiệp nhà trai · ?side=groom</legend><div>
+            <label>Ngày cưới trên đầu thiệp<input type="date" value={config.groomWeddingDate ?? ''} onChange={(event) => updateConfig('groomWeddingDate', event.target.value)} /></label>
+            <label>Ngày làm lễ<input type="date" value={config.groomCeremonyDate ?? ''} onChange={(event) => updateConfig('groomCeremonyDate', event.target.value)} /></label>
+            <label>Ngày tiệc / reception<input type="date" value={config.groomReceptionDate ?? ''} onChange={(event) => updateConfig('groomReceptionDate', event.target.value)} /></label>
+          </div></fieldset>
+          <fieldset className="admin-studio-family-fields is-wide"><legend>Ngày thiệp nhà gái · ?side=bride</legend><div>
+            <label>Ngày cưới trên đầu thiệp<input type="date" value={config.brideWeddingDate ?? ''} onChange={(event) => updateConfig('brideWeddingDate', event.target.value)} /></label>
+            <label>Ngày làm lễ<input type="date" value={config.brideCeremonyDate ?? ''} onChange={(event) => updateConfig('brideCeremonyDate', event.target.value)} /></label>
+            <label>Ngày tiệc / reception<input type="date" value={config.brideReceptionDate ?? ''} onChange={(event) => updateConfig('brideReceptionDate', event.target.value)} /></label>
+          </div></fieldset>
         </div>}
         {step === 4 && <div className="admin-form-grid">
           <label className="is-wide">Địa điểm<input value={customer.venue} onChange={(event) => onCustomerChange('venue', event.target.value)} /></label>
@@ -478,10 +511,10 @@ function AdminStudioEditor({
         {step === 7 && (config.packageTier === '109k' ? <div className="admin-studio-guests-locked">
           <strong>Gói Cơ bản gồm RSVP Có / Không</strong>
           <span>Danh sách khách riêng, số khách và câu hỏi xe/ăn sẽ mở ở gói Premium. Nội dung đã nhập được giữ lại khi đổi gói.</span>
-          <div><button type="button" onClick={() => updateConfig('packageTier', '159k')}>Chọn 159K Premium</button><button type="button" onClick={() => updateConfig('packageTier', '199k')}>Chọn 199K Diamond</button></div>
+          <div><button type="button" title="Chuyển sang gói Premium để mở danh sách khách và RSVP nâng cao." onClick={() => updateConfig('packageTier', '159k')}>Chọn 159K Premium</button><button type="button" title="Chuyển sang gói Diamond để mở đầy đủ quyền lợi." onClick={() => updateConfig('packageTier', '199k')}>Chọn 199K Diamond</button></div>
         </div> : <div className="admin-studio-guests">
-          <div className="admin-studio-guests__add"><label htmlFor="admin-studio-guest">Thêm khách mời</label><div><input id="admin-studio-guest" value={guestName} onChange={(event) => setGuestName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addGuest(); } }} placeholder="Tên khách" /><button type="button" onClick={addGuest} disabled={!guestName.trim()}><Users aria-hidden="true" /> Thêm</button></div></div>
-          <div className="admin-studio-guests__list">{config.guests.map((guest) => <div key={guest.id}><span>{guest.name}</span><select aria-label={`Lời chào cho ${guest.name}`} value={guest.greeting} onChange={(event) => updateConfig('guests', config.guests.map((item) => item.id === guest.id ? { ...item, greeting: event.target.value as 'formal' | 'friendly' } : item))}><option value="friendly">Thân mời</option><option value="formal">Trân trọng kính mời</option></select><button type="button" aria-label={`Xóa ${guest.name}`} onClick={() => updateConfig('guests', config.guests.filter((item) => item.id !== guest.id))}>×</button></div>)}</div>
+          <div className="admin-studio-guests__add"><label htmlFor="admin-studio-guest">Thêm khách mời</label><div><input id="admin-studio-guest" value={guestName} onChange={(event) => setGuestName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addGuest(); } }} placeholder="Tên khách" />{guestName.trim() ? <button type="button" title="Thêm tên này vào danh sách khách mời." onClick={addGuest}><Users aria-hidden="true" /> Thêm</button> : <span className="admin-studio-tooltip" title="Nhập tên khách mời trước khi thêm." aria-label="Nhập tên khách mời trước khi thêm." tabIndex={0}><button type="button" disabled><Users aria-hidden="true" /> Thêm</button></span>}</div></div>
+          <div className="admin-studio-guests__list">{config.guests.map((guest) => <div key={guest.id}><span>{guest.name}</span><select aria-label={`Lời chào cho ${guest.name}`} value={guest.greeting} onChange={(event) => updateConfig('guests', config.guests.map((item) => item.id === guest.id ? { ...item, greeting: event.target.value as 'formal' | 'friendly' } : item))}><option value="friendly">Thân mời</option><option value="formal">Trân trọng kính mời</option></select><button type="button" title={`Xóa ${guest.name} khỏi danh sách khách mời.`} aria-label={`Xóa ${guest.name}`} onClick={() => updateConfig('guests', config.guests.filter((item) => item.id !== guest.id))}>×</button></div>)}</div>
           <fieldset className="admin-studio-rsvp"><legend>Câu hỏi RSVP</legend><label><input type="checkbox" checked={config.rsvpQuestions.includes('transport')} onChange={() => updateConfig('rsvpQuestions', config.rsvpQuestions.includes('transport') ? config.rsvpQuestions.filter((item) => item !== 'transport') : [...config.rsvpQuestions, 'transport'])} /> Xe đưa đón</label><label><input type="checkbox" checked={config.rsvpQuestions.includes('meal')} onChange={() => updateConfig('rsvpQuestions', config.rsvpQuestions.includes('meal') ? config.rsvpQuestions.filter((item) => item !== 'meal') : [...config.rsvpQuestions, 'meal'])} /> Chế độ ăn</label></fieldset>
         </div>)}
         {step === 8 && <div className="admin-form-grid">
@@ -525,7 +558,7 @@ function AdminStudioEditor({
         </div>}
         {step === 11 && <dl className="admin-studio-review">
           <div><dt>Đôi bạn</dt><dd>{customer.brideName || 'Cô dâu'} &amp; {customer.groomName || 'Chú rể'}</dd></div>
-          <div><dt>Thời gian</dt><dd>{customer.weddingDate || 'Chưa chọn ngày'} · Lễ {config.ceremonyTime || customer.weddingTime || '18:00'} · Đón khách {config.receptionTime || customer.weddingTime || '18:00'}</dd></div>
+          <div><dt>Thời gian</dt><dd>Chung {customer.weddingDate || 'chưa chọn'} · Nhà trai {config.groomWeddingDate || customer.weddingDate || 'ngày chung'} (lễ {config.groomCeremonyDate || config.groomWeddingDate || customer.weddingDate || 'chung'} · tiệc {config.groomReceptionDate || config.groomWeddingDate || customer.weddingDate || 'chung'}) · Nhà gái {config.brideWeddingDate || customer.weddingDate || 'ngày chung'} (lễ {config.brideCeremonyDate || config.brideWeddingDate || customer.weddingDate || 'chung'} · tiệc {config.brideReceptionDate || config.brideWeddingDate || customer.weddingDate || 'chung'})</dd></div>
           <div><dt>Địa điểm</dt><dd>{customer.venue || 'Chưa thêm địa điểm'} · {customer.address}</dd></div>
           <div><dt>Thiết kế</dt><dd>{selectedTemplateName} · {selectedPackage.name} · {config.theme}{config.packageTier !== '109k' ? ` · ${config.fontStyle}` : ''}</dd></div>
           <div><dt>Nhạc nền</dt><dd>{config.packageTier === '109k' || config.musicTrack === 'default' ? 'Mặc định' : config.musicTrack === 'custom' ? config.customMusicUrl || 'Link riêng chưa nhập' : weddingMusicTracks.find((track) => track.id === config.musicTrack)?.label ?? 'Mặc định'}</dd></div>
@@ -541,10 +574,14 @@ function AdminStudioEditor({
        </aside>
       </div>
       <footer className="admin-studio-editor__actions">
-        <button type="button" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}><ArrowLeft aria-hidden="true" /> Trước</button>
+        {step === 0
+          ? <span className="admin-studio-tooltip" title="Đang ở bước đầu tiên. Hãy chọn một bước khác hoặc nhấn Tiếp theo." aria-label="Đang ở bước đầu tiên. Hãy chọn một bước khác hoặc nhấn Tiếp theo." tabIndex={0}><button type="button" disabled><ArrowLeft aria-hidden="true" /> Trước</button></span>
+          : <button type="button" title="Quay lại bước trước." onClick={() => setStep((current) => Math.max(0, current - 1))}><ArrowLeft aria-hidden="true" /> Trước</button>}
         {step < studioSteps.length - 1
-          ? <button type="button" className="is-primary" onClick={() => setStep((current) => Math.min(studioSteps.length - 1, current + 1))}>Tiếp theo <ArrowRight aria-hidden="true" /></button>
-          : <button type="button" className="is-primary" onClick={handleSave} disabled={saving}><Save aria-hidden="true" /> {saving ? 'Đang lưu...' : 'Lưu cấu hình vào demo'}</button>}
+          ? <button type="button" className="is-primary" title={`Sang bước tiếp theo: ${studioStepDetails[step + 1][0]}.`} onClick={() => setStep((current) => Math.min(studioSteps.length - 1, current + 1))}>Tiếp theo <ArrowRight aria-hidden="true" /></button>
+          : saving
+            ? <span className="admin-studio-tooltip" title="Đang lưu cấu hình; vui lòng đợi hoàn tất." aria-label="Đang lưu cấu hình; vui lòng đợi hoàn tất." tabIndex={0}><button type="button" className="is-primary" disabled><Save aria-hidden="true" /> Đang lưu...</button></span>
+            : <button type="button" className="is-primary" title="Lưu cấu hình Studio vào demo." onClick={handleSave}><Save aria-hidden="true" /> Lưu cấu hình vào demo</button>}
       </footer>
     </section>
   );
@@ -797,6 +834,61 @@ interface AdminWishRecord {
   submittedAt: string;
 }
 
+function PublishedInvitationExpiry({
+  demoId,
+  accessToken,
+  expiresAt,
+  onSaved,
+}: {
+  demoId: string;
+  accessToken: string;
+  expiresAt: string | null;
+  onSaved: (expiresAt: string | null) => void;
+}) {
+  const [date, setDate] = useState(() => dateInputValue(expiresAt));
+  const [savingExpiry, setSavingExpiry] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
+  useEffect(() => setDate(dateInputValue(expiresAt)), [expiresAt]);
+
+  const save = async () => {
+    setSavingExpiry(true);
+    setError('');
+    setMessage('');
+    try {
+      const result = await mediaRequest<{ expiresAt: string | null }>(
+        'update-published-invitation-expiry',
+        { demoId, expiresAt: endOfLocalDate(date) },
+        accessToken,
+      );
+      onSaved(result.expiresAt);
+      setMessage(result.expiresAt ? `Link hết hạn ${formatDate(result.expiresAt)}.` : 'Link không đặt thời hạn.');
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Không cập nhật được thời hạn thiệp.');
+    } finally {
+      setSavingExpiry(false);
+    }
+  };
+
+  return (
+    <div className="admin-demo-expiry">
+      <label>
+        Hạn thiệp chính thức
+        <input type="date" value={date} onChange={(event) => { setDate(event.target.value); setMessage(''); }} />
+      </label>
+      <button type="button" onClick={() => void save()} disabled={savingExpiry || date === dateInputValue(expiresAt)}
+        title={!date ? 'Để trống để không giới hạn thời gian truy cập.' : 'Lưu ngày hết hạn (đến hết ngày đã chọn).'}>
+        {savingExpiry ? <LoaderCircle className="is-spinning" aria-hidden="true" /> : <Save aria-hidden="true" />}
+        {savingExpiry ? 'Đang lưu...' : 'Cập nhật hạn'}
+      </button>
+      <small>{expiresAt && Date.parse(expiresAt) <= Date.now() ? 'Thiệp đã hết hạn.' : expiresAt ? `Đang hoạt động đến ${formatDate(expiresAt)}.` : 'Thiệp không có thời hạn.'} Mặc định link mới là 90 ngày.</small>
+      {message && <small role="status">{message}</small>}
+      {error && <small role="alert">{error}</small>}
+    </div>
+  );
+}
+
 function AdminDemoWishesPanel({ demoId, accessToken }: { demoId: string; accessToken: string }) {
   const [open, setOpen] = useState(false);
   const [wishes, setWishes] = useState<AdminWishRecord[]>([]);
@@ -918,7 +1010,6 @@ function AdminDemoTrackingPanel({ demoId, accessToken }: { demoId: string; acces
   return (
     <section className="admin-demo-rsvp admin-demo-tracking" aria-label="Link theo dõi RSVP và lời chúc">
       <header>
-        <strong><Link2 aria-hidden="true" /> Link theo dõi chung</strong>
         <button type="button" onClick={() => void createShareLink()} disabled={creating}>
           {creating ? <LoaderCircle className="is-spinning" aria-hidden="true" /> : <Link2 aria-hidden="true" />}
           Tạo link xem chung
@@ -990,8 +1081,10 @@ export function AdminDashboardPage() {
     tier: studioConfig.packageTier,
     bride: editor.brideName,
     groom: editor.groomName,
-    date: editor.weddingDate,
-    dateLabel: dateDots(editor.weddingDate),
+    date: resolveInvitationSide(studioConfig)?.weddingDate || editor.weddingDate,
+    dateLabel: dateDots(resolveInvitationSide(studioConfig)?.weddingDate || editor.weddingDate),
+    ceremonyDateLabel: dateDots(resolveInvitationSide(studioConfig)?.ceremonyDate || resolveInvitationSide(studioConfig)?.weddingDate || editor.weddingDate),
+    receptionDateLabel: dateDots(resolveInvitationSide(studioConfig)?.receptionDate || resolveInvitationSide(studioConfig)?.weddingDate || editor.weddingDate),
     time: editor.weddingTime,
     ceremonyTime: studioConfig.ceremonyTime || editor.weddingTime,
     receptionTime: studioConfig.receptionTime || editor.weddingTime,
@@ -1080,6 +1173,12 @@ export function AdminDashboardPage() {
         ?? nextCustomers[0]?.id
         ?? null;
       setSelectedCustomerId(nextSelectedId);
+      setMediaSelection((current) => {
+        if (current?.customerId === nextSelectedId) return current;
+        if (!nextSelectedId) return undefined;
+        const savedPhotos = nextDemos.find((demo) => demo.customerId === nextSelectedId)?.payload.photos ?? [];
+        return savedPhotos.length ? { customerId: nextSelectedId, photos: savedPhotos } : undefined;
+      });
       const nextSelected = nextCustomers.find((item) => item.id === nextSelectedId);
       if (nextSelected) setEditor(customerToEditor(nextSelected));
     } catch (loadError) {
@@ -1423,7 +1522,7 @@ export function AdminDashboardPage() {
   };
 
   const removeCustomer = async () => {
-    if (!session || !selectedCustomer || actionLoading || saving) return;
+    if (!session || !selectedCustomer || selectedCustomer.status === 'completed' || actionLoading || saving) return;
     const customer = selectedCustomer;
     const displayName = customer.brideName && customer.groomName
       ? `${customer.brideName} & ${customer.groomName}`
@@ -1455,6 +1554,23 @@ export function AdminDashboardPage() {
     } catch (deleteError) {
       setError(deleteError instanceof Error ? deleteError.message : 'Không thể xóa khách hàng.');
     } finally { setActionLoading(''); }
+  };
+
+  const completeCustomer = async () => {
+    if (!session || !selectedCustomer || selectedCustomer.status === 'completed' || actionLoading || saving) return;
+    setActionLoading(`complete-customer:${selectedCustomer.id}`);
+    setError('');
+    try {
+      const activeSession = await refreshAdminSession(readAdminSession() ?? session);
+      const completedCustomer = await updateCustomer(activeSession, selectedCustomer.id, { status: 'completed' });
+      setCustomers((current) => current.map((customer) => customer.id === completedCustomer.id ? completedCustomer : customer));
+      setEditor((current) => ({ ...current, status: 'completed' }));
+      showMessage('Đã đánh dấu khách hàng hoàn thành. Hồ sơ này không thể xóa.');
+    } catch (completeError) {
+      setError(completeError instanceof Error ? completeError.message : 'Không thể đánh dấu khách hàng hoàn thành.');
+    } finally {
+      setActionLoading('');
+    }
   };
 
   const expireDemo = async (demo: InvitationDemoRecord) => {
@@ -1577,6 +1693,7 @@ export function AdminDashboardPage() {
           <button type="button" className="is-active"><LayoutDashboard aria-hidden="true" /> Tổng quan</button>
           <button type="button" onClick={() => document.querySelector('.admin-customer-list')?.scrollIntoView()}><Users aria-hidden="true" /> Khách hàng</button>
           <button type="button" onClick={() => document.querySelector('.admin-demo-panel')?.scrollIntoView()}><WandSparkles aria-hidden="true" /> Demo khách</button>
+          <button type="button" onClick={() => navigateTo('/admin/guide')}><BookOpen aria-hidden="true" /> Hướng dẫn sử dụng</button>
         </nav>
         <div className="admin-sidebar__profile">
           <span><UserRound aria-hidden="true" /></span>
@@ -1620,7 +1737,13 @@ export function AdminDashboardPage() {
                   type="button"
                   key={customer.id}
                   className={selectedCustomerId === customer.id && !isNewCustomer ? 'is-active' : ''}
-                  onClick={() => { setIsNewCustomer(false); setSelectedCustomerId(customer.id); setEditor(customerToEditor(customer)); }}
+                  onClick={() => {
+                    setIsNewCustomer(false);
+                    setSelectedCustomerId(customer.id);
+                    const savedPhotos = demos.find((demo) => demo.customerId === customer.id)?.payload.photos ?? [];
+                    setMediaSelection(savedPhotos.length ? { customerId: customer.id, photos: savedPhotos } : undefined);
+                    setEditor(customerToEditor(customer));
+                  }}
                 >
                   <span className="admin-customer-avatar">{(customer.brideName || customer.fullName || '?').charAt(0)}</span>
                   <span><b>{customer.brideName && customer.groomName ? `${customer.brideName} & ${customer.groomName}` : customer.fullName}</b><small>{customer.phone || customer.email || 'Chưa có liên hệ'}</small></span>
@@ -1660,7 +1783,8 @@ export function AdminDashboardPage() {
                     </select>
                   </label>
                   <label>Trạng thái
-                    <select value={editor.status} onChange={(e) => updateEditor('status', e.target.value as CustomerStatus)}>
+                    <select value={editor.status} disabled={selectedCustomer?.status === 'completed'} onChange={(e) => updateEditor('status', e.target.value as CustomerStatus)}
+                      title={selectedCustomer?.status === 'completed' ? 'Trạng thái Hoàn thành là cuối cùng.' : undefined}>
                       {customerStatuses.map((status) => <option key={status} value={status}>{customerStatusLabels[status]}</option>)}
                     </select>
                   </label>
@@ -1668,9 +1792,17 @@ export function AdminDashboardPage() {
                 </div>
                 <div className="admin-form-actions">
                   {isNewCustomer && <button type="button" onClick={() => { setIsNewCustomer(false); setSelectedCustomerId(customers[0]?.id ?? null); }}>Hủy</button>}
-                  {selectedCustomer && !isNewCustomer && <button type="button" className="is-danger" onClick={() => void removeCustomer()} disabled={Boolean(actionLoading) || saving}>
-                    {actionLoading === `delete-customer:${selectedCustomer.id}` ? <LoaderCircle className="is-spinning" /> : <Trash2 />} Xóa khách hàng
-                  </button>}
+                  {selectedCustomer && !isNewCustomer && <>
+                    {selectedCustomer.status !== 'completed' && <button type="button" onClick={() => void completeCustomer()} disabled={Boolean(actionLoading) || saving}>
+                      {actionLoading === `complete-customer:${selectedCustomer.id}` ? <LoaderCircle className="is-spinning" /> : <Check />} Hoàn thành
+                    </button>}
+                    <button type="button" className="is-danger" onClick={() => void removeCustomer()}
+                      disabled={selectedCustomer.status === 'completed' || Boolean(actionLoading) || saving}
+                      title={selectedCustomer.status === 'completed' ? 'Khách hàng đã hoàn thành nên không thể xóa.' : 'Xóa hồ sơ khách hàng và dữ liệu liên quan.'}>
+                      {actionLoading === `delete-customer:${selectedCustomer.id}` ? <LoaderCircle className="is-spinning" /> : <Trash2 />} Xóa khách hàng
+                    </button>
+                    {selectedCustomer.status === 'completed' && <small className="admin-form-actions__notice">Khách hàng đã hoàn thành; thao tác xóa đã bị khóa.</small>}
+                  </>}
                   <button type="submit" className="is-primary" disabled={saving}>{saving ? <LoaderCircle className="is-spinning" /> : <Save />} {saving ? 'Đang lưu...' : 'Lưu hồ sơ'}</button>
                 </div>
               </form>
@@ -1723,7 +1855,8 @@ export function AdminDashboardPage() {
               {customerDemos.map((demo) => {
                 const previewUrl = `${window.location.origin}/preview/${demo.publicToken}`;
                 const canExport = selectedCustomer.status === 'confirmed' || selectedCustomer.status === 'completed';
-                const publishedSlug = publishedInvitations.find((item) => item.demoId === demo.id)?.slug;
+                const publishedInvitation = publishedInvitations.find((item) => item.demoId === demo.id);
+                const publishedSlug = publishedInvitation?.slug;
                 const invitationUrl = publishedSlug ? publicInvitationUrl(publishedSlug) : '';
                 return (
                   <article key={demo.id}>
@@ -1731,6 +1864,14 @@ export function AdminDashboardPage() {
                     <div><b>{weddingTemplates.find((item) => item.id === demo.templateId)?.name ?? customTemplates.find((item) => item.id === demo.templateId)?.name ?? demo.templateId}</b><small>Tạo {formatDate(demo.createdAt)}{demo.expiresAt ? ` · Hết hạn ${formatDate(demo.expiresAt)}` : ''}</small></div>
                     <label><input readOnly value={previewUrl} /><button type="button" onClick={() => void copyPreviewLink(demo.publicToken)} aria-label="Sao chép link"><Clipboard /></button><a href={previewUrl} target="_blank" rel="noreferrer" aria-label="Mở preview"><ExternalLink /></a></label>
                     {publishedSlug && <label className="admin-demo-live-link"><input readOnly value={invitationUrl} aria-label="Link thiệp chính thức" /><button type="button" onClick={() => void copyInvitationLink(publishedSlug)} aria-label="Sao chép link thiệp"><Clipboard /></button><a href={invitationUrl} target="_blank" rel="noreferrer" aria-label="Mở thiệp chính thức"><ExternalLink /></a></label>}
+                    {publishedInvitation && session && <PublishedInvitationExpiry
+                      demoId={demo.id}
+                      accessToken={session.accessToken}
+                      expiresAt={publishedInvitation.expiresAt}
+                      onSaved={(expiresAt) => setPublishedInvitations((current) => current.map((item) => (
+                        item.demoId === demo.id ? { ...item, expiresAt } : item
+                      )))}
+                    />}
                     <small className="admin-demo-zip-hint">Tải ZIP mới nhất, sửa index.html hoặc styles.css, rồi nạp lại vào đúng demo để cập nhật preview và link thiệp.</small>
                     <div className="admin-demo-list__actions">
                       <button type="button" onClick={() => void expireDemo(demo)}><Archive /> {demo.status === 'expired' ? 'Mở lại' : 'Khóa link'}</button>
@@ -1763,6 +1904,173 @@ export function AdminDashboardPage() {
             </div>
           </section>
         )}
+      </div>
+    </main>
+  );
+}
+
+export function AdminGuidePage() {
+  const [authorized, setAuthorized] = useState(false);
+
+  useEffect(() => {
+    if (!readAdminSession()) {
+      navigateTo('/admin/login');
+      return;
+    }
+    document.title = 'Hướng dẫn quản trị | Wedding Invitation MP';
+    setAuthorized(true);
+  }, []);
+
+  if (!authorized) {
+    return <main className="admin-loading" role="status"><LoaderCircle className="is-spinning" /><span>Đang mở hướng dẫn...</span></main>;
+  }
+
+  const signOut = () => {
+    clearAdminSession();
+    navigateTo('/admin/login');
+  };
+
+  return (
+    <main className="admin-app">
+      <aside className="admin-sidebar">
+        <a href="/admin" onClick={(event) => { event.preventDefault(); navigateTo('/admin'); }}>
+          <span><Sparkles aria-hidden="true" /></span>
+          <b>Wedding MP</b>
+          <small>Studio Console</small>
+        </a>
+        <nav aria-label="Điều hướng quản trị">
+          <button type="button" onClick={() => navigateTo('/admin')}><LayoutDashboard aria-hidden="true" /> Tổng quan</button>
+          <button type="button" className="is-active" aria-current="page"><BookOpen aria-hidden="true" /> Hướng dẫn sử dụng</button>
+        </nav>
+        <div className="admin-sidebar__profile">
+          <span><UserRound aria-hidden="true" /></span>
+          <div><b>Khu vực quản trị</b><small>Hướng dẫn chức năng</small></div>
+          <button type="button" onClick={signOut} aria-label="Đăng xuất"><LogOut aria-hidden="true" /></button>
+        </div>
+      </aside>
+      <div className="admin-main">
+        <header className="admin-topbar admin-guide__topbar">
+          <div><p>Trung tâm trợ giúp</p><h1>Hướng dẫn sử dụng Admin</h1></div>
+          <div>
+            <button type="button" onClick={() => navigateTo('/admin')}><ArrowLeft aria-hidden="true" /> Quay lại quản trị</button>
+          </div>
+        </header>
+        <div className="admin-guide">
+          <section className="admin-guide__intro">
+            <BookOpen aria-hidden="true" />
+            <div>
+              <p>TÀI LIỆU VẬN HÀNH</p>
+              <h2>Quản lý khách hàng và thiệp cưới</h2>
+              <span>Hướng dẫn từ lúc tiếp nhận yêu cầu, tạo preview đến khi bàn giao thiệp chính thức.</span>
+            </div>
+          </section>
+          <nav className="admin-guide__contents" aria-label="Mục lục hướng dẫn">
+            <a href="#guide-customer">1. Hồ sơ khách hàng</a>
+            <a href="#guide-studio">2. Studio và cấu hình thiệp</a>
+            <a href="#guide-preview">3. Preview và xác nhận</a>
+            <a href="#guide-live">4. Thiệp chính thức</a>
+            <a href="#guide-responses">5. RSVP, lời chúc</a>
+            <a href="#guide-export">6. ZIP và kết thúc hồ sơ</a>
+          </nav>
+
+          <section id="guide-customer" className="admin-guide__section">
+            <span className="admin-guide__number">01</span>
+            <div>
+              <h2>Hồ sơ khách hàng</h2>
+              <p>Danh sách bên trái là CRM. Chọn hồ sơ để xem và sửa thông tin; dùng tìm kiếm theo tên, số điện thoại hoặc email và bộ lọc trạng thái để tìm nhanh.</p>
+              <ol>
+                <li>Chọn <b>Thêm khách</b> để tạo hồ sơ mới, hoặc mở khách đã có để cập nhật.</li>
+                <li>Điền thông tin liên hệ, tên cô dâu/chú rể, ngày giờ, địa điểm, lời mời và mẫu thiệp.</li>
+                <li>Nhấn <b>Lưu hồ sơ</b> để lưu thay đổi CRM. Cấu hình trong Studio có nút lưu riêng ở bước cuối.</li>
+                <li>Nút <b>Hoàn thành</b> đánh dấu hồ sơ đã bàn giao. Trạng thái này là cuối cùng: không thể đổi lại và không thể xóa khách đó.</li>
+              </ol>
+              <p className="admin-guide__note">Chỉ xóa hồ sơ khi chắc chắn không cần giữ dữ liệu. Xóa khách sẽ xóa cả demo, link xuất bản, ảnh và các file liên quan.</p>
+            </div>
+          </section>
+
+          <section id="guide-studio" className="admin-guide__section">
+            <span className="admin-guide__number">02</span>
+            <div>
+              <h2>Studio: cấu hình thiệp theo 12 bước</h2>
+              <p>Trong khung <b>Demo Studio</b>, nhấn <b>Mở Studio</b>. Preview bên cạnh cập nhật theo cấu hình hiện tại; lưu ở bước cuối để ghi cấu hình vào demo.</p>
+              <ol>
+                <li><b>Chọn mẫu:</b> chọn mẫu nội bộ hoặc tải ZIP mẫu riêng theo hướng dẫn ngay tại Studio.</li>
+                <li><b>Chọn gói:</b> 109K có RSVP Có/Không; 159K mở Story, khách mời và RSVP nâng cao; 199K có thêm các mục Diamond như QR, video, sổ lưu bút.</li>
+                <li><b>Đôi bạn:</b> nhập tên cô dâu và chú rể.</li>
+                <li><b>Thời gian:</b> nhập ngày chung và giờ làm lễ/đón khách. Có thể đặt ngày riêng cho đầu thiệp, lễ và tiệc ở mỗi bên; ngày trống sẽ dùng ngày chung/ngày đầu thiệp bên đó.</li>
+                <li><b>Địa điểm:</b> nhập địa chỉ chung dự phòng và địa chỉ/địa điểm riêng nhà trai, nhà gái. Link có <code>?side=groom</code> hoặc <code>?side=bride</code> sẽ hiển thị thông tin phía tương ứng.</li>
+                <li><b>Nội dung:</b> viết lời mời, chỉnh tiêu đề và chọn các phần hiện trên thiệp. Mục chưa có trong gói/mẫu sẽ bị khóa; tooltip cho biết lý do.</li>
+                <li><b>Ảnh & album:</b> chọn tối đa 7 ảnh: một cover bắt buộc, tối đa một ảnh main, một video và các ảnh gallery. Có thể đổi vai trò, thứ tự gallery và điểm lấy nét.</li>
+                <li><b>Khách mời & RSVP:</b> gói 109K dùng RSVP cơ bản; gói cao hơn cho phép nhập danh sách khách và chọn câu hỏi xe/ăn.</li>
+                <li><b>Phong cách:</b> chọn bảng màu; font tùy chỉnh dành cho gói Premium/Diamond.</li>
+                <li><b>Nhạc nền:</b> gói Basic dùng nhạc mặc định. Gói cao hơn có nhạc thư viện hoặc URL trực tiếp tới MP3 HTTPS; không dùng link trang YouTube.</li>
+                <li><b>QR mừng cưới:</b> nhập tài khoản dùng chung hoặc bật <b>2 thiệp</b> để cấu hình riêng nhà trai/nhà gái. QR chỉ hiện trong gói Diamond; nếu chưa cấu hình hoặc dịch vụ QR lỗi, thiệp dùng QR minh họa theo thiết kế.</li>
+                <li><b>Xem lại:</b> kiểm tra thông tin và nhấn <b>Lưu cấu hình vào demo</b>.</li>
+              </ol>
+              <p className="admin-guide__note">Khi mở lại thư viện ảnh, vai trò và thứ tự đã lưu trong demo được giữ nguyên; thao tác tải ảnh mới chỉ cập nhật URL ảnh.</p>
+            </div>
+          </section>
+
+          <section id="guide-preview" className="admin-guide__section">
+            <span className="admin-guide__number">03</span>
+            <div>
+              <h2>Preview và xác nhận khách đặt</h2>
+              <ol>
+                <li>Sau khi lưu Studio và chọn ảnh, nhập ghi chú popup cùng ngày hết hạn preview.</li>
+                <li>Nhấn <b>Tạo link preview</b> để tạo link riêng cho khách xem và góp ý. Preview có thể hết hạn theo ngày đặt ở khu vực này.</li>
+                <li>Khi khách xác nhận đặt mẫu, nhấn <b>Xác nhận khách đặt mẫu</b>. Thao tác này mở quyền xuất ZIP và cho phép tạo link thiệp chính thức.</li>
+                <li>Nút <b>Khóa link</b> trong danh sách demo khóa/mở lại link preview, không khóa link thiệp chính thức.</li>
+              </ol>
+              <p className="admin-guide__note">RSVP và lời chúc gửi từ link preview không được ghi vào hệ thống. Các phản hồi theo dõi được lưu từ thiệp chính thức.</p>
+            </div>
+          </section>
+
+          <section id="guide-live" className="admin-guide__section">
+            <span className="admin-guide__number">04</span>
+            <div>
+              <h2>Thiệp chính thức và thời hạn</h2>
+              <ol>
+                <li>Sau khi khách đã xác nhận, nhấn <b>Tạo link thiệp thực tế</b>. Hệ thống tạo và sao chép URL dạng <code>/invite/slug</code> trên domain ứng dụng.</li>
+                <li>Link mới mặc định hết hạn sau <b>90 ngày</b>. Trong ô <b>Hạn thiệp chính thức</b>, chọn ngày rồi nhấn <b>Cập nhật hạn</b> để đổi thời hạn.</li>
+                <li>Để link không hết hạn, xóa ngày trong ô và nhấn <b>Cập nhật hạn</b>. Ngày được chọn có hiệu lực đến hết ngày đó.</li>
+                <li>Khi hết hạn, nội dung thiệp, ảnh và việc gửi RSVP/lời chúc bị từ chối. Có thể đặt ngày tương lai để gia hạn.</li>
+              </ol>
+              <p className="admin-guide__note">Link chính thức là link theo slug, không phải subdomain tự tạo dưới <code>vercel.app</code>. Khóa preview không làm thay đổi thời hạn thiệp chính thức.</p>
+            </div>
+          </section>
+
+          <section id="guide-responses" className="admin-guide__section">
+            <span className="admin-guide__number">05</span>
+            <div>
+              <h2>RSVP, lời chúc và lọc theo gia đình</h2>
+              <ol>
+                <li>Trong demo tương ứng, dùng các mục <b>Xem RSVP</b> và <b>Xem lời chúc</b> để xem hoặc xóa từng phản hồi trong Admin.</li>
+                <li>Nhấn <b>Tạo link xem chung</b> để tạo một link công khai chỉ xem, có tab RSVP và Lời chúc.</li>
+                <li>Trên trang theo dõi, chọn <b>Tất cả</b>, <b>Nhà trai</b> hoặc <b>Nhà gái</b>. Lựa chọn áp dụng cho tab đang xem; số liệu RSVP cũng tính theo bộ lọc.</li>
+                <li>Side được xác định từ URL thiệp: <code>?side=groom</code> là nhà trai, <code>?side=bride</code> là nhà gái. Phản hồi từ phiên bản cũ chưa có side chỉ hiện khi chọn Tất cả.</li>
+                <li>Lời chúc mới cũng xuất hiện trong sổ lưu bút trên thiệp chính thức. Link theo dõi chung là link riêng với link thiệp.</li>
+              </ol>
+            </div>
+          </section>
+
+          <section id="guide-export" className="admin-guide__section">
+            <span className="admin-guide__number">06</span>
+            <div>
+              <h2>ZIP, cập nhật thiệp và bàn giao</h2>
+              <ol>
+                <li><b>Xuất code ZIP</b> tải source của đúng khách/demo; chỉ khả dụng sau khi trạng thái khách đã xác nhận.</li>
+                <li>Để sửa giao diện custom, xuất ZIP mới nhất, sửa các file cho phép rồi dùng <b>Cập nhật từ ZIP</b> tại đúng demo. ZIP được kiểm tra marker để tránh nhập nhầm khách/demo.</li>
+                <li><b>Áp dụng ảnh đã chọn</b> lưu vai trò và thứ tự ảnh mới vào demo.</li>
+                <li><b>Xóa demo</b> sẽ vô hiệu link preview và link thiệp chính thức gắn với demo. Xóa khách sẽ xóa toàn bộ dữ liệu liên quan.</li>
+                <li>Khi đã bàn giao xong, nhấn <b>Hoàn thành</b> ở hồ sơ khách để khóa thao tác xóa và giữ lại hồ sơ.</li>
+              </ol>
+              <p className="admin-guide__note">Nếu nút bị vô hiệu hóa, đưa chuột lên nút hoặc focus bằng bàn phím để xem lý do và điều kiện cần thực hiện.</p>
+            </div>
+          </section>
+          <footer className="admin-guide__footer">
+            <button type="button" onClick={() => navigateTo('/admin')}><ArrowLeft aria-hidden="true" /> Quay lại danh sách khách</button>
+          </footer>
+        </div>
       </div>
     </main>
   );

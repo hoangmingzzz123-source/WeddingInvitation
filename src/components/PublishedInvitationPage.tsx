@@ -86,8 +86,10 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     tier: studio?.packageTier ?? templateTier,
     bride: payload.brideName,
     groom: payload.groomName,
-    date: payload.weddingDate,
-    dateLabel: dateLabel(payload.weddingDate),
+    date: familyVariant?.weddingDate || payload.weddingDate,
+    dateLabel: dateLabel(familyVariant?.weddingDate || payload.weddingDate),
+    ceremonyDateLabel: dateLabel(familyVariant?.ceremonyDate || familyVariant?.weddingDate || payload.weddingDate),
+    receptionDateLabel: dateLabel(familyVariant?.receptionDate || familyVariant?.weddingDate || payload.weddingDate),
     time: payload.weddingTime,
     ceremonyTime: familyVariant?.ceremonyTime || studio?.ceremonyTime || payload.weddingTime,
     receptionTime: familyVariant?.receptionTime || studio?.receptionTime || payload.weddingTime,
@@ -131,6 +133,8 @@ export function PublishedInvitationPage({ slug }: { slug: string }) {
     await mediaRequest<{ ok: boolean }>('submit-invitation-wish', { slug, ...payload });
   };
 
-  return <SignatureDemo id={templateId} customization={customization} rsvpQuestions={studio?.rsvpQuestions ?? []}
-    initialWishes={payload.wishes ?? []} onRsvpSubmit={submitRsvp} onWishSubmit={submitWish} />;
+  return <div className="demo-page-content demo-page-content--signature" data-template={templateId}>
+    <SignatureDemo id={templateId} customization={customization} rsvpQuestions={studio?.rsvpQuestions ?? []}
+      initialWishes={payload.wishes ?? []} onRsvpSubmit={submitRsvp} onWishSubmit={submitWish} />
+  </div>;
 }

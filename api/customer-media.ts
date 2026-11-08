@@ -19,7 +19,7 @@ const uuid = (value: unknown) => {
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const flag = (name: string) => process.env[name] === 'true';
-const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTime', 'receptionTime', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideCeremonyTime', 'brideReceptionTime', 'brideHeroKicker', 'brideAddress', 'brideReceptionAddress', 'brideVenue', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomCeremonyTime', 'groomReceptionTime', 'groomHeroKicker', 'groomAddress', 'groomReceptionAddress', 'groomVenue', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions', 'qrSeparateSides'];
+const publicStudioKeys = ['packageTier', 'city', 'headerMonogramText', 'ceremonyTime', 'receptionTime', 'ceremonyTitle', 'receptionTitle', 'brideCeremonyTitle', 'brideReceptionTitle', 'brideCeremonyTime', 'brideReceptionTime', 'brideWeddingDate', 'brideCeremonyDate', 'brideReceptionDate', 'brideHeroKicker', 'brideAddress', 'brideReceptionAddress', 'brideVenue', 'groomCeremonyTitle', 'groomReceptionTitle', 'groomCeremonyTime', 'groomReceptionTime', 'groomWeddingDate', 'groomCeremonyDate', 'groomReceptionDate', 'groomHeroKicker', 'groomAddress', 'groomReceptionAddress', 'groomVenue', 'heroKicker', 'albumTitle', 'timeLabel', 'venueLabel', 'signatureText', 'theme', 'fontStyle', 'rsvpQuestions', 'qrSeparateSides'];
 const invitationSections = new Set(['story', 'events', 'timeline', 'album', 'video', 'qr', 'guestbook', 'venue', 'rsvp']);
 const templateMimeTypes: Record<string, string> = {
   html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'application/javascript; charset=utf-8',
@@ -457,10 +457,13 @@ async function removeStorageFiles(bucket: string, paths: string[]) {
 
 async function deleteCustomer(customerIdValue: unknown) {
   const customerId = uuid(customerIdValue);
-  const [customerRow] = await db<Array<{ id: string; drive_folder_id: string | null }>>(
-    `customers?id=eq.${customerId}&select=id,drive_folder_id&limit=1`,
+  const [customerRow] = await db<Array<{ id: string; status: string; drive_folder_id: string | null }>>(
+    `customers?id=eq.${customerId}&select=id,status,drive_folder_id&limit=1`,
   );
   if (!customerRow) throw new MediaError(404, 'Không tìm thấy khách hàng cần xóa.');
+  if (customerRow.status === 'completed') {
+    throw new MediaError(409, 'Khách hàng đã hoàn thành nên không thể xóa.');
+  }
 
   const [photos, ownedRevisions] = await Promise.all([
     photosFor(customerId),
@@ -509,10 +512,13 @@ async function deleteCustomerDemo(body: Record<string, unknown>) {
 
 async function submitInvitationRsvp(body: Record<string, unknown>) {
   const slug = invitationSlug(body.slug);
-  const [published] = await db<Array<{ demo_id: string }>>(
-    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=demo_id&limit=1`,
+  const [published] = await db<Array<{ demo_id: string; expires_at: string | null }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=demo_id,expires_at&limit=1`,
   );
   if (!published) throw new MediaError(404, 'Thiệp không tồn tại hoặc chưa được xuất bản.');
+  if (published.expires_at && Date.parse(published.expires_at) <= Date.now()) {
+    throw new MediaError(410, 'Thiệp đã hết hạn.');
+  }
   const name = clean(body.name, 120);
   if (!name) throw new MediaError(400, 'Vui lòng nhập họ tên.');
   const attending = body.attending === 'no' ? 'no' : body.attending === 'yes' ? 'yes' : '';
@@ -604,10 +610,13 @@ async function publicInvitationRsvps(tokenValue: unknown) {
 
 async function submitInvitationWish(body: Record<string, unknown>) {
   const slug = invitationSlug(body.slug);
-  const [published] = await db<Array<{ demo_id: string }>>(
-    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=demo_id&limit=1`,
+  const [published] = await db<Array<{ demo_id: string; expires_at: string | null }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=demo_id,expires_at&limit=1`,
   );
   if (!published) throw new MediaError(404, 'Thiệp không tồn tại hoặc chưa được xuất bản.');
+  if (published.expires_at && Date.parse(published.expires_at) <= Date.now()) {
+    throw new MediaError(410, 'Thiệp đã hết hạn.');
+  }
   const name = clean(body.name, 80);
   const message = clean(body.message, 500);
   if (!name || !message) throw new MediaError(400, 'Vui lòng nhập tên và lời chúc.');
@@ -996,11 +1005,11 @@ async function publishInvitation(body: Record<string, unknown>) {
     throw new MediaError(409, 'Chỉ có thể tạo link chính thức sau khi khách xác nhận đặt mẫu.');
   }
 
-  const existing = () => db<Array<{ slug: string }>>(
-    `published_invitations?demo_id=eq.${demoId}&select=slug&limit=1`,
+  const existing = () => db<Array<{ slug: string; expires_at: string | null }>>(
+    `published_invitations?demo_id=eq.${demoId}&select=slug,expires_at&limit=1`,
   );
   const [published] = await existing();
-  if (published) return json({ slug: published.slug });
+  if (published) return json({ slug: published.slug, expiresAt: published.expires_at });
 
   const baseSlug = slugifyInvitation(`${customerRow.bride_name}-${customerRow.groom_name}`);
   const [collision] = await db<Array<{ demo_id: string }>>(
@@ -1011,18 +1020,23 @@ async function publishInvitation(body: Record<string, unknown>) {
     await db('published_invitations', { slug, customer_id: customerId, demo_id: demoId });
   } catch {
     const [raced] = await existing();
-    if (raced) return json({ slug: raced.slug });
+    if (raced) return json({ slug: raced.slug, expiresAt: raced.expires_at });
     throw new MediaError(409, 'Tên link này vừa được sử dụng. Hãy thử tạo lại.');
   }
-  return json({ slug });
+  const [created] = await existing();
+  if (!created) throw new MediaError(500, 'Đã tạo link nhưng không đọc lại được thông tin hết hạn.');
+  return json({ slug: created.slug, expiresAt: created.expires_at });
 }
 
 async function publicInvitation(slugValue: unknown) {
   const slug = invitationSlug(slugValue);
-  const [published] = await db<Array<{ customer_id: string; demo_id: string }>>(
-    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=customer_id,demo_id&limit=1`,
+  const [published] = await db<Array<{ customer_id: string; demo_id: string; expires_at: string | null }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=customer_id,demo_id,expires_at&limit=1`,
   );
   if (!published) throw new MediaError(404, 'Thiệp này không tồn tại.');
+  if (published.expires_at && Date.parse(published.expires_at) <= Date.now()) {
+    throw new MediaError(410, 'Thiệp chính thức đã hết hạn.');
+  }
   const [[demo], [customerRow]] = await Promise.all([
     db<Array<{ id: string; template_id: string; payload: Record<string, unknown> }>>(
       `invitation_demos?id=eq.${published.demo_id}&select=id,template_id,payload&limit=1`,
@@ -1054,10 +1068,13 @@ async function publicInvitation(slugValue: unknown) {
 async function publicInvitationPhoto(slugValue: unknown, photoIdValue: unknown) {
   const slug = invitationSlug(slugValue);
   const photoId = uuid(photoIdValue);
-  const [published] = await db<Array<{ customer_id: string; demo_id: string }>>(
-    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=customer_id,demo_id&limit=1`,
+  const [published] = await db<Array<{ customer_id: string; demo_id: string; expires_at: string | null }>>(
+    `published_invitations?slug=eq.${encodeURIComponent(slug)}&select=customer_id,demo_id,expires_at&limit=1`,
   );
   if (!published) throw new MediaError(404, 'Ảnh thiệp không tồn tại.');
+  if (published.expires_at && Date.parse(published.expires_at) <= Date.now()) {
+    throw new MediaError(410, 'Thiệp chính thức đã hết hạn.');
+  }
   const [[demo], [customerRow]] = await Promise.all([
     db<Array<{ payload: Record<string, unknown> }>>(`invitation_demos?id=eq.${published.demo_id}&select=payload&limit=1`),
     db<Array<{ status: string }>>(`customers?id=eq.${published.customer_id}&select=status&limit=1`),
@@ -1068,7 +1085,27 @@ async function publicInvitationPhoto(slugValue: unknown, photoIdValue: unknown) 
   const photo = selected.find(({ ref }) => ref.photoId === photoId);
   if (!photo) throw new MediaError(404, 'Ảnh thiệp không tồn tại.');
   const image = await supabase(`/storage/v1/object/authenticated/${ASSETS}/${photo.path}`);
-  return new Response(image.body, { headers: { 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=3600' } });
+  return new Response(image.body, { headers: { 'Content-Type': 'image/webp', 'Cache-Control': 'private, no-store' } });
+}
+
+async function updatePublishedInvitationExpiry(body: Record<string, unknown>) {
+  const demoId = uuid(body.demoId);
+  if (!Object.hasOwn(body, 'expiresAt')) throw new MediaError(400, 'Thiếu ngày hết hạn.');
+  let expiresAt: string | null = null;
+  if (body.expiresAt !== null && body.expiresAt !== '') {
+    if (typeof body.expiresAt !== 'string' || !Number.isFinite(Date.parse(body.expiresAt))) {
+      throw new MediaError(400, 'Ngày hết hạn không hợp lệ.');
+    }
+    const expiresTime = Date.parse(body.expiresAt);
+    if (expiresTime <= Date.now()) throw new MediaError(400, 'Ngày hết hạn phải ở tương lai.');
+    expiresAt = new Date(expiresTime).toISOString();
+  }
+  const [published] = await db<Array<{ demo_id: string }>>(
+    `published_invitations?demo_id=eq.${demoId}&select=demo_id&limit=1`,
+  );
+  if (!published) throw new MediaError(404, 'Demo chưa có link thiệp chính thức.');
+  await db(`published_invitations?demo_id=eq.${demoId}`, { expires_at: expiresAt }, 'PATCH');
+  return json({ expiresAt });
 }
 
 export default {
@@ -1147,6 +1184,7 @@ export default {
       if (action === 'delete-customer') return await deleteCustomer(body.customerId);
       if (action === 'delete-demo') return await deleteCustomerDemo(body);
       if (action === 'publish-invitation') return await publishInvitation(body);
+      if (action === 'update-published-invitation-expiry') return await updatePublishedInvitationExpiry(body);
       if (action === 'templates') return json(await listCustomTemplates(body.customerId));
       const driveEnabled = flag('GOOGLE_DRIVE_ENABLED');
       if (!driveEnabled && (action === 'drive-health' || action === 'retry')) {

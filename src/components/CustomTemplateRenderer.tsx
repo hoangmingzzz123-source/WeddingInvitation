@@ -32,15 +32,28 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     .map((section) => `[data-invitation-section="${section}"]{display:none!important}`)
     .join('');
   const familyVariant = resolveInvitationSide(studio);
-  const parsedDate = payload.weddingDate ? new Date(`${payload.weddingDate}T00:00:00`) : null;
+  const weddingDate = familyVariant?.weddingDate || payload.weddingDate;
+  const ceremonyDate = familyVariant?.ceremonyDate || familyVariant?.weddingDate || payload.weddingDate;
+  const receptionDate = familyVariant?.receptionDate || familyVariant?.weddingDate || payload.weddingDate;
+  const parsedDate = weddingDate ? new Date(`${weddingDate}T00:00:00`) : null;
   const weddingDateLabel = parsedDate && !Number.isNaN(parsedDate.getTime())
     ? new Intl.DateTimeFormat('vi-VN', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }).format(parsedDate)
-    : payload.weddingDate;
+    : weddingDate;
+  const dateLabel = (value: string) => {
+    const date = value ? new Date(`${value}T00:00:00`) : null;
+    return date && !Number.isNaN(date.getTime())
+      ? new Intl.DateTimeFormat('vi-VN', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }).format(date)
+      : value;
+  };
   const values: Record<string, string> = {
     brideName: payload.brideName,
     groomName: payload.groomName,
-    weddingDate: payload.weddingDate,
+    weddingDate,
     weddingDateLabel,
+    ceremonyDate,
+    ceremonyDateLabel: dateLabel(ceremonyDate),
+    receptionDate,
+    receptionDateLabel: dateLabel(receptionDate),
     weddingTime: payload.weddingTime,
     venue: familyVariant?.venue || payload.venue,
     brideVenue: studio?.brideVenue ?? '',
@@ -57,6 +70,12 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     receptionTime: familyVariant?.receptionTime || studio?.receptionTime || payload.weddingTime,
     brideCeremonyTitle: studio?.brideCeremonyTitle ?? '',
     brideReceptionTitle: studio?.brideReceptionTitle ?? '',
+    brideWeddingDate: studio?.brideWeddingDate || payload.weddingDate,
+    brideWeddingDateLabel: dateLabel(studio?.brideWeddingDate || payload.weddingDate),
+    brideCeremonyDate: studio?.brideCeremonyDate || studio?.brideWeddingDate || payload.weddingDate,
+    brideCeremonyDateLabel: dateLabel(studio?.brideCeremonyDate || studio?.brideWeddingDate || payload.weddingDate),
+    brideReceptionDate: studio?.brideReceptionDate || studio?.brideWeddingDate || payload.weddingDate,
+    brideReceptionDateLabel: dateLabel(studio?.brideReceptionDate || studio?.brideWeddingDate || payload.weddingDate),
     brideCeremonyTime: studio?.brideCeremonyTime || studio?.ceremonyTime || payload.weddingTime,
     brideReceptionTime: studio?.brideReceptionTime || studio?.receptionTime || payload.weddingTime,
     brideCeremonyAddress: studio?.brideAddress || payload.address,
@@ -67,6 +86,12 @@ function buildSrcDoc(template: CustomInvitationTemplate, payload: InvitationPayl
     groomReceptionAddress: studio?.groomReceptionAddress || studio?.groomAddress || payload.address,
     groomCeremonyTitle: studio?.groomCeremonyTitle ?? '',
     groomReceptionTitle: studio?.groomReceptionTitle ?? '',
+    groomWeddingDate: studio?.groomWeddingDate || payload.weddingDate,
+    groomWeddingDateLabel: dateLabel(studio?.groomWeddingDate || payload.weddingDate),
+    groomCeremonyDate: studio?.groomCeremonyDate || studio?.groomWeddingDate || payload.weddingDate,
+    groomCeremonyDateLabel: dateLabel(studio?.groomCeremonyDate || studio?.groomWeddingDate || payload.weddingDate),
+    groomReceptionDate: studio?.groomReceptionDate || studio?.groomWeddingDate || payload.weddingDate,
+    groomReceptionDateLabel: dateLabel(studio?.groomReceptionDate || studio?.groomWeddingDate || payload.weddingDate),
     ceremonyTitle: familyVariant?.ceremonyTitle ?? studio?.ceremonyTitle ?? '',
     receptionTitle: familyVariant?.receptionTitle ?? studio?.receptionTitle ?? '',
     heroKicker: familyVariant?.heroKicker ?? studio?.heroKicker ?? '',

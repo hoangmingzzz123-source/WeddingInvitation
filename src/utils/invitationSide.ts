@@ -7,6 +7,9 @@ export interface InvitationSideDetails {
   heroKicker: string;
   ceremonyTime: string;
   receptionTime: string;
+  weddingDate: string;
+  ceremonyDate: string;
+  receptionDate: string;
   ceremonyAddress: string;
   receptionAddress: string;
 }
@@ -50,6 +53,9 @@ export function resolveInvitationSide(
       heroKicker: studio?.brideHeroKicker || 'Lễ Vu Quy',
       ceremonyTime: studio?.brideCeremonyTime || studio?.ceremonyTime || '',
       receptionTime: studio?.brideReceptionTime || studio?.receptionTime || '',
+      weddingDate: studio?.brideWeddingDate || '',
+      ceremonyDate: studio?.brideCeremonyDate || studio?.brideWeddingDate || '',
+      receptionDate: studio?.brideReceptionDate || studio?.brideWeddingDate || '',
       ceremonyAddress,
       receptionAddress: studio?.brideReceptionAddress || ceremonyAddress,
     };
@@ -64,6 +70,9 @@ export function resolveInvitationSide(
       heroKicker: studio?.groomHeroKicker || 'Lễ Thành Hôn',
       ceremonyTime: studio?.groomCeremonyTime || studio?.ceremonyTime || '',
       receptionTime: studio?.groomReceptionTime || studio?.receptionTime || '',
+      weddingDate: studio?.groomWeddingDate || '',
+      ceremonyDate: studio?.groomCeremonyDate || studio?.groomWeddingDate || '',
+      receptionDate: studio?.groomReceptionDate || studio?.groomWeddingDate || '',
       ceremonyAddress,
       receptionAddress: studio?.groomReceptionAddress || ceremonyAddress,
     };

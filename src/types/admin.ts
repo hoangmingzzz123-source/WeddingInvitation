@@ -29,6 +29,9 @@ export interface InvitationStudioConfig {
   brideReceptionTitle: string;
   brideCeremonyTime: string;
   brideReceptionTime: string;
+  brideWeddingDate?: string;
+  brideCeremonyDate?: string;
+  brideReceptionDate?: string;
   brideHeroKicker: string;
   brideAddress: string;
   brideReceptionAddress: string;
@@ -36,6 +39,9 @@ export interface InvitationStudioConfig {
   groomReceptionTitle: string;
   groomCeremonyTime: string;
   groomReceptionTime: string;
+  groomWeddingDate?: string;
+  groomCeremonyDate?: string;
+  groomReceptionDate?: string;
   groomHeroKicker: string;
   groomAddress: string;
   groomReceptionAddress: string;
@@ -115,6 +121,7 @@ export interface PublishedInvitationRecord {
   customerId: string;
   demoId: string;
   createdAt: string;
+  expiresAt: string | null;
 }
 
 export interface PublicInvitationDemo {

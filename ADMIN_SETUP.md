@@ -48,8 +48,12 @@ Nút tạo link thiệp thực tế luôn tạo URL dạng `/invite/slug` trên 
 1. Khách gửi `/yeu-cau-thiep` hoặc admin tạo hồ sơ thủ công.
 2. Admin chọn mẫu, rà soát dữ liệu và tạo link preview.
 3. Khách mở `/preview/:token`, xác nhận popup demo rồi xem thiệp.
-4. Admin nhấn **Xác nhận khách đặt mẫu**. Hệ thống tạo và sao chép link thiệp chính thức theo tên cô dâu/chú rể; có thể mở hoặc sao chép link từ demo.
+4. Admin nhấn **Xác nhận khách đặt mẫu**. Hệ thống tạo và sao chép link thiệp chính thức theo tên cô dâu/chú rể; link mặc định hết hạn sau 90 ngày. Trong demo, có thể chỉnh ngày hết hạn hoặc xóa ngày để link không hết hạn.
 5. Nút **Xuất code ZIP** được mở; server xác minh lại JWT, quyền admin và trạng thái đơn trước khi sinh file. Xóa demo sẽ gỡ cả link preview và link chính thức liên kết với demo đó.
+
+Trước khi deploy tính năng thời hạn thiệp chính thức, áp dụng migration `supabase/migrations/202611080002_published_invitation_expiry.sql`. Các link đã tồn tại nhận thời hạn mặc định 90 ngày kể từ lúc migration được áp dụng.
+
+Khách hàng có thể được đánh dấu **Hoàn thành** từ hồ sơ Admin. Đây là trạng thái cuối cùng: không thể xóa khách đã hoàn thành hoặc đổi trạng thái đó về trạng thái khác. Áp dụng migration `supabase/migrations/202611080003_protect_completed_customers.sql` trước khi deploy thay đổi này.
 
 ## 5. Kiểm tra bảo mật
 

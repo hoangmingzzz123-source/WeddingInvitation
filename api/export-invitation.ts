@@ -71,9 +71,25 @@ async function buildCustomTemplateFiles(templateId: string, demo: JsonRecord, cu
     const percent = (value?: number) => `${(Number.isFinite(value) ? Math.max(0, Math.min(1, value!)) : 0.5) * 100}%`;
     return `${percent(photo?.focalX)} ${percent(photo?.focalY)}`;
   };
+  const weddingDate = String(payload.weddingDate ?? '');
+  const brideWeddingDate = String(studio.brideWeddingDate || weddingDate);
+  const brideCeremonyDate = String(studio.brideCeremonyDate || studio.brideWeddingDate || weddingDate);
+  const brideReceptionDate = String(studio.brideReceptionDate || studio.brideWeddingDate || weddingDate);
+  const groomWeddingDate = String(studio.groomWeddingDate || weddingDate);
+  const groomCeremonyDate = String(studio.groomCeremonyDate || studio.groomWeddingDate || weddingDate);
+  const groomReceptionDate = String(studio.groomReceptionDate || studio.groomWeddingDate || weddingDate);
   const replacements: Record<string, string> = {
     brideName: String(payload.brideName ?? ''), groomName: String(payload.groomName ?? ''),
-    weddingDate: String(payload.weddingDate ?? ''), weddingDateLabel: formatDate(payload.weddingDate), weddingTime: String(payload.weddingTime ?? ''),
+    weddingDate, weddingDateLabel: formatDate(weddingDate),
+    ceremonyDate: weddingDate, ceremonyDateLabel: formatDate(weddingDate),
+    receptionDate: weddingDate, receptionDateLabel: formatDate(weddingDate),
+    brideWeddingDate, brideWeddingDateLabel: formatDate(brideWeddingDate),
+    brideCeremonyDate, brideCeremonyDateLabel: formatDate(brideCeremonyDate),
+    brideReceptionDate, brideReceptionDateLabel: formatDate(brideReceptionDate),
+    groomWeddingDate, groomWeddingDateLabel: formatDate(groomWeddingDate),
+    groomCeremonyDate, groomCeremonyDateLabel: formatDate(groomCeremonyDate),
+    groomReceptionDate, groomReceptionDateLabel: formatDate(groomReceptionDate),
+    weddingTime: String(payload.weddingTime ?? ''),
     venue: String(payload.venue ?? ''), brideVenue: String(studio.brideVenue ?? ''), groomVenue: String(studio.groomVenue ?? ''),
     address: String(payload.address ?? ''), message: String(payload.message ?? ''),
     city: String(studio.city ?? ''), packageTier: String(studio.packageTier ?? ''),

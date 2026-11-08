@@ -31,6 +31,7 @@ const sideLabel = (side?: 'groom' | 'bride' | null) => side === 'groom' ? 'Thi�
 export function PublicInvitationTrackingPage({ token }: { token: string }) {
   const [result, setResult] = useState<InvitationTrackingResult | null>(null);
   const [activeTab, setActiveTab] = useState<'wishes' | 'rsvp'>('wishes');
+  const [sideFilter, setSideFilter] = useState<'all' | 'groom' | 'bride'>('all');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -67,8 +68,13 @@ export function PublicInvitationTrackingPage({ token }: { token: string }) {
     </main>
   );
 
-  const yesCount = result.responses.filter((response) => response.attending === 'yes').length;
-  const guestCount = result.responses.reduce((total, response) => total + (response.attending === 'yes' ? response.guestCount : 0), 0);
+  const filterBySide = <T extends { side?: 'groom' | 'bride' | null }>(items: T[]) => (
+    sideFilter === 'all' ? items : items.filter((item) => item.side === sideFilter)
+  );
+  const wishes = filterBySide(result.wishes);
+  const responses = filterBySide(result.responses);
+  const yesCount = responses.filter((response) => response.attending === 'yes').length;
+  const guestCount = responses.reduce((total, response) => total + (response.attending === 'yes' ? response.guestCount : 0), 0);
 
   return (
     <main className="public-tracking-share">
@@ -76,20 +82,33 @@ export function PublicInvitationTrackingPage({ token }: { token: string }) {
         <p><MessageCircleHeart aria-hidden="true" /> THE WEDDING GUESTBOOK</p>
         <h1>{result.couple}</h1>
       </header>
+      <div className="public-tracking-share__filters" role="group" aria-label="Lọc theo bên gia đình">
+        <span>Lọc theo</span>
+        {([
+          ['all', 'Tất cả'],
+          ['groom', 'Nhà trai'],
+          ['bride', 'Nhà gái'],
+        ] as const).map(([value, label]) => (
+          <button type="button" key={value} aria-pressed={sideFilter === value} onClick={() => setSideFilter(value)}>
+            {label}
+          </button>
+        ))}
+        {sideFilter === 'all' && <small>Lời chúc và phản hồi cũ chưa gắn bên gia đình vẫn được hiển thị.</small>}
+      </div>
       <div className="public-tracking-share__tabs" role="tablist" aria-label="Nội dung theo dõi">
         <button id="tracking-tab-wishes" type="button" role="tab" aria-selected={activeTab === 'wishes'}
           aria-controls="tracking-panel-wishes" onClick={() => setActiveTab('wishes')}>
-          Lời chúc <span>{result.wishes.length}</span>
+          Lời chúc <span>{wishes.length}</span>
         </button>
         <button id="tracking-tab-rsvp" type="button" role="tab" aria-selected={activeTab === 'rsvp'}
           aria-controls="tracking-panel-rsvp" onClick={() => setActiveTab('rsvp')}>
-          RSVP <span>{result.responses.length}</span>
+          RSVP <span>{responses.length}</span>
         </button>
       </div>
       {activeTab === 'wishes' ? (
         <section id="tracking-panel-wishes" role="tabpanel" aria-labelledby="tracking-tab-wishes" className="public-tracking-share__panel">
-          {result.wishes.length ? <ol className="public-tracking-share__wishes">
-            {result.wishes.map((wish) => (
+          {wishes.length ? <ol className="public-tracking-share__wishes">
+            {wishes.map((wish) => (
               <li key={wish.id}>
                 <Heart aria-hidden="true" />
                 <div>
@@ -100,17 +119,17 @@ export function PublicInvitationTrackingPage({ token }: { token: string }) {
                 </div>
               </li>
             ))}
-          </ol> : <p className="public-wishes-share__empty">Chưa có lời chúc nào.</p>}
+          </ol> : <p className="public-wishes-share__empty">Không có lời chúc phù hợp bộ lọc.</p>}
         </section>
       ) : (
         <section id="tracking-panel-rsvp" role="tabpanel" aria-labelledby="tracking-tab-rsvp" className="public-tracking-share__panel">
           <div className="public-rsvp-share__stats">
             <span><CheckCircle2 aria-hidden="true" /> {yesCount} sẽ tham dự</span>
             <span><Users aria-hidden="true" /> {guestCount} khách xác nhận</span>
-            <span>{result.responses.length} phản hồi</span>
+            <span>{responses.length} phản hồi</span>
           </div>
-          {result.responses.length ? <ol className="public-tracking-share__rsvps">
-            {result.responses.map((response) => (
+          {responses.length ? <ol className="public-tracking-share__rsvps">
+            {responses.map((response) => (
               <li key={response.id}>
                 <div className="public-rsvp-share__guest">
                   <strong>{response.name}</strong>
@@ -127,7 +146,7 @@ export function PublicInvitationTrackingPage({ token }: { token: string }) {
                 </div>
               </li>
             ))}
-          </ol> : <p className="public-rsvp-share__empty">Chưa có lời hồi đáp nào.</p>}
+          </ol> : <p className="public-rsvp-share__empty">Không có hồi đáp phù hợp bộ lọc.</p>}
         </section>
       )}
       <footer>Chế độ chỉ xem</footer>

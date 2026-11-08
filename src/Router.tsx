@@ -29,6 +29,7 @@ const PublishedInvitationPage = lazy(() => import('./components/PublishedInvitat
 const AdminLoginPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminLoginPage })));
 const AdminSetPasswordPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminSetPasswordPage })));
 const AdminDashboardPage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminDashboardPage })));
+const AdminGuidePage = lazy(() => import('./components/admin/AdminPages').then((module) => ({ default: module.AdminGuidePage })));
 const PublicRsvpSharePage = lazy(() => import('./components/PublicRsvpSharePage').then((module) => ({ default: module.PublicRsvpSharePage })));
 const PublicWishesSharePage = lazy(() => import('./components/PublicWishesSharePage').then((module) => ({ default: module.PublicWishesSharePage })));
 const PublicInvitationTrackingPage = lazy(() => import('./components/PublicInvitationTrackingPage').then((module) => ({ default: module.PublicInvitationTrackingPage })));
@@ -163,6 +164,7 @@ export function Router() {
     '/admin/login': <AdminLoginPage />,
     '/admin/setup-password': <AdminSetPasswordPage />,
     '/admin': <AdminDashboardPage />,
+    '/admin/guide': <AdminGuidePage />,
     ...demoRoutes,
   };
 

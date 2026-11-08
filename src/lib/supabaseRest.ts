@@ -345,7 +345,7 @@ export async function listDemos(session: AdminSession, customerId?: string) {
 
 export async function listPublishedInvitations(session: AdminSession) {
   const rows = await request<JsonRecord[]>(
-    '/rest/v1/published_invitations?select=slug,customer_id,demo_id,created_at',
+    '/rest/v1/published_invitations?select=slug,customer_id,demo_id,created_at,expires_at',
     { token: session.accessToken },
   );
   return rows.map((row): PublishedInvitationRecord => ({
@@ -353,6 +353,7 @@ export async function listPublishedInvitations(session: AdminSession) {
     customerId: String(row.customer_id),
     demoId: String(row.demo_id),
     createdAt: String(row.created_at),
+    expiresAt: typeof row.expires_at === 'string' ? row.expires_at : null,
   }));
 }
 
